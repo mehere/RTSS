@@ -5,4 +5,9 @@ class Util
 
 }
 
+class Teacher 
+{
+
+}
+
 ?>
