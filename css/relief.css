@@ -22,11 +22,22 @@
 .table-info th {
 	border: 1px black solid;	
 	padding: 5px 0;
+	cursor: pointer;
 	
 	background-color: #a5a5a5;
 	background: -ms-linear-gradient(top,  #aaaaaa 0%,#999999 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#aaaaaa), color-stop(100%,#999999));
 	background: linear-gradient(to bottom,  #aaaaaa 0%,#999999 100%);
+}
+.table-info th:hover {
+	background-color: #999999;
+	background: -ms-linear-gradient(top,  #999999 0%,#a5a5a5 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#999999), color-stop(100%,#a5a5a5));
+	background: linear-gradient(to bottom,  #999999 0%,#a5a5a5 100%);
+}
+.table-info th .ui-icon {
+	float: right;
+	margin-top: 3px;
 }
 .table-info tbody tr {
 	background-color: #ffffff;
@@ -35,16 +46,22 @@
 	background-color: #ededed;
 }
 .table-info tbody tr:hover {
-	background-color: #DBDBDB;
+	background-color: rgba(219, 219, 219, 1);
 }
 .table-info tr td {
 	padding: 5px 10px;
 	border: 1px black solid;
 }
-.table-info tr td:nth-child(1), .table-info tr td:nth-child(3) {
+
+#align-teacher tr td:nth-child(1), #align-teacher tr td:nth-child(3) {
 	text-align: left;
 	word-wrap: break-word;
 }
+#align-temp tr td:nth-child(1), #align-temp tr td:nth-child(4) {
+	text-align: left;
+	word-wrap: break-word;
+}
+
 .bt-control {	
 	margin-top: 40px;
 	text-align: center;

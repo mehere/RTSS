@@ -24,20 +24,20 @@
                 </ul>                
             </div>
             <form class="main" name="schedule" action="" method="post">
-            	Date: <input type="text" class="textfield" name="date" /> XXX
+            	Date: <input type="text" class="textfield" name="date" /> <img id="calendar-trigger" src="/RTSS/img/calendar.png" alt="Calendar" style="vertical-align: middle; cursor: pointer" width="36" />
                 <div class="section">
                 	Teacher on Leave: <a href="">Edit/Add</a>
                     <table class="table-info">
                         <thead>
                             <tr>
-                                <th style="width: 20%"><span class="sort" search="username">Name</span></th>
+                                <th style="width: 20%"><span class="sort" search="username">Name</span><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
                                 <th style="width: 80px"><span class="sort" search="email">Type</span></th>
                                 <th style="width: 40%"><span class="sort" search="occupation">Reason</span></th>
                                 <th style="width: 80px"><span class="sort" search="residence">Verified</span></th>
                                 <th style="width: 100px"><span class="sort" search="login_time">Scheduled</span></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="align-teacher">
                         	<tr><td>haha asdf</td><td>AED</td><td>haha</td><td>Yes</td><td>No</td></tr>
                             <tr><td>haha asdf</td><td>Normal</td><td>haha</td><td>Yes</td><td>No</td></tr>
                             <tr><td>hahaasdfasdfasadsfasdfadsfasdf dsfg</td><td>haha d</td><td>haha asdf asd fasd fasd fasd fasd f</td><td>Yes</td><td>No</td></tr>
@@ -50,16 +50,15 @@
                         <thead>
                             <tr>
                                 <th style="width: 20%"><span class="sort" search="username">Name</span></th>
-                                <th style="width: 80px"><span class="sort" search="email">Type</span></th>
-                                <th style="width: 40%"><span class="sort" search="occupation">Reason</span></th>
-                                <th style="width: 80px"><span class="sort" search="residence">Verified</span></th>
-                                <th style="width: 100px"><span class="sort" search="login_time">Scheduled</span></th>
+                                <th style="width: 110px"><span class="sort" search="email">Handphone</span></th>
+                                <th style="width: 140px"><span class="sort" search="occupation">Time Avaialble</span></th>
+                                <th style="width: 40%"><span class="sort" search="residence">Remark</span></th>                                
                             </tr>
                         </thead>
-                        <tbody>
-                        	<tr><td>haha asdf</td><td>AED</td><td>haha</td><td>Yes</td><td>No</td></tr>
-                            <tr><td>haha asdf</td><td>Normal</td><td>haha</td><td>Yes</td><td>No</td></tr>
-                            <tr><td>haha asdf</td><td>haha d</td><td>haha</td><td>Yes</td><td>No</td></tr>
+                        <tbody id="align-temp">
+                        	<tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
+                            <tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
+                            <tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
                         </tbody>
                     </table>
                 </div>

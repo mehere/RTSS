@@ -84,6 +84,7 @@ ul.nav li>a {
 ul.nav li>a:hover {	
 	text-shadow: 0 0 .2em #fef4dd;
 	text-decoration: none;
+	box-shadow: 0 0 6px 1px #fdf2cf;
 }
 
 ul.breadcrumb {
@@ -164,7 +165,8 @@ ul.breadcrumb a {
 	outline: none;
 }
 .button:hover {
-
+	box-shadow: 0 0 5px 1px #fef4dd;
+	text-shadow: 0 0 .2em #fef4dd;
 }
 
 .fltrt {
