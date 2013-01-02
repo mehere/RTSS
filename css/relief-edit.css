@@ -1,0 +1,33 @@
+@charset "UTF-8";
+.section {
+	margin-top: 15px;
+}
+.section .control-top {
+	margin-top: 10px;
+}
+.section .control-top>a {
+	margin-right: 30px;
+	font-size: .9em;
+}
+.table-info input, .table-info select {
+	font-size: .85em;
+}
+.table-info textarea {
+	font-size: 14px;
+	width: 95%;
+	height: 5em;
+}
+.table-info .time-line {
+	text-align: right;
+	width: 220px;
+	margin: 5px auto;
+}
+.table-info #last-row {
+	display: none;
+}
+
+
+.section #add-save {
+	margin: 10px 0 -20px 20px; 
+	display: block;
+}

@@ -79,3 +79,10 @@
 	width: 160px;
 	margin-right: 100px;
 }
+
+#teacher-detail .table-info tr td {
+	background-color: #ffffff;
+}
+#teacher-detail .table-info tr td:nth-child(odd) {
+	background-color: #f9f9f9;
+}

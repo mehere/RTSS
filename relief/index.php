@@ -18,19 +18,18 @@
             <div id="topbar">
             	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
                 <ul class="breadcrumb">
-                    <li><a href="">Scheduling</a></li>
-                    <li><a href="">Report</a></li>
-                    <li>Here</li>
+                    <li><a href="/RTSS/relief/">Scheduling</a></li>
+                    <li>Start</li>
                 </ul>                
             </div>
             <form class="main" name="schedule" action="" method="post">
-            	Date: <input type="text" class="textfield" name="date" /> <img id="calendar-trigger" src="/RTSS/img/calendar.png" alt="Calendar" style="vertical-align: middle; cursor: pointer" width="36" />
+            	Date: <input type="text" class="textfield" name="date" maxlength="10" /> <img id="calendar-trigger" src="/RTSS/img/calendar.png" alt="Calendar" style="vertical-align: middle; cursor: pointer" width="36" />
                 <div class="section">
-                	Teacher on Leave: <a href="">Edit/Add</a>
+                	Teacher on Leave: <a href="teacher-edit.php">Edit/Add</a>
                     <table class="table-info">
                         <thead>
                             <tr>
-                                <th style="width: 20%"><span class="sort" search="username">Name</span><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
+                                <th style="width: 20%">Name<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
                                 <th style="width: 80px"><span class="sort" search="email">Type</span></th>
                                 <th style="width: 40%"><span class="sort" search="occupation">Reason</span></th>
                                 <th style="width: 80px"><span class="sort" search="residence">Verified</span></th>
@@ -38,14 +37,14 @@
                             </tr>
                         </thead>
                         <tbody id="align-teacher">
-                        	<tr><td><a href="">haha asdf</a></td><td>AED</td><td>haha</td><td>Yes</td><td>No</td></tr>
-                            <tr><td><a href="">haha asdf</a></td><td>Normal</td><td>haha</td><td>Yes</td><td>No</td></tr>
+                        	<tr><td><a href="_teacher_detail.php?accname=1234">haha asdf</a></td><td>AED</td><td>haha</td><td>Yes</td><td>No</td></tr>
+                            <tr><td><a href="_teacher_detail.php?accname=5sfw3">haha asdf</a></td><td>Normal</td><td>haha</td><td>Yes</td><td>No</td></tr>
                             <tr><td>hahaasdfasdfasadsfasdfadsfasdf dsfg</td><td>haha d</td><td>haha asdf asd fasd fasd fasd fasd f</td><td>Yes</td><td>No</td></tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="section">
-                	Temporary Relief Teacher: <a href="">Edit/Add</a>
+                	Temporary Relief Teacher: <a href="teacher-edit.php?teacher=temp">Edit/Add</a>
                     <table class="table-info">
                         <thead>
                             <tr>
@@ -67,9 +66,10 @@
                     <input type="submit" value="Adhoc Schedule" class="button" />
                 </div>                
             </form>
+            <div id="teacher-detail">Loading ...</div>
         </div>        
     </div>
-    <?php include_once '../sidebar-frag.php'; ?>
+    <?php include '../sidebar-frag.php'; ?>
 </div>
     
 </body>
