@@ -38,8 +38,8 @@
                             </tr>
                         </thead>
                         <tbody id="align-teacher">
-                        	<tr><td>haha asdf</td><td>AED</td><td>haha</td><td>Yes</td><td>No</td></tr>
-                            <tr><td>haha asdf</td><td>Normal</td><td>haha</td><td>Yes</td><td>No</td></tr>
+                        	<tr><td><a href="">haha asdf</a></td><td>AED</td><td>haha</td><td>Yes</td><td>No</td></tr>
+                            <tr><td><a href="">haha asdf</a></td><td>Normal</td><td>haha</td><td>Yes</td><td>No</td></tr>
                             <tr><td>hahaasdfasdfasadsfasdfadsfasdf dsfg</td><td>haha d</td><td>haha asdf asd fasd fasd fasd fasd f</td><td>Yes</td><td>No</td></tr>
                         </tbody>
                     </table>
@@ -67,7 +67,7 @@
                     <input type="submit" value="Adhoc Schedule" class="button" />
                 </div>                
             </form>
-        </div>
+        </div>        
     </div>
     <?php include_once '../sidebar-frag.php'; ?>
 </div>
