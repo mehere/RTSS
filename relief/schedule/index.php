@@ -1,5 +1,5 @@
 <?php 
-    include_once '../head-frag.php';
+    include_once '../../head-frag.php';
 ?>
 <title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -17,7 +17,7 @@
                     <li>Result Preview</li>
                 </ul>                
             </div>
-            <form class="result" method="get" action="">
+            <form class="result" method="get" action="result.php">
                 <fieldset>
                     <legend>Schedule 1</legend>
                     <table class="result-table">
@@ -41,7 +41,7 @@
             </form>
         </div>        
     </div>
-    <?php include '../sidebar-frag.php'; ?>
+    <?php include '../../sidebar-frag.php'; ?>
 </div>
     
 </body>
