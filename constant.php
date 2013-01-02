@@ -58,5 +58,26 @@ class NameMap
             )
         )
     );
+    
+    // For /RTSS/relief/schedule/ & ~result.php
+    public static $SCHEDULE_RESULT=array(
+        'preview' => array(
+            'display' => array(
+                'type' => 'Type', 'minPeriod' => 'Min Period', 
+                'MT' => 'Mother Togue'
+            ),
+            'hidden' => array()
+        ),
+        
+        'schedule' => array(
+            'display' => array(
+                'class' => 'Class', 'time' => 'Time', 
+                'teacherOnLeave' => 'Teacher on Leave', 'reliefTeacher' => 'Relief Teacher'
+            ),
+            'hidden' => array(
+                'scheduleIndex'
+            )
+        )
+    );
 }
 ?>

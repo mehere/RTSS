@@ -85,4 +85,5 @@
 }
 #teacher-detail .table-info tr td:nth-child(odd) {
 	background-color: #f9f9f9;
+	font-weight: bold;
 }

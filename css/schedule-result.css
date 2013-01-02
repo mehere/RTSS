@@ -1,0 +1,16 @@
+@charset "UTF-8";
+.section {
+	margin-top: 15px;
+}
+.table-info input, .table-info select {
+	font-size: .85em;
+}
+
+.bt-control {
+	margin-top: 20px;
+	padding-bottom: 10px;
+}
+.bt-control .link {
+	margin-right: 90px;
+	margin-left: -30px;
+}
