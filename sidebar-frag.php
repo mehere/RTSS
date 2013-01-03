@@ -4,7 +4,7 @@
     <ul class="nav">
         <li><a href="/RTSS/relief/">Scheduling</a></li>
         <li><a href="#">Report</a></li>
-        <li><a href="#">Timetable Upload</a></li>
+        <li><a href="/RTSS/timetable/upload.php">Timetable Upload</a></li>
         <li><a href="#">View Timetable</a></li>
     </ul>    
 </div>

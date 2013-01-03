@@ -5,7 +5,7 @@
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/schedule-result.css" rel="stylesheet" type="text/css">
-<!--<script src="/RTSS/js/relief-edit.js"></script>-->
+<script src="/RTSS/js/result.js"></script>
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
@@ -44,21 +44,21 @@ EOD;
                             </tr>
                         </thead>
                         <tbody>
-                        	<tr><td>1A</td><td>1030 - 1330</td><td>Good Anota</td><td>What Hash</td></tr>
+                        	<tr><td>1A</td><td>1030 - 1330</td><td>Good Anota</td><td><span class="text-display">What Hash</span><input type="text" name="reliefTeacherName-0" value="What Hash" class="text-hidden" /></td></tr>
                             <tr><td>1A</td><td>1030 - 1330</td><td>Good Anota</td><td>What Hash</td></tr>
                             <tr><td>1A</td><td>1030 - 1330</td><td>Good Anota</td><td>What Hash</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="bt-control">
+                <div class="fltrt">                	
+                	<input type="button" name="override" value="Override" class="button" />
+                    <input type="submit" value="Approve" class="button" />
+                </div>
+                <div class="link-control">
                     <a href="" class="link">Preview Teacher Timetable</a>
                     <a href="" class="link">Preview Class Timetable</a>
-                </div>
-                <div class="bt-control">                	
-                	<input type="button" name="verify" value="Override" class="button" />
-                    <input type="button" name="delete" value="Approve" class="button" />
-                </div>
-                <!--<input type="hidden" name="num" value="1" />-->                
+                </div>                
+                <input type="hidden" name="num" value="1" />                
             </form>            
         </div>        
     </div>

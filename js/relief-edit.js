@@ -50,25 +50,50 @@ $(document).ready(function(){
     // Add and Save
     var ADD_SAVE_TEXT=["Add", "Save"], FADE_DUR=400;
     $("#add-save").click(function(){
-        if ($(this).html() == ADD_SAVE_TEXT[0])
+        if ($(this).html() == ADD_SAVE_TEXT[1])
         {
-            $("#last-row").fadeIn(FADE_DUR, function(){
-                $("#add-save").html(ADD_SAVE_TEXT[1]);
-            });
+
         }
         else
         {
-
+            $("#last-row").fadeIn(FADE_DUR);
+            $("#add-save").html(ADD_SAVE_TEXT[1]);
         }
 
         return false;
     });
 
-    $(formEdit['line-delete']).click(function(){
+    $(formEdit['line-delete']).button({
+        icons: {
+            primary: "ui-icon-trash"
+        },
+        text: false
+    }).click(function(){
         confirm("Confirm to delete this row?", function(){
             $("#last-row").fadeOut(FADE_DUR, function(){
                 $("#add-save").html(ADD_SAVE_TEXT[0]);
             });
         });
+    });
+
+    // Auto complete
+    var nameList=["Ana Mill", "Anto Till", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
+    $(formEdit['fullname']).autocomplete({
+        source: nameList,
+        delay: 0,
+        autoFocus: true
+    }).blur(function(){
+        var curText= $.trim(this.value), isMatch=false;
+        $.each(nameList, function(index, value){
+            if (curText.toLowerCase() == value.toLowerCase())
+            {
+                isMatch=true;
+                return false;
+            }
+        });
+        if (!isMatch)
+        {
+            this.value="";
+        }
     });
 });

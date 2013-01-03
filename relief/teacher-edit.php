@@ -65,7 +65,7 @@ EOD;
                                 </td>
                                 <td><textarea name="remark-0">Specifies that a text area should automatically</textarea></td><td><input type="checkbox" name="verified-0" /></td>
                             </tr>
-                            <tr id="last-row"><td><input type="button" name="line-delete" value="Delete"></td>
+                            <tr id="last-row"><td><button name="line-delete" style="padding: 5px 0"></button></td>
                             <td><input type="text" name="fullname" style="width: 90%;" /></td>
                             	<td>
                                 	<select name="reason"><option value="MC">MC</option>
