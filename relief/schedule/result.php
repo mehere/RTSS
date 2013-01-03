@@ -55,7 +55,7 @@ EOD;
                     <input type="submit" value="Approve" class="button" />
                 </div>
                 <div class="link-control">
-                    <a href="" class="link">Preview Teacher Timetable</a>
+                    <a href="timetable.php" class="link">Preview Teacher Timetable</a>
                     <a href="" class="link">Preview Class Timetable</a>
                 </div>                
                 <input type="hidden" name="num" value="1" />                

@@ -44,6 +44,7 @@ EOD;
                     </select>
                 </div>
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
+                <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em; margin-top: 10px" /></div>                
             </form>
         </div>        
     </div>
