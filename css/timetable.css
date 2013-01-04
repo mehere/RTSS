@@ -11,6 +11,7 @@
 	position: absolute;
 	left: 3px;
 	height: 10px;
+	width: 99.5%;
 	
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#888888', endColorstr='#00888888',GradientType=0 );
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(136,136,136,1)), color-stop(100%,rgba(136,136,136,0)));
@@ -59,8 +60,4 @@
 }
 #tabs .ui-widget-header .ui-state-active a {
 	color: black;
-}
-
-.table-info {
-	width: 70%;
 }

@@ -1,0 +1,35 @@
+@charset "UTF-8";
+
+#tabs .main {
+	color: white;
+	font-size: 1.1em;
+	max-width: 800px;
+}
+.main fieldset>legend {
+	margin-left: 10px;
+}
+
+.table-info {
+	width: 100%;	
+}
+
+#table-overall tr td:first-child {
+	text-align: left;
+	word-wrap: break-word;
+}
+#table-individual tr td {
+	background-color: white;
+}
+#table-individual tr td:first-child {
+	background-color: #f9f9f9;
+	width: 150px;
+}
+
+.ui-autocomplete {
+	max-height: 11em;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.ui-autocomplete .ui-menu-item {
+	font-size: .9em;
+}

@@ -8,8 +8,7 @@ $(document).ready(function(){
         }
     });
 
-    $(".gradient-top").css('top', $('.ui-tabs-panel').position().top)
-        .width($('.ui-tabs-panel').outerWidth());
+    $(".gradient-top").css('top', $('.ui-tabs-panel').position().top);
 
     var selectedInd=document.forms['tab-data']['selectedInd'].value-0;
     if (selectedInd != 0)

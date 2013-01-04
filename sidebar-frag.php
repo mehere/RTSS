@@ -3,7 +3,7 @@
     <h1>iScheduler</h1>
     <ul class="nav">
         <li><a href="/RTSS/relief/">Scheduling</a></li>
-        <li><a href="#">Report</a></li>
+        <li><a href="/RTSS/report/">Report</a></li>
         <li><a href="/RTSS/timetable/upload.php">Timetable Upload</a></li>
         <li><a href="/RTSS/timetable/">View Timetable</a></li>
     </ul>    

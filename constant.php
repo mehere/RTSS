@@ -82,7 +82,7 @@ class NameMap
         )
     );
     
-    // For /RTSS/relief/schedule/ & ~result.php
+    // For /RTSS/relief/timetable/
     public static $TIMETABLE=array(
         'class' => array(
             'display' => array(
@@ -99,6 +99,27 @@ class NameMap
             ),
             'hidden' => array(
                 'teacher'
+            )
+        )
+    );
+    
+    // For /RTSS/relief/report/
+    public static $REPORT=array(
+        'overall' => array(
+            'display' => array(
+                'fullname' => 'Name', 'type' => 'Type', 'mc' => 'MC', 'relief' => 'Relief', 'net' => 'Net'                
+            ),
+            'hidden' => array(
+                'accname'
+            )
+        ),
+        
+        'individual' => array(
+            'display' => array(
+                'mc' => 'MC Date', 'relief' => 'Relief Date'
+            ),
+            'hidden' => array(
+                'accname'
             )
         )
     );

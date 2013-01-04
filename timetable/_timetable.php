@@ -9,7 +9,7 @@ $isTeacher=$_GET['tab'] == 'teacher';
 <table class="table-info">
     <thead>
         <tr>
-            <th style="width: 100px">Time</th>
+            <th style="width: 120px">Time</th>
             <th><?php echo $isTeacher?'Teacher':'Class'; ?></th>                                
         </tr>
     </thead>

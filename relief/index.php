@@ -5,17 +5,19 @@
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/js/relief.js"></script>
+<script src="/RTSS/js/teacher-detail.js"></script>
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
 <style type="text/css">
-#teacher-detail .table-info tr td {
-	background-color: #ffffff;
+#align-teacher tr td:nth-child(1), #align-teacher tr td:nth-child(3) {
+	text-align: left;
+	word-wrap: break-word;
 }
-#teacher-detail .table-info tr td:nth-child(odd) {
-	background-color: #f9f9f9;
-	font-weight: bold;
+#align-temp tr td:nth-child(1), #align-temp tr td:nth-child(4) {
+	text-align: left;
+	word-wrap: break-word;
 }
 </style>
 </head>

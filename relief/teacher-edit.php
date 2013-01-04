@@ -8,6 +8,7 @@
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief-edit.css" rel="stylesheet" type="text/css">
 <script src="/RTSS/js/relief-edit.js"></script>
+<script src="/RTSS/js/teacher-detail.js"></script>
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
@@ -92,6 +93,7 @@ EOD;
                 <input type="hidden" name="num" value="1" />             
             </form>
             <div id="dialog-confirm"></div>
+            <div id="teacher-detail">Loading ...</div>
         </div>        
     </div>
     <?php include '../sidebar-frag.php'; ?>

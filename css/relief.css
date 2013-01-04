@@ -64,15 +64,6 @@
 	color: #e77200;
 }
 
-#align-teacher tr td:nth-child(1), #align-teacher tr td:nth-child(3) {
-	text-align: left;
-	word-wrap: break-word;
-}
-#align-temp tr td:nth-child(1), #align-temp tr td:nth-child(4) {
-	text-align: left;
-	word-wrap: break-word;
-}
-
 .bt-control {	
 	margin-top: 40px;
 	text-align: center;
@@ -80,4 +71,14 @@
 .bt-control .button {
 	width: 160px;
 	margin-right: 100px;
+}
+
+#teacher-detail .table-info tr td {
+	background-color: #ffffff;
+}
+#teacher-detail .table-info tr td:nth-child(odd) {
+	background-color: #f9f9f9;
+	font-weight: bold;
+	text-align: right;
+	width: 100px;
 }
