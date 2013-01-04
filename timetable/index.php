@@ -1,5 +1,5 @@
 <?php 
-    include_once '../../head-frag.php';
+    include_once '../head-frag.php';
 ?>
 <title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -19,23 +19,21 @@
             <div id="topbar">
             	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
                 <ul class="breadcrumb">
-                	<li><a href="/RTSS/relief/">Scheduling</a></li>
-                    <li><a href="/RTSS/relief/schedule/">Result Preview</a></li>
-                    <li><a href="/RTSS/relief/schedule/result.php">Result Approval</a></li>
-                    <li>Timetable Preview</li>
+                	<li><a href="/RTSS/timetable/">Timetable</a></li>
+                    <li>View</li>
                 </ul>                
             </div>
             <div id="tabs">
             	<div class="gradient-top"></div>
                 <ul>
-                    <li><a href="/RTSS/timetable/_timetable.php?mode=preview">Class</a></li>
-                    <li><a href="/RTSS/timetable/_timetable.php?tab=teacher&mode=preview">Teacher</a></li>
+                    <li><a href="/RTSS/timetable/_timetable.php">Class</a></li>
+                    <li><a href="/RTSS/timetable/_timetable.php?tab=teacher">Teacher</a></li>
                 </ul>                
             </div>
             <form name="tab-data"><input type="hidden" name="selectedInd" value="<?php if ($_GET['tab']=='teacher') echo 1; ?>" /></form>
         </div>        
     </div>
-    <?php include '../../sidebar-frag.php'; ?>
+    <?php include '../sidebar-frag.php'; ?>
 </div>
     
 </body>

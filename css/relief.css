@@ -23,14 +23,16 @@
 .table-info th {
 	border: 1px black solid;	
 	padding: 5px 0;
-	cursor: pointer;
 	
 	background-color: #a5a5a5;
 	background: -ms-linear-gradient(top, #aaaaaa 0%,#999999 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#aaaaaa), color-stop(100%,#999999));
 	background: linear-gradient(to bottom, #aaaaaa 0%,#999999 100%);
 }
-.table-info th:hover {
+.table-info .sort {	
+	cursor: pointer;
+}
+.table-info .sort:hover {
 	background-color: #999999;
 	background: -ms-linear-gradient(top, #999999 0%,#a5a5a5 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#999999), color-stop(100%,#a5a5a5));
@@ -78,12 +80,4 @@
 .bt-control .button {
 	width: 160px;
 	margin-right: 100px;
-}
-
-#teacher-detail .table-info tr td {
-	background-color: #ffffff;
-}
-#teacher-detail .table-info tr td:nth-child(odd) {
-	background-color: #f9f9f9;
-	font-weight: bold;
 }

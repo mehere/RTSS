@@ -9,6 +9,15 @@
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
+<style type="text/css">
+#teacher-detail .table-info tr td {
+	background-color: #ffffff;
+}
+#teacher-detail .table-info tr td:nth-child(odd) {
+	background-color: #f9f9f9;
+	font-weight: bold;
+}
+</style>
 </head>
 <body>
 
@@ -29,11 +38,11 @@
                     <table class="table-info">
                         <thead>
                             <tr>
-                                <th style="width: 20%">Name<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
-                                <th style="width: 80px"><span class="sort" search="email">Type</span></th>
-                                <th style="width: 40%"><span class="sort" search="occupation">Reason</span></th>
-                                <th style="width: 80px"><span class="sort" search="residence">Verified</span></th>
-                                <th style="width: 100px"><span class="sort" search="login_time">Scheduled</span></th>
+                                <th style="width: 30%" class="sort">Name<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
+                                <th style="width: 80px" class="sort"><span class="sort" search="email">Type</span></th>
+                                <th style="width: 70%" class="sort"><span class="sort" search="occupation">Reason</span></th>
+                                <th style="width: 80px" class="sort"><span class="sort" search="residence">Verified</span></th>
+                                <th style="width: 100px" class="sort"><span class="sort" search="login_time">Scheduled</span></th>
                             </tr>
                         </thead>
                         <tbody id="align-teacher">
@@ -48,10 +57,10 @@
                     <table class="table-info">
                         <thead>
                             <tr>
-                                <th style="width: 20%"><span class="sort" search="username">Name</span></th>
-                                <th style="width: 110px"><span class="sort" search="email">Handphone</span></th>
-                                <th style="width: 140px"><span class="sort" search="occupation">Time Avaialble</span></th>
-                                <th style="width: 40%"><span class="sort" search="residence">Remark</span></th>                                
+                                <th style="width: 30%" class="sort"><span class="sort" search="username">Name</span></th>
+                                <th style="width: 110px" class="sort"><span class="sort" search="email">Handphone</span></th>
+                                <th style="width: 140px" class="sort"><span class="sort" search="occupation">Time Avaialble</span></th>
+                                <th style="width: 70%" class="sort"><span class="sort" search="residence">Remark</span></th>                                
                             </tr>
                         </thead>
                         <tbody id="align-temp">

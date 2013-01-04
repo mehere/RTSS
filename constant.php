@@ -53,7 +53,7 @@ class NameMap
         
         'tempTeacher' => array(
             'display' => array(
-                'fullname' => 'Name', 'handphone' => 'Handphone', 'time' => 'Time Available', 'remark' => 'Remark'
+                'fullname' => 'Name', 'handphone' => 'Phone', 'time' => 'Time Available', 'remark' => 'Remark'
             ),
             'hidden' => array(
                 'accname'
@@ -78,6 +78,27 @@ class NameMap
             ),
             'hidden' => array(
                 'scheduleIndex'
+            )
+        )
+    );
+    
+    // For /RTSS/relief/schedule/ & ~result.php
+    public static $TIMETABLE=array(
+        'class' => array(
+            'display' => array(
+                'time' => 'Time', 'teacher' => 'Teacher'
+            ),
+            'hidden' => array(
+                'class'
+            )
+        ),
+        
+        'teacher' => array(
+            'display' => array(
+                'time' => 'Time', 'class' => 'Class'
+            ),
+            'hidden' => array(
+                'teacher'
             )
         )
     );

@@ -28,7 +28,6 @@ $(document).ready(function(){
             OK: function(){
                 $(this).dialog("close");
                 $(this).data('exec')();
-                console.log($(this).data('exec'));
             },
             Cancel: function(){
                 $(this).dialog("close");
@@ -74,6 +73,7 @@ $(document).ready(function(){
                 $("#add-save").html(ADD_SAVE_TEXT[0]);
             });
         });
+        return false;
     });
 
     // Auto complete

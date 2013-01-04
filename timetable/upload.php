@@ -3,7 +3,7 @@
 ?>
 <title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
-<link href="/RTSS/css/timetable.css" rel="stylesheet" type="text/css">
+<link href="/RTSS/css/upload.css" rel="stylesheet" type="text/css">
 <script src="/RTSS/js/upload.js"></script>
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
@@ -44,7 +44,7 @@ EOD;
                     </select>
                 </div>
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
-                <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em; margin-top: 10px" /></div>                
+                <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em; margin: 10px 0" class="button" /></div>                
             </form>
         </div>        
     </div>
