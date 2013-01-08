@@ -19,7 +19,7 @@
                 <input type="submit" value="Login" class="button" />
                 <!--a href="">Forgot password?</a-->
             </form>
-            <div class="comment-bottom">Copyright @ <?php echo date("Y") . "&nbsp;&nbsp;" . Constant::SCH_NAME; ?><span style="margin-left: 1.5em; font-size: .8em">All rights reserved</span></div>
+            <div class="comment-bottom">Copyright @ <?php echo date("Y") . "&nbsp;&nbsp;" . Constant::SCH_NAME; ?><div style="margin-top: 10px; font-size: .8em">All rights reserved</div></div>
         </div>
     </div>
 </div>
