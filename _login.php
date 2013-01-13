@@ -15,6 +15,7 @@ $destination = "index.php";
 //call function to verify username and password
 $_session["userType"] = User::login($_POST['username'], $_POST['password']);
 
+//based on user type, decide where to redirect or simply go back with error message
 switch($_session["userType"]){
     case "":        
         $_session["loginError"] = true;
@@ -27,6 +28,7 @@ switch($_session["userType"]){
         break;
 }
 
+//redirect
 header("Location: $destination");
 
 ?>
