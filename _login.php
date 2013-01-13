@@ -17,15 +17,15 @@ $_session["type"] = User::login($_POST['username'], $_POST['password']);
 
 //based on user type, decide where to redirect or simply go back with error message
 if($_session["type"]){
-    $_session["loginError"] = true;
-}
-else{
     //store user name
-    $_session("accname") = $_POST['username'];
+    $_session["accname"] = $_POST['username'];
     if($_session["type"] == "teacher")
         $destination = "/RTSS/relief/index.php";
     else
-        $destination = "/RTSS/timetable/index.php";
+        $destination = "/RTSS/timetable/index.php";    
+}
+else{
+    $_session["loginError"] = true;
 }
 
 //redirect
