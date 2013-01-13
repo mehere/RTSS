@@ -10,22 +10,22 @@ include('class/User.php');
 //true if user name does or password does not match
 $_session["loginError"] = false;
 //page to be redirected to
-$destination = "index.php";
+$destination = "/RTSS/index.php";
 
-//call function to verify username and password
-$_session["userType"] = User::login($_POST['username'], $_POST['password']);
+//call function to verify username and password and store user type
+$_session["type"] = User::login($_POST['username'], $_POST['password']);
 
 //based on user type, decide where to redirect or simply go back with error message
-switch($_session["userType"]){
-    case "":        
-        $_session["loginError"] = true;
-        break;
-    case "teacher":
+if($_session["type"]){
+    $_session["loginError"] = true;
+}
+else{
+    //store user name
+    $_session("accname") = $_POST['username'];
+    if($_session["type"] == "teacher")
         $destination = "/RTSS/relief/index.php";
-        break;
-    case "admin":
+    else
         $destination = "/RTSS/timetable/index.php";
-        break;
 }
 
 //redirect
