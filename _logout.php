@@ -7,7 +7,7 @@ header("Pragma: no-cache");
 session_start();
 
 //log out only if user is currently logged in
-if (!$_session["accname"]){
+if (!$_SESSION['accname']){
     //destroy session
     session_destroy();
 }

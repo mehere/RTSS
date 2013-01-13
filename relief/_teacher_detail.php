@@ -7,7 +7,7 @@ header("Pragma: no-cache");
 session_start();
 include('../class/Teacher.php');
 
-if (!$_session['accname']) 
+if (!$_SESSION['accname']) 
 {   
     header('Content-type: application/json');
     $output = array("error" => "Please login first.");
@@ -27,13 +27,13 @@ else
     $output = array("ID"=>"sb", "name"=>"John Doe", "gender"=>"Male", "mobile"=>"98765432", "email"=>"johnDoe@hotmail.com");
 
 //Prepare teacher information for display
-$id = $output["ID"];
-$name = $output["name"];
-$gender = $output["gender"];
-$mobile = $output["mobile"];
-$email = $output["email"];
+$id = $output['ID'];
+$name = $output['name'];
+$gender = $output['gender'];
+$mobile = $output['mobile'];
+$email = $output['email'];
 
-json_encode($teacherInfo);
+json_encode($output);
 
 ?>
 <table class="table-info">                        
