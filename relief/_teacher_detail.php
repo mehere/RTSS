@@ -7,24 +7,31 @@ header("Pragma: no-cache");
 session_start();
 include('../class/Teacher.php');
 
+if (!$_session['accname']) 
+{   
+    header('Content-type: application/json');
+    $output = array("error" => "Please login first.");
+    echo json_encode($output);
+    exit;
+}
 //retrieve account name of the selected entry
 $accname =$_GET['accname'];
-//$teacherInfo = Teacher::getIndividualTeacherDetail($accname);
+//$output = Teacher::getIndividualTeacherDetail($accname);
 
 //test info
 if ($accname == "caiVir")
-    $teacherInfo = array("ID"=>"caiVir", "name"=>"Virgil Cai", "gender"=>"Male", "mobile"=>"97394731", "email"=>"ryujicai@hotmail.com");
+    $output = array("ID"=>"caiVir", "name"=>"Virgil Cai", "gender"=>"Male", "mobile"=>"97394731", "email"=>"ryujicai@hotmail.com");
 else if($accname == "jieXu")
-    $teacherInfo = array("ID"=>"jieXu", "name"=>"Xu Jie", "gender"=>"Female", "mobile"=>"92365504", "email"=>"xujie0086@gmail.com");
+    $output = array("ID"=>"jieXu", "name"=>"Xu Jie", "gender"=>"Female", "mobile"=>"92365504", "email"=>"xujie0086@gmail.com");
 else
-    $teacherInfo = array("ID"=>"sb", "name"=>"John Doe", "gender"=>"Male", "mobile"=>"98765432", "email"=>"johnDoe@hotmail.com");
+    $output = array("ID"=>"sb", "name"=>"John Doe", "gender"=>"Male", "mobile"=>"98765432", "email"=>"johnDoe@hotmail.com");
 
 //Prepare teacher information for display
-$id = $teacherInfo["ID"];
-$name = $teacherInfo["name"];
-$gender = $teacherInfo["gender"];
-$mobile = $teacherInfo["mobile"];
-$email = $teacherInfo["email"];
+$id = $output["ID"];
+$name = $output["name"];
+$gender = $output["gender"];
+$mobile = $output["mobile"];
+$email = $output["email"];
 
 json_encode($teacherInfo);
 
