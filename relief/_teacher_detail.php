@@ -7,13 +7,29 @@ header("Pragma: no-cache");
 session_start();
 include('../class/Teacher.php');
 
-if (!$_SESSION['accname']) 
-{   
+$login = true;
+
+//check if user is logged in
+if (isset($_SESSION['accname']))
+{
+    if (!$_SESSION['accname']) {
+        $login = false;
+    }
+}else
+    $login = false;
+
+if (!$login) {
+    //indicates error
     header('Content-type: application/json');
     $output = array("error" => "Please login first.");
     echo json_encode($output);
     exit;
+}else
+{
+    //indicates no error
+    $output['error'] = "";
 }
+
 //retrieve account name of the selected entry
 $accname =$_GET['accname'];
 //$output = Teacher::getIndividualTeacherDetail($accname);
