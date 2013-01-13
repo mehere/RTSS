@@ -5,7 +5,7 @@ header("Pragma: no-cache");
 
 //initialize session
 session_start();
-//include('class/Teacher.php');
+include('../class/Teacher.php');
 
 //retrieve account name of the selected entry
 $accname =$_GET['accname'];
