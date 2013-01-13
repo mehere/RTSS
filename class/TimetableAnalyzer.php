@@ -160,7 +160,7 @@ class TimetableAnalyzer {
 
         // the following codes are just for verification of the code correctness
 
-        /*
+       /* 
         foreach($arrLessons as $key=>$value){
             echo 'Lesson '.$key.': <br>';
             echo 'Subject: '.$value->subject.'<br>';
@@ -248,7 +248,7 @@ class TimetableAnalyzer {
         
         //Teacher::abbreToFullnameBatchSetup($arrTeachers);
         
-        //$err_message = TimetableDB::insertTimetable($arrLessons);
+        //$err_message = TimetableDB::insertTimetable($arrLessons, $arrTeachers);
         //echo $err_message;
        
         /*
@@ -261,6 +261,39 @@ class TimetableAnalyzer {
         }
          * 
          */
+        
+      
+        $query_date = "2013-01-12";
+        $teacher_on_leave = Teacher::getTeacherOnLeave($query_date);
+        foreach($teacher_on_leave as $a_leave_teacher)
+        {
+            echo "start<br>";
+            echo $a_leave_teacher['accname']."<br>";
+            echo $a_leave_teacher['fullname']."<br>";
+            echo $a_leave_teacher['type']."<br>";
+            echo $a_leave_teacher['reason']."<br>";
+            echo $a_leave_teacher['remark']."<br>";
+            echo $a_leave_teacher['leaveID']."<br>";
+            echo ($a_leave_teacher['isVerified']?"YES":"NO")."<br>";
+            print_r($a_leave_teacher['datetime']);
+            echo "<br>";
+            echo ($a_leave_teacher['isScheduled']?"YES":"NO")."<br>";
+            echo "end<br><br>";
+        }
+        
+        
+        /*
+        $test_result = Teacher::getIndividualTeacherDetail("bbc");
+        echo $test_result['found']."<br>";
+        echo $test_result['ID']."<br>";
+        echo $test_result['name']."<br>";
+        echo $test_result['gender']."<br>";
+        echo $test_result['mobile']."<br>";
+        echo $test_result['email']."<br>";
+        
+         * 
+         */
+        //********xue : testing end
          }
 
 }

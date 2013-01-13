@@ -6,7 +6,7 @@ class TimetableDB
     //this function insert lesson_list into database
     //input : lesson_list
     //output : error message string, echo to read it. empty if no error. Fatal error message starts with FE.
-    public static function insertTimetable($lesson_list)
+    public static function insertTimetable($lesson_list, $teacher_list)
     {
         //error information
         $empty_days = Array();
@@ -15,6 +15,9 @@ class TimetableDB
         $empty_subject = Array();
         $empty_class = Array();
         $empty_teacher = Array();
+        
+        //teacher list
+        $teacher_full_acc_name_full_list = Teacher::getTeachersAccnameAndFullname($teacher_list);
         
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson values ";
@@ -43,20 +46,20 @@ class TimetableDB
                 array_push($empty_subject, $key);
                 $subject  = Constant::default_var_value;
             }
-            if(empty($day_index) || !is_numeric($day_index))
+            if(empty($day_index) || !is_numeric($day_index) || $day_index < 1 || $day_index > Constant::num_of_week_day)
             {
                 array_push($empty_days, $key);
-                $day_index = Constant::default_int_value;
+                $day_index = Constant::default_num_value;
             }
-            if(empty($start_time_index) || !is_numeric($start_time_index))
+            if(empty($start_time_index) || !is_numeric($start_time_index) || $start_time_index < 0 || $end_time_index > Constant::num_of_time_slot)
             {
                 array_push($empty_start_time, $key);
-                $start_time_index  = Constant::default_int_value;
+                $start_time_index  = Constant::default_num_value;
             }
-            if(empty($end_time_index) || !is_numeric($end_time_index))
+            if(empty($end_time_index) || !is_numeric($end_time_index) || $start_time_index < 0 || $end_time_index > Constant::num_of_time_slot)
             {
                 array_push($empty_end_time, $key);
-                $end_time_index  = Constant::default_int_value;
+                $end_time_index  = Constant::default_num_value;
             }
             
             $start_time = Constant::$time_conversion[$start_time_index];
@@ -86,16 +89,15 @@ class TimetableDB
             //insert into ct_teacher_matching
             $teachers = $value->teachers;
             
-            $teachers_with_accname = Teacher::getTeachersAccnameAndFullname($teachers);
-            
-            foreach ($teachers_with_accname as $a_teacher){
-                $teacher_accname = $a_teacher->accname;
+            foreach ($teachers as $a_teacher){
+                $abbre_name = $a_teacher->abbreviation;
+                $teacher_accname = $teacher_full_acc_name_full_list[$abbre_name]->accname;
                 
                 if(empty($teacher_accname))
                 {
-                    if(!in_array($a_teacher->abbreviation, $empty_teacher))
+                    if(!in_array($abbre_name, $empty_teacher))
                     {
-                        array_push($empty_teacher, $a_teacher->abbreviation);
+                        array_push($empty_teacher, $abbre_name);
                     }
                     
                     continue;
@@ -153,8 +155,6 @@ class TimetableDB
         {
             return "Error in ct_teacher_matching table. Fail to insert timetable. Please try again later";
         }
-        
-        mysql_close($db_con);
         
         //print error info
         $err_message = "";

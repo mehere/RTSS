@@ -15,6 +15,9 @@ Class Constant
     const ifins_table_teacher_verification = "fs_accounts_pri";
     
     //time slot
+    const num_of_time_slot = 15;
+    const num_of_week_day = 5;
+    
     public static $time_conversion = array(
         0 => '0000',
         1 => '0725',
