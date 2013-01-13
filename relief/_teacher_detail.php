@@ -6,7 +6,6 @@ header("Pragma: no-cache");
 //initialize session
 session_start();
 include('../class/Teacher.php');
-
 $login = true;
 
 //check if user is logged in
@@ -32,15 +31,7 @@ if (!$login) {
 
 //retrieve account name of the selected entry
 $accname =$_GET['accname'];
-//$output = Teacher::getIndividualTeacherDetail($accname);
-
-//test info
-if ($accname == "caiVir")
-    $output = array("ID"=>"caiVir", "name"=>"Virgil Cai", "gender"=>"Male", "mobile"=>"97394731", "email"=>"ryujicai@hotmail.com");
-else if($accname == "jieXu")
-    $output = array("ID"=>"jieXu", "name"=>"Xu Jie", "gender"=>"Female", "mobile"=>"92365504", "email"=>"xujie0086@gmail.com");
-else
-    $output = array("ID"=>"sb", "name"=>"John Doe", "gender"=>"Male", "mobile"=>"98765432", "email"=>"johnDoe@hotmail.com");
+$output = Teacher::getIndividualTeacherDetail($accname);
 
 //Prepare teacher information for display
 $id = $output['ID'];
