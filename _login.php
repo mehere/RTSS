@@ -19,10 +19,10 @@ $_session["type"] = User::login($_POST['username'], $_POST['password']);
 if($_session["type"]){
     //store user name
     $_session["accname"] = $_POST['username'];
-    if($_session["type"] == "teacher")
+    if($_session["type"] == "admin")
         $destination = "/RTSS/relief/index.php";
     else
-        $destination = "/RTSS/timetable/index.php";    
+        $destination = "/RTSS/timetable/index.php";
 }
 else{
     $_session["loginError"] = true;
