@@ -1,4 +1,6 @@
 <?php
+require_once 'util.php';
+
 class User
 {
     //this function verify user login for both admin and teacher

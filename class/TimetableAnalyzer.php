@@ -38,8 +38,6 @@ class TimetableAnalyzer {
         $days = array();
         $times = array(array());
         $timeSlots = array();
-        
-        //** read day and time into array
         for ($i = 1; $i < $noCol; $i++) {
             if ($dayRow[$i] !== "") {
                 $days[$dayIndex] = $dayRow[$i];
@@ -50,8 +48,6 @@ class TimetableAnalyzer {
             $timeSlots[$i] = new DayTime($dayIndex, $timeIndex);
             $timeIndex++;
         }
-        //** end of read
-        
 //        echo "<br> start:<br>";
 //        print_r($timeSlots);
 //        echo "<br>end<br>";
@@ -73,21 +69,21 @@ class TimetableAnalyzer {
                 break;
             }
 
-            //x : $name is the class name
-            $name = $subjectRow[0]; 
+            $name = $subjectRow[0];
             //echo $name;
             $aClass = new Students($name);
-            //x : $arrClasses is an associative array of all classes
             $arrClasses[$name] = $aClass;
 
             for ($i = 1; $i < $noCol; $i++) {
 
                 // skip the lessons without teachers
                 if (empty($teacherRow[$i])) {
+                    // echo '<br>'.$i.'<br>';
                     continue;
                 }
 
-                //* check if previous lesson and the current one are the same
+
+                // check if previous lesson and the current one are the same
                 if (($i > 1) &&
                         ($subjectRow[$i] == $subjectRow[$i - 1]) &&
                         ($teacherRow[$i] == $teacherRow[$i - 1]) &&
@@ -95,19 +91,19 @@ class TimetableAnalyzer {
                         ($timeSlots[$i - 1]->isNext($timeSlots[$i]))) {
                     $aLesson = $aClass->timetable[$i - 1];
                     /* @var $aLesson Lesson */
-                    $aLesson->incrementEndTime();
-
                     $aClass->timetable[$i] = $aLesson;
                     $theTeachers = $aLesson->teachers;
-                    foreach ($theTeachers as $aTeacher) {
-                        /* @var $aTeacher Teacher */
-                        $aTeacher->timetable[$i] = $aLesson;
+                    $firstTeacher = current($theTeachers);
+                    $hisTimetable = $firstTeacher->timetable;
+                    if (!(array_key_exists($i, $hisTimetable))) {
+                        $aLesson->incrementEndTime();
+                        foreach ($theTeachers as $aTeacher) {
+                            /* @var $aTeacher Teacher */
+                            $aTeacher->timetable[$i] = $aLesson;
+                        }
                     }
                 } else {
                     $theTeacherNames = explode(";", $teacherRow[$i]);
-//                     '<br>';echo '<br>';
-//                    print_r($theTeacherNames);
-//                    echo
                     $firstTeacherName = $theTeacherNames[0];
                     $isNewLesson = TRUE;
                     if (array_key_exists($firstTeacherName, $arrTeachers)) {
@@ -160,32 +156,31 @@ class TimetableAnalyzer {
 
         // the following codes are just for verification of the code correctness
 
-       /* 
-        foreach($arrLessons as $key=>$value){
-            echo 'Lesson '.$key.': <br>';
-            echo 'Subject: '.$value->subject.'<br>';
-            echo 'Day: '.$value->day.'<br>';
-            echo 'Start: '.$value->startTimeSlot.' End: '.$value->endTimeSlot.'<br>';
-            if (!(empty($value->venue))){
-                echo 'Venue: '.$value->venue.'<br>';
+        /*
+        foreach ($arrLessons as $key => $value) {
+            echo 'Lesson ' . $key . ': <br>';
+            echo 'Subject: ' . $value->subject . '<br>';
+            echo 'Day: ' . $value->day . '<br>';
+            echo 'Start: ' . $value->startTimeSlot . ' End: ' . $value->endTimeSlot . '<br>';
+            if (!(empty($value->venue))) {
+                echo 'Venue: ' . $value->venue . '<br>';
             }
             echo 'Classes: ';
             foreach ($value->classes as $aClass) {
-                echo $aClass->name."; ";
+                echo $aClass->name . "; ";
             }
             echo '<br>';
             echo 'Teacher: ';
-            foreach ($value->teachers as $aTeacher){
-                echo $aTeacher->abbreviation.'; ';
+            foreach ($value->teachers as $aTeacher) {
+                echo $aTeacher->abbreviation . '; ';
             }
             echo '<br>';
             echo '<br>';
-
         }
 
         echo "Class's Master<br>";
         foreach ($arrClasses as $aClass) {
-            // @var $aClass Students 
+             
             $name = $aClass->name;
             echo $name . ':<br>';
             $aLessonOld = NULL;
@@ -193,7 +188,7 @@ class TimetableAnalyzer {
                 if (array_key_exists($i, $aClass->timetable)) {
                     $aLesson = $aClass->timetable[$i];
                     if ($aLessonOld !== $aLesson) {
-                        echo 'Day: ' . $aLesson->day . ' Start Time: ' . $aLesson->startTimeSlot . ' End Time: ' . $aLesson->endTimeSlot . ' Subject: ' . $aLesson->subject.' Venue: '.$aLesson->venue;
+                        echo 'Day: ' . $aLesson->day . ' Start Time: ' . $aLesson->startTimeSlot . ' End Time: ' . $aLesson->endTimeSlot . ' Subject: ' . $aLesson->subject . ' Venue: ' . $aLesson->venue;
                         echo ' Teachers: ';
                         foreach ($aLesson->teachers as $aTeacher) {
                             echo $aTeacher->abbreviation . " ; ";
@@ -207,16 +202,10 @@ class TimetableAnalyzer {
             }
         }
 
-
-
-
-
-
-
         // teacher's view
         echo "Teacher's Master<br>";
         foreach ($arrTeachers as $aTeacher) {
-            // @var $aTeacher Teacher 
+            
             $name = $aTeacher->abbreviation;
             echo $name . ':<br>';
             $aLessonOld = NULL;
@@ -237,7 +226,8 @@ class TimetableAnalyzer {
                 $aLessonOld = $aLesson;
             }
         }
-        */
+         * 
+         */
         fclose($file);
        
         
@@ -248,9 +238,18 @@ class TimetableAnalyzer {
         
         //Teacher::abbreToFullnameBatchSetup($arrTeachers);
         
-        //$err_message = TimetableDB::insertTimetable($arrLessons, $arrTeachers);
-        //echo $err_message;
-       
+        /*
+        $err_message = TimetableDB::insertTimetable($arrLessons, $arrTeachers);
+        foreach($err_message as $key=>$error)
+        {
+            if(!empty($error))
+            {
+                echo "Key : ".$key."<br> : ".$error;
+            }
+        }
+         * 
+         */
+        
         /*
         $arrTeachersNew=Teacher::getTeachersAccnameAndFullname($arrTeachers);
         foreach($arrTeachersNew as $a_teacher)
@@ -263,6 +262,7 @@ class TimetableAnalyzer {
          */
         
       
+        /*
         $query_date = "2013-01-12";
         $teacher_on_leave = Teacher::getTeacherOnLeave($query_date);
         foreach($teacher_on_leave as $a_leave_teacher)
@@ -280,10 +280,11 @@ class TimetableAnalyzer {
             echo ($a_leave_teacher['isScheduled']?"YES":"NO")."<br>";
             echo "end<br><br>";
         }
-        
-        
+         * 
+         */
+       
         /*
-        $test_result = Teacher::getIndividualTeacherDetail("bbc");
+        $test_result = Teacher::getIndividualTeacherDetail("aie");
         echo $test_result['found']."<br>";
         echo $test_result['ID']."<br>";
         echo $test_result['name']."<br>";
@@ -293,8 +294,41 @@ class TimetableAnalyzer {
         
          * 
          */
+        /*
+        $output = Lesson::getLessonsToday("2013-1-15");
+        echo $output["success"]?"YES":"NO";
+        echo $output["error_msg"];
+        foreach ($output["Lessons"] as $key => $value) {
+            echo 'Lesson ' . $key . ': <br>';
+            echo 'Subject: ' . $value->subject . '<br>';
+            echo 'Day: ' . $value->day . '<br>';
+            echo 'Start: ' . $value->startTimeSlot . ' End: ' . $value->endTimeSlot . '<br>';
+            if (!(empty($value->venue))) {
+                echo 'Venue: ' . $value->venue . '<br>';
+            }
+            echo 'Classes: ';
+            foreach ($value->classes as $aClass) {
+                echo $aClass->name . "; ";
+            }
+            echo '<br>';
+            echo 'Teacher: ';
+            foreach ($value->teachers as $aTeacher) {
+                echo $aTeacher->abbreviation . '; ';
+            }
+            echo '<br>';
+            echo '<br>';
+        }
+        foreach ($output["Teachers"] as $key=>$aTeacher) {
+            
+            
+            echo $key . ' : '.$aTeacher->name.' , '.$aTeacher->abbreviation.'<br>';
+            
+        }
+         * 
+         */
         //********xue : testing end
          }
+         
 
 }
 
