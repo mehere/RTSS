@@ -1,5 +1,6 @@
 <?php
-include 'util.php';
+require_once 'util.php';
+
 class User
 {
     //this function verify user login for both admin and teacher
@@ -63,7 +64,7 @@ class User
     //input : username, password
     //output : true or false
     //note : password is not encrypted
-    public static function add_admin($username, $password)
+    public static function addAdmin($username, $password)
     {
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;
@@ -108,7 +109,7 @@ class User
     //this function delete an admin from database
     //input : username
     //output : return true if delete successfully or the database doesn't have the username. reutrn false if fail to delete
-    public static function delete_admin($username)
+    public static function deleteAdmin($username)
     {
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;

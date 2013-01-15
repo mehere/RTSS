@@ -100,6 +100,28 @@ class Teacher {
         mysql_select_db($db_name);
         
         //start
+        
+        
+        //query relief info to check whether scheduled
+        $sql_query_relief = "select * from rs_relief_info where date = '".$query_date."';";
+        $relief_query_result = mysql_query($sql_query_relief);
+        if(!$relief_query_result)
+        {
+            return $result;
+        }
+        
+        $leave_id_array = Array();
+        
+        while($row = mysql_fetch_assoc($relief_query_result))
+        {
+            $one_leave_id = $row['leave_id_ref'];
+            if(!in_array($one_leave_id, $leave_id_array))
+            {
+                array_push($leave_id_array, $one_leave_id);
+            }
+        }
+        
+        //query leave
         $sql_query_leave = "select * from ac_all_teacher, rs_leave_info 
             where ac_all_teacher.acc_name=rs_leave_info.acc_name and '".$query_date."' between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
         
@@ -110,7 +132,7 @@ class Teacher {
             return $result;
         }
         
-        while($row = mysql_fetch_array($query_leave_result))
+        while($row = mysql_fetch_assoc($query_leave_result))
         {
             $each_record = Array();
             $each_record['accname'] = $row['acc_name'];
@@ -135,9 +157,7 @@ class Teacher {
             
             $each_record['isScheduled'] = false;
             
-            $sql_query_relief = "select * from rs_relief_info where leave_id_ref = ".$each_record['leaveID']." and date = '".$query_date."';";
-            
-            if(($relief_query_result = mysql_query($sql_query_relief)) && mysql_fetch_array($relief_query_result))
+            if(in_array($each_record['leaveID'], $leave_id_array))
             {
                 $each_record['isScheduled'] = true;
             }
@@ -147,6 +167,12 @@ class Teacher {
         //end
         
         return $result;
+    }
+    
+    //This function get all temporary teachers
+    public static function getTempTeacher($date)
+    {
+        
     }
     
     //this function returns the details of a teacher
