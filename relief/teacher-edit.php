@@ -1,5 +1,5 @@
 <?php 
-    include_once '../head-frag.php';
+    include_once '../head-frag.php'; include_once '../php-head.php';
     
     $isTemp=$_GET['teacher'] == 'temp';
 ?>

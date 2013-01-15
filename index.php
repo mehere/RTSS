@@ -1,4 +1,5 @@
 <?php 
+    include_once 'php-head.php';
     include_once 'head-frag.php';
 ?>
 <title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>

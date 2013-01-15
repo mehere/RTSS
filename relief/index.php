@@ -1,4 +1,10 @@
-<?php 
+<?php   
+    include_once '../php-head.php';
+    if (!$_SESSION['accname'])
+    {
+        header("Location: /RTSS/");
+    }
+    
     include_once '../head-frag.php';
 ?>
 <title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
@@ -26,13 +32,13 @@
 <div id="container">  	
     <div id="content-wrapper">
     	<div id="content">
-            <div id="topbar">
-            	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
-                <ul class="breadcrumb">
-                    <li><a href="/RTSS/relief/">Scheduling</a></li>
-                    <li>Start</li>
-                </ul>                
-            </div>
+            <?php 
+                $TOPBAR_LIST=array(
+                    array('tabname'=>'Scheduling', 'url'=>"/RTSS/relief/"), 
+                    array('tabname'=>'Start', 'url'=>""), 
+                );
+                include '../topbar-frag.php'; 
+            ?>
             <form class="main" name="schedule" action="schedule/" method="post">
             	Date: <input type="text" class="textfield" name="date" maxlength="10" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                 <div class="section">

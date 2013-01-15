@@ -1,5 +1,5 @@
 <?php 
-    include_once '../head-frag.php';
+    include_once '../head-frag.php'; include_once '../php-head.php';
 ?>
 <title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
