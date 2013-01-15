@@ -1,11 +1,11 @@
 <?php   
-    include_once '../php-head.php';
-    if (!$_SESSION['accname'])
-    {
-        header("Location: /RTSS/");
-    }
-    
-    include_once '../head-frag.php';
+include_once '../php-head.php';
+if (!$_SESSION['accname'])
+{
+    header("Location: /RTSS/");
+}
+
+include_once '../head-frag.php';    
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -37,26 +37,58 @@
                     array('tabname'=>'Scheduling', 'url'=>"/RTSS/relief/"), 
                     array('tabname'=>'Start', 'url'=>""), 
                 );
-                include '../topbar-frag.php'; 
+                include '../topbar-frag.php';
+                
+                require_once '../class/Teacher.php';
+                $date=$_POST['date'];
+                if (!$date)
+                {
+                    $date=$_SESSION['scheduleDate'];
+                    if (!$date) $date=date('Y-m-d');
+                }
+                $_SESSION['scheduleDate']=$date;
             ?>
             <form class="main" name="schedule" action="schedule/" method="post">
-            	Date: <input type="text" class="textfield" name="date" maxlength="10" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+            	Date: <input type="text" class="textfield" name="date" maxlength="10" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                 <div class="section">
                 	Teacher on Leave: <a href="teacher-edit.php">Edit/Add</a>
                     <table class="table-info">
                         <thead>
-                            <tr>
-                                <th style="width: 30%" class="sort">Name<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
-                                <th style="width: 80px" class="sort"><span class="sort" search="email">Type</span></th>
-                                <th style="width: 70%" class="sort"><span class="sort" search="occupation">Reason</span></th>
-                                <th style="width: 80px" class="sort"><span class="sort" search="residence">Verified</span></th>
-                                <th style="width: 100px" class="sort"><span class="sort" search="login_time">Scheduled</span></th>
+                            <tr class="teacher-thead">
+                                <?php                                 
+                                    $width=array('30%', '80px', '70%', '80px', '100px');                                                                        
+                                    $tableHeaderList=array_values(NameMap::$RELIEF['teacherOnLeave']['display']);
+                                    
+                                    for ($i=0; $i<count($tableHeaderList); $i++)
+                                    {
+                                        echo <<< EOD
+                                            <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+EOD;
+                                    }
+                                ?>
                             </tr>
                         </thead>
                         <tbody id="align-teacher">
-                            <tr><td><a href="_teacher_detail.php?accname=ycw">James Yeo Chuan Wee</a></td><td>Big Boss</td><td>Sun burn</td><td>Yes</td><td>No</td></tr>
-                            <tr><td><a href="_teacher_detail.php?accname=cr">Chelliah Rama</a></td><td>Smaller Boss</td><td>Sun burn</td><td>Yes</td><td>No</td></tr>
-                            <tr><td><a href="_teacher_detail.php?accname=ps">Prashanth</a></td><td>Little Boss</td><td>Sun burn</td><td>Yes</td><td>No</td></tr>                            
+                            <?php 
+                                $teacherOnLeaveList=Teacher::getTeacherOnLeave($date);
+                                $keyList=array_keys(NameMap::$RELIEF['teacherOnLeave']['display']);
+                                $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
+                                foreach ($teacherOnLeaveList as $teacher) 
+                                {
+                                    echo <<< EOD
+<tr><td><a href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$teacher[$keyList[2]]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td></tr>   
+EOD;
+                                }
+                                if (empty($teacherOnLeaveList))
+                                {
+                                    echo "<tr>";
+                                    foreach ($width as $value)
+                                    {
+                                        echo "<td>--</td>";
+                                    }
+                                    echo "</tr>";
+                                }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -64,14 +96,21 @@
                 	Temporary Relief Teacher: <a href="teacher-edit.php?teacher=temp">Edit/Add</a>
                     <table class="table-info">
                         <thead>
-                            <tr>
-                                <th style="width: 30%" class="sort"><span class="sort" search="username">Name</span></th>
-                                <th style="width: 110px" class="sort"><span class="sort" search="email">Handphone</span></th>
-                                <th style="width: 140px" class="sort"><span class="sort" search="occupation">Time Avaialble</span></th>
-                                <th style="width: 70%" class="sort"><span class="sort" search="residence">Remark</span></th>                                
+                            <tr class="teacher-thead">
+                                <?php                                 
+                                    $width=array('30%', '110px', '140px', '70%');                                                                        
+                                    $tableHeaderList=array_values(NameMap::$RELIEF['tempTeacher']['display']);
+                                    
+                                    for ($i=0; $i<count($tableHeaderList); $i++)
+                                    {
+                                        echo <<< EOD
+                                            <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+EOD;
+                                    }
+                                ?>                               
                             </tr>
                         </thead>
-                        <tbody id="align-temp">
+                        <tbody id="align-temp">                            
                         	<tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
                             <tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
                             <tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>

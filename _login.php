@@ -13,7 +13,7 @@ $_SESSION['loginError'] = false;
 $destination = "/RTSS/index.php";
 
 //call function to verify username and password and store user type
-$_SESSION['type'] = User::login($_POST['username'], $_POST['password']);
+$_SESSION['type'] = User::login(trim($_POST['username']), trim($_POST['password']));
 
 //based on user type, decide where to redirect or simply go back with error message
 if($_SESSION['type']){

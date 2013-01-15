@@ -19,13 +19,14 @@
 <div id="container">  	
     <div id="content-wrapper">
     	<div id="content">
-            <div id="topbar">
-            	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
-                <ul class="breadcrumb">
-                    <li><a href="/RTSS/relief/">Scheduling</a></li>
-                    <li>Edit/Add</li>
-                </ul>                
-            </div>
+            <?php 
+                $TOPBAR_LIST=array(
+                    array('tabname'=>'Scheduling', 'url'=>"/RTSS/relief/"), 
+                    array('tabname'=>'Edit/Add', 'url'=>""), 
+                );
+                include '../topbar-frag.php';
+                var_dump($_SESSION['scheduleDate']);
+            ?>
             <form class="main" name="edit" action="" method="post">            	
             	<input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
                 <div class="section">
