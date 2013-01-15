@@ -282,7 +282,6 @@ class TimetableAnalyzer {
         }
          * 
          */
-       
         /*
         $test_result = Teacher::getIndividualTeacherDetail("aie");
         echo $test_result['found']."<br>";
