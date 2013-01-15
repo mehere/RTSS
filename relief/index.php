@@ -34,7 +34,7 @@
                 </ul>                
             </div>
             <form class="main" name="schedule" action="schedule/" method="post">
-            	Date: <input type="text" class="textfield" name="date" maxlength="10" /> <img id="calendar-trigger" src="/RTSS/img/calendar.png" alt="Calendar" style="vertical-align: middle; cursor: pointer" width="36" />
+            	Date: <input type="text" class="textfield" name="date" maxlength="10" />
                 <div class="section">
                 	Teacher on Leave: <a href="teacher-edit.php">Edit/Add</a>
                     <table class="table-info">
