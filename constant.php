@@ -1,11 +1,18 @@
 <?php
-class Constant
+class PageConstant
 {
     const PRODUCT_NAME="iScheduler";
     const SCH_NAME_ABBR="CHIJ";
     const SCH_NAME="CHIJ St Nicholas Girl's School";
     
     const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/upload.php'
+    
+    public static $ERROR_TEXT=array(
+        'login' => array(
+            'mismatch' => 'Username or Password was entered incorrectly.',
+            'loginFirst' => 'Please log in first.'
+        )
+    );
 }
 
 class NameMap

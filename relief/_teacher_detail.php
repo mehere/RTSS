@@ -19,10 +19,8 @@ if (isset($_SESSION['accname']))
 
 if (!$login) {
     //indicates error
-    header('Content-type: application/json');
-    $output = array("error" => "Please login first.");
-    echo json_encode($output);
-    exit;
+    require_once '../constant.php';
+    die(PageConstant::$ERROR_TEXT['login']['loginFirst']);
 }else
 {
     //indicates no error
@@ -34,21 +32,13 @@ $accname =$_GET['accname'];
 $output = Teacher::getIndividualTeacherDetail($accname);
 
 //Prepare teacher information for display
-$id = $output['ID'];
-$name = $output['name'];
-$gender = $output['gender'];
-$mobile = $output['mobile'];
-$email = $output['email'];
-
-json_encode($output);
-
 ?>
 <table class="table-info">                        
     <tbody>
-        <tr><td>ID:</td><td><?php echo $id; ?></td></tr>
-        <tr><td>Name:</td><td><?php echo $name; ?></td></tr>
-        <tr><td>Gender:</td><td><?php echo $gender; ?></td></tr>
-        <tr><td>Mobile:</td><td><?php echo $mobile; ?></td></tr>
-        <tr><td>Email:</td><td><?php echo $email; ?></td></tr>        
+        <tr><td>ID:</td><td><?php echo $output['ID']; ?></td></tr>
+        <tr><td>Name:</td><td><?php echo $output['name']; ?></td></tr>
+        <tr><td>Gender:</td><td><?php echo $output['gender']; ?></td></tr>
+        <tr><td>Mobile:</td><td><?php echo $output['mobile']; ?></td></tr>
+        <tr><td>Email:</td><td><?php echo $output['email']; ?></td></tr>        
     </tbody>
 </table>

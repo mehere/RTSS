@@ -4,6 +4,8 @@ $(document).ready(function(){
         autoOpen: false,
         modal: true,
         width: 400,
+        minWidth: 400,
+        minHeight: 200,
         title: "Teacher Information Detail"
     });
 
@@ -19,6 +21,7 @@ $(document).ready(function(){
             }
         });
 
+        $("#teacher-detail").html('Loading ...');
         $("#teacher-detail").dialog("open");
         return false;
     });

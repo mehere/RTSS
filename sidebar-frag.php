@@ -11,7 +11,7 @@
 <div id="footer">
     <div style="position: absolute; left: 0; bottom: 5px; width: 100%">
         Copyright @ <?php echo date("Y"); ?>
-        <div style="font-size: .8em"><?php echo Constant::SCH_NAME ?></div>
+        <div style="font-size: .8em"><?php echo PageConstant::SCH_NAME ?></div>
         <p style="margin-top: .3em; font-size: .75em">All rights reserved</p>
     </div>
 </div>

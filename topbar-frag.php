@@ -4,9 +4,10 @@
         <?php 
             foreach ($TOPBAR_LIST as $tab) {
                 $url=$tab['url'];
-                if ($url) $url="href=\"$url\"";
+                if ($url) $content="<a href=\"$url\">{$tab['tabname']}</a>";
+                else $content=$tab['tabname'];
                 echo <<< EOD
-                    <li><a $url>{$tab['tabname']}</a></li>
+                    <li>$content</li>
 EOD;
             }
         ?>
