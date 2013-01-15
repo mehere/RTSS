@@ -48,9 +48,9 @@
                             </tr>
                         </thead>
                         <tbody id="align-teacher">
-                        	<tr><td><a href="_teacher_detail.php?accname=1234">haha asdf</a></td><td>AED</td><td>haha</td><td>Yes</td><td>No</td></tr>
-                            <tr><td><a href="_teacher_detail.php?accname=5sfw3">haha asdf</a></td><td>Normal</td><td>haha</td><td>Yes</td><td>No</td></tr>
-                            <tr><td>hahaasdfasdfasadsfasdfadsfasdf dsfg</td><td>haha d</td><td>haha asdf asd fasd fasd fasd fasd f</td><td>Yes</td><td>No</td></tr>
+                            <tr><td><a href="_teacher_detail.php?accname=ycw">James Yeo Chuan Wee</a></td><td>Big Boss</td><td>Sun burn</td><td>Yes</td><td>No</td></tr>
+                            <tr><td><a href="_teacher_detail.php?accname=cr">Chelliah Rama</a></td><td>Smaller Boss</td><td>Sun burn</td><td>Yes</td><td>No</td></tr>
+                            <tr><td><a href="_teacher_detail.php?accname=ps">Prashanth</a></td><td>Little Boss</td><td>Sun burn</td><td>Yes</td><td>No</td></tr>                            
                         </tbody>
                     </table>
                 </div>

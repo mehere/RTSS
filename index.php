@@ -12,7 +12,7 @@
     <div id="content-wrapper">
     	<div id="content">
         	<img src="/RTSS/img/school-logo-name.png" alt="<?php echo Constant::SCH_NAME ?>" class="logo-name" />
-            <form method="post" action="/RTSS/relief/" class="login-form">
+            <form method="post" action="_login.php" class="login-form">
                 <div>Log in to <?php echo Constant::PRODUCT_NAME ?></div>
                 <input type="text" name="username" value="User Name" class="textfield" />
                 <input type="password" name="password" value="Password" class="textfield" />
