@@ -25,7 +25,7 @@
                     array('tabname'=>'Edit/Add', 'url'=>""), 
                 );
                 include '../topbar-frag.php';
-                var_dump($_SESSION['scheduleDate']);
+//                var_dump($_SESSION['scheduleDate']);
             ?>
             <form class="main" name="edit" action="" method="post">            	
             	<input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
