@@ -283,6 +283,24 @@ class TimetableAnalyzer {
          * 
          */
         /*
+        $query_date = "2013-01-12";
+        $temp_teacher = Teacher::getTempTeacher($query_date);
+        foreach($temp_teacher as $a_leave_teacher)
+        {
+            echo "start<br>";
+            echo $a_leave_teacher['accname']."<br>";
+            echo $a_leave_teacher['fullname']."<br>";
+            echo $a_leave_teacher['type']."<br>";
+            echo $a_leave_teacher['remark']."<br>";
+            print_r($a_leave_teacher['datetime']);
+            echo $a_leave_teacher['MT']."<br>";
+            echo $a_leave_teacher['email']."<br>";
+            echo "end<br><br>";
+        }
+         * 
+         */
+        
+        /*
         $test_result = Teacher::getIndividualTeacherDetail("aie");
         echo $test_result['found']."<br>";
         echo $test_result['ID']."<br>";
