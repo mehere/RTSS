@@ -74,7 +74,6 @@ class Teacher {
     //this functio returns all teachers on leave today
     //input : date string, in format 2012-12-11
     //output : array of associative arrays each representing a piece of leave info that's on the input date. Empty - possibly there are errors. Check database for confirmation.
-    //output_array["remark"] may have value of NULL
     public static function getTeacherOnLeave($query_date)
     {
         $result = Array();
@@ -100,8 +99,6 @@ class Teacher {
         mysql_select_db($db_name);
         
         //start
-        
-        
         //query relief info to check whether scheduled
         $sql_query_relief = "select * from rs_relief_info where date = '".$query_date."';";
         $relief_query_result = mysql_query($sql_query_relief);
@@ -140,6 +137,10 @@ class Teacher {
             $each_record['type'] = $row['type'];
             $each_record['reason'] = $row['reason'];
             $each_record['remark'] = $row['remark'];
+            if(empty($each_record['remark']))
+            {
+                $each_record['remark'] = '';
+            }
             $each_record['leaveID'] = $row['leave_id'];
             
             if($row['verified'] === 'YES')
@@ -170,9 +171,63 @@ class Teacher {
     }
     
     //This function get all temporary teachers
-    public static function getTempTeacher($date)
+    //input : date string, in format 2012-12-11
+    //output : array of associative arrays each representing temporary teacher. MT, remark, email may be ""
+    public static function getTempTeacher($query_date)
     {
+        $result = Array();
         
+        //check input
+        if(!preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
+        {
+            return $result;
+        }
+        
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+        
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+        
+        if (!$db_con)
+        {
+            return $result;
+        }
+        
+        mysql_select_db($db_name);
+        
+        $sql_query_temp_teacher = "select * from ac_all_teacher, temp_relief_teacher 
+            where ac_all_teacher.acc_name=temp_relief_teacher.acc_name and '".$query_date."' between date(temp_relief_teacher.time_available_start) and date(temp_relief_teacher.time_available_end);";
+        
+        $query_temp_teacher = mysql_query($sql_query_temp_teacher);
+        
+        if(!$query_temp_teacher)
+        {
+            return $result;
+        }
+        
+        while($row = mysql_fetch_assoc($query_temp_teacher))
+        {
+            $one_teacher = Array(
+                'remark' => '',
+                'MT' => '',
+                'email' => '',
+                'datetime' => Array()
+            );
+            
+            $one_teacher['accname'] = $row['acc_name'];
+            $one_teacher['fullname'] = $row['name'];
+            $one_teacher['type'] = $row['type'];
+            $one_teacher['datetime'] = Array($row['time_available_start'], $row['time_available_end']);
+            $one_teacher['remark'] = (empty($row['remark'])?'':$row['remark']);
+            $one_teacher['MT'] = (empty($row['mother_tongue'])?'':$row['mother_tongue']);
+            $one_teacher['email'] = (empty($row['email'])?'':$row['email']);
+            
+            array_push($result, $one_teacher);
+        }
+        
+        return $result;
     }
     
     //this function returns the details of a teacher
