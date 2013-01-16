@@ -47,7 +47,7 @@ $(document).ready(function(){
     }
 
     // Add and Save
-    var ADD_SAVE_TEXT=["Add", "Save"], FADE_DUR=400,
+    var FADE_DUR=400,
         SMALL_BT_ARR=[
             {
                 icons: {
@@ -71,7 +71,7 @@ $(document).ready(function(){
             }
         ];
 
-    $("#add-save").click(function(){
+    /*$("#add-save").click(function(){
         if ($(this).html() == ADD_SAVE_TEXT[1])
         {
 
@@ -83,7 +83,7 @@ $(document).ready(function(){
         }
 
         return false;
-    });
+    });*/
 
     $(".table-info .edit-bt").button(SMALL_BT_ARR[0]).click(function(){
         if ($(this).button('option', 'label') == SMALL_BT_ARR[0]['label'])
@@ -96,16 +96,18 @@ $(document).ready(function(){
             $(this).button('option', SMALL_BT_ARR[0]);
         }
 
-        $(".table-info .toggle-edit").toggle();
-        $(".table-info .toggle-display").toggle();
+        $(this).parents('tr').first().find('.toggle-edit').toggle();
+        $(this).parents('tr').first().find('.toggle-display').toggle();
 
         return false;
     });
 
     $(".table-info .delete-bt").button(SMALL_BT_ARR[2]).click(function(){
+        var curRow=$(this).parents('tr').first();
         confirm("Confirm to delete this row?", function(){
-            $("#last-row").fadeOut(FADE_DUR, function(){
-                $("#add-save").html(ADD_SAVE_TEXT[0]);
+            curRow.fadeOut(FADE_DUR, function(){
+                $(this).remove();
+                // ajax delete this acc
             });
         });
         return false;
@@ -113,7 +115,7 @@ $(document).ready(function(){
 
     // Auto complete
     var nameList=["Ana Mill", "Anto Till", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
-    $(formEdit['fullname']).autocomplete({
+    $(".table-info .fullname-server").autocomplete({
         source: nameList,
         delay: 0,
         autoFocus: true
