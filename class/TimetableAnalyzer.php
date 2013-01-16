@@ -262,7 +262,7 @@ class TimetableAnalyzer {
          */
         
       
-        /*
+       /*
         $query_date = "2013-01-12";
         $teacher_on_leave = Teacher::getTeacherOnLeave($query_date);
         foreach($teacher_on_leave as $a_leave_teacher)
@@ -280,8 +280,8 @@ class TimetableAnalyzer {
             echo ($a_leave_teacher['isScheduled']?"YES":"NO")."<br>";
             echo "end<br><br>";
         }
-         * 
-         */
+        * 
+        */
         /*
         $query_date = "2013-01-12";
         $temp_teacher = Teacher::getTempTeacher($query_date);
@@ -295,6 +295,7 @@ class TimetableAnalyzer {
             print_r($a_leave_teacher['datetime']);
             echo $a_leave_teacher['MT']."<br>";
             echo $a_leave_teacher['email']."<br>";
+            echo $a_leave_teacher['handphone']."<br>";
             echo "end<br><br>";
         }
          * 
