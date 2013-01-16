@@ -35,7 +35,7 @@
                     <table class="table-info">
                         <thead>
                             <tr>
-                                <?php                                 
+                                <?php
                                     $width=array('60px', '30%', '20%', '240px', '50%', '70px');
                                                                         
                                     $tableHeaderList=array_values(NameMap::$RELIEF_EDIT[$isTemp ? 'tempTeacher' : 'teacherOnLeave']['display']);
