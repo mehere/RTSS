@@ -5,13 +5,13 @@ $(document).ready(function(){
     for (var i=0; i<num; i++)
     {
         $(formEdit['date-from-' + i]).datepicker({
-            dateFormat: "dd/mm/yy",
+            dateFormat: "yy-mm-dd",
             changeMonth: true,
             changeYear: true
         }).datepicker('setDate', new Date(formEdit['server-date-from-' + i].value));
 
         $(formEdit['date-to-' + i]).datepicker({
-            dateFormat: "dd/mm/yy",
+            dateFormat: "yy-mm-dd",
             changeMonth: true,
             changeYear: true
         }).datepicker('setDate', new Date(formEdit['server-date-to-' + i].value));
@@ -47,7 +47,30 @@ $(document).ready(function(){
     }
 
     // Add and Save
-    var ADD_SAVE_TEXT=["Add", "Save"], FADE_DUR=400;
+    var ADD_SAVE_TEXT=["Add", "Save"], FADE_DUR=400,
+        SMALL_BT_ARR=[
+            {
+                icons: {
+                    primary: "ui-icon-pencil"
+                },
+                text: false,
+                label: 'Edit'
+            },
+            {
+                icons: {
+                    primary: "ui-icon-disk"
+                },
+                label: 'Delete'
+            },
+            {
+                icons: {
+                    primary: "ui-icon-trash"
+                },
+                text: false,
+                label: 'Delete'
+            }
+        ];
+
     $("#add-save").click(function(){
         if ($(this).html() == ADD_SAVE_TEXT[1])
         {
@@ -62,12 +85,24 @@ $(document).ready(function(){
         return false;
     });
 
-    $(formEdit['line-delete']).button({
-        icons: {
-            primary: "ui-icon-trash"
-        },
-        text: false
-    }).click(function(){
+    $(".table-info .edit-bt").button(SMALL_BT_ARR[0]).click(function(){
+        if ($(this).button('option', 'label') == SMALL_BT_ARR[0]['label'])
+        {
+            $(this).button('option', SMALL_BT_ARR[1]);
+            
+        }
+        else
+        {
+            $(this).button('option', SMALL_BT_ARR[0]);
+        }
+
+        $(".table-info .toggle-edit").toggle();
+        $(".table-info .toggle-display").toggle();
+
+        return false;
+    });
+
+    $(".table-info .delete-bt").button(SMALL_BT_ARR[2]).click(function(){
         confirm("Confirm to delete this row?", function(){
             $("#last-row").fadeOut(FADE_DUR, function(){
                 $("#add-save").html(ADD_SAVE_TEXT[0]);

@@ -13,6 +13,13 @@
 	margin-right: 30px;
 	font-size: .9em;
 }
+
+.table-info {
+	width: 100%
+}
+.table-info tbody tr td:first-child {
+	text-align: left;
+}
 .table-info input, .table-info select {
 	font-size: .85em;
 }
@@ -23,10 +30,18 @@
 }
 .table-info .time-line {
 	text-align: right;
-	width: 220px;
+	padding-right: 10px;
 	margin: 5px auto;
 }
 .table-info #last-row {
+	display: none;
+}
+.table-info .small-bt {
+	margin: 5px 0;
+	width: 24px;
+	height: 24px;
+}
+.table-info .toggle-edit {
 	display: none;
 }
 
@@ -43,3 +58,4 @@
 .ui-autocomplete .ui-menu-item {
 	font-size: .9em;
 }
+

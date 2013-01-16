@@ -39,7 +39,6 @@
 }
 #tabs .ui-widget-header .ui-state-default a {
 	color: black;
-	outline: none;
 }
 #tabs .ui-widget-header .ui-state-hover {		
 	background: #d3d5d6;

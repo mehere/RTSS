@@ -17,7 +17,7 @@ include_once '../head-frag.php';
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
 <style type="text/css">
-#align-teacher tr td:nth-child(1), #align-teacher tr td:nth-child(3) {
+#align-teacher tr td:nth-child(1), #align-teacher tr td:nth-child(4) {
 	text-align: left;
 	word-wrap: break-word;
 }
@@ -56,7 +56,7 @@ include_once '../head-frag.php';
                         <thead>
                             <tr class="teacher-thead">
                                 <?php                                 
-                                    $width=array('30%', '80px', '70%', '80px', '100px');                                                                        
+                                    $width=array('30%', '80px', '150px', '70%', '80px', '100px');                                                                        
                                     $tableHeaderList=array_values(NameMap::$RELIEF['teacherOnLeave']['display']);
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
@@ -75,8 +75,9 @@ EOD;
                                 $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
                                 foreach ($teacherOnLeaveList as $teacher) 
                                 {
+                                    $datetime=$teacher[$keyList[2]];
                                     echo <<< EOD
-<tr><td><a href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$teacher[$keyList[2]]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td></tr>   
+<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0]} &rarr; {$datetime[1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td><td>{$teacher[$keyList[5]]}</td></tr>   
 EOD;
                                 }
                                 if (empty($teacherOnLeaveList))

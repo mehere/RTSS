@@ -1,7 +1,14 @@
 <?php 
-    include_once '../head-frag.php'; include_once '../php-head.php';
+include_once '../php-head.php';
     
-    $isTemp=$_GET['teacher'] == 'temp';
+if (!$_SESSION['accname'])
+{
+    header("Location: /RTSS/");
+}
+    
+$isTemp=$_GET['teacher'] == 'temp';
+
+include_once '../head-frag.php'; 
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -36,10 +43,10 @@
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=array('60px', '30%', '20%', '240px', '50%', '70px');
+                                    $width=array('45px', '50px', '30%', '20%', '240px', '50%', '70px');
                                                                         
                                     $tableHeaderList=array_values(NameMap::$RELIEF_EDIT[$isTemp ? 'tempTeacher' : 'teacherOnLeave']['display']);
-                                    array_unshift($tableHeaderList, 'Select');
+                                    array_unshift($tableHeaderList, '', 'Select');
                                     $tableHeaderList[]='Verified';
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
@@ -48,26 +55,33 @@
                                             <th style="width: $width[$i]">$tableHeaderList[$i]</th>
 EOD;
                                     }
-                                ?>                                
+                                ?>
                             </tr>
                         </thead>
                         <tbody>
-                        	<tr><td><input type="checkbox" name="select-0" /></td><td><a href="_teacher_detail.php?accname=1234">haha asdf</a></td>
+                        	<tr>
+                            	<td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>
+                            	<td><input type="checkbox" name="select-0" /></td>
+                                <td><a href="_teacher_detail.php?accname=1234" class="teacher-detail-link">haha asdf</a></td>
                             	<td>
-                                	<select name="reason"><option value="MC">MC</option>
+                                	<span class="toggle-display">MC</span>
+                                	<select name="reason" class="toggle-edit"><option value="MC">MC</option>
                                     </select>
                                 </td>
                             	<td>
-                                	<div class="time-line">From: <input type="text" name="date-from-0" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-0" value="2012-12-10" />
-                                		<select name="time-from-0"><option value="15">15</option></select>
-                                    </div>
-                                    <div class="time-line">To: <input type="text" name="date-to-0" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-to-0" value="2012-12-10" />
-                                		<select name="time-to-0"><option value="15">30</option></select>
+                                	<div class="toggle-display">2012-12-10 07:15 <br /> 2012-12-11 14:30</div>
+                                	<div class="toggle-edit">
+                                        <div class="time-line">From: <input type="text" name="date-from-0" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-0" value="2012-12-10" />
+                                            <select name="time-from-0"><option value="15">07:15</option></select>
+                                        </div>
+                                        <div class="time-line">To: <input type="text" name="date-to-0" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-to-0" value="2012-12-10" />
+                                            <select name="time-to-0"><option value="15">14:30</option></select>
+                                        </div>
                                     </div>
                                 </td>
                                 <td><textarea name="remark-0">Specifies that a text area should automatically</textarea></td><td><input type="checkbox" name="verified-0" /></td>
                             </tr>
-                            <tr id="last-row"><td><button name="line-delete" style="padding: 5px 0"></button></td>
+                            <tr id="last-row"><td></td>
                             <td><input type="text" name="fullname" style="width: 90%;" /></td>
                             	<td>
                                 	<select name="reason"><option value="MC">MC</option>

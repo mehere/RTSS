@@ -9,7 +9,7 @@ $(document).ready(function(){
         title: "Teacher Information Detail"
     });
 
-    $( ".table-info tr td>a" ).click(function(){
+    $( ".table-info .teacher-detail-link" ).click(function(){
         $.ajax({
             url: this.href,
             dataType: 'text',
