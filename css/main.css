@@ -166,6 +166,9 @@ ul.breadcrumb li:last-child {
 	box-shadow: 0 0 5px 1px #fef4dd;
 	text-shadow: 0 0 .2em #fef4dd;
 }
+.button::-moz-focus-inner {
+  border: 0;
+}
 
 .fltrt {
 	float: right;

@@ -56,7 +56,7 @@ include_once '../head-frag.php';
                         <thead>
                             <tr class="teacher-thead">
                                 <?php                                 
-                                    $width=array('30%', '80px', '150px', '70%', '80px', '100px');                                                                        
+                                    $width=array('30%', '80px', '170px', '70%', '80px', '100px');                                                                        
                                     $tableHeaderList=array_values(NameMap::$RELIEF['teacherOnLeave']['display']);
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
@@ -77,7 +77,7 @@ EOD;
                                 {
                                     $datetime=$teacher[$keyList[2]];
                                     echo <<< EOD
-<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0]} &rarr; {$datetime[1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td><td>{$teacher[$keyList[5]]}</td></tr>   
+<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0]}<br />{$datetime[1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td><td>{$teacher[$keyList[5]]}</td></tr>   
 EOD;
                                 }
                                 if (empty($teacherOnLeaveList))
@@ -111,10 +111,28 @@ EOD;
                                 ?>                               
                             </tr>
                         </thead>
-                        <tbody id="align-temp">                            
-                        	<tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
-                            <tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
-                            <tr><td>haha asdf</td><td>09234543</td><td>0900-1500</td><td>asdf asdf </td></tr>
+                        <tbody id="align-temp">
+                            <?php 
+                                $tempTeacherList=Teacher::getTempTeacher($date);
+                                $keyList=array_keys(NameMap::$RELIEF['tempTeacher']['display']);
+                                $keyExtraList=NameMap::$RELIEF['tempTeacher']['hidden'];
+                                foreach ($tempTeacherList as $teacher) 
+                                {
+                                    $datetime=$teacher[$keyList[2]];
+                                    echo <<< EOD
+<tr><td>{$teacher[$keyList[0]]}</td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0]} - {$datetime[1]}</td><td>{$teacher[$keyList[3]]}</td></tr>
+EOD;
+                                }
+                                if (empty($tempTeacherList))
+                                {
+                                    echo "<tr>";
+                                    foreach ($width as $value)
+                                    {
+                                        echo "<td>--</td>";
+                                    }
+                                    echo "</tr>";
+                                }
+                            ?>
                         </tbody>
                     </table>
                 </div>

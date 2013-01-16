@@ -89,7 +89,7 @@ $(document).ready(function(){
         if ($(this).button('option', 'label') == SMALL_BT_ARR[0]['label'])
         {
             $(this).button('option', SMALL_BT_ARR[1]);
-            
+
         }
         else
         {

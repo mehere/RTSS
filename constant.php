@@ -7,13 +7,39 @@ class PageConstant
     
     const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/upload.php'
     
+    // School start/end time
+    public static $SCHOOL_START_TIME, $SCHOOL_END_TIME;
+    const SCHOOL_TIME_INTERVAL=30; // minute
+    
     public static $ERROR_TEXT=array(
         'login' => array(
             'mismatch' => 'Username or Password was entered incorrectly.',
             'loginFirst' => 'Please log in first.'
         )
     );
+    
+    /**
+     * Output string representation of option array in 'select' tag
+     * @param array $optionArr {key}/{value} pair as in: <option value="{key}">{value}</option>
+     * @param string $selectedOption option is to be selected
+     * @return string output 
+     */
+    public static function formatOptionInSelect($optionArr, $selectedOption)
+    {        
+        $output="";
+        foreach ($optionArr as $key => $value)
+        {
+            $optionSelectedStr="";
+            if (strcasecmp($selectedOption, $key) == 0) $optionSelectedStr='selected="selected"';
+            $output .= <<< EOD
+                <option value="$key" $optionSelectedStr>$value</option>
+EOD;
+        }
+        return $output;
+    }
 }
+PageConstant::$SCHOOL_START_TIME=mktime(7, 15);
+PageConstant::$SCHOOL_END_TIME=mktime(14, 15);
 
 class NameMap
 {
@@ -31,7 +57,7 @@ class NameMap
         
         'tempTeacher' => array(
             'display' => array(
-                'fullname' => 'Name', 'handphone' => 'Handphone', 'time' => 'Time', 'remark' => 'Remark'
+                'fullname' => 'Name', 'handphone' => 'Handphone', 'datetime' => 'Time', 'remark' => 'Remark'
             ),
             'hidden' => array(
                 'accname'
@@ -42,6 +68,13 @@ class NameMap
             'display' => array(
                 'accname' => 'Account', 'fullname' => 'Name', 'subject' => 'Subject',
                 'email' => 'Email', 'handphone' => 'Handphone'
+            ),
+            'hidden' => array()
+        ),
+        
+        'leaveReason' => array(
+            'display' => array(
+                'MC' => 'MC', 'maternity' => 'Maternity', 'holiday' => 'Holiday'
             ),
             'hidden' => array()
         )

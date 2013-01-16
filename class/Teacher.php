@@ -1,16 +1,4 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of Teacher
- *
- * @author Wee
- */
-
 require_once 'util.php';
 
 class Teacher {
