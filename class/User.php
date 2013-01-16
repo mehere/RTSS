@@ -24,7 +24,7 @@ class User
         
         mysql_select_db($ifins_db_name, $ifins_db_con);
         
-        $ifins_sql_query = "select * from ".$ifins_table_teacher_veri." where accname ='".$username."' and accpw = '".$password."';";
+        $ifins_sql_query = "select * from ".mysql_real_escape_string($ifins_table_teacher_veri)." where accname ='".mysql_real_escape_string($username)."' and accpw = '".mysql_real_escape_string($password)."';";
         if(mysql_fetch_array(mysql_query($ifins_sql_query)))
         {
             mysql_close($ifins_db_con);
@@ -48,7 +48,7 @@ class User
         
         mysql_select_db($db_name, $db_con);
         
-        $sql_query = "select * from x_user where username ='".$username."' and password = '".$password."';";
+        $sql_query = "select * from x_user where username ='".mysql_real_escape_string($username)."' and password = '".mysql_real_escape_string($password)."';";
         if(mysql_fetch_array(mysql_query($sql_query)))
         {
             mysql_close($db_con);
@@ -80,14 +80,14 @@ class User
         
         mysql_select_db($db_name, $db_con);
         
-        $sql_query_check_teacher = "select * from ac_all_teacher where acc_name = '".$username."';";
+        $sql_query_check_teacher = "select * from ac_all_teacher where acc_name = '".mysql_real_escape_string($username)."';";
         if(mysql_fetch_array(mysql_query($sql_query_check_teacher)))
         {
             mysql_close($db_con);
             return false;
         }
         
-        $sql_query_check_admin = "select * from x_user where username = '".$username."'";
+        $sql_query_check_admin = "select * from x_user where username = '".mysql_real_escape_string($username)."'";
         if(mysql_fetch_array(mysql_query($sql_query_check_admin)))
         {
             mysql_close($db_con);
@@ -125,7 +125,7 @@ class User
         
         mysql_select_db($db_name, $db_con);
         
-        $sql_query_delete_admin = "delete from x_user where username = '".$username."';";
+        $sql_query_delete_admin = "delete from x_user where username = '".mysql_real_escape_string($username)."';";
         
         if(!mysql_query($sql_query_delete_admin))
         {
