@@ -9,13 +9,9 @@ include('../class/Teacher.php');
 $login = true;
 
 //check if user is logged in
-if (isset($_SESSION['accname']))
-{
-    if (!$_SESSION['accname']) {
-        $login = false;
-    }
-}else
+if (!$_SESSION['accname']) {
     $login = false;
+}
 
 if (!$login) {
     //indicates error
@@ -35,10 +31,10 @@ $output = Teacher::getIndividualTeacherDetail($accname);
 ?>
 <table class="table-info">                        
     <tbody>
-        <tr><td>ID:</td><td><?php echo $output['ID']; ?></td></tr>
+        <tr><td>Account ID:</td><td><?php echo $output['ID']; ?></td></tr>
         <tr><td>Name:</td><td><?php echo $output['name']; ?></td></tr>
         <tr><td>Gender:</td><td><?php echo $output['gender']; ?></td></tr>
-        <tr><td>Mobile:</td><td><?php echo $output['mobile']; ?></td></tr>
+        <tr><td>Handphone:</td><td><?php echo $output['mobile']; ?></td></tr>
         <tr><td>Email:</td><td><?php echo $output['email']; ?></td></tr>        
     </tbody>
 </table>
