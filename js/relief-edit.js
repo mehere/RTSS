@@ -135,25 +135,6 @@ $(document).ready(function(){
         });
     }
 
-        /*$(".table-info .fullname-server").autocomplete({
-            source: nameList,
-            delay: 0,
-            autoFocus: true
-        }).blur(function(){
-            var curText= $.trim(this.value), isMatch=false;
-            $.each(nameList, function(index, value){
-                if (curText.toLowerCase() == value.toLowerCase())
-                {
-                    isMatch=true;
-                    return false;
-                }
-            });
-            if (!isMatch)
-            {
-                this.value="";
-            }
-        });*/
-
     // Add extra row automatically
     var addRowFunc=function(event){
         var selfDelegate=event.delegateTarget;
