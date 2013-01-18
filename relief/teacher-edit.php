@@ -80,7 +80,8 @@ EOD;
                                     
                                     $datetime=$teacher[$keyList[2]];
                                     $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
-                                    $timeFromOptionStr=PageConstant::formatOptionInSelect($timeArr, '');
+                                    $timeFromOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[0][1]);
+                                    $timeToOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[1][1]);
                                     echo <<< EOD
 <tr>
     <td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>
@@ -91,13 +92,13 @@ EOD;
         <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>
     </td>
     <td>
-        <div class="toggle-display">2012-12-10 07:15 <br /> 2012-12-11 14:30</div>
+        <div class="toggle-display">{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</div>
         <div class="toggle-edit">
-            <div class="time-line">From: <input type="text" name="date-from-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-$i" value="2012-12-10" />
+            <div class="time-line">From: <input type="text" name="date-from-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-$i" value="{$datetime[0][0]}" />
                 <select name="time-from-$i">$timeFromOptionStr</select>
             </div>
-            <div class="time-line">To: <input type="text" name="date-to-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-to-$i" value="2012-12-10" />
-                <select name="time-to-$i">$timeFromOptionStr</select>
+            <div class="time-line">To: <input type="text" name="date-to-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-to-$i" value="{$datetime[1][0]}" />
+                <select name="time-to-$i">$timeToOptionStr</select>
             </div>
         </div>
     </td>

@@ -57,7 +57,7 @@ class NameMap
         
         'tempTeacher' => array(
             'display' => array(
-                'fullname' => 'Name', 'handphone' => 'Handphone', 'datetime' => 'Time', 'remark' => 'Remark'
+                'fullname' => 'Name', 'handphone' => 'Handphone', 'datetime' => 'Time Available', 'remark' => 'Remark'
             ),
             'hidden' => array(
                 'accname'
@@ -84,7 +84,7 @@ class NameMap
     public static $RELIEF_EDIT=array(
         'teacherOnLeave' => array(
             'display' => array(
-                'fullname' => 'Name', 'reason' => 'Reason', 'time' => 'Time', 'remark' => 'Remark'
+                'fullname' => 'Name', 'reason' => 'Reason', 'datetime' => 'Time', 'remark' => 'Remark'
             ),
             'hidden' => array(
                 'accname'
@@ -93,7 +93,7 @@ class NameMap
         
         'tempTeacher' => array(
             'display' => array(
-                'fullname' => 'Name', 'handphone' => 'Phone', 'time' => 'Time Available', 'remark' => 'Remark'
+                'fullname' => 'Name', 'handphone' => 'Phone', 'datetime' => 'Time Available', 'remark' => 'Remark'
             ),
             'hidden' => array(
                 'accname'

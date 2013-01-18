@@ -77,7 +77,7 @@ EOD;
                                 {
                                     $datetime=$teacher[$keyList[2]];
                                     echo <<< EOD
-<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0]}<br />{$datetime[1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td><td>{$teacher[$keyList[5]]}</td></tr>   
+<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td><td>{$teacher[$keyList[5]]}</td></tr>   
 EOD;
                                 }
                                 if (empty($teacherOnLeaveList))
@@ -99,7 +99,7 @@ EOD;
                         <thead>
                             <tr class="teacher-thead">
                                 <?php                                 
-                                    $width=array('30%', '110px', '140px', '70%');                                                                        
+                                    $width=array('30%', '100px', '130px', '70%');                                                                        
                                     $tableHeaderList=array_values(NameMap::$RELIEF['tempTeacher']['display']);
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
@@ -120,7 +120,7 @@ EOD;
                                 {
                                     $datetime=$teacher[$keyList[2]];
                                     echo <<< EOD
-<tr><td>{$teacher[$keyList[0]]}</td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0]} - {$datetime[1]}</td><td>{$teacher[$keyList[3]]}</td></tr>
+<tr><td>{$teacher[$keyList[0]]}</td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][1]} - {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td></tr>
 EOD;
                                 }
                                 if (empty($tempTeacherList))

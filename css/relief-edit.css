@@ -41,6 +41,12 @@
 .table-info .toggle-edit {
 	display: none;
 }
+.table-info #last-row {
+	display: none;
+}
+.table-info #last-row .add-edit {
+	display: none;
+}
 
 .ui-autocomplete {
 	max-height: 10em;
@@ -50,4 +56,3 @@
 .ui-autocomplete .ui-menu-item {
 	font-size: .9em;
 }
-
