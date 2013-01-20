@@ -43,7 +43,7 @@ include_once '../head-frag.php';
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=array('45px', '50px', '30%', '20%', '240px', '50%', '70px');
+                                    $width=array('45px', '50px', '30%', '170px', '240px', '50%', '70px');
                                                                         
                                     $tableHeaderList=array_values(NameMap::$RELIEF_EDIT[$isTemp ? 'tempTeacher' : 'teacherOnLeave']['display']);
                                     array_unshift($tableHeaderList, '', 'Select');
@@ -61,8 +61,11 @@ EOD;
                         <tbody>
                             <?php 
                                 $teacherList=Teacher::getTeacherOnLeave($_SESSION['scheduleDate']);
+                                PageConstant::escapeHTMLEntity($teacherList);
                                 $keyList=array_keys(NameMap::$RELIEF_EDIT['teacherOnLeave']['display']);
                                 $keyExtraList=NameMap::$RELIEF_EDIT['teacherOnLeave']['hidden'];
+                                
+                                $teacherVerifiedList=$_SESSION['teacherVerified'];
                                 
                                 // construct reason option array and time option array
                                 $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
@@ -82,6 +85,7 @@ EOD;
                                     $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
                                     $timeFromOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[0][1]);
                                     $timeToOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[1][1]);
+                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacher[$keyExtraList[0]]]);
                                     echo <<< EOD
 <tr>
     <td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>
@@ -92,7 +96,7 @@ EOD;
         <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>
     </td>
     <td>
-        <div class="toggle-display">{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</div>
+        <div class="toggle-display"><span>{$datetime[0][0]}</span> <span>{$datetime[0][1]}</span><br /><span>{$datetime[1][0]}</span> <span>{$datetime[1][1]}</span></div>
         <div class="toggle-edit">
             <div class="time-line">From: <input type="text" name="date-from-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-$i" value="{$datetime[0][0]}" />
                 <select name="time-from-$i">$timeFromOptionStr</select>
@@ -103,7 +107,7 @@ EOD;
         </div>
     </td>
     <td><div class="toggle-display">{$teacher[$keyList[3]]}</div><textarea name="remark-$i" class="toggle-edit">{$teacher[$keyList[3]]}</textarea></td>
-    <td><input type="checkbox" name="verified-$i" /></td>
+    <td>$verifiedStr</td>
 </tr>
 EOD;
                                 }

@@ -37,6 +37,36 @@ EOD;
         }
         return $output;
     }
+    
+    /**
+     * Escape HTML entity in each element of input array. Directly change on that array
+     * @param array $arr input array
+     */
+    public static function escapeHTMLEntity(&$arr)
+    {
+        array_walk_recursive($arr, array('PageConstant', 'escape'));
+    }
+    
+    // as in above function
+    private static function escape(&$ele, $key)
+    {
+        $ele=htmlentities($ele);
+    }
+    
+    /**
+     * Output mark/sign based on input state
+     * @param int $state 0, 1
+     * @return string 0: No; 1: Yes 
+     */
+    public static function stateRepresent($state)
+    {
+        switch ($state)
+        {
+            case 0: return "&#x2717";
+            case 1: return "&#x2713";
+        }
+        return '';
+    }
 }
 PageConstant::$SCHOOL_START_TIME=mktime(7, 15);
 PageConstant::$SCHOOL_END_TIME=mktime(14, 15);
@@ -74,7 +104,11 @@ class NameMap
         
         'leaveReason' => array(
             'display' => array(
-                'MC' => 'MC', 'maternity' => 'Maternity', 'holiday' => 'Holiday'
+                'MC' => 'MC', 'pr-MC' => 'Pro-rated MC', 'hospitalization' => 'Hospitalization', 
+                'maternity' => 'Maternity', 'child-care' => 'Child Care', 
+                'official-VR' => 'Official VR', 'private-VR' => 'Private VR', 'pr-VR' => 'Pro-rated VR', 'wo-VR' => 'Without VR',
+                'couse-seminar' => 'Course or Seminar', 'external-official-duty' => 'External Official Duty',
+                'others' => 'Others'
             ),
             'hidden' => array()
         )

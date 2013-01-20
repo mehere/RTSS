@@ -72,30 +72,60 @@ $(document).ready(function(){
             }
         ];
 
-    function makeEditButton(obj /*, isSaveButton */)
+    function makeEditButton(obj, index /*, isSaveButton */)
     {
-        obj.button(SMALL_BT_ARR[arguments[1]?1:0]).unbind('click').click(function(){
+        // Create button
+        var isSaveButton=arguments[2];
+        obj.data('index', index).button(SMALL_BT_ARR[isSaveButton?1:0]).click(function(){
             if ($(this).button('option', 'label') == SMALL_BT_ARR[0]['label'])
             {
                 $(this).button('option', SMALL_BT_ARR[1]);
             }
             else
             {
+                var index=$(this).data('index');
+                var fieldObj={
+                    'reason': formEdit['reason-'+index],
+                    'time': [formEdit['date-from-'+index], formEdit['time-from-'+index],
+                        formEdit['date-to-'+index], formEdit['time-to-'+index]],
+                    'remark': formEdit['remark-'+index]
+                };
+
+                // for new rows
+                if (isSaveButton)
+                {
+                    fieldObj['fullname']=formEdit['fullname-'+index];
+                    if (!fieldObj['fullname'].value) return false;
+                    formEdit['fullname-'+index].parentNode.replaceChild(document.createTextNode(fieldObj['fullname'].value), formEdit['fullname-'+index]);
+                }
+
                 $(this).button('option', SMALL_BT_ARR[0]);
 
-                // Save
+                // Save locally
+                $(fieldObj['reason']).parents('td').first().find('.toggle-display').text(fieldObj['reason'].options[fieldObj['reason'].selectedIndex].innerHTML);
+                $(fieldObj['time']).parents('td').first().find('.toggle-display > span').text(function(index){
+                    return fieldObj['time'][index].value;
+                });
+                $(fieldObj['remark']).parents('td').first().find('.toggle-display').text(fieldObj['remark'].value);
+
+                // Save remotely
+
+                // clear 'isSaveButton'
+                if (isSaveButton) isSaveButton=null;
             }
 
-            $(this).parents('tr').first().find('.toggle-edit').toggle();
-            $(this).parents('tr').first().find('.toggle-display').toggle();
+            $(this).parents('tr').first().find('.toggle-edit, .toggle-display').toggle();
+
+            // Focus first element, excluding 'add new ...' row
+            $(this).parents('tr').find('select').first().focus();
 
             return false;
         });
     }
 
-    function makeDeleteButton(obj)
+    function makeDeleteButton(obj, index)
     {
-        obj.button(SMALL_BT_ARR[2]).click(function(){
+        obj.data('index', index).button(SMALL_BT_ARR[2]).click(function(){
             var curRow=$(this).parents('tr').first();
             confirm("Confirm to delete this row?", function(){
                 curRow.fadeOut(FADE_DUR, function(){
@@ -108,8 +138,12 @@ $(document).ready(function(){
         });
     }
 
-    makeEditButton($(".table-info .edit-bt"));
-    makeDeleteButton($(".table-info .delete-bt"));
+    $(".table-info .edit-bt").not(":last").each(function(index){
+        makeEditButton($(this), index);
+    });
+    $(".table-info .delete-bt").each(function(index){
+        makeDeleteButton($(this), index);
+    });
 
     // Auto complete
     var nameList=["Ana Mill", "Anto Till", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
@@ -119,7 +153,7 @@ $(document).ready(function(){
             source: nameList,
             delay: 0,
             autoFocus: true
-        }).blur(function(){
+        }).focusout(function(){
             var curText= $.trim(this.value), isMatch=false;
             $.each(nameList, function(index, value){
                 if (curText.toLowerCase() == value.toLowerCase())
@@ -135,7 +169,34 @@ $(document).ready(function(){
         });
     }
 
+    // Show 'Add New ...' tip for last row
+    var FIELD_TIP="Add New ...";
+    function textFieldShowTip(textfield, tip)
+    {
+        textfield.val(tip).css('color', 'gray').css('font-style', 'italic').one('focus', (function(){
+            this.value='';
+            $(this).css('color', 'black').css('font-style', 'normal');
+        }));
+    }
+
     // Add extra row automatically
+    function ajaxAddRow(numOfTeacher)
+    {
+        $("#last-row").show(FADE_DUR).one('focus', ":input:not(:checkbox)", addRowFunc);
+        makeEditButton($("#last-row .edit-bt"), numOfTeacher, true);
+        makeDeleteButton($("#last-row .delete-bt"), numOfTeacher);
+
+        setDatePicker($(formEdit['date-from-' + numOfTeacher]), '');
+        setDatePicker($(formEdit['date-to-' + numOfTeacher]), '');
+        formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + numOfTeacher].options.length-1;
+        $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic')
+
+        $("#last-row").find(".toggle-edit, .toggle-display").toggle();
+
+        addAutoComplete($("#last-row .fullname-server"));
+    }
+
+    var prevTextfield=null;
     var addRowFunc=function(event){
         var selfDelegate=event.delegateTarget;
         selfDelegate.removeAttribute('id');
@@ -144,25 +205,28 @@ $(document).ready(function(){
         $.get("/RTSS/relief/teacher-edit-frag.php", {"num": numOfTeacher}, function(data){
             formEdit['num'].value=numOfTeacher;
             $(selfDelegate).parent().append(data);
-            $("#last-row").show(FADE_DUR).one('focus', ":input", addRowFunc);
+
             adjustSidebar();
 
-            makeEditButton($("#last-row .edit-bt"), true);
-            makeDeleteButton($("#last-row .delete-bt"));
-
-            setDatePicker($(formEdit['date-from-' + numOfTeacher]), '');
-            setDatePicker($(formEdit['date-to-' + numOfTeacher]), '');
-            formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + num].options.length-1;
-
-            addAutoComplete($("#last-row .fullname-server"));
+            ajaxAddRow(numOfTeacher);
         }, 'text');
+
+        $(formEdit['fullname-'+(numOfTeacher-1)]).val('').css('color', 'black').css('font-style', 'normal');
+
+        if (prevTextfield)
+        {
+            if (prevTextfield.value)
+            {
+                $(prevTextfield).parents('tr').first().find('.edit-bt').click();
+            }
+            else
+            {
+                $(prevTextfield).parents('tr').first().remove();
+            }
+        }
+        prevTextfield=formEdit['fullname-'+(numOfTeacher-1)];
     };
 
     // Displayed last row config
-    $("#last-row").show().one('focus', ":input", addRowFunc);
-    makeEditButton($("#last-row .edit-bt"), true);
-    setDatePicker($(formEdit['date-from-' + num]), '');
-    setDatePicker($(formEdit['date-to-' + num]), '');
-    formEdit['time-to-' + num].selectedIndex=formEdit['time-to-' + num].options.length-1;
-    addAutoComplete($("#last-row .fullname-server"));
+    ajaxAddRow(num);
 });

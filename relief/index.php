@@ -47,6 +47,10 @@ include_once '../head-frag.php';
                     if (!$date) $date=date('Y-m-d');
                 }
                 $_SESSION['scheduleDate']=$date;
+                
+                // Teacher verified
+                $teacherVerifiedList=$_SESSION['teacherVerified'];
+                $teacherScheduledList=$_SESSION['teacherScheduled'];
             ?>
             <form class="main" name="schedule" action="schedule/" method="post">
             	Date: <input type="text" class="textfield" name="date" maxlength="10" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
@@ -71,13 +75,17 @@ EOD;
                         <tbody id="align-teacher">
                             <?php 
                                 $teacherOnLeaveList=Teacher::getTeacherOnLeave($date);
+                                PageConstant::escapeHTMLEntity($teacherOnLeaveList);
                                 $keyList=array_keys(NameMap::$RELIEF['teacherOnLeave']['display']);
                                 $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
                                 foreach ($teacherOnLeaveList as $teacher) 
                                 {
                                     $datetime=$teacher[$keyList[2]];
+                                    $teacherAccname=$teacher[$keyExtraList[0]];
+                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacherAccname]);
+                                    $scheduledStr=PageConstant::stateRepresent($teacherScheduledList[$teacherAccname]);
                                     echo <<< EOD
-<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$teacher[$keyList[4]]}</td><td>{$teacher[$keyList[5]]}</td></tr>   
+<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname=$teacherAccname">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>$verifiedStr</td><td>$scheduledStr</td></tr>   
 EOD;
                                 }
                                 if (empty($teacherOnLeaveList))
@@ -114,6 +122,7 @@ EOD;
                         <tbody id="align-temp">
                             <?php 
                                 $tempTeacherList=Teacher::getTempTeacher($date);
+                                PageConstant::escapeHTMLEntity($tempTeacherList);
                                 $keyList=array_keys(NameMap::$RELIEF['tempTeacher']['display']);
                                 $keyExtraList=NameMap::$RELIEF['tempTeacher']['hidden'];
                                 foreach ($tempTeacherList as $teacher) 
