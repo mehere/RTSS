@@ -64,6 +64,7 @@ class User
     //input : username, password
     //output : true or false
     //note : password is not encrypted
+    /* temporarily disabled, not updated
     public static function addAdmin($username, $password)
     {
         $db_url = Constant::db_url;
@@ -105,6 +106,8 @@ class User
         
         return true;
     }
+     * 
+     */
     
     //this function delete an admin from database
     //input : username

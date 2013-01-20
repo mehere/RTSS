@@ -155,8 +155,7 @@ class TimetableAnalyzer {
 
 
         // the following codes are just for verification of the code correctness
-
-        /*
+/*
         foreach ($arrLessons as $key => $value) {
             echo 'Lesson ' . $key . ': <br>';
             echo 'Subject: ' . $value->subject . '<br>';
@@ -226,8 +225,8 @@ class TimetableAnalyzer {
                 $aLessonOld = $aLesson;
             }
         }
-         * 
-         */
+ * 
+ */       
         fclose($file);
        
         

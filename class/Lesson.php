@@ -53,10 +53,10 @@ class Lesson {
         $this->endTimeSlot++;
     }
 
-    //this function returns all lessons for a particular day
+    //this function returns all normal teachers' lessons for a particular day, excluding AEDs'
     //input : string : date, can be in any php-supported format, e.g. yyyy-mm-dd. for more info, http://php.net/manual/en/datetime.formats.date.php
     //output : array {"success"->boolean, "error_msg"->string, “Lessons”-> arr{primaryKey -> Lesson}, “Teachers”->arr{primaryKey ->Teacher}}, pk of lesson is int, pk of teacher is accname string
-    //note : please check output["success"] to see whether the query is successful. if fail, see output["error_msg"] for information; The returned teacher objects only contain accname, email me if you need more information; The teacher objects is referenced by both Teachers list and lesson objects
+    //note : please check output["success"] to see whether the query is successful. if fail, see output["error_msg"] for information; The returned teacher objects only contain accname and abbre name, email me if you need more information; The teacher objects is referenced by both Teachers list and lesson objects
     public static function getLessonsToday($date)
     {
         $result = Array(
@@ -101,7 +101,7 @@ class Lesson {
         mysql_select_db($db_name);
         
         //lesson
-        $sql_query_lessons = "select * from ct_lesson where weekday = ".$weekday_number.";";
+        $sql_query_lessons = "select * from ct_lesson where weekday = ".$weekday_number." and type = 'N';";
         $lesson_query_result = mysql_query($sql_query_lessons);
         
         if(!$lesson_query_result)
@@ -125,7 +125,7 @@ class Lesson {
         
         //class
         $sql_query_class = "SELECT ct_class_matching.* FROM ct_class_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_class_matching.lesson_id 
-            AND ct_lesson.weekday = ".$weekday_number.";";
+            AND ct_lesson.weekday = ".$weekday_number." AND ct_lesson.type = 'N';";
         $class_query_result = mysql_query($sql_query_class);
         
         if(!$class_query_result)
@@ -142,8 +142,8 @@ class Lesson {
         }
         
         //teacher
-        $sql_query_teacher = "SELECT ct_teacher_matching.*, ct_name_abbre_matching.abbre_name, ac_all_teacher.name FROM ct_teacher_matching, ct_lesson, ac_all_teacher, ct_name_abbre_matching WHERE ct_lesson.lesson_id = ct_teacher_matching.lesson_id 
-            AND ct_lesson.weekday = ".$weekday_number." AND ac_all_teacher.acc_name = ct_teacher_matching.acc_name AND ct_teacher_matching.acc_name = ct_name_abbre_matching.acc_name;";
+        $sql_query_teacher = "SELECT ct_teacher_matching.*, ct_name_abbre_matching.abbre_name FROM ct_teacher_matching, ct_lesson, ct_name_abbre_matching WHERE ct_lesson.lesson_id = ct_teacher_matching.lesson_id 
+            AND ct_lesson.weekday = ".$weekday_number." AND ct_teacher_matching.teacher_id = ct_name_abbre_matching.teacher_id AND ct_lesson.type = 'N';";
         $teacher_query_result = mysql_query($sql_query_teacher);
         
         if(!$teacher_query_result)
@@ -154,7 +154,7 @@ class Lesson {
         
         while($row =  mysql_fetch_array($teacher_query_result))
         {
-            $acc_name = $row['acc_name'];
+            $acc_name = $row['teacher_id'];
             
             if(array_key_exists($acc_name, $result["Teachers"]))
             {
@@ -165,7 +165,6 @@ class Lesson {
                 $abbreviation = $row['abbre_name'];
                 $one_teacher = new Teacher($abbreviation);
                 $one_teacher->accname = $acc_name;
-                $one_teacher->name = $row['name'];
                 
                 $result["Teachers"][$acc_name] = $one_teacher;
             }
