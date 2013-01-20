@@ -31,8 +31,12 @@ class Teacher {
     //this function finds full name and accname for a list of teachers, given abbre name
     //input : Array of teachers, with abbre nave known
     //output : Array of teachers, with name and accname returned
+    //error : An empty array is returned
     public static function getTeachersAccnameAndFullname($teacher_list)
     {
+        $result_list = Array();
+        
+        //get abbre-accname list
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;
         $db_password = Constant::db_password;
@@ -42,27 +46,36 @@ class Teacher {
         
         if (!$db_con)
         {
-            die("function Teacher::abbreToFullnameBatch : Could not connect to database");
+            return $result_list;
         }
         
         mysql_select_db($db_name, $db_con);
         
-        $result_list = Array();
+        $sql_query = "select * from ct_name_abbre_matching;";
+        $result = mysql_query($sql_query);
+        if(!$result)
+        {
+            return $result_list;
+        }
         
+        $abbre_dict = Array();
+        while($row = mysql_fetch_array($result))
+        {
+            $abbre_dict[str_replace(" ", "_", $row['abbre_name'])] = $row['teacher_id'];
+        }
+        
+        //get accname - teacher list
+        $teacher_dict = Teacher::getAllTeachers();
+        
+        //search teacher name
         foreach($teacher_list as $key => $a_teacher)
         {
-            $sql_query = "select ct_name_abbre_matching.acc_name, ac_all_teacher.name 
-                from ct_name_abbre_matching , ac_all_teacher where ct_name_abbre_matching.acc_name = ac_all_teacher.acc_name
-                and ct_name_abbre_matching.abbre_name = '".mysql_real_escape_string($a_teacher->abbreviation) ."';";
-            $result = mysql_query($sql_query);
-            
             $temp_teacher = new Teacher($a_teacher->abbreviation);
             
-            if($result)
+            if(!empty($abbre_dict[str_replace(" ", "_", $a_teacher->abbreviation)]))
             {
-                $row = mysql_fetch_array($result);
-                $temp_teacher->name=$row['name'];
-                $temp_teacher->accname=$row['acc_name'];
+                $temp_teacher->accname=$abbre_dict[str_replace(" ", "_", $a_teacher->abbreviation)];
+                $temp_teacher->name=$teacher_dict[$temp_teacher->accname]['name'];
             }
             
             $result_list[$key] = $temp_teacher;
@@ -77,6 +90,9 @@ class Teacher {
     public static function getTeacherOnLeave($query_date)
     {
         $result = Array();
+        
+        //query teacher dict
+        $teacher_dict = Teacher::getAllTeachers();
         
         //check input
         if(!preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
@@ -100,6 +116,8 @@ class Teacher {
         
         //start
         //query relief info to check whether scheduled
+        //No need now
+        /*
         $sql_query_relief = "select * from rs_relief_info where date = '".mysql_real_escape_string($query_date)."';";
         $relief_query_result = mysql_query($sql_query_relief);
         if(!$relief_query_result)
@@ -117,10 +135,12 @@ class Teacher {
                 array_push($leave_id_array, $one_leave_id);
             }
         }
+         * 
+         */
         
         //query leave
-        $sql_query_leave = "select *, DATE(rs_leave_info.start_time) as start_date, DATE(rs_leave_info.end_time) as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from ac_all_teacher, rs_leave_info 
-            where ac_all_teacher.acc_name=rs_leave_info.acc_name and '".mysql_real_escape_string($query_date)."' between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
+        $sql_query_leave = "select *, DATE(rs_leave_info.start_time) as start_date, DATE(rs_leave_info.end_time) as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info 
+            where '".mysql_real_escape_string($query_date)."' between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
         
         $query_leave_result = mysql_query($sql_query_leave);
         
@@ -128,38 +148,27 @@ class Teacher {
         {
             return $result;
         }
-        
+       
         while($row = mysql_fetch_assoc($query_leave_result))
         {
             $each_record = Array();
-            $each_record['accname'] = $row['acc_name'];
-            $each_record['fullname'] = $row['name'];
-            $each_record['type'] = $row['type'];
+            $each_record['accname'] = $row['teacher_id'];
             $each_record['reason'] = $row['reason'];
-            $each_record['remark'] = $row['remark'];
-            if(empty($each_record['remark']))
-            {
-                $each_record['remark'] = '';
-            }
+            $each_record['remark'] = empty($row['remark'])?'':$row['remark'];
             $each_record['leaveID'] = $row['leave_id'];
-            
-            if($row['verified'] === 'YES')
-            {
-                $each_record['isVerified'] = true;
-            }
-            else
-            {
-                $each_record['isVerified'] = false;
-            }
-           
+            $each_record['isVerified'] = ($row['verified'] === 'YES')?true:false;
             $each_record['datetime'] = Array(Array($row['start_date'], $row['start_time_point']), Array($row['end_date'], $row['end_time_point']));
-            
             $each_record['isScheduled'] = false;
-            
+            /*
             if(in_array($each_record['leaveID'], $leave_id_array))
             {
                 $each_record['isScheduled'] = true;
             }
+             * 
+             */
+            
+            $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['name'];
+            $each_record['type'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['type'];
             
             array_push($result, $each_record);
         }
@@ -195,8 +204,8 @@ class Teacher {
         
         mysql_select_db($db_name);
         
-        $sql_query_temp_teacher = "select ac_all_teacher.*, temp_relief_teacher.*, DATE(temp_relief_teacher.time_available_start) as start_date, DATE(temp_relief_teacher.time_available_end) as end_date, TIME_FORMAT(temp_relief_teacher.time_available_start, '%H:%i') as start_time, TIME_FORMAT(temp_relief_teacher.time_available_end, '%H:%i') as end_time from ac_all_teacher, temp_relief_teacher 
-            where ac_all_teacher.acc_name=temp_relief_teacher.acc_name and '".mysql_real_escape_string($query_date)."' between date(temp_relief_teacher.time_available_start) and date(temp_relief_teacher.time_available_end);";
+        $sql_query_temp_teacher = "select *, DATE(rs_temp_relief_teacher_availability.start_datetime) as start_date, DATE(rs_temp_relief_teacher_availability.end_datetime) as end_date, TIME_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%H:%i') as start_time, TIME_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%H:%i') as end_time 
+            from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.start_datetime);";
         
         $query_temp_teacher = mysql_query($sql_query_temp_teacher);
         
@@ -214,11 +223,11 @@ class Teacher {
                 'datetime' => Array()
             );
             
-            $one_teacher['accname'] = $row['acc_name'];
+            $one_teacher['accname'] = $row['teacher_id'];
             $one_teacher['fullname'] = $row['name'];
-            $one_teacher['type'] = $row['type'];
+            $one_teacher['type'] = "Temporary";
             $one_teacher['datetime'] = Array(Array($row['start_date'], $row['start_time']), Array($row['end_date'], $row['end_time']));
-            $one_teacher['remark'] = (empty($row['remark'])?'':$row['remark']);
+            $one_teacher['remark'] = (empty($row['slot_remark'])?'':$row['slot_remark']);
             $one_teacher['MT'] = (empty($row['mother_tongue'])?'':$row['mother_tongue']);
             $one_teacher['email'] = (empty($row['email'])?'':$row['email']);
             $one_teacher['handphone'] = (empty($row['mobile'])?'':$row['mobile']);
@@ -230,8 +239,9 @@ class Teacher {
     }
     
     //this function returns the details of a teacher
-    //input : accname
+    //input : accname - the name used to log in
     //output : associative array of information. Before retrieving any information, check if($output['found']) to see whether the teacher record is found
+    /* temporarily disabled, will release later
     public static function getIndividualTeacherDetail($accname)
     {
         $result = Array(
@@ -243,21 +253,21 @@ class Teacher {
             'email' => NULL
         );
 
-        //with accname, get fullname from ntu.ac_all_teacher
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
+        $ifins_db_url = Constant::ifins_db_url;
+        $ifins_db_username = Constant::ifins_db_username;
+        $ifins_db_password = Constant::ifins_db_password;
+        $ifins_db_name = Constant::ifins_db_name;
         
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
+        $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
         
-        if (!$db_con)
+        if (!$ifins_db_con)
         {
             return $result;
         }
         
-        mysql_select_db($db_name);
+        mysql_select_db($ifins_db_name);
         
+        //with accname, get fullname from ntu.ac_all_teacher
         $sql_query_fullname = "select name from ac_all_teacher where acc_name = '".mysql_real_escape_string($accname)."';";
         $db_query_result = mysql_query($sql_query_fullname);
         if(!$db_query_result)
@@ -276,20 +286,6 @@ class Teacher {
         }
         
         //with full name, query information from ifins_2012.actatek_user
-        $ifins_db_url = Constant::ifins_db_url;
-        $ifins_db_username = Constant::ifins_db_username;
-        $ifins_db_password = Constant::ifins_db_password;
-        $ifins_db_name = Constant::ifins_db_name;
-        
-        $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
-        
-        if (!$ifins_db_con)
-        {
-            return $result;
-        }
-        
-        mysql_select_db($ifins_db_name);
-        
         $sql_query_detail = "select * from actatek_user where user_name = '".mysql_real_escape_string($result['name'])."';";
         $ifins_query_result = mysql_query($sql_query_detail);
         
@@ -311,11 +307,14 @@ class Teacher {
        
         return $result;
     }
+     * 
+     */
     
     //this function finds a list of alternatives for abbre name of all teachers
     //this function is used when the 1-to-1 match of abbre and full name is not established
     //input : an array of teacher objects, with abbre name provided
     //output : NA
+    /* temporarily disabled. not updated
     public static function abbreToFullnameBatchSetup($teacher_list)
     {
         $db_url = Constant::ifins_db_url;
@@ -353,6 +352,8 @@ class Teacher {
         }
         
     }
+     * 
+     */
     
     /*
      The following functions are for testing purpose
@@ -362,6 +363,7 @@ class Teacher {
     //this function lists all abbre name (in teacher_list) that dont have a match
     //input : $teacher_list, a list of Teacher object, with abbre_name provided
     //output : na
+    /* temporarily disabled. not updated
     public static function listUnmatchedAbbreName($teacher_list)
     {
         $db_url = Constant::db_url;
@@ -414,6 +416,8 @@ class Teacher {
             echo "<br>";
         }
     }
+     * 
+     */
     
     /*
      The following are private functions
@@ -424,6 +428,7 @@ class Teacher {
     //this function is used when the 1-to-1 match of abbre and full name is not established
     //input : abbre name - string
     //output : an array of teacher objects, with accname and fullname
+    /* temporarily disabled. not updated
     private static function abbreToFullnameSingleSetup($teacher_abbre_name)
     {
         $result = Array();
@@ -480,6 +485,45 @@ class Teacher {
         }
         
         return $result;
+    }
+     * 
+     */
+    
+    //this function retrieve all teachers from database ifins
+    private static function getAllTeachers()
+    {
+        $teacher_dict = Array();
+        
+        $ifins_db_url = Constant::ifins_db_url;
+        $ifins_db_username = Constant::ifins_db_username;
+        $ifins_db_password = Constant::ifins_db_password;
+        $ifins_db_name = Constant::ifins_db_name;
+        
+        $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
+        
+        if (!$ifins_db_con)
+        {
+            return $teacher_dict;
+        }
+        
+        mysql_select_db($ifins_db_name, $ifins_db_con);
+        
+        $sql_query_teacher = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher';";
+        $result_teacher = mysql_query($sql_query_teacher);
+        if(!$result_teacher)
+        {
+            return $teacher_dict;
+        }
+        
+        while($row = mysql_fetch_array($result_teacher))
+        {
+            $teacher_dict[$row['user_id']] = Array(
+                'name' => $row['user_name'],
+                'type' => $row['dept_name']
+            );
+        }
+        
+        return $teacher_dict;
     }
 }
 
