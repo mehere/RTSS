@@ -1,7 +1,7 @@
 <?php 
-    include_once '../head-frag.php';
+    include_once '../head-frag.php'; include_once '../php-head.php';
 ?>
-<title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
+<title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/upload.css" rel="stylesheet" type="text/css">
 <script src="/RTSS/js/upload.js"></script>
@@ -27,7 +27,7 @@
                 	<select name="year">
                         <?php 
                             $curYear=date('Y');
-                            for ($i=$curYear-Constant::NUM_OF_YEAR; $i<=$curYear+Constant::NUM_OF_YEAR; $i++)
+                            for ($i=$curYear-PageConstant::NUM_OF_YEAR; $i<=$curYear+PageConstant::NUM_OF_YEAR; $i++)
                             {
                                 $selected=$i==$curYear ? 'selected="selected"' : '';
                                 echo <<< EOD

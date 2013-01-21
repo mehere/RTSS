@@ -1,0 +1,314 @@
+Master Timetable by Teacher
+,MON,,,,,,,,,,,,,,TUE,,,,,,,,,,,,,,WED,,,,,,,,,,,,,,THU,,,,,,,,,,,,,,FRI,,,,,,,,,,,,,,
+,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,
+,0725 - 0745,0745 - 0815,0815 - 0845,0845 - 0915,0915 - 0945,0945 - 1015,1015 - 1045,1045 - 1115,1115 - 1145,1145 - 1215,1215 - 1245,1245 - 1315,1315 - 1345,1345 - 1415,0725 - 0745,0745 - 0815,0815 - 0845,0845 - 0915,0915 - 0945,0945 - 1015,1015 - 1045,1045 - 1115,1115 - 1145,1145 - 1215,1215 - 1245,1245 - 1315,1315 - 1345,1345 - 1415,0725 - 0745,0745 - 0815,0815 - 0845,0845 - 0915,0915 - 0945,0945 - 1015,1015 - 1045,1045 - 1115,1115 - 1145,1145 - 1215,1215 - 1245,1245 - 1315,1315 - 1345,1345 - 1415,0725 - 0745,0745 - 0815,0815 - 0845,0845 - 0915,0915 - 0945,0945 - 1015,1015 - 1045,1045 - 1115,1115 - 1145,1145 - 1215,1215 - 1245,1245 - 1315,1315 - 1345,1345 - 1415,0725 - 0745,0745 - 0815,0815 - 0845,0845 - 0915,0915 - 0945,0945 - 1015,1015 - 1045,1045 - 1115,1115 - 1145,1145 - 1215,1215 - 1245,1245 - 1315,1315 - 1345,1345 - 1415,
+,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,10,11,12,13,14,
+
+BALINDA,FAM_T,,,,,,ELSS3/LSP P1,,,ELSS3/LSP P2,ELSS1,ELSS,ELSS,,FR,ELSS1,,ELSS,ELSS,PLC EL12,PLC EL12,ELSS3/LSP P1,,,,ELSS3/LSP P2,,,AS_CCT,AS_CCT,ELSS3/LSP P2,AC,AC,,ELSS3/LSP P1,,ELSS1,,,ELSS,ELSS,,AS_CCT,AS_CCT,ELSS3/LSP P1,,ELSS3/LSP P2,,,ELSS,ELSS,AC,AC,ELSS1,,,FR,ELSS3/LSP P2,,ELSS1,ELSS1,,ELSS3,ELSS,ELSS,ELSS3/LSP P1,,,,,
+,1G,,,,,,1C;1F;1J;1P;1W,,,2H;2F;2W,1G,1G,1G,,1G,1G,,1G,1G,PLC EL,PLC EL,1C;1F;1J;1P;1W,,,,2H;2F;2W,,,1G,1G,2H;2F;2W,2J,2J,,1C;1F;1J;1P;1W,,1G,,,1G,1G,,1G,1G,1C;1F;1J;1P;1W,,2H;2F;2W,,,1G,1G,2W,2W,1G,,,1G,2H;2F;2W,,1G,1G,,1G,1G,1G,1C;1F;1J;1P;1W,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+BOSWELLC,FAM_T,,,ELSS,ELSS,,ELSS3/LSP P1,EL,EL,EL,EL1,,ELSS1,,FR,EL,EL,MENT 1,,PLC EL12,PLC EL12,ELSS3/LSP P1,,ELSS,ELSS,ELSS,,,AS_CCT,AS_CCT,MENT 1,MENT 1,,,ELSS3/LSP P1,,,ELSS,ELSS,EL,EL,,AS_CCT,AS_CCT,ELSS3/LSP P1,,EL,EL,ELSS,ELSS,,,,,,,FR,,,,,,,EL,EL,ELSS3/LSP P1,ELSS,ELSS,,,
+,1P,,,1P,1P,,1C;1F;1J;1P;1W,3J,3J,3J,3J,,1P,,1P,3J,3J,STEM SC,,PLC EL,PLC EL,1C;1F;1J;1P;1W,,1P,1P,1P,,,1P,1P,STEM SC,STEM SC,,,1C;1F;1J;1P;1W,,,1P,1P,3J,3J,,1P,1P,1C;1F;1J;1P;1W,,3J,3J,1P,1P,,,,,,,1P,,,,,,,3J,3J,1C;1F;1J;1P;1W,1P,1P,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHAN CHR,FAM_T,PLC MA12,PLC MA12,,,,ELSS1,ELSS,ELSS,MA1/LSMP1,,MA,MA,,FR,,MA1/LSMP1,ELSS,ELSS,,MA,,,ELSS1,,,,,AS_CCT,AS_CCT,ELSS1,,MA1/LSMP1,,,MA,MA,,ELSS,ELSS,ELSS,,AS_CCT,AS_CCT,ELSS1,,,,MA,MA,,ELSS,ELSS,BT,,,FR,ELSS,ELSS,ELSS,ELSS1,,MA1/LSMP1,,,,MA,MA,BT,,
+,1H,PLC MA,PLC MA,,,,1H,1H,1H,1J,,1H,1H,,1H,,1J,1H,1H,,1H,,,1H,,,,,1H,1H,1H,,1J,,,1H,1H,,1H,1H,1H,,1H,1H,1H,,,,1H,1H,,1H,1H,2J;2P;2W,,,1H,1H,1H,1H,1H,,1J,,,,1H,1H,1J;1P;1W,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHAN HM,FAM_T,,,,,,CL,CL,,XCL/XFCL,XCL/XFCL,CL/BCL,CL/BCL,,FR,MENT 1,MENT 1,CL,CL,,,,CL1,,CL/BCL,CL/BCL,,,AS_CCT,AS_CCT,MENT 2,MENT 2,MENT 1,,,CL/BCL,CL/BCL,CL,CL,,,,AS_CCT,AS_CCT,CL,CL,CL,,,CL/BCL,CL/BCL,,PLC CL56,PLC CL56,,,FR,,,,,,,MENT 2,CL,CL,,CL/BCL,CL/BCL,,
+,6H,,,,,,2C,2C,,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,,6H,STEM CL,STEM CL,2C,2C,,,,2C,,6G;6H;6J;6P,6G;6H;6J;6P,,,6H,6H,STEM CL,STEM CL,STEM CL,,,6G;6H;6J;6P,6G;6H;6J;6P,2C,2C,,,,6H,6H,2C,2C,2C,,,6G;6H;6J;6P,6G;6H;6J;6P,,PLC CL,PLC CL,,,6H,,,,,,,STEM CL,2C,2C,,6G;6H;6J;6P,6G;6H;6J;6P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHAN JO,L Patrol,SC,SC,,,,MA,MA,MA,,,SC,SC,,L Patrol,SS,,MENT 1,,,,,MA,MA,SS,,,,Assembly,Assembly,MENT 1,MENT 1,,,MA,MA,,SC,SC,,,,L Patrol,,MA,MA,SS,,PLC SC,PLC SC,,,MENT 2,MENT 2,MENT 2,,L Patrol,L Patrol,SC,SC,,,MA,MA,SS,,,,,,
+,,4F,4F,,,,4H,4H,4H,,,4J,4J,,,4C,,STEM SC,,,,,4H,4H,4P,,,,,,STEM SC,STEM SC,,,4H,4H,,4J,4J,,,,,,4H,4H,4C,,PLC SC,PLC SC,,,STEM SC,STEM SC,STEM SC,,,,4F,4F,,,4H,4H,4P,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHEE G,,Relief,MA,MA,MA,,,,,,,,,,,MA,MA,,,,,,,,,,,,,,,,,,MA,MA,,Exco,Exco,Exco,Exco,,,,,,,,,,MA,MA,,,,,,MA,MA,,,,,,,,,,,,
+,,,4P,4P,4P,,,,,,,,,,,4P,4P,,,,,,,,,,,,,,,,,,4P,4P,,,,,,,,,,,,,,,4P,4P,,,,,,4P,4P,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHEE S,FAM_T,,,EL,EL,EL,Patrol,EL,EL,,SS,,,,FR,EL,EL,,,SS,,EL1,,EL,EL,,,,AS_CCT,AS_CCT,,,EL,EL,Patrol,,,EL,EL,XEL,EL1,,AS_CCT,AS_CCT,,,EL,EL,,,,,EL,EL,,,FR,EL,EL,EL,,XEL,,EL,EL,PLC EL56,PLC EL56,,,,
+,6P,,,5C,5C,5C,,6J;6P,6J;6P,,3H,,,,6P,6J;6P,6J;6P,,,3H,,6J;6P,,5C,5C,,,,6P,6P,,,6J;6P,6J;6P,,,,5C,5C,6J;6P,6J;6P,,6P,6P,,,6J;6P,6J;6P,,,,,5C,5C,,,6P,5C,5C,5C,,6J;6P,,6J;6P,6J;6P,PLC EL,PLC EL,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHEN G,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHEN LZ,,CL/BCL,CL/BCL,,,,CL,CL,CL,,,CL,CL,,,CL/BCL,CL/BCL,CL,CL,,CL,CL,,,BS,BS,,,,,,,CL,,CL,CL,,CL/BCL,CL/BCL,,,,,,CL,CL,CL/BCL,CL/BCL,,,,CL,CL,,,,,,,CL/BCL,CL/BCL,,CL,CL,,,CL,CL,CL,,
+,,5P,5P,,,,1G,1G,1G,,,4F,4F,,,5P,5P,4F,4F,,1G,1G,,,1G,1G,,,,,,,4F,,1G,1G,,5P,5P,,,,,,4F,4F,5P,5P,,,,1G,1G,,,,,,,5P,5P,,4F,4F,,,1G,1G,1G,,
+,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 1,CL VEN 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHEN PJ,FAM_T,CL,CL,,,,,CL,CL,CME,,,CME,,FR,,,CL,CL1,,CL,,CME,,CL,CL,,,AS_CCT,AS_CCT,CL,CL,,PLC CL34,PLC CL34,BS,BS,,CME,CL,CL,,AS_CCT,AS_CCT,CL,CL,,,CME,,CL,CL,,,,,FR,CME,,,CL,CL,,BS,BS,,CL,CL,,,
+,1W,3J,3J,,,,,1W,1W,1P,,,1F,,1W,,,3J,1W,,1W,,1P,,1W,1W,,,1W,1W,3J,3J,,PLC CL,PLC CL,3J,3J,,1J,1W,1W,,1W,1W,3J,3J,,,1J,,1W,1W,,,,,1W,1F,,,3J,3J,,1W,1W,,1W,1W,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 2,CL VEN 2,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 1,CL VEN 1,,,,,,
+
+CHIN XU,FAM_T,MU,,MU,MU,,,,MU,MENT 2,MENT 2,MENT 2,MA,,FR,,,,MU,,MU,,,,MA,MA,,,AS_CCT,AS_CCT,MA,MA,MU,,MU,,,MU,MU,MU,MU,,AS_CCT,AS_CCT,MU,,MU,,MA,MA,,,,,,,FR,,,,MU,MU,PLC PEAE,PLC PEAE,MU,,MU,MA,MA,,
+,1C,2H,,4H,4F,,,,2G,STEM MA,STEM MA,STEM MA,1C,,1C,,,,2G,,4C,,,,1C,1C,,,1C,1C,1C,1C,4C,,2H,,,3J,3J,3P,3P,,1C,1C,4G,,4F,,1C,1C,,,,,,,1C,,,,3H,3H,PLC PEAE,PLC PEAE,4G,,4H,1C,1C,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHONG FM,FAM_T,XEL,EL,EL,,,,EL,EL,EL,,,,,FR,XEL,,,EL,EL,,EL1,,EL,EL,EL,,,AS_CCT,AS_CCT,EL,EL,EL,EL,,,,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,,,,,,EL,EL,EL1,EL,EL,,,FR,EL,EL,,,,,,,PLC EL56,PLC EL56,EL,EL,,
+,6H,6H,6H,6H,,,,5F,5F,5F,,,,,6H,6H,,,6H,6H,,6H,,5F,5F,5F,,,6H,6H,6H,6H,5F,5F,,,,,,,,,6H,6H,,,,,,5F,5F,6H,6H,6H,,,6H,6H,6H,,,,,,,PLC EL,PLC EL,5F,5F,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHOONG A,FAM_T,PLC MA12,PLC MA12,SS,,SS,,MA,MA,,MA,MA,SS,,FR,MA,MA,,,,MA,MA,,,,SS,,,AS_CCT,AS_CCT,SS,,,,MA,MA,MA,MA,MA,,,,AS_CCT,AS_CCT,MA,MA,,,MA,MA,,SS,,SS,,,FR,SS,,,,,,MA,MA,MA,,,,,
+,4F,PLC MA,PLC MA,4F,,3P,,4F,4F,,2F,2F,3F,,4F,2F,2F,,,,4F,4F,,,,3P,,,4F,4F,4J,,,,2F,2F,4F,4F,4F,,,,4F,4F,2F,2F,,,4F,4F,,3F,,4J,,,4F,4F,,,,,,2F,4F,4F,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+CHUA KW,FAM_T,CL,CL,CL,CL,,,,,XCL/XFCL,XCL/XFCL,CL/BCL,CL/BCL,,FR,,,CL,CL,,CL,CL,,,CL/BCL,CL/BCL,,,AS_CCT,AS_CCT,,,,PLC CL34,PLC CL34,CL/BCL,CL/BCL,,CL,CL,CL,,AS_CCT,AS_CCT,,,,,CL,CL/BCL,CL/BCL,,CL,CL,,,FR,,,CL,CL,,,,,CL,CL,CL/BCL,CL/BCL,,
+,4J,4J,4J,4G,4G,,,,,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,,4J,,,4J,4J,,4G,4G,,,6G;6H;6J;6P,6G;6H;6J;6P,,,4J,4J,,,,PLC CL,PLC CL,6G;6H;6J;6P,6G;6H;6J;6P,,4G,4J,4J,,4J,4J,,,,,4J,6G;6H;6J;6P,6G;6H;6J;6P,,4G,4G,,,4J,,,4J,4J,,,,,4G,4G,6G;6H;6J;6P,6G;6H;6J;6P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+GANCANDY,FAM_T,ELSS,ELSS,,,,,MA,MA,ELSS1,ELSS1,,ELSS3,,FR,ELSS1,ELSS1,MA,MA,PLC EL12,PLC EL12,,,ELSS,ELSS,ELSS,,,AS_CCT,AS_CCT,,BS,BS,,ELSS1,,BS,BS,MA,ELSS,ELSS,,AS_CCT,AS_CCT,,,,,ELSS,ELSS,MA,MA,,,,,FR,,,ELSS,ELSS,,BS,BS,,,,MA,MA,,
+,2C,2C,2C,,,,,2H,2H,2C,2C,,2C,,2C,2C,2C,2H,2H,PLC EL,PLC EL,,,2C,2C,2C,,,2C,2C,,2F,2F,,2C,,2H,2H,2H,2C,2C,,2C,2C,,,,,2C,2C,2H,2H,,,,,2C,,,2C,2C,,2C,2C,,,,2H,2H,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P2 LA,P2 LA,,,,P2 LA,P2 LA,,,,,,,,,,,,,,,,,,,,,,,,,P2 LA,P2 LA,,,,,,,
+
+GOHWENDY,FAM_T,CL,CL,,,CME,,CL1,,,CL,CL,,,FR,MENT 1,MENT 1,,,,,CME,,CL,CL,CL,,,AS_CCT,AS_CCT,CL,CL,MENT 1,,,CL,CL,CL1,,BS,BS,,AS_CCT,AS_CCT,,CL,CL,PLC CL12,PLC CL12,,CL,CL,,,,,FR,CL,CL,CME,,CME,,BS,BS,CL,CL,,,,
+,1J,3H,3H,,,3J,,1J,,,1J,1J,,,1J,STEM CL,STEM CL,,,,,3G,,3H,1J,1J,,,1J,1J,1J,1J,STEM CL,,,3H,3H,1J,,1J,1J,,1J,1J,,1J,1J,PLC CL,PLC CL,,3H,3H,,,,,1J,1J,1J,3J,,3G,,3H,3H,3H,3H,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 1,CL VEN 1,,,,,,,,,,,,,,,,,,,,,,,CL VEN 2,CL VEN 2,,,,,,
+
+GOMATHI,FAM_T,ELSS1,ELSS1,,,,,,MA,MA,ELSS,ELSS,ELSS,,FR,ELSS1,,,,PLC EL12,PLC EL12,,MA,ELSS,ELSS,ELSS3,,,AS_CCT,AS_CCT,ELSS,ELSS,ELSS1,,BS,BS,MA,MA,,,,,AS_CCT,AS_CCT,ELSS1,AC,AC,,ELSS,ELSS,MA,MA,,,,,FR,ELSS,ELSS,,,,,,,MA,MA,,,,
+,2P,2P,2P,,,,,,2P,2P,2P,2P,2P,,2P,2P,,,,PLC EL,PLC EL,,2P,2P,2P,2P,,,2P,2P,2P,2P,2P,,2P,2P,2P,2P,,,,,2P,2P,2P,2G,2G,,2P,2P,2P,2P,,,,,2P,2P,2P,,,,,,,2P,2P,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P2 LA,P2 LA,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+GUO JW,FAM_T,ELSS,ELSS,MENT 1,MENT 1,,ELSS3/LSP P1,ELSS,ELSS,ELSS3/LSP P2,,,ELSS1,,FR,,,ELSS,ELSS,PLC EL12,PLC EL12,ELSS3/LSP P1,,ELSS,ELSS,ELSS3/LSP P2,,,AS_CCT,AS_CCT,ELSS3/LSP P2,,,,ELSS3/LSP P1,ELSS,ELSS,,ELSS,ELSS,ELSS,,AS_CCT,AS_CCT,ELSS3/LSP P1,,ELSS3/LSP P2,,ELSS,ELSS,,,ELSS,ELSS,MENT 1,,FR,ELSS3/LSP P2,ELSS,ELSS,ELSS,,,,ELSS1,ELSS3/LSP P1,ELSS,ELSS,,,
+,2F,1J,1J,STEM EL,STEM EL,,1C;1F;1J;1P;1W,2F,2F,2H;2F;2W,,,1J,,2F,,,1J,1J,PLC EL,PLC EL,1C;1F;1J;1P;1W,,2F,2F,2H;2F;2W,,,2F,2F,2H;2F;2W,,,,1C;1F;1J;1P;1W,1J,1J,,2F,2F,2F,,2F,2F,1C;1F;1J;1P;1W,,2H;2F;2W,,2F,2F,,,1J,1J,STEM EL,,2F,2H;2F;2W,2F,2F,2F,,,,1J,1C;1F;1J;1P;1W,1J,1J,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+HEFANG,FAM_T,PE HE,PE HE,,PE HE,PE HE,,,,,,,,,FR,PE HE,PE HE,PE HE,PE HE,,,,,PE HE,PE HE,,,,AS_CCT,AS_CCT,PE HE,PE HE,PE HE,PE HE,,,,PE HE,PE HE,PE HE,PE HE,,AS_CCT,AS_CCT,PE HE,PE HE,PE HE,PE HE,,,,,PE HE,PE HE,,,FR,PE HE,PE HE,PE HE,PE HE,,PLC PEAE,PLC PEAE,,PE HE,PE HE,PE HE,PE HE,,
+,3P,4C,4C,,3H,3H,,,,,,,,,3P,4F,4F,4G,4G,,,,,4J,4J,,,,3P,3P,4F,4F,3H,3H,,,,4H,4H,4G,4G,,3P,3P,4P,4P,3G,3G,,,,,4C,4C,,,3P,4J,4J,4H,4H,,PLC PEAE,PLC PEAE,,4P,4P,3G,3G,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+HO YK,,CL/BCL,CL/BCL,BS,BS,BT,,,BS,BS,,CL,CL,,,CL/BCL,CL/BCL,BT,,,,CL,CL,Prayer,,,,,,,BT,BT,CL,CL,,,,CL/BCL,CL/BCL,,,,,,,,CL/BCL,CL/BCL,,CL,CL,BT,PLC CL56,PLC CL56,,,,,,CL/BCL,CL/BCL,BT,,,,Prayer,,CL,CL,,
+,,5P,5P,5P,5P,5F;5J,,,5C,5C,,5C,5C,,,5P,5P,6C;6J,,,,5C,5C,,,,,,,,5G;5H,6F;6P,5C,5C,,,,5P,5P,,,,,,,,5P,5P,,5C,5C,5C;5P,PLC CL,PLC CL,,,,,,5P,5P,6G;6H,,,,,,5C,5C,,
+,,,,CL VEN 3,CL VEN 3,,,,CL VEN 3,CL VEN 3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+HUANG M,FAM_T,PE HE,PE HE,PE HE,PE HE,,,,,,,PE HE,PE HE,,FR,,PE HE,PE HE,PE HE,PE HE,,,,,PE HE,PE HE,,,AS_CCT,AS_CCT,PE HE,PE HE,PE HE,PE HE,,,,PE HE,PE HE,PE HE,PE HE,,AS_CCT,AS_CCT,PE HE,PE HE,PE HE,PE HE,,,,,PE HE,PE HE,,,FR,PE HE,PE HE,,PE HE,PE HE,PLC PEAE,PLC PEAE,,,,PE HE,PE HE,,
+,3J,3P,3P,5F,5F,,,,,,,5G,5G,,3J,,5G,5G,3J,3J,,,,,5P,5P,,,3J,3J,5P,5P,5J,5J,,,,5F,5F,5H,5H,,3J,3J,5H,5H,5C,5C,,,,,5J,5J,,,3J,3J,3J,,5C,5C,PLC PEAE,PLC PEAE,,,,3P,3P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+HUM JUST,FAM_T,XMA,,,MA/FMA,MA/FMA,PLC MA56,PLC MA56,,,MA,MA,,,FR,Relief,,XMA,MA,MA,,,MA/FMA,MA/FMA,,,,,AS_CCT,AS_CCT,,,,,,MA,MA,MA/FMA,MA/FMA,Exco,Exco,,AS_CCT,AS_CCT,MA/FMA,MA/FMA,,,,MA,MA,,,,,,FR,,,MA/FMA,MA/FMA,,,MA,MA,XMA/XFMA,XMA/XFMA,,,,
+,6J,6F,,,6H;6J;6P,6H;6J;6P,PLC MA,PLC MA,,,6F,6F,,,6J,,,6F,6F,6F,,,6H;6J;6P,6H;6J;6P,,,,,6J,6J,,,,,,6F,6F,6H;6J;6P,6H;6J;6P,,,,6J,6J,6H;6J;6P,6H;6J;6P,,,,6F,6F,,,,,,6J,,,6H;6J;6P,6H;6J;6P,,,6F,6F,6H;6J;6P,6H;6J;6P,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+IAHMAD,FAM_T,PLC EL34,PLC EL34,,MA/FMA,MA/FMA,EL,EL,EL,,,,,,FR,,,,,,EL,EL,MA/FMA,MA/FMA,,,,,AS_CCT,AS_CCT,,EL,EL,,,,,MA/FMA,MA/FMA,Exco,Exco,,AS_CCT,AS_CCT,MA/FMA,MA/FMA,,,,EL,EL,EL,,,,,FR,,,MA/FMA,MA/FMA,,EL,EL,,XMA/XFMA,XMA/XFMA,BS,BS,,
+,6P,PLC EL,PLC EL,,6H;6J;6P,6H;6J;6P,4J,4J,4J,,,,,,6P,,,,,,4J,4J,6H;6J;6P,6H;6J;6P,,,,,6P,6P,,4J,4J,,,,,6H;6J;6P,6H;6J;6P,,,,6P,6P,6H;6J;6P,6H;6J;6P,,,,4J,4J,4J,,,,,6P,,,6H;6J;6P,6H;6J;6P,,4J,4J,,6H;6J;6P,6H;6J;6P,4J,4J,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P4 LA,P4 LA,,
+
+JAO PJ,FAM_T,AC,AC,AC,AC,,,,,AC,AC,,,,FR,AC,AC,,,,,AC,AC,,AC,AC,,,AS_CCT,AS_CCT,AC,AC,,,,AC,AC,,,AC,AC,,AS_CCT,AS_CCT,AC,AC,,,,AC,AC,,AC,AC,,,FR,AC,AC,AC,AC,,PLC PEAE,PLC PEAE,,AC,AC,AC,AC,,
+,2C,1G,1G,2F,2F,,,,,1H,1H,,,,2C,3C,3C,,,,,3F,3F,,4F,4F,,,2C,2C,5F,5F,,,,2C,2C,,,4C,4C,,2C,2C,5P,5P,,,,3P,3P,,1F,1F,,,2C,4G,4G,1C,1C,,PLC PEAE,PLC PEAE,,3J,3J,2P,2P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,D ART,D ART,,,,,,,,,,,,,D ART,D ART,,,,,,,,,,,,,,,,,,,,,,,,,
+
+JUAY CJ,FAM_T,MA,MA,MA,MA,,,,,,,SC,SC,,FR,MA,MA,,,PLC MA34,PLC MA34,,MA,MA,,,,,AS_CCT,AS_CCT,SC,SC,,,MA,MA,MA,MA,,,,,AS_CCT,AS_CCT,MA,MA,,,MA,MA,MA,,SC,SC,,,FR,SC,SC,MA,MA,,,,MA,MA,MA,,,,
+,4G,4G,4G,4J,4J,,,,,,,3J,3J,,4G,4J,4J,,,PLC MA,PLC MA,,4G,4G,,,,,4G,4G,3P,3P,,,4J,4J,4G,4G,,,,,4G,4G,4J,4J,,,4G,4G,4G,,3J,3J,,,4G,3P,3P,4G,4G,,,,4J,4J,4J,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+KOH PAT,FAM_T,CME,CL1,,,,CME,CL,CL,CL,CL,,,,FR,,,,,,,CL,CL,CL,CME,CME,,,AS_CCT,AS_CCT,BS,BS,,PLC CL34,PLC CL34,,,CL,CL,CL,CL,,AS_CCT,AS_CCT,,CL,CL,,CME,,CL,CL,,CME,,,FR,,,,,,CL1,CL,CL,CL,CL,,,,
+,1F,4P,1F,,,,4F,1F,1F,4C,4C,,,,1F,,,,,,,4C,1F,1F,4H,4P,,,1F,1F,1F,1F,,PLC CL,PLC CL,,,4C,4C,1F,1F,,1F,1F,,1F,1F,,4H,,4C,4C,,4F,,,1F,,,,,,1F,1F,1F,4C,4C,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 1,CL VEN 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LAI SL,FAM_T,Relief,,XCL,CL,CL,,,,XCL/XFCL,XCL/XFCL,CL/BCL,CL/BCL,,FR,CL,CL,,,,,,,XCL,CL/BCL,CL/BCL,,,AS_CCT,AS_CCT,,,CL,CL,,CL/BCL,CL/BCL,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,,,CL,CL,,CL/BCL,CL/BCL,CME,PLC CL56,PLC CL56,,,FR,CME,,,,,,CL,CL,,,CL/BCL,CL/BCL,,
+,5H,,,6C,6C,6C,,,,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,,5H,6C,6C,,,,,,,6C,6G;6H;6J;6P,6G;6H;6J;6P,,,5H,5H,,,6C,6C,,6G;6H;6J;6P,6G;6H;6J;6P,,,,,,5H,5H,,,6C,6C,,6G;6H;6J;6P,6G;6H;6J;6P,5H,PLC CL,PLC CL,,,5H,5H,,,,,,6C,6C,,,6G;6H;6J;6P,6G;6H;6J;6P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LAU PX,FAM_T,MA,MA,AC,AC,,PLC MA56,PLC MA56,,MA,MA,,,,FR,MA,MA,AC,AC,,AC,AC,MA,MA,,,,,AS_CCT,AS_CCT,MA,MA,,,,,,AC,AC,MA,MA,,AS_CCT,AS_CCT,MA,MA,,,,,MA,MA,,,,,FR,,,AC,AC,,,MA,MA,,MA,MA,,,
+,5C,5C,5C,1J,1J,,PLC MA,PLC MA,,5J,5J,,,,5C,5C,5C,5C,5C,,2H,2H,5J,5J,,,,,5C,5C,5C,5C,,,,,,1W,1W,5J,5J,,5C,5C,5C,5C,,,,,5J,5J,,,,,5C,,,1P,1P,,,5C,5C,,5J,5J,,,
+,,,,,,,,,,,,,,,,,,D ART,D ART,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LEE HI,FAM_T,MA,MA,MA,,,,,MA,MA,EL,EL,EL,,FR,,,MA,MA,PLC MA34,PLC MA34,,EL,EL,MA,MA,,,AS_CCT,AS_CCT,MA,MA,,,,,,MA,MA,EL,EL,,AS_CCT,AS_CCT,MA,MA,,,,EL,EL,,MA,MA,,,FR,MA,MA,MA,,,,,EL,EL,EL,MA,MA,,
+,5P,3F,3F,3F,,,,,3H,3H,5P,5P,5P,,5P,,,3F,3F,PLC MA,PLC MA,,5P,5P,3H,3H,,,5P,5P,3H,3H,,,,,,3F,3F,5P,5P,,5P,5P,3H,3H,,,,5P,5P,,3F,3F,,,5P,3H,3H,3H,,,,,5P,5P,5P,3F,3F,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LEE LL,FAM_T,CL,CL,,CL,CL,,CL,,,,,XCL,,FR,,,CL,CL,,,XCL,CL,CL,,,,,AS_CCT,AS_CCT,CL,CL,CL,CL,,BS,BS,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,CL,CL,,PLC CL12,PLC CL12,,,,CL,CL,,,FR,,,,,,CL,CL,CL,CL,CL,,,,
+,6F,1P,1P,,6F,6F,,1P,,,,,6F,,6F,,,1P,1P,,,6F,6F,6F,,,,,6F,6F,1P,1P,6F,6F,,1P,1P,,,,,,6F,6F,6F,6F,,PLC CL,PLC CL,,,,1P,1P,,,6F,,,,,,1P,1P,1P,6F,6F,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 1,CL VEN 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LEE MARY,,,,ELSS,ELSS,,ELSS1,ELSS1,,ELSS3/LSP P2,ELSS,ELSS,ELSS,,,ELSS,ELSS,ELSS1,,PLC EL12,PLC EL12,,,ELSS,ELSS,ELSS3/LSP P2,,,,,ELSS3/LSP P2,ELSS,ELSS,,,,ELSS,ELSS,ELSS1,,,,,,,,ELSS3/LSP P2,,ELSS,ELSS,ELSS,ELSS,,ELSS1,,,,ELSS3/LSP P2,,,ELSS1,,ELSS,ELSS,ELSS,,ELSS,ELSS,ELSS,,
+,,,,2G,2G,,2G,2G,,2H;2F;2W,2H,2H,2H,,,2G,2G,2G,,PLC EL,PLC EL,,,2H,2H,2H;2F;2W,,,,,2H;2F;2W,2H,2H,,,,2G,2G,2G,,,,,,,,2H;2F;2W,,2H,2H,2G,2G,,2G,,,,2H;2F;2W,,,2G,,2H,2H,2H,,2G,2G,2G,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LEE NOEL,,PLC EL34,PLC EL34,ELSS,ELSS,,ELSS3/LSP P1,,EL,EL,EL,BS,BS,,,EL,EL,,,,ELSS,ELSS3/LSP P1,,,ELSS,ELSS,,,,,EL,EL,ELSS1,,ELSS3/LSP P1,ELSS,ELSS,,,,,,,,ELSS3/LSP P1,EL,EL,,,,ELSS,ELSS,,,,,,,,ELSS,ELSS,,EL,EL,,ELSS3/LSP P1,,,EL1,,
+,,PLC EL,PLC EL,1F,1F,,1C;1F;1J;1P;1W,,4G,4G,4G,4G,4G,,,4G,4G,,,,1F,1C;1F;1J;1P;1W,,,1F,1F,,,,,4G,4G,1F,,1C;1F;1J;1P;1W,1F,1F,,,,,,,,1C;1F;1J;1P;1W,4G,4G,,,,1F,1F,,,,,,,,1F,1F,,4G,4G,,1C;1F;1J;1P;1W,,,4G,,
+,,,,,,,,,,,,P4 LA,P4 LA,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LEE REG,FAM_T,PLC EL34,PLC EL34,MENT 1,MENT 1,,EL,EL,EL,MENT 2,MENT 2,,,,FR,,,EL,EL,,,,,Prayer,,BT,,,AS_CCT,AS_CCT,BS,BS,,MENT 2,,,,Prayer,EL,EL,EL,,AS_CCT,AS_CCT,,,BT,,EL,EL,BT,Prayer,BT,BT,MENT 1,,FR,,BS,BS,BT,,EL,EL,BS,BS,,,BT,,
+,4P,PLC EL,PLC EL,STEM EL,STEM EL,,4P,4P,4P,STEM EL,STEM EL,,,,4P,,,4P,4P,,,,,,,4G;4H,,,4P,4P,4P,4P,,STEM EL,,,,,4P,4P,4P,,4P,4P,,,4J;4P,,4P,4P,2C;2F,,2G;2H,2J;2P;2W,STEM EL,,4P,,2G,2G,4C;4F,,4P,4P,2W,2W,,,1J;1P;1W,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P4 LA,P4 LA,,,,,,,,,,,,,,,,,,,,,,,,,,,P2 LA,P2 LA,,,,,P2 LA,P2 LA,,,,,
+
+LEE SF,,CL,CL,CL,CL,,,CL,CL,,,,,,,,,CL,CL,,CL,CL,CL,,CL,CL,,,,,CL,CL,CL,CL,,CL,CL,,,,,,,,CL,CL,CL,CL,,CL,CL,,,,,,,CL,CL,BS,BS,CL,,,,,CL,CL,CL,,
+,,2W,2W,3P,3P,,,5J,5J,,,,,,,,,3P,3P,,2W,2W,2W,,5J,5J,,,,,5J,5J,3P,3P,,2W,2W,,,,,,,,5J,5J,3P,3P,,2W,2W,,,,,,,5J,5J,3P,3P,3P,,,,,2W,2W,2W,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 2,CL VEN 2,,,,,,,,,,
+
+LEEAGNES,FAM_T,PE HE,PE HE,PE HE,PE HE,,,,,,PE HE,PE HE,,,FR,PE HE,PE HE,PE HE,PE HE,,,,,,PE HE,PE HE,,,AS_CCT,AS_CCT,,,PE HE,PE HE,,,,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,PE HE,PE HE,,,,,,,,,,,FR,PE HE,PE HE,PE HE,PE HE,,PLC PEAE,PLC PEAE,,PE HE,PE HE,PE HE,PE HE,,
+,1C,1C,1C,2P,2P,,,,,,3F,3F,,,1C,1C,1C,2F,2F,,,,,,2J,2J,,,1C,1C,,,3C,3C,,,,,,,,,1C,1C,3F,3F,,,,,,,,,,,1C,2J,2J,2P,2P,,PLC PEAE,PLC PEAE,,2F,2F,3C,3C,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LI HUILI,FAM_T,CL,CL,,CME,,CME,,CL1,CME,CL,CL,CL,,FR,CME,,CL,CL,,CL,CL,CME,,,,,,AS_CCT,AS_CCT,,,CME,,,CME,CL,CL,,CL,CL,,AS_CCT,AS_CCT,,,CL,PLC CL12,PLC CL12,CL,CL,,CME,,,,FR,CL,CL,CME,,,CL,CL,,,,CME,,,
+,4H,4H,4H,,1W,,4C,,2J,1C,2J,2J,2J,,4H,1W,,2J,2J,,4H,4H,4J,,,,,,4H,4H,,,4G,,,1C,2J,2J,,4H,4H,,4H,4H,,,4H,PLC CL,PLC CL,2J,2J,,4J,,,,4H,4H,4H,4C,,,2J,2J,,,,4G,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LI YANZH,FAM_T,CL,CL,,,,,CL,CL,Prayer,BS,BS,,,FR,,CME,CL,CL,,CL1,CL,CL,,,,,,AS_CCT,AS_CCT,,,CME,,,,CL1,CL,CL,CL,CL,,AS_CCT,AS_CCT,CL,CL,,PLC CL12,PLC CL12,,CME,Prayer,CL,CL,,,FR,,BS,BS,CL,CL,,CL,CL,BT,BT,,CME,,
+,5F,5F,5F,,,,,1C,1C,,1C,1C,,,5F,,1G,1C,1C,,1C,5F,5F,,,,,,5F,5F,,,1G,,,,1C,1C,1C,5F,5F,,5F,5F,5F,5F,,PLC CL,PLC CL,,1H,,1C,1C,,,5F,,5F,5F,5F,5F,,1C,1C,1G;1H,1C;1F,,1H,,
+,,,,,,,,,,,CL VEN 1,CL VEN 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 3,CL VEN 3,,,,,,,,,,,
+
+LIM CAE,FAM_T,SC,SC,SC,,,,SC,SC,SC,SC,,,,FR,Relief,,XSC,SC,SC,SC,SC,,,SC,SC,,,AS_CCT,AS_CCT,SC,,,,,SC,SC,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,,,SC,SC,PLC SC,PLC SC,,SC,SC,XSC,,,FR,SC,SC,XSC,XSC,,,,,SC,SC,,,,
+,3G,3G,3G,6P,,,,6G,6G,4P,4P,,,,3G,,,6P,6P,6P,4P,4P,,,4C,4C,,,3G,3G,6P,,,,,3G,3G,,,,,,3G,3G,,,6G,6G,PLC SC,PLC SC,,6P,6P,6P,,,3G,4C,4C,6G,6G,,,,,6G,6G,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LIM LK,FAM_T,,CL,CL,CL,,,CME,CME,CL,CL,,,,FR,CL,CL,,CL,CL,CME,,CL,,,,,,AS_CCT,AS_CCT,,BS,BS,,,,,CL,CL,CL,CL,,AS_CCT,AS_CCT,,,,PLC CL12,PLC CL12,CME,,CL,CL,CL,,,FR,,CL,CL,CL,CME,,CME,CME,,CME,CL,CL,,
+,2H,,2H,2H,2H,,,5P,2C,5G,5G,,,,2H,2H,2H,,5G,5G,2P,,2H,,,,,,2H,2H,,5G,5G,,,,,5G,5G,2H,2H,,2H,2H,,,,PLC CL,PLC CL,5J,,5G,5G,2H,,,2H,,2H,2H,2H,5P,,5J,2P,,2C,5G,5G,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 3,CL VEN 3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LIM NL,,MU,,,,,,MU,MU,MU,,,MU,,,MU,,,MU,MU,MU,MU,,MU,,,,,,,MU,MU,MU,,MU,MU,MU,MU,,,MU,,,,MU,,MU,,,MU,,MU,MU,MU,,,,MU,MU,,,,MU,MU,MU,MU,MU,,,,
+,,1F,,,,,,5G,1P,1G,,,1W,,,2J,,,2P,5J,1J,5P,,2W,,,,,,,1W,5H,1P,,2W,3C,3C,1H,,,5C,,,,2J,,1C,,,1J,,5F,2P,1H,,,,1G,1F,,,,1C,3F,3F,3G,3G,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LIM QNIN,FAM_T,CL,CL,,,,,CL,CL,CME,CME,,CME,,FR,CME,CME,,,,CL,CL,CL,,CL,CL,,,AS_CCT,AS_CCT,CL,CL,,CME,,,CL,CL,,CME,,,AS_CCT,AS_CCT,CL,CL,,PLC CL12,PLC CL12,,,CL,CL,CL,,,FR,CL,CL,,,,,CME,BS,BS,,CL,CL,,
+,5J,2F,2F,,,,,5J,5J,2J,5C,,5F,,5J,5G,2J,,,,2F,2F,2F,,5J,5J,,,5J,5J,5J,5J,,5G,,,2F,2F,,5C,,,5J,5J,5J,5J,,PLC CL,PLC CL,,,2F,2F,2F,,,5J,5J,5J,,,,,5F,5J,5J,,2F,2F,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 3,CL VEN 3,,,,,
+
+LIM REBE,FAM_T,PLC MA12,PLC MA12,MA,MA,,,,MA,MA1/LSMP1,,MA,MA,,FR,MA,MA1/LSMP1,,,,MA,MA,MA,MA,,,,,AS_CCT,AS_CCT,MA,MA,MA1/LSMP1,,MA,MA,,,,,,,AS_CCT,AS_CCT,MA,,MA1,,MA,,MA,MA,,,,,FR,,MA1,,,,MA1/LSMP1,MA,MA,MA,,,,,
+,2G,PLC MA,PLC MA,1G,1G,,,,1J,1J,,2G,2G,,2G,1J,1J,,,,2G,2G,1G,1G,,,,,2G,2G,1G,1G,1J,,2G,2G,,,,,,,2G,2G,2G,,1G,,1G,,1J,1J,,,,,2G,,1G,,,,1J,1J,2G,2G,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LIM SK,FAM_T,,,CME,,CME,CME,CME,,CL,CL,CL,,,FR,CL,CL,,,CME,,CME,,CL,CL,,,,AS_CCT,AS_CCT,CL,CL,,PLC CL34,PLC CL34,CME,,BS,BS,CL,CL,,AS_CCT,AS_CCT,CME,,CL,CL,,CL,,,,,,,FR,,,,CL,CL,,CL,CL,BS,BS,,,,
+,3G,,,3H,,3C,2H,3P,,3F,3G,3G,,,3G,3G,3G,,,3P,,3H,,3F,3F,,,,3G,3G,3G,3G,,PLC CL,PLC CL,2H,,3G,3G,3F,3F,,3G,3G,3C,,3F,3F,,3G,,,,,,,3G,,,,3F,3F,,3G,3G,3F,3F,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 2,CL VEN 2,,,,,,,,,,,,,,,,,,,,,,,,,,,CL VEN 2,CL VEN 2,,,,
+
+LIMJOHN,FAM_T,,SC,SC,SC,SC,,SC,SC,Prayer,,,,,FR,,SC,SC,SC,SC,,,,,,,,,AS_CCT,AS_CCT,,,XSC,XSC,,SC,SC,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,,,SC,SC,PLC SC,PLC SC,,SC,SC,XSC,,,FR,SC,SC,XSC,,,,SC,SC,Prayer,SC,,,,
+,3F,,6F,6F,3F,3F,,6H,6H,,,,,,3F,,6H,6H,5F,5F,,,,,,,,,3F,3F,,,6H,6H,,3F,3F,,,,,,3F,3F,,,5F,5F,PLC SC,PLC SC,,6F,6F,6F,,,3F,6F,6F,6F,,,,6H,6H,,5F,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LIMLAURA,FAM_T,EL,EL,EL,,,,,,,,EL,EL,,FR,EL,EL,,,,,SS,,EL,EL,EL,,,AS_CCT,AS_CCT,,,,,,EL,EL,EL,,EL,EL,,AS_CCT,AS_CCT,,,EL,EL,,EL,EL,,,SS,,,FR,SS,,EL1,EL,EL,,EL,EL,PLC EL56,PLC EL56,,SS,,
+,5G,5G,5G,5G,,,,,,,,5J,5J,,5G,5J,5J,,,,,5J,,5G,5G,5G,,,5G,5G,,,,,,5J,5J,5J,,5G,5G,,5G,5G,,,5J,5J,,5G,5G,,,5G,,,5G,5G,,5J,5J,5J,,5G,5G,PLC EL,PLC EL,,5J,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LOH ESME,,ELSS,ELSS,ELSS,,,ELSS3/LSP P1,EL,EL,EL,,NA,NA,,,,,EL,EL,EL,,ELSS3/LSP P1,ELSS,ELSS,,NA,NA,,,,,,EL,EL,ELSS3/LSP P1,ELSS,ELSS,,,NA,NA,,,,ELSS3/LSP P1,ELSS,ELSS,,ELSS,,EL,EL,,NA,NA,,,EL,EL,ELSS,ELSS,,,,,ELSS3/LSP P1,,NA,NA,,
+,,1W,1W,1W,,,1C;1F;1J;1P;1W,3G,3G,3G,,,,,,,,3G,3G,3G,,1C;1F;1J;1P;1W,1W,1W,,,,,,,,,3G,3G,1C;1F;1J;1P;1W,1W,1W,,,,,,,,1C;1F;1J;1P;1W,1W,1W,,1W,,3G,3G,,,,,,3G,3G,1W,1W,,,,,1C;1F;1J;1P;1W,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LOH SH,,PLC MA12,PLC MA12,,,,,MA,MA,MA,,MA,MA,,,MA,MA,MA,MA,,,MA,MA,MA,,,,,,,MA,MA,,,,MA,MA,MA,MA,,,,,,MA,MA,,,MA,MA,,,MA,MA,,,,MA,MA,MA,,,,MA,MA,,,MA,MA,,
+,,PLC MA,PLC MA,,,,,3C,3C,1F,,3P,3P,,,1F,1F,3C,3C,,,3P,3P,3P,,,,,,,3C,3C,,,,3P,3P,1F,1F,,,,,,3P,3P,,,1F,1F,,,3C,3C,,,,3C,3C,3C,,,,3P,3P,,,1F,1F,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LUI YK,FAM_T,SC,SC,XSC,,,SC,SC,,SC,SC,SC,SC,,FR,SC,SC,,SC,SC,,SC,SC,,,,,,AS_CCT,AS_CCT,,,,,SC,SC,,XSC,XSC,SC,SC,,AS_CCT,AS_CCT,,,SC,SC,PLC SC,PLC SC,,XSC,,,,,FR,SC,SC,,SC,SC,,,SC,SC,,SC,SC,,
+,6J,6J,6J,6J,,,4G,4G,,6C,6C,3C,3C,,6J,4H,4H,,6J,6J,,6C,6C,,,,,,6J,6J,,,,,4G,4G,,6C,6C,3H,3H,,6J,6J,,,3H,3H,PLC SC,PLC SC,,6J,,,,,6J,6J,6J,,3C,3C,,,4H,4H,,6C,6C,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+LUM HM,L Patrol,CL,CL,,,,,,,XCL/XFCL,XCL/XFCL,CL/BCL,CL/BCL,,L Patrol,CL,CL,,,Patrol,,BS,BS,,CL/BCL,CL/BCL,,,L Patrol,L Patrol,,CL,CL,,CL,CL/BCL,CL/BCL,Exco,Exco,Exco,Exco,,L Patrol,,,CL,CL,Patrol,,CL/BCL,CL/BCL,,PLC CL56,PLC CL56,,,Assembly,Assembly,,,,,CL,CL,CL,,,CL/BCL,CL/BCL,,
+,,1H,1H,,,,,,,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,,,1H,1H,,,,,1H,1H,,6G;6H;6J;6P,6G;6H;6J;6P,,,,,,1H,1H,,1H,6G;6H;6J;6P,6G;6H;6J;6P,,,,,,,,,1H,1H,,,6G;6H;6J;6P,6G;6H;6J;6P,,PLC CL,PLC CL,,,,,,,,,1H,1H,1H,,,6G;6H;6J;6P,6G;6H;6J;6P,,
+,,,,,,,,,,,,,,,,,,,,,,CL VEN 1,CL VEN 1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+MUNIRAH,FAM_T,ELSS,ELSS,ELSS,ELSS1,,,,,MA,MA,MA,,,FR,,MA,MA,,PLC EL12,PLC EL12,,ELSS,ELSS,,,,,AS_CCT,AS_CCT,,MA,MA,,ELSS,ELSS,,,BS,BS,ELSS1,,AS_CCT,AS_CCT,,ELSS,ELSS,,ELSS1,MA,,,MENT 2,MENT 2,MENT 2,,FR,,,ELSS1,ELSS1,,MA,,ELSS,ELSS,ELSS,,,,
+,2J,2J,2J,2J,2J,,,,,1W,1W,1W,,,2J,,1W,1W,,PLC EL,PLC EL,,2J,2J,,,,,2J,2J,,1W,1W,,2J,2J,,,2J,2J,2J,,2J,2J,,2J,2J,,2J,1W,,,STEM SC,STEM SC,STEM SC,,2J,,,2J,2J,,1W,,2J,2J,2J,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P2 LA,P2 LA,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+NG CINDY,,,,,,Patrol,,CL,CL,CL,CL,,,,Latecome,BS,BS,,CL,CL,,,CL1,CL,CL,CL,,,,,CL,CL,,Patrol,,CL,CL,Exco,Exco,Exco,Exco,,Latecome,,,,CL,CL,CL,CL,,,PLC CL56,PLC CL56,,,Latecome,Latecome,,,,Patrol,CL,CL,,,CL,CL,,,
+,,,,,,,,5H,5H,2G,2G,,,,,5H,5H,,5H,5H,,,2G,2G,2G,2G,,,,,2G,2G,,,,5H,5H,,,,,,,,,,5H,5H,2G,2G,,,PLC CL,PLC CL,,,,,,,,,2G,2G,,,5H,5H,,,
+,,,,,,,,,,,,,,,,CL VEN 3,CL VEN 3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+NG JADE,FAM_T,PLC EL34,PLC EL34,AC,AC,,,EL,EL,EL,EL,,,,FR,EL,EL,AC,AC,,,,,EL,EL,EL,,,AS_CCT,AS_CCT,,EL,EL,EL,,,,EL,EL,,,,AS_CCT,AS_CCT,,EL,EL,EL,,EL,EL,,AC,AC,,,FR,EL,EL,EL,,,,EL,EL,,,,,,
+,3F,PLC EL,PLC EL,5J,5J,,,3F,3F,3C,3C,,,,3F,3F,3F,3H,3H,,,,,3C,3C,3C,,,3F,3F,,3F,3F,3F,,,,3C,3C,,,,3F,3F,,3C,3C,3C,,3F,3F,,3G,3G,,,3F,3F,3F,3F,,,,3C,3C,,,,,,
+,,,,D ART,D ART,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+NG PH,L Patrol,,,,,,CL,CL,,XCL/XFCL,XCL/XFCL,CL/BCL,CL/BCL,,L Patrol,,CL,CL,,CME,,CL1,,,CL/BCL,CL/BCL,,,Assembly,Assembly,CME,,,,,CL/BCL,CL/BCL,,CL,CL,CL,,L Patrol,,,CL,CL,,,CL/BCL,CL/BCL,,PLC CL56,PLC CL56,,,L Patrol,L Patrol,,,,,CL,CL,,,,CL/BCL,CL/BCL,,
+,,,,,,,2P,2P,,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,,,,2P,2P,,3F,,2P,,,6G;6H;6J;6P,6G;6H;6J;6P,,,,,3F,,,,,6G;6H;6J;6P,6G;6H;6J;6P,,2P,2P,2P,,,,,2P,2P,,,6G;6H;6J;6P,6G;6H;6J;6P,,PLC CL,PLC CL,,,,,,,,,2P,2P,,,,6G;6H;6J;6P,6G;6H;6J;6P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+ONG EH,NA,NA,NA,NA,NA,NA,NA,NA,NA,XCL/XFCL,XCL/XFCL,CL/BCL,CL/BCL,,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,CL/BCL,CL/BCL,,,NA,NA,NA,NA,NA,NA,,CL/BCL,CL/BCL,,,,,,NA,NA,NA,,,,,CL/BCL,CL/BCL,,,,,,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,,CL/BCL,CL/BCL,,
+,,,,,,,,,,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,6G;6H;6J;6P,,,,,,,,,,,,6G;6H;6J;6P,6G;6H;6J;6P,,,,,,,,,,6G;6H;6J;6P,6G;6H;6J;6P,,,,,,,,,,,,,6G;6H;6J;6P,6G;6H;6J;6P,,,,,,,,,,,,,,,,,6G;6H;6J;6P,6G;6H;6J;6P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+ONG EIL,FAM_T,PLC EL34,PLC EL34,EL,EL,,,BS,BS,EL,EL,MU,,,FR,,EL,EL,EL,,,,EL,EL,,MU,,,AS_CCT,AS_CCT,EL,EL,MU,,EL,EL,MU,,,BS,BS,,AS_CCT,AS_CCT,EL,EL,,,,,EL,EL,EL,,,,FR,,,,,,EL,EL,EL,,EL,EL,EL,,
+,4C,PLC EL,PLC EL,4C,4C,,,4C,4C,4F,4F,4P,,,4C,,4C,4C,4C,,,,4F,4F,,4J,,,4C,4C,4C,4C,4P,,4F,4F,4J,,,4F,4F,,4C,4C,4C,4C,,,,,4F,4F,4F,,,,4C,,,,,,4C,4C,4C,,4F,4F,4F,,
+,,,,,,,,P4 LA,P4 LA,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P4 LA,P4 LA,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+ONGCARIS,Latecome,Latecome,,,MA,MA,PLC MA56,PLC MA56,,MA,MA,AC,AC,,Latecome,Latecome,,,,,Patrol,MA,MA,,MA,MA,,,Latecome,Latecome,,,MA,MA,,MA,MA,Exco,Exco,Exco,Exco,,Latecome,Latecome,,,MA,MA,Patrol,,,,MA,MA,,,Latecome,Latecome,AC,AC,MA,MA,Patrol,,MA,MA,,,,,
+,,,,,5G,5G,PLC MA,PLC MA,,5H,5H,5H,5H,,,,,,,,,5G,5G,,5H,5H,,,,,,,5H,5H,,5G,5G,,,,,,,,,,5G,5G,,,,,5H,5H,,,,,5G,5G,5G,5G,,,5H,5H,,,,,
+,,,,,,,,,,,,D ART,D ART,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,D ART,D ART,,,,,,,,,,,
+
+PATIL I,FAM_T,,,EL,EL,EL,,EL,EL,,,,,,FR,,,,EL,EL,,EL,EL,EL,,,,,AS_CCT,AS_CCT,EL,EL,,,,,,XEL,XEL,EL,EL,,AS_CCT,AS_CCT,EL,EL,,,,XEL,XEL,EL,EL,EL,,,FR,EL,EL,EL,,,,EL,EL,PLC EL56,PLC EL56,,,,
+,6C,,,6G,6G,6G,,6C,6C,,,,,,6C,,,,6C,6C,,6G,6G,6G,,,,,6C,6C,6G,6G,,,,,,6G,6G,6C,6C,,6C,6C,6G,6G,,,,6C,6C,6C,6C,6C,,,6C,6C,6C,6C,,,,6G,6G,PLC EL,PLC EL,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+PHOON CW,FAM_T,,,MA,MA,MA,,SS,EL,EL,EL,,,,FR,EL,EL,SS,,PLC MA34,PLC MA34,SS,MA,MA,,SS,,,AS_CCT,AS_CCT,,,,,,,,EL,EL,MA,MA,,AS_CCT,AS_CCT,MA,MA,,,,SS,,EL,EL,EL,,,FR,,,MA,MA,,,,,EL,EL,,SS,,
+,3P,,,3G,3G,3G,,5C,3P,3P,3P,,,,3P,3P,3P,5H,,PLC MA,PLC MA,3C,3G,3G,,5C,,,3P,3P,,,,,,,,3P,3P,3G,3G,,3P,3P,3G,3G,,,,3C,,3P,3P,3P,,,3P,,,3G,3G,,,,,3P,3P,,5H,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+RT (PE),,PE HE,PE HE,PE HE,PE HE,,,,,,PE HE,PE HE,,,,PE HE,PE HE,PE HE,PE HE,,,,PE HE,PE HE,PE HE,PE HE,,,,,PE HE,PE HE,,,,,,PE HE,PE HE,PE HE,PE HE,,,,PE HE,PE HE,,,,,PE HE,PE HE,PE HE,PE HE,,,,PE HE,PE HE,PE HE,PE HE,,,,,,,PE HE,PE HE,,
+,,2G,2G,1H,1H,,,,,,1F,1F,,,,1P,1P,1F,1F,,,,1J,1J,1H,1H,,,,,2C,2C,,,,,,1G,1G,2G,2G,,,,1G,1G,,,,,1P,1P,1W,1W,,,,1W,1W,1J,1J,,,,,,,2C,2C,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+S LINDA,L Patrol,SC,SC,,SC,SC,,EL,EL,,,,,,L Patrol,EL,EL,SC,SC,SC,,EL1,,SC,,,,,Assembly,Assembly,,,EL,EL,,SC,SC,,SC,XEL,EL1,,L Patrol,,,,EL,EL,PLC SC,PLC SC,,,,,,,L Patrol,L Patrol,SC,SC,,XEL,,EL,EL,SC,SC,,,,
+,,5J,5J,,5H,5H,,6J;6P,6J;6P,,,,,,,6J;6P,6J;6P,5J,5J,5C,,6J;6P,,5H,,,,,,,,,6J;6P,6J;6P,,5C,5C,,5J,6J;6P,6J;6P,,,,,,6J;6P,6J;6P,PLC SC,PLC SC,,,,,,,,,5H,5H,,6J;6P,,6J;6P,6J;6P,5C,5C,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+SEE CAM,,,,,MA/FMA,MA/FMA,,,,,,,,,,,,,,,,,MA/FMA,MA/FMA,,,,,,,,,,,,,,MA/FMA,MA/FMA,,,,,,MA/FMA,MA/FMA,,,,,,,,,,,,,,MA/FMA,MA/FMA,,,,,XMA/XFMA,XMA/XFMA,,,,
+,,,,,6H;6J;6P,6H;6J;6P,,,,,,,,,,,,,,,,,6H;6J;6P,6H;6J;6P,,,,,,,,,,,,,,6H;6J;6P,6H;6J;6P,,,,,,6H;6J;6P,6H;6J;6P,,,,,,,,,,,,,,6H;6J;6P,6H;6J;6P,,,,,6H;6J;6P,6H;6J;6P,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+SEOWJOSH,FAM_T,PE HE,PE HE,PE HE,PE HE,,,,,,,PE HE,PE HE,,FR,PE HE,PE HE,,,,,,,,PE HE,PE HE,,,AS_CCT,AS_CCT,PE HE,PE HE,PE HE,PE HE,,,,PE HE,PE HE,PE HE,PE HE,,AS_CCT,AS_CCT,PE HE,PE HE,PE HE,PE HE,,,,,PE HE,PE HE,,,FR,PE HE,PE HE,,PE HE,PE HE,PLC PEAE,PLC PEAE,,PE HE,PE HE,PE HE,PE HE,,
+,2W,6P,6P,2W,2W,,,,,,,6C,6C,,2W,6G,6G,,,,,,,,6F,6F,,,2W,2W,6J,6J,6G,6G,,,,2W,2W,6H,6H,,2W,2W,2H,2H,6H,6H,,,,,6J,6J,,,2W,6P,6P,,6C,6C,PLC PEAE,PLC PEAE,,2H,2H,6F,6F,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+SETHI,FAM_T,EL,EL,EL,,,,,MA/FMA,MA/FMA,MA,MA,,,FR,,,MA/FMA,MA/FMA,,MA,EL,EL,,,,,,AS_CCT,AS_CCT,,,MA/FMA,MA/FMA,,,,EL,EL,MA,MA,,AS_CCT,AS_CCT,,MA,MA,,,EL,EL,,MA/FMA,MA/FMA,,,FR,MA,MA,,EL,EL,,EL1,,PLC EL56,PLC EL56,MA/FMA,MA/FMA,,
+,5H,5H,5H,5H,,,,,5P,5P,1P,1P,,,5H,,,5P,5P,,1P,5H,5H,,,,,,5H,5H,,,5P,5P,,,,5H,5H,1P,1P,,5H,5H,,1P,1P,,,5H,5H,,5P,5P,,,5H,1P,1P,,5H,5H,,5H,,PLC EL,PLC EL,5P,5P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+SING SUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TAN CP,FAM_T,CL,CL,BS,BS,,CME,,,,CME,,CL,,FR,,,,,CL,,,CL,CL,CME,,,,AS_CCT,AS_CCT,MENT 2,MENT 2,CME,PLC CL34,PLC CL34,,CL,CL,,CL,CL,,AS_CCT,AS_CCT,,,,,,,CL,CL,CL,CL,,,FR,CME,,CL,CL,,,MENT 2,CME,CL,CL,,,,
+,3C,3C,3C,3C,3C,,2F,,,,2W,,4P,,3C,,,,,3C,,,4P,4P,2W,,,,3C,3C,STEM CL,STEM CL,2G,PLC CL,PLC CL,,4P,4P,,3C,3C,,3C,3C,,,,,,,3C,3C,4P,4P,,,3C,2G,,4P,4P,,,STEM CL,2F,3C,3C,,,,
+,,,,CL VEN 2,CL VEN 2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TAN LEEC,FAM_T,,,ELSS,ELSS,,ELSS3/LSP P1,EL1,,MENT 2,MENT 2,EL,EL,,FR,EL,EL,,,PLC EL12,PLC EL12,ELSS3/LSP P1,ELSS,ELSS,,,,,AS_CCT,AS_CCT,,,ELSS1,MENT 2,ELSS3/LSP P1,,,EL,EL,ELSS,ELSS,,AS_CCT,AS_CCT,ELSS3/LSP P1,ELSS1,,,,EL1,ELSS,ELSS,EL,EL,,,FR,ELSS,ELSS,,,,,,,ELSS3/LSP P1,,EL,EL,,
+,3H,,,1C,1C,,1C;1F;1J;1P;1W,3H,,STEM EL,STEM EL,3H,3H,,3H,3H,3H,,,PLC EL,PLC EL,1C;1F;1J;1P;1W,1C,1C,,,,,3H,3H,,,1C,STEM EL,1C;1F;1J;1P;1W,,,3H,3H,1C,1C,,3H,3H,1C;1F;1J;1P;1W,1C,,,,3H,1C,1C,3H,3H,,,3H,1C,1C,,,,,,,1C;1F;1J;1P;1W,,3H,3H,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TAN PP,,,,,SS,SS,,,MA/FMA,MA/FMA,,,SS,,,SS,,MA/FMA,MA/FMA,PLC MA34,PLC MA34,SS,,,SS,SS,,,,,,,MA/FMA,MA/FMA,,,SS,Exco,Exco,Exco,Exco,,,Relief,,,,,,SS,,SS,MA/FMA,MA/FMA,,,,SS,,,,,,SS,,,,MA/FMA,MA/FMA,,
+,,,,,4H,5P,,,5P,5P,,,3G,,,5F,,5P,5P,PLC MA,PLC MA,3J,,,4G,3G,,,,,,,5P,5P,,,4H,,,,,,,,,,,,,3J,,4G,5P,5P,,,,5F,,,,,,5P,,,,5P,5P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TANLINDA,,,,,,,,EL,EL,,,,,,,EL,EL,,,,,EL1,,,,,,,,,,,EL,EL,,,,,,XEL,EL1,,,,,,EL,EL,,,,,,,,,,,,,,XEL,,EL,EL,,,,,,
+,,,,,,,,6J;6P,6J;6P,,,,,,,6J;6P,6J;6P,,,,,6J;6P,,,,,,,,,,,6J;6P,6J;6P,,,,,,6J;6P,6J;6P,,,,,,6J;6P,6J;6P,,,,,,,,,,,,,,6J;6P,,6J;6P,6J;6P,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TAY CAL,FAM_T,,,,,,,,SC,BS,BS,EL,EL,,FR,,,EL,EL,SC,,,,,,,,,AS_CCT,AS_CCT,EL,EL,EL,,,SC,SC,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,SC,SC,,,PLC SC,PLC SC,,EL,EL,EL,,,FR,SC,SC,,,,,,,SC,SC,EL,EL,,
+,4H,,,,,,,,5G,4H,4H,4H,4H,,4H,,,4H,4H,5P,,,,,,,,,4H,4H,4H,4H,4H,,,5P,5P,,,,,,4H,4H,5G,5G,,,PLC SC,PLC SC,,4H,4H,4H,,,4H,5P,5P,,,,,,,5G,5G,4H,4H,,
+,,,,,,,,,,P4 LA,P4 LA,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TAY YYIN,FAM_T,MA,MA,,MA/FMA,MA/FMA,PLC MA56,PLC MA56,,AC,AC,,,,FR,,,XMA,MA,MA,,,MA/FMA,MA/FMA,,,,,AS_CCT,AS_CCT,,,,,,,,MA/FMA,MA/FMA,MA,MA,,AS_CCT,AS_CCT,MA/FMA,MA/FMA,,,,AC,AC,XMA,MA,MA,,,FR,MA,MA,MA/FMA,MA/FMA,,,,,XMA/XFMA,XMA/XFMA,AC,AC,,
+,6G,6G,6G,,6H;6J;6P,6H;6J;6P,PLC MA,PLC MA,,4J,4J,,,,6G,,,6G,6G,6G,,,6H;6J;6P,6H;6J;6P,,,,,6G,6G,,,,,,,,6H;6J;6P,6H;6J;6P,6G,6G,,6G,6G,6H;6J;6P,6H;6J;6P,,,,4H,4H,6G,6G,6G,,,6G,6G,6G,6H;6J;6P,6H;6J;6P,,,,,6H;6J;6P,6H;6J;6P,4P,4P,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TEO JANE,L Patrol,PLC MA12,PLC MA12,,MA/FMA,MA/FMA,MA,MA,,,,MA,MA,,L Patrol,,,MA,MA,,MA,MA,MA/FMA,MA/FMA,,,,,L Patrol,L Patrol,MA,MA,MA,,,,,MA/FMA,MA/FMA,,,,L Patrol,,MA/FMA,MA/FMA,,,MA,,,MA,MA,,,,,,,MA/FMA,MA/FMA,,MA,MA,,XMA/XFMA,XMA/XFMA,MA,MA,,
+,,PLC MA,PLC MA,,6H;6J;6P,6H;6J;6P,2J,2J,,,,2W,2W,,,,,2W,2W,,2J,2J,6H;6J;6P,6H;6J;6P,,,,,,,2J,2W,2W,,,,,6H;6J;6P,6H;6J;6P,,,,,,6H;6J;6P,6H;6J;6P,,,2W,,,2J,2J,,,,,,,6H;6J;6P,6H;6J;6P,,2W,2W,,6H;6J;6P,6H;6J;6P,2J,2J,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TOH PYEN,,MA,MA,,,,PLC MA56,PLC MA56,,MENT 2,MENT 2,MENT 2,,,,,,,,,,,,,MA,MA,,,,,MA,MA,,,,XMA,XMA,,,,,,,,MA,MA,,,,,,,MENT 1,MENT 1,MENT 1,,,,,,,,,,,MA,MA,,,,
+,,6C,6C,,,,PLC MA,PLC MA,,STEM MA,STEM MA,STEM MA,,,,,,,,,,,,,6C,6C,,,,,6C,6C,,,,6C,6C,,,,,,,,6C,6C,,,,,,,STEM MA,STEM MA,STEM MA,,,,,,,,,,,6C,6C,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TOH WT,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+TOHHAZEL,FAM_T,,,,,,ELSS,ELSS,ELSS,ELSS3/LSP P2,,MA,MA,,FR,ELSS,ELSS,,,PLC MA34,PLC MA34,,MA,MA,,ELSS3/LSP P2,,,AS_CCT,AS_CCT,ELSS3/LSP P2,,,,MA,MA,MA,,,ELSS,ELSS,,AS_CCT,AS_CCT,ELSS,ELSS,ELSS3/LSP P2,,MA,MA,,,MENT 1,MENT 1,MENT 1,,FR,ELSS3/LSP P2,ELSS,ELSS,ELSS,,,,,,,MA,MA,,
+,2W,,,,,,2W,2W,2W,2H;2F;2W,,4C,4C,,2W,2W,2W,,,PLC MA,PLC MA,,4C,4C,,2H;2F;2W,,,2W,2W,2H;2F;2W,,,,4C,4C,4C,,,2W,2W,,2W,2W,2W,2W,2H;2F;2W,,4C,4C,,,STEM MA,STEM MA,STEM MA,,2W,2H;2F;2W,2W,2W,2W,,,,,,,4C,4C,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+WEESHEON,FAM_T,,,MA,MA,,PLC MA56,PLC MA56,,,MA,MA,,,FR,,MA,MA,,,,,MA,MA,MA,BT,,,AS_CCT,AS_CCT,,,MA,MA,,MA,MA,Exco,Exco,Exco,Exco,,AS_CCT,AS_CCT,,,BT,,,,MA,MA,MA,MA,,,FR,,,,BT,,,,MA,MA,,MA,MA,,
+,3J,,,3J,3J,,PLC MA,PLC MA,,,5F,5F,,,3J,,5F,5F,,,,,3J,3J,3J,4G;4H,,,3J,3J,,,3J,3J,,5F,5F,,,,,,3J,3J,,,4J;4P,,,,3J,3J,5F,5F,,,3J,,,,4C;4F,,,,5F,5F,,3J,3J,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+WONGBER,FAM_T,,,MA,MA,,,XEL,EL,EL,,MU,MU,,FR,EL,EL,,,,MA,MA,BT,,BT,BT,,,AS_CCT,AS_CCT,EL1,,MA,,,,,EL,XEL,EL,EL,,AS_CCT,AS_CCT,,,EL,EL,,,,MA,MA,MU,,,FR,MA,MA,,EL,EL,MU,,,PLC EL56,PLC EL56,,,,
+,6F,,,2C,2C,,,6F,6F,6F,,2C,2F,,6F,6F,6F,,,,2C,2C,3C;3H,,3G;3P,3F;3J,,,6F,6F,6F,,2C,,,,,6F,6F,6F,6F,,6F,6F,,,6F,6F,,,,2C,2C,2C,,,6F,2C,2C,,6F,6F,2F,,,PLC EL,PLC EL,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+YONG SM,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Exco,Exco,Exco,Exco,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+

@@ -7,6 +7,8 @@
 }
 .result fieldset>legend {
 	margin-left: 15px;
+	color: white;
+	padding: 0 10px;
 }
 .result fieldset .button {
 	float: right;

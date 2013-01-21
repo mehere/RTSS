@@ -1,6 +1,6 @@
 @charset "UTF-8";
 body {
-	font: 100%/1.4 Verdana, Arial, Helvetica, sans-serif;
+	font: 15px/1.4 Arial, Helvetica, sans-serif;
 	margin: 0;
 	padding: 0;
 	
@@ -20,7 +20,8 @@ a>img {
 }
 a {
 	color: #aaa7a7;
-	text-decoration: none;
+	text-decoration: none;    
+	outline: none;
 }
 a:hover { 
 	color: #c3c0c0;
@@ -40,7 +41,7 @@ a:hover {
 
 #sidebar {
 	float: left;
-	width: 210px;
+	width: 180px;
 	margin-left: -100%;
 	
 	border-right: 1px white groove;
@@ -67,10 +68,10 @@ ul.nav li>a {
 	margin: 0 1px;
 	padding: 10px 0;
 	display: block;
-	outline: none;
 	text-align: center;
 	color: black;
 	font-weight: bold;
+	font-family: Verdana, Geneva, sans-serif;
 	
 	border: 1px solid #a3a3a3;
 	box-shadow: 0 0 5px 1px #a3a3a3;
@@ -121,7 +122,7 @@ ul.breadcrumb li:last-child {
 }
 #content {
 	padding: 10px 0;
-	margin-left: 210px;
+	margin-left: 180px;
 }
 #content ul, #content ol { 
 	/*padding: 0 15px 15px 40px;*/
@@ -136,7 +137,7 @@ ul.breadcrumb li:last-child {
 	color: #949594;
 	text-align: center;
 	
-	width: 210px;
+	width: 180px;
 	position: absolute;
 	left: 0;
 	bottom: 0;
@@ -164,6 +165,9 @@ ul.breadcrumb li:last-child {
 .button:hover {
 	box-shadow: 0 0 5px 1px #fef4dd;
 	text-shadow: 0 0 .2em #fef4dd;
+}
+.button::-moz-focus-inner {
+  border: 0;
 }
 
 .fltrt {
