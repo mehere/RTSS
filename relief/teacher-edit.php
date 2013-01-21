@@ -32,13 +32,13 @@ include_once '../head-frag.php';
                 );
                 include '../topbar-frag.php';
                 
-                require_once '../class/Teacher.php';
+                require_once '../class/Teacher.php';                
             ?>
-            <form class="main" name="edit" action="" method="post">            	
+            <form class="main" name="edit" action="_teacher_edit.php" method="post">            	
             	<input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
                 <div class="section">
                 	<?php echo $isTemp ? "Temporary Relief Teacher:" : "Teacher on Leave:"; ?> 
-                    <div class="control-top"><a href="">Select All</a> <a href="">Deselect All</a></div>
+                    <div class="control-top"><a id="select-all" href="">Select All</a> <a id="deselect-all" href="">Deselect All</a></div>
                     <table class="table-info">
                         <thead>
                             <tr>

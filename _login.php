@@ -7,8 +7,6 @@ header("Pragma: no-cache");
 session_start();
 include('class/User.php');
 
-//true if user name does or password does not match
-$_SESSION['loginError'] = false;
 //page to be redirected to
 $destination = "/RTSS/index.php";
 
@@ -29,6 +27,7 @@ else{
 }
 
 //redirect
+session_regenerate_id();
 header("Location: $destination");
 
 ?>

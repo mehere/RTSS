@@ -1,10 +1,22 @@
 $(document).ready(function(){
-    function setDatePicker(target, dateValue)
+    var CONFIRM_TEXT=["Confirm to verify selected teachers?", "Confirm to delete selected teachers?",
+            "Please select at least one teacher before proceeding."],
+        FADE_DUR=400;
+
+    function setDatePicker(target, dateValue /*, dateToField */)
     {
+        var dateToField=arguments[2];
         target.datepicker({
             dateFormat: "yy-mm-dd",
             changeMonth: true,
-            changeYear: true
+            changeYear: true,
+            onSelect: function(selectedDate) {
+                if (dateToField && selectedDate)
+                {
+                    dateToField.datepicker( "option", "minDate", selectedDate );
+                }
+            }
+
         }).datepicker('setDate', dateValue?new Date(dateValue):new Date());
     }
 
@@ -13,7 +25,7 @@ $(document).ready(function(){
     var num=formEdit['num'].value;
     for (var i=0; i<num; i++)
     {
-        setDatePicker($(formEdit['date-from-' + i]), formEdit['server-date-from-' + i].value);
+        setDatePicker($(formEdit['date-from-' + i]), formEdit['server-date-from-' + i].value, $(formEdit['date-to-' + i]));
         setDatePicker($(formEdit['date-to-' + i]), formEdit['server-date-to-' + i].value);
     }
 
@@ -35,11 +47,53 @@ $(document).ready(function(){
         }
     });
 
+    function multipleOp(mode)
+    {
+        var dataPost={}, numOfAcc= 0, rowList=null;
+        for (var i=0; i<this.form['num'].value; i++)
+        {
+            if (this.form['select-'+i].checked)
+            {
+                dataPost['accname-'+numOfAcc]=this.form['accname-'+i].value;
+                var curRow=$(this.form['accname-'+i]).parents('tr').first();
+                if (!rowList) rowList=curRow;
+                else rowList=rowList.add(curRow);
+                numOfAcc++;
+            }
+        }
+
+        if (numOfAcc == 0)
+        {
+            confirm(CONFIRM_TEXT[2], function(){});
+            return;
+        }
+
+        dataPost['num']=numOfAcc;
+        dataPost['mode']=mode;
+
+        var url=this.form.action;
+        confirm(CONFIRM_TEXT[mode=='verify'?0:1], function(){
+            $.post(url, dataPost, function(data){
+                if (data['error'] > 0) return;
+                if (mode == 'verify')
+                {
+                    window.location.href="index.php";
+                }
+                else
+                {
+                    rowList.fadeOut(FADE_DUR, function(){
+                        $(this).remove();
+                    });
+                }
+            }, 'json');
+        });
+    }
+
     $(formEdit['verify']).click(function(){
-        confirm("Confirm to verify selected teachers?");
+        multipleOp.call(this, 'verify');
     });
     $(formEdit['delete']).click(function(){
-        confirm("Confirm to delete selected teachers?");
+        multipleOp.call(this, 'delete');
     });
 
     function confirm(text, func){
@@ -47,8 +101,7 @@ $(document).ready(function(){
     }
 
     // Edit, Save and Delete
-    var FADE_DUR=400,
-        SMALL_BT_ARR=[
+    var SMALL_BT_ARR=[
             {
                 icons: {
                     primary: "ui-icon-pencil"
@@ -71,6 +124,7 @@ $(document).ready(function(){
                 label: 'Delete'
             }
         ];
+    var prevTextfield=null;
 
     function makeEditButton(obj, index /*, isSaveButton */)
     {
@@ -136,17 +190,40 @@ $(document).ready(function(){
             });
             return false;
         });
+
+        // Auto save 'add new ...' row
+        obj.parents('tr').first().focusin(function(event){
+            if (prevTextfield && !$(prevTextfield).parents('tr').first().is($(event.delegateTarget)))
+            {
+                if (prevTextfield.value)
+                {
+                    $(prevTextfield).parents('tr').first().find('.edit-bt').click();
+                }
+                else
+                {
+                    $(prevTextfield).parents('tr').first().remove();
+                }
+            }
+        });
     }
 
     $(".table-info .edit-bt").not(":last").each(function(index){
         makeEditButton($(this), index);
     });
-    $(".table-info .delete-bt").each(function(index){
+    $(".table-info .delete-bt").not(":last").each(function(index){
         makeDeleteButton($(this), index);
     });
 
     // Auto complete
-    var nameList=["Ana Mill", "Anto Till", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
+    var nameList=[], nameAccMap=[];
+    $.getJSON("/RTSS/relief/_teacher_name.php", function(data){
+        if (data['error']) return;
+
+        $.each(data, function(key, value){
+            nameList.push(value['fullname']);
+            nameAccMap[value['fullname']]=value['accname'];
+        });
+    });
     function addAutoComplete(obj)
     {
         obj.autocomplete({
@@ -154,11 +231,13 @@ $(document).ready(function(){
             delay: 0,
             autoFocus: true
         }).focusout(function(){
-            var curText= $.trim(this.value), isMatch=false;
+            var curText= $.trim(this.value), isMatch=false, selfObj=$(this);
             $.each(nameList, function(index, value){
                 if (curText.toLowerCase() == value.toLowerCase())
                 {
                     isMatch=true;
+                    selfObj.parents('tr').first().find('input[name^="accname"]').val(nameAccMap[value]);
+
                     return false;
                 }
             });
@@ -166,6 +245,8 @@ $(document).ready(function(){
             {
                 this.value="";
             }
+
+            prevTextfield=this;
         });
     }
 
@@ -196,7 +277,6 @@ $(document).ready(function(){
         addAutoComplete($("#last-row .fullname-server"));
     }
 
-    var prevTextfield=null;
     var addRowFunc=function(event){
         var selfDelegate=event.delegateTarget;
         selfDelegate.removeAttribute('id');
@@ -212,21 +292,26 @@ $(document).ready(function(){
         }, 'text');
 
         $(formEdit['fullname-'+(numOfTeacher-1)]).val('').css('color', 'black').css('font-style', 'normal');
-
-        if (prevTextfield)
-        {
-            if (prevTextfield.value)
-            {
-                $(prevTextfield).parents('tr').first().find('.edit-bt').click();
-            }
-            else
-            {
-                $(prevTextfield).parents('tr').first().remove();
-            }
-        }
-        prevTextfield=formEdit['fullname-'+(numOfTeacher-1)];
     };
 
-    // Displayed last row config
     ajaxAddRow(num);
+
+    // (De)select all
+    $("#select-all").click(function(){
+        for(var i=0; i<formEdit['num'].value; i++)
+        {
+            formEdit['select-'+i].checked=true;
+        }
+
+        return false;
+    });
+
+    $("#deselect-all").click(function(){
+        for(var i=0; i<formEdit['num'].value; i++)
+        {
+            formEdit['select-'+i].checked=false;
+        }
+
+        return false;
+    });
 });

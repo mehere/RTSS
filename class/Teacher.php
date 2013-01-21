@@ -342,6 +342,19 @@ class Teacher {
         
     }
     
+    /**
+     * Return the list of teacher's name, followed by accname
+     * @param string $type possible input: '' (empty string <-- default, means all), normal, temp
+     * @return type 
+     */
+    public static function getTeahcerName($type='')
+    {
+        return array(array('fullname'=>'Chia Siew Eng', 'accname'=>'cse'),
+            array('fullname'=>'Chin Yi Xuan Xuanie', 'accname'=>'cyx'), array('fullname'=>'Tian Zhe', 'accname'=>'tz'),
+            array('fullname'=>'Jade Lim Swee Chern', 'accname'=>'lsc'), array('fullname'=>'Caris Ong ', 'accname'=>'co'));
+    }
+    
+    
     /*
      The following functions are for testing purpose
      * 

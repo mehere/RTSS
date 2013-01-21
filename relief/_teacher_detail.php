@@ -3,38 +3,36 @@ header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 
-//initialize session
-session_start();
-include('../class/Teacher.php');
-$login = true;
+//initialize session, check login, etc
+require_once '../controller-head.php';
 
-//check if user is logged in
-if (!$_SESSION['accname']) {
-    $login = false;
-}
-
-if (!$login) {
-    //indicates error
-    require_once '../constant.php';
-    die(PageConstant::$ERROR_TEXT['login']['loginFirst']);
-}else
-{
-    //indicates no error
-    $output['error'] = "";
-}
+include '../class/Teacher.php';
 
 //retrieve account name of the selected entry
-$accname =$_GET['accname'];
-$output = Teacher::getIndividualTeacherDetail($accname);
-
-//Prepare teacher information for display
-?>
+$accname=$_GET['accname'];
+$output=array();
+if (!$accname)
+{
+    $output['error']=2;    
+}
+else
+{
+    $teacherInfolist=Teacher::getIndividualTeacherDetail($accname);
+    
+    //Prepare teacher information for display
+    $output['display']= <<< EOD
 <table class="table-info">                        
     <tbody>
-        <tr><td>Account ID:</td><td><?php echo $output['ID']; ?></td></tr>
-        <tr><td>Name:</td><td><?php echo $output['name']; ?></td></tr>
-        <tr><td>Gender:</td><td><?php echo $output['gender']; ?></td></tr>
-        <tr><td>Handphone:</td><td><?php echo $output['mobile']; ?></td></tr>
-        <tr><td>Email:</td><td><?php echo $output['email']; ?></td></tr>        
+        <tr><td>Account ID:</td><td>{$teacherInfolist['ID']}</td></tr>
+        <tr><td>Name:</td><td>{$teacherInfolist['name']}</td></tr>
+        <tr><td>Gender:</td><td>{$teacherInfolist['gender']}</td></tr>
+        <tr><td>Handphone:</td><td>{$teacherInfolist['mobile']}</td></tr>
+        <tr><td>Email:</td><td>{$teacherInfolist['email']}</td></tr>        
     </tbody>
 </table>
+EOD;
+}
+
+header('Content-type: application/json');
+echo json_encode($output);
+?>

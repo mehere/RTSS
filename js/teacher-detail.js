@@ -10,15 +10,9 @@ $(document).ready(function(){
     });
 
     $( ".table-info .teacher-detail-link" ).click(function(){
-        $.ajax({
-            url: this.href,
-            dataType: 'text',
-            success: function(data){
-                $("#teacher-detail").html(data);
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-                $("#teacher-detail").html("Oops! Error occurred: " + errorThrown);
-            }
+        $.getJSON(this.href, function(data){
+            if (data['error']) return;
+            $("#teacher-detail").html(data['display']);
         });
 
         $("#teacher-detail").html('Loading ...');

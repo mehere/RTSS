@@ -27,5 +27,5 @@ include_once 'head-frag.php';
 </body>
 </html>
 <?php 
-$_SESSION['loginError']='';
+unset($_SESSION['loginError']);
 ?>
