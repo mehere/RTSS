@@ -11,7 +11,7 @@ Class Constant
     const ifins_db_url = "localhost";
     const ifins_db_username = "root";
     const ifins_db_password = "";
-    const ifins_db_name = "ifins_2012";
+    const ifins_db_name = "ifins";
     const ifins_table_teacher_verification = "fs_accounts_pri";
     
     //time slot
