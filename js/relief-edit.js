@@ -54,8 +54,8 @@ $(document).ready(function(){
         {
             if (this.form['select-'+i].checked)
             {
-                dataPost['accname-'+numOfAcc]=this.form['accname-'+i].value;
-                var curRow=$(this.form['accname-'+i]).parents('tr').first();
+                dataPost['leaveID-'+numOfAcc]=this.form['leaveID-'+i].value;
+                var curRow=$(this.form['leaveID-'+i]).parents('tr').first();
                 if (!rowList) rowList=curRow;
                 else rowList=rowList.add(curRow);
                 numOfAcc++;
@@ -164,7 +164,9 @@ $(document).ready(function(){
 
                 // Save remotely
 
-                // clear 'isSaveButton'
+                // Save leaveID
+
+                // Clear 'isSaveButton'
                 if (isSaveButton) isSaveButton=null;
             }
 
