@@ -12,7 +12,6 @@ Class Constant
     const ifins_db_username = "root";
     const ifins_db_password = "";
     const ifins_db_name = "ifins";
-    const ifins_table_teacher_verification = "fs_accounts_pri";
     
     //time slot
     const num_of_time_slot = 15;
