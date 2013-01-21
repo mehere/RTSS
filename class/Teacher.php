@@ -226,77 +226,164 @@ class Teacher {
         return $result;
     }
     
-    //this function returns the details of a teacher
+    public static function getTeacherName($type)
+    {
+        $normal_list = Array();
+        $temp_list = Array();
+        
+        if(empty($type) || strcmp($type, "normal")===0)
+        {
+            $ifins_db_url = Constant::ifins_db_url;
+            $ifins_db_username = Constant::ifins_db_username;
+            $ifins_db_password = Constant::ifins_db_password;
+            $ifins_db_name = Constant::ifins_db_name;
+
+            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
+
+            if ($ifins_db_con)
+            {
+                mysql_select_db($ifins_db_name);
+                
+                $sql_query_normal = "select user_id, user_name from actatek_user where user_position = 'Teacher';";
+                $query_normal_result = mysql_query($sql_query_normal);
+                
+                if($query_normal_result)
+                {
+                    $index = 0;
+                    while($row = mysql_fetch_assoc($query_normal_result))
+                    {
+                        $normal_list[$index] = Array(
+                            'fullname' => $row['user_name'],
+                            'accname' => $row['user_id']
+                        );
+                        $index++;
+                    }
+                }
+            }    
+        }
+        if(empty($type) || strcmp($type, "temp")===0)
+        {
+            $db_url = Constant::db_url;
+            $db_username = Constant::db_username;
+            $db_password = Constant::db_password;
+            $db_name = Constant::db_name;
+
+            $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+            if ($db_con)
+            {
+                mysql_select_db($db_name);
+                
+                $sql_query_temp = "select teacher_id, name from rs_temp_relief_teacher;";
+                $query_temp_result = mysql_query($sql_query_temp);
+                
+                if($query_temp_result)
+                {
+                    $index = 0;
+                    while($row = mysql_fetch_assoc($query_temp_result))
+                    {
+                        $temp_list[$index] = Array(
+                            'fullname' => $row['name'],
+                            'accname' => $row['teacher_id']
+                        );
+                        $index++;
+                    }
+                }
+            }
+        }
+        
+        return array_merge($normal_list, $temp_list);
+    }
+    
+    //this function returns the details of a normal teacher
     //input : accname - the name used to log in
     //output : associative array of information. Before retrieving any information, check if($output['found']) to see whether the teacher record is found
-    /* temporarily disabled, will release later
     public static function getIndividualTeacherDetail($accname)
     {
         $result = Array(
             'found' => false,
             'ID' => $accname,
-            'name' => NULL,
-            'gender' => NULL,
-            'mobile' => NULL,
-            'email' => NULL
         );
 
-        $ifins_db_url = Constant::ifins_db_url;
-        $ifins_db_username = Constant::ifins_db_username;
-        $ifins_db_password = Constant::ifins_db_password;
-        $ifins_db_name = Constant::ifins_db_name;
-        
-        $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
-        
-        if (!$ifins_db_con)
+        if(substr($accname, 0, 3) === 'TMP')
         {
-            return $result;
-        }
-        
-        mysql_select_db($ifins_db_name);
-        
-        //with accname, get fullname from ntu.ac_all_teacher
-        $sql_query_fullname = "select name from ac_all_teacher where acc_name = '".mysql_real_escape_string($accname)."';";
-        $db_query_result = mysql_query($sql_query_fullname);
-        if(!$db_query_result)
-        {
-            return $result;
-        }
-        
-        $row = mysql_fetch_array($db_query_result);
-        if($row)
-        {
+            $db_url = Constant::db_url;
+            $db_username = Constant::db_username;
+            $db_password = Constant::db_password;
+            $db_name = Constant::db_name;
+
+            $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+            if (!$db_con)
+            {
+                return $result;
+            }
+
+            mysql_select_db($db_name);
+
+            //with full name, query information from ifins_2012.actatek_user
+            $sql_query_detail = "select * from rs_temp_relief_teacher where teacher_id = '".mysql_real_escape_string($accname)."';";
+            $query_result = mysql_query($sql_query_detail);
+
+            if(!$query_result)
+            {
+                return $result;
+            }
+
+            $row = mysql_fetch_array($query_result);
+            if(!$row)
+            {
+                return $result;
+            }
+
+            $result['found'] = true;
             $result['name'] = $row['name'];
+            $result['gender'] = $row['gender'];
+            $result['mobile'] = $row['mobile'];
+            $result['email'] = $row['email'];
+
+            return $result;
         }
         else
         {
+            $ifins_db_url = Constant::ifins_db_url;
+            $ifins_db_username = Constant::ifins_db_username;
+            $ifins_db_password = Constant::ifins_db_password;
+            $ifins_db_name = Constant::ifins_db_name;
+
+            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
+
+            if (!$ifins_db_con)
+            {
+                return $result;
+            }
+
+            mysql_select_db($ifins_db_name);
+
+            //with full name, query information from ifins_2012.actatek_user
+            $sql_query_detail = "select * from actatek_user where user_id = '".mysql_real_escape_string($accname)."' and user_position = 'Teacher';";
+            $ifins_query_result = mysql_query($sql_query_detail);
+
+            if(!$ifins_query_result)
+            {
+                return $result;
+            }
+
+            $ifins_row = mysql_fetch_array($ifins_query_result);
+            if(!$ifins_row)
+            {
+                return $result;
+            }
+
+            $result['found'] = true;
+            $result['name'] = $ifins_row['user_name'];
+            $result['gender'] = $ifins_row['user_gender'];
+            $result['mobile'] = $ifins_row['user_mobile'];
+            $result['email'] = $ifins_row['user_email'];
+
             return $result;
         }
-        
-        //with full name, query information from ifins_2012.actatek_user
-        $sql_query_detail = "select * from actatek_user where user_name = '".mysql_real_escape_string($result['name'])."';";
-        $ifins_query_result = mysql_query($sql_query_detail);
-        
-        if(!$ifins_query_result)
-        {
-            return $result;
-        }
-        
-        $ifins_row = mysql_fetch_array($ifins_query_result);
-        if(!$ifins_row)
-        {
-            return $result;
-        }
-       
-        $result['found'] = true;
-        $result['gender'] = $ifins_row['user_gender'];
-        $result['mobile'] = $ifins_row['user_mobile'];
-        $result['email'] = $ifins_row['user_email'];
-       
-        return $result;
     }
-     * 
-     */
     
     //this function finds a list of alternatives for abbre name of all teachers
     //this function is used when the 1-to-1 match of abbre and full name is not established
