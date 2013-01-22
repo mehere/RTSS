@@ -27,7 +27,7 @@ else
         <tr><td>Name:</td><td>{$teacherInfolist['name']}</td></tr>
         <tr><td>Gender:</td><td>{$teacherInfolist['gender']}</td></tr>
         <tr><td>Handphone:</td><td>{$teacherInfolist['mobile']}</td></tr>
-        <tr><td>Email:</td><td>{$teacherInfolist['email']}</td></tr>        
+        <tr><td>Email:</td><td><a href="mailto:{$teacherInfolist['email']}">{$teacherInfolist['email']}</a></td></tr>        
     </tbody>
 </table>
 EOD;
