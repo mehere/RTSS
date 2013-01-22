@@ -343,6 +343,26 @@ class TimetableAnalyzer {
         }
          * 
          */
+        /*
+        $result = User::login("S0127975J", 'S0127975J');
+        echo $result['accname'];
+        echo $result['type'];
+         * 
+         */
+        /*
+        $result = Teacher::getTeacherName('');
+        foreach($result as $one_teacher)
+        {
+            echo $one_teacher['accname']."<br>";
+            echo $one_teacher['fullname']."<br><br>";
+        }
+         * 
+         */
+        /*
+        $result = Teacher::getIndividualTeacherDetail("178984");
+        print_r($result);
+         * 
+         */
         //********xue : testing end
          }
          
