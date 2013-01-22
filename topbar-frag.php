@@ -1,5 +1,5 @@
 <div id="topbar">
-    <div class="fltrt"><?php echo htmlentities($_SESSION['accname']); ?> | <a href="/RTSS/_logout.php">Log out</a></div>
+    <div class="fltrt"><?php echo htmlentities($_SESSION['username']); ?> | <a href="/RTSS/_logout.php">Log out</a></div>
     <ul class="breadcrumb">
         <?php 
             foreach ($TOPBAR_LIST as $tab) {
