@@ -11,7 +11,7 @@ class PageConstant
     public static $SCHOOL_START_TIME, $SCHOOL_END_TIME;
     const SCHOOL_TIME_INTERVAL=30; // minute
     
-    public static $DAY=array('Mon', 'Tue', 'Wed', 'Thu', 'Fri');
+    public static $DAY=array('Monday', 'Tuesday', 'Wedsday', 'Thursday', 'Friday');
     
     public static $ERROR_TEXT=array(
         'login' => array(
@@ -160,21 +160,13 @@ class NameMap
     
     // For /RTSS/relief/timetable/
     public static $TIMETABLE=array(
-        'class' => array(
+        'layout' => array(
             'display' => array(
-                'time' => 'Time', 'teacher' => 'Teacher'
+                'time' => 'Time',  'subject' => 'Subject',  'class' => 'Class', 'venue' => 'Venue', 
+                'teacher-fullname' => 'Teacher',  'relief-teacher-fullname' => 'Relief Teacher'
             ),
             'hidden' => array(
-                'class'
-            )
-        ),
-        
-        'teacher' => array(
-            'display' => array(
-                'time' => 'Time', 'class' => 'Class'
-            ),
-            'hidden' => array(
-                'teacher'
+                'teacher-accname', 'relief-teacher-aaccname'
             )
         )
     );

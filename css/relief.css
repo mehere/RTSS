@@ -75,6 +75,7 @@
 
 #teacher-detail .table-info tr td {
 	background-color: #ffffff;
+	word-wrap: break-word;
 }
 #teacher-detail .table-info tr td:nth-child(odd) {
 	background-color: #f9f9f9;

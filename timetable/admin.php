@@ -1,9 +1,17 @@
 <?php 
-    include_once '../php-head.php';
-    include_once '../head-frag.php'; 
+include_once '../php-head.php';
+include_once '../head-frag.php';
+
+$timeArr=array();
+for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
+{
+    $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
+    $timeArr[$i]=$timeStr;
+}
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
+<link href="/RTSS/css/timetable.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/upload.css" rel="stylesheet" type="text/css">
 <script src="/RTSS/js/upload.js"></script>
 
@@ -23,8 +31,9 @@
                 );
                 include '../topbar-frag.php';
             ?>
-            <form class="main" name="timetable" action="" method="post">
-            	<div class="line"><span class="label">Year:</span>
+            <form class="main" name="timetable" action="" method="post">                
+            	<h3>Upload Timetable</h3>
+                <div class="line"><span class="label">Year:</span>
                 	<select name="year">
                         <?php 
                             $curYear=date('Y');
@@ -47,8 +56,10 @@ EOD;
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
                 <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em; margin: 10px 0" class="button" /></div>                
             </form>
+            <hr style="margin: 0 30px" />
             <div class="main">
-                <form name="add-class">
+            	<h3 style="margin-bottom: 0; margin-top: 10px">Add AED Timetable</h3>
+                <form name="add-class">                	
                     <table class="form-table">
                     	<thead>
                             <tr>
@@ -67,21 +78,38 @@ EOD;
                             <td class="label">Day:</td>
                             <td>
                                 <select name="day">
-                                    <option value="0">Monday</option>
-                                    <option value="1">Tuesday</option>                        
+                                    <?php
+                                        $dayArr=PageConstant::$DAY;
+                                        for ($i=0; $i<count($dayArr); $i++)
+                                        {
+                                            echo <<< EOD
+                                                <option value="$i">{$dayArr[$i]}</option>
+EOD;
+                                        }
+                                    ?>
                                 </select>
                             </td>                        
                             <td class="label">Time:</td>
                             <td>
                                 <select name="time-from">
-                                    <option value="1">07:15</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
+                                    <?php                                         
+                                        foreach (array_slice($timeArr, 0, -1) as $key => $value)
+                                        {
+                                            echo <<< EOD
+<option value="$key">$value</option>
+EOD;
+                                        }
+                                    ?>                                    
                                 </select>
                                 <select name="time-to" style="margin-left: 10px">
-                                    <option value="1">07:15</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
+                                    <?php                                         
+                                        foreach (array_slice($timeArr, 1) as $key => $value)
+                                        {
+                                            echo <<< EOD
+<option value="$key">$value</option>
+EOD;
+                                        }
+                                    ?>
                                 </select>
                             </td>
                             <td class="label">Subject:</td>
@@ -97,12 +125,11 @@ EOD;
                         </tr>
                     </table>
                 </form>
-                <form name="AED" action="" method="post" style="position: relative">            	
+                <form name="AED" style="position: relative">                	
                     <table class="table-info">
                         <thead>
                             <th style="width: 90px"></th>
-                            <?php 
-                                $dayArr=PageConstant::$DAY;
+                            <?php                                 
                                 foreach($dayArr as $day)
                                 {
                                     echo <<< EOD
@@ -112,15 +139,12 @@ EOD;
                             ?>                    	
                         </thead>
                         <tbody>
-                            <?php 
-                                $timeArr=array();
-                                for ($i=0; $i<(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
+                            <?php                                 
+                                for ($i=0; $i<count($timeArr)-1; $i++)
                                 {
-                                    $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
-                                    $timeToStr=date("H:i", ($i+1)*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
-                                    $timeArr[$i]=$timeStr;
+                                    // Debug: <td>{$timeArr[$i]} Mon</td><td>{$timeArr[$i]} Tue</td><td>{$timeArr[$i]} Wed</td><td>{$timeArr[$i]} Thu</td><td>{$timeArr[$i]} Fri</td>
                                     echo <<< EOD
-<tr><td class="time-col">$timeStr<span style="margin: 0 3px">-</span>$timeToStr</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i+1]}</td><td></td><td></td><td></td><td></td><td></td></tr>
 EOD;
                                 }
                             ?>
@@ -130,10 +154,9 @@ EOD;
                     	<span class="label">AED Name:</span><input type="text" name="fullname" />
                         <input type="submit" class="button" value="Submit" style="margin-left: 30px" />
                     </div>
-                    <div class="subject">PLC MA12<br />P1<br />CL VEN 3
-                    </div>
                 </form>
             </div>
+            <div id="dialog-alert"></div>
         </div>        
     </div>
     <?php include '../sidebar-frag.php'; ?>
