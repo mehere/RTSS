@@ -390,6 +390,291 @@ class Teacher {
         }
     }
     
+    /**
+     * add both temp teacher and leave teacher
+     * @param type $accname
+     * @param type $prop - 'leave', 'temp'
+     * @param type $fullname
+     * @param type $reason
+     * @param type $remark
+     * @param type $date_from - 2013-01-13
+     * @param type $date_to - 2013-01-13
+     * @param type $time_from - 07:30
+     * @param type $time_to - 07:30
+     * @param type $handphone
+     * @param type $email
+     * @param type $MT
+     * @return int >=0:add leave successfully, leaveID, -1:add temp successfully, -2:error
+     */
+    public static function add($accname, $prop, $fullname, $reason, $remark, $datetime_from, $datetime_to, $handphone, $email, $MT)
+    {
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
+        {
+            return -2;
+        }
+
+        mysql_select_db($db_name);
+        
+        if(strcmp($prop, "leave")===0)
+        {
+            $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified) values
+                ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
+                    '".mysql_real_escape_string(trim($datetime_from))."', '".mysql_real_escape_string(trim($datetime_to))."', 'NO');";
+            
+            $insert_leave_result = mysql_query($sql_insert_leave);
+            
+            if(!$insert_leave_result)
+            {
+                return -2;
+            }
+            
+            return mysql_insert_id();
+        }
+        else if(strcmp($prop, "temp")===0)
+        {
+            if(empty($accname))
+            {
+                $name_array = explode(" ", $fullname);
+                if(count($name_array)>0)
+                {
+                    if(strlen($name_array[0])>2)
+                    {
+                        $name_short = substr($name_array[0], 0, 3); 
+                    }
+                    else if(strlen($name_array[0])==2)
+                    {
+                        $name_short = $name_array[0].rand(0, 9);
+                    }
+                    else if(strlen($name_array[0])==1)
+                    {
+                        $name_short = $name_array[0].rand(11, 99);
+                    }
+                    else
+                    {
+                        return -2;
+                    }
+                }
+                else
+                {
+                    return -2;
+                }
+                    
+                //time since 2010-1-1 00:00:00
+                $accname = "TMP".(time() - 1261440000).$name_short;
+                
+                $sql_insert_temp_teacher = "insert into rs_temp_relief_teacher(teacher_id, name, mobile, email, mother_tongue) values
+                    ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($fullname))."', '".mysql_real_escape_string(trim($handphone))."',
+                        '".mysql_real_escape_string(trim($email))."', '".mysql_real_escape_string(trim($MT))."');";
+                
+                $insert_temp_result = mysql_query($sql_insert_temp_teacher);
+            
+                if(!$insert_temp_result)
+                {
+                    return -2;
+                }
+            }
+            
+            $sql_insert_temp_time = "insert into rs_temp_relief_teacher_availability(teacher_id, start_datetime, end_datetime, slot_remark) values
+                ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($datetime_from))."', 
+                    '".mysql_real_escape_string(trim($datetime_to))."', '".mysql_real_escape_string(trim($remark))."');";
+            
+            $insert_temp_time_result = mysql_query($sql_insert_temp_time);
+            
+            if(!$insert_temp_time_result)
+            {
+                return -2;
+            }
+            
+            return mysql_insert_id();
+        }
+        else
+        {
+            return -2;
+        }
+    }
+    
+    public static function delete($leaveIDList, $prop)
+    {
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
+        {
+            return false;
+        }
+
+        mysql_select_db($db_name);
+        
+        if(strcmp($prop, "leave") === 0)
+        {
+            $sql_delete_leave = "delete from rs_leave_info where leave_id in (".  implode(', ', $leaveIDList).");";
+            
+            $delete_leave_result = mysql_query($sql_delete_leave);
+            
+            if(!$delete_leave_result)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        else if(strcmp($prop, "temp") === 0)
+        {
+            $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";
+            
+            $delete_temp_result = mysql_query($sql_delete_temp);
+            
+            if(!$delete_temp_result)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * For prop=leave, only accname, reason, remark, datetime-from, datetime-to can be updated; 
+     * For prop=temp, only datetime-from, datetime-to, remark, phone, email, MT can be updated;
+     * !!!!!!Important!!!!!! : pass the teacher's accname if prop = temp
+     * @param type $leaveID
+     * @param type $prop
+     * @param type $change
+     * @return boolean
+     */
+    public static function edit($leaveID, $prop, $change)
+    {
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
+        {
+            return false;
+        }
+
+        mysql_select_db($db_name);
+        
+        if(empty($change) || count($change)===0)
+        {
+            return false;
+        }
+        
+        if(strcmp($prop, "leave") === 0)
+        {
+            $match_array = Array(
+                'accname' => 'teacher_id',
+                'reason' => 'reason',
+                'remark' => 'remark',
+                'datetime-from' => 'start_time',
+                'datetime-to' => 'end_time'
+            );
+            
+            $sql_update_leave = "update rs_leave_info set ";
+            
+            foreach($change as $key => $value)
+            {
+                if(array_key_exists($key, $match_array))
+                {
+                    $sql_update_leave .= $match_array[$key]."='".mysql_real_escape_string($value)."',";
+                }
+            }
+            
+            $sql_update_leave = substr($sql_update_leave, 0 ,-1)." ";
+            $sql_update_leave .= "where leave_id = ".$leaveID.";";
+            
+            $update_leave_result = mysql_query($sql_update_leave);
+            
+            if(!$update_leave_result)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        else if(strcmp($prop, "temp") === 0)
+        {
+            $teacher_match_array = Array(
+                'handphone' => 'mobile',
+                'email' => 'email',
+                'MT' => 'mother_tongue'
+            );
+            $temp_match_array = Array(
+                'remark' => 'slot_remark',
+                'datetime-from' => 'start_datetime',
+                'datetime-to' => 'end_datetime'
+            );
+            
+
+            $sql_update_teacher = "update rs_temp_relief_teacher set ";
+            $sql_update_temp = "update rs_temp_relief_teacher_availability set ";
+
+            $teacher_change = false;
+            $temp_change = false;
+
+            foreach($change as $key => $value)
+            {
+                if(array_key_exists($key, $teacher_match_array))
+                {
+                    $teacher_change = true;
+                    $sql_update_teacher .= $teacher_match_array[$key]."='".mysql_real_escape_string($value)."',";
+                }
+                else if(array_key_exists($key, $temp_match_array))
+                {
+                    $temp_change = true;
+                    $sql_update_temp .= $temp_match_array[$key]."='".mysql_real_escape_string($value)."',";
+                }
+            }
+
+            $teacher_id = $change['accname'];
+         
+            $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
+            $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
+            
+            $sql_update_temp = substr($sql_update_temp, 0 ,-1)." ";
+            $sql_update_temp .= "where temp_availability_id = ".$leaveID.";";
+            echo $sql_update_teacher."<br>".$sql_update_temp;
+            if($teacher_change)
+            {
+                $update_teacher_result = mysql_query($sql_update_teacher);
+            
+                if(!$update_teacher_result)
+                {
+                    return false;
+                }
+            }
+            if($temp_change)
+            {
+                $update_temp_result = mysql_query($sql_update_temp);
+            
+                if(!$update_temp_result)
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+    }
+    
     //this function finds a list of alternatives for abbre name of all teachers
     //this function is used when the 1-to-1 match of abbre and full name is not established
     //input : an array of teacher objects, with abbre name provided
