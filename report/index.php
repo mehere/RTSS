@@ -1,7 +1,7 @@
 <?php 
-    include_once '../head-frag.php';
+    include_once '../head-frag.php'; include_once '../php-head.php';
 ?>
-<title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
+<title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/timetable.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />

@@ -2,6 +2,11 @@ $(document).ready(function(){
     // Form
     var originColor=$("form .textfield").css('color');
     $("form .textfield").focus(function(){
+        if (this.name == 'password')
+        {
+            this.type='password';
+        }
+
         if (this.value == this.defaultValue)
         {
             this.value='';
@@ -14,4 +19,7 @@ $(document).ready(function(){
             $(this).css('color', originColor);
         }
     });
+
+    var passwordField=document.forms[0]['password'];
+    passwordField.type='text';
 });
