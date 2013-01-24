@@ -5,8 +5,16 @@
 	font-size: 1.1em;
 	max-width: 800px;
 }
+.main fieldset {
+	padding: 10px;
+}
 .main fieldset>legend {
-	margin-left: 10px;
+	margin-left: 15px;
+	color: white;
+	padding: 10px;
+}
+.main .textfield {
+	margin-top: 0;
 }
 
 .table-info {
@@ -20,9 +28,8 @@
 #table-individual tr td {
 	background-color: white;
 }
-#table-individual tr td:first-child {
+#table-individual tr td:nth-child(odd) {
 	background-color: #f9f9f9;
-	width: 150px;
 }
 
 .ui-autocomplete {
