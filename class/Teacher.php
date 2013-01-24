@@ -714,12 +714,10 @@ class Teacher {
     }
      * 
      */
-    
     /*
      The following functions are for testing purpose
      * 
      */
-    
     //this function lists all abbre name (in teacher_list) that dont have a match
     //input : $teacher_list, a list of Teacher object, with abbre_name provided
     //output : na
