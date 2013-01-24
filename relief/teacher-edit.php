@@ -1,14 +1,20 @@
 <?php 
-    include_once '../head-frag.php';
+include_once '../php-head.php';
     
-    $isTemp=$_GET['teacher'] == 'temp';
+if (!$_SESSION['accname'])
+{
+    header("Location: /RTSS/");
+}
+    
+$isTemp=$_GET['teacher'] == 'temp';
+
+include_once '../head-frag.php'; 
 ?>
-<title><?php echo Constant::SCH_NAME_ABBR . " " . Constant::PRODUCT_NAME; ?></title>
+<title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief-edit.css" rel="stylesheet" type="text/css">
 <script src="/RTSS/js/relief-edit.js"></script>
-<script src="/RTSS/js/teacher-detail.js"></script>
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
@@ -19,26 +25,28 @@
 <div id="container">  	
     <div id="content-wrapper">
     	<div id="content">
-            <div id="topbar">
-            	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
-                <ul class="breadcrumb">
-                    <li><a href="/RTSS/relief/">Scheduling</a></li>
-                    <li>Edit/Add</li>
-                </ul>                
-            </div>
-            <form class="main" name="edit" action="" method="post">            	
+            <?php 
+                $TOPBAR_LIST=array(
+                    array('tabname'=>'Scheduling', 'url'=>"/RTSS/relief/"), 
+                    array('tabname'=>'Edit/Add', 'url'=>""), 
+                );
+                include '../topbar-frag.php';
+                
+                require_once '../class/Teacher.php';                
+            ?>
+            <form class="main" name="edit" action="_teacher_edit.php" method="post">            	
             	<input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
                 <div class="section">
                 	<?php echo $isTemp ? "Temporary Relief Teacher:" : "Teacher on Leave:"; ?> 
-                    <div class="control-top"><a href="">Select All</a> <a href="">Deselect All</a></div>
+                    <div class="control-top"><a id="select-all" href="">Select All</a> <a id="deselect-all" href="">Deselect All</a></div>
                     <table class="table-info">
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=array('60px', '30%', '20%', '240px', '50%', '70px');
+                                    $width=array('45px', '50px', '30%', '170px', '240px', '50%', '70px');
                                                                         
                                     $tableHeaderList=array_values(NameMap::$RELIEF_EDIT[$isTemp ? 'tempTeacher' : 'teacherOnLeave']['display']);
-                                    array_unshift($tableHeaderList, 'Select');
+                                    array_unshift($tableHeaderList, '', 'Select');
                                     $tableHeaderList[]='Verified';
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
@@ -47,53 +55,75 @@
                                             <th style="width: $width[$i]">$tableHeaderList[$i]</th>
 EOD;
                                     }
-                                ?>                                
+                                ?>
                             </tr>
                         </thead>
                         <tbody>
-                        	<tr><td><input type="checkbox" name="select-0" /></td><td><a href="_teacher_detail.php?accname=1234">haha asdf</a></td>
-                            	<td>
-                                	<select name="reason"><option value="MC">MC</option>
-                                    </select>
-                                </td>
-                            	<td>
-                                	<div class="time-line">From: <input type="text" name="date-from-0" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-0" value="2012-12-10" />
-                                		<select name="time-from-0"><option value="15">15</option></select>
-                                    </div>
-                                    <div class="time-line">To: <input type="text" name="date-to-0" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-to-0" value="2012-12-10" />
-                                		<select name="time-to-0"><option value="15">30</option></select>
-                                    </div>
-                                </td>
-                                <td><textarea name="remark-0">Specifies that a text area should automatically</textarea></td><td><input type="checkbox" name="verified-0" /></td>
-                            </tr>
-                            <tr id="last-row"><td><button name="line-delete" style="padding: 5px 0"></button></td>
-                            <td><input type="text" name="fullname" style="width: 90%;" /></td>
-                            	<td>
-                                	<select name="reason"><option value="MC">MC</option>
-                                    </select>
-                                </td>
-                            	<td>
-                                	<div class="time-line">From: <input type="text" name="date-from" maxlength="10" style="width: 7em; margin-right: 5px" />
-                                		<select name="time-from"><option value="15">15</option></select>
-                                    </div>
-                                    <div class="time-line">To: <input type="text" name="date-to" maxlength="10" style="width: 7em; margin-right: 5px" />
-                                		<select name="time-to"><option value="15">30</option></select>
-                                    </div>
-                                </td>
-                                <td><textarea name="remark"></textarea></td><td></td>
-                            </tr>
+                            <?php 
+                                $teacherList=Teacher::getTeacherOnLeave($_SESSION['scheduleDate']);
+                                PageConstant::escapeHTMLEntity($teacherList);
+                                $keyList=array_keys(NameMap::$RELIEF_EDIT['teacherOnLeave']['display']);
+                                $keyExtraList=NameMap::$RELIEF_EDIT['teacherOnLeave']['hidden'];
+                                
+                                $teacherVerifiedList=$_SESSION['teacherVerified'];
+                                
+                                // construct reason option array and time option array
+                                $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
+                                $timeArr=array();
+                                for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
+                                {
+                                    $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
+                                    $timeArr[$i]=$timeStr;
+                                }
+                                
+                                $numOfTeacher=count($teacherList);
+                                for ($i=0; $i<$numOfTeacher; $i++)
+                                {
+                                    $teacher=$teacherList[$i];
+                          
+                                    $datetime=$teacher[$keyList[2]];
+                                    $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
+                                    $timeFromOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[0][1]);
+                                    $timeToOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[1][1]);
+                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacher[$keyExtraList[1]]]);
+                                    echo <<< EOD
+<tr>
+    <td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>
+    <td><input type="checkbox" name="select-$i" /></td>
+    <td>{$teacher[$keyList[0]]} <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /></td>
+    <td>
+        <span class="toggle-display">{$teacher[$keyList[1]]}</span>
+        <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>
+    </td>
+    <td>
+        <div class="toggle-display"><span>{$datetime[0][0]}</span> <span>{$datetime[0][1]}</span><br /><span>{$datetime[1][0]}</span> <span>{$datetime[1][1]}</span></div>
+        <div class="toggle-edit">
+            <div class="time-line">From: <input type="text" name="date-from-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-$i" value="{$datetime[0][0]}" />
+                <select name="time-from-$i">$timeFromOptionStr</select>
+            </div>
+            <div class="time-line">To: <input type="text" name="date-to-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-to-$i" value="{$datetime[1][0]}" />
+                <select name="time-to-$i">$timeToOptionStr</select>
+            </div>
+        </div>
+    </td>
+    <td><div class="toggle-display">{$teacher[$keyList[3]]}</div><textarea name="remark-$i" class="toggle-edit">{$teacher[$keyList[3]]}</textarea></td>
+    <td>$verifiedStr <input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" /></td>
+</tr>
+EOD;
+                                }
+                                
+                                include 'teacher-edit-frag.php';
+                            ?>                            
                         </tbody>
                     </table>
-                    <a href="" id="add-save">Add</a>
                 </div>
                 <div class="bt-control">
                 	<input type="button" name="verify" value="Verify Selected" class="button" />
                     <input type="button" name="delete" value="Delete Selected" class="button" />
                 </div>
-                <input type="hidden" name="num" value="1" />             
+                <input type="hidden" name="num" value="<?php echo count($teacherList); ?>" />
             </form>
             <div id="dialog-confirm"></div>
-            <div id="teacher-detail">Loading ...</div>
         </div>        
     </div>
     <?php include '../sidebar-frag.php'; ?>
