@@ -218,7 +218,7 @@ $(document).ready(function(){
 
     // Auto complete
     var nameList=[], nameAccMap=[];
-    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "normal"}, function(data){
+    $.getJSON("/RTSS/relief/_teacher_name.php", function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){
