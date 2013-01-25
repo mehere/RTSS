@@ -26,12 +26,12 @@ for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)
     	<div id="content">
             <?php 
                 $TOPBAR_LIST=array(
-                    array('tabname'=>'Timetable', 'url'=>"/RTSS/timetable/upload.php"), 
+                    array('tabname'=>'Timetable', 'url'=>"/RTSS/timetable/admin.php"), 
                     array('tabname'=>'Admin', 'url'=>""), 
                 );
                 include '../topbar-frag.php';
             ?>
-            <form class="main" name="timetable" action="" method="post">                
+            <form class="main" name="timetable" action="namematch.php" method="post">                
             	<h3>Upload Timetable</h3>
                 <div class="line"><span class="label">Year:</span>
                 	<select name="year">

@@ -2,7 +2,7 @@
     <fieldset>
         <legend>Filter</legend>
         Name: <input type="text" name="name-email" class="textfield" style="width: 150px; margin-right: 20px" />
-        <input type="submit" value="Go" class="button" style="margin-left: 30px" />
+        <input type="submit" value="Go" class="button" />
     </fieldset>
     <div class="section">
         <table class="table-info">

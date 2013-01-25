@@ -20,7 +20,7 @@ function tdWrap($ele)
     	<div id="content">
             <?php 
                 $TOPBAR_LIST=array(
-                    array('tabname'=>'Timetable', 'url'=>"/RTSS/timetable/upload.php"), 
+                    array('tabname'=>'Timetable', 'url'=>"/RTSS/timetable/admin.php"), 
                     array('tabname'=>'View', 'url'=>""), 
                 );
                 include '../topbar-frag.php';

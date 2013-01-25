@@ -5,7 +5,7 @@ class PageConstant
     const SCH_NAME_ABBR="CHIJ";
     const SCH_NAME="CHIJ St Nicholas Girl's School";
     
-    const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/upload.php'
+    const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'
     
     // School start/end time
     public static $SCHOOL_START_TIME, $SCHOOL_END_TIME;
@@ -167,6 +167,15 @@ class NameMap
             ),
             'hidden' => array(
                 'teacher-accname', 'relief-teacher-aaccname'
+            )
+        ),
+        
+        'namematch' => array(
+            'display' => array(
+                'abbrname' => 'Abbreviation', 'fullname' => 'Full Name'
+            ),
+            'hidden' => array(
+                'accname'
             )
         )
     );
