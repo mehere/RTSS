@@ -8,10 +8,10 @@ require_once '../controller-head.php';
 $mode=$_POST['mode'];
 $prop=$_POST['prop'];
 
-$accnameList=array();
+$leaveIDList=array();
 for ($i=0; $i<$_POST['num']; $i++)
 {
-    $accnameList[]=$_POST["accname-$i"];
+    $leaveIDList[]=$_POST["leaveID-$i"];
 }
 
 $output=array();
@@ -24,22 +24,26 @@ switch ($mode)
             $_SESSION['teacherVerified']=array();        
         }
         
-        foreach ($accnameList as $value)
+        foreach ($leaveIDList as $value)
         {
             $_SESSION['teacherVerified'][$value]=1;
         }
         
         $output['error']=0;
         break;
+        
     case 'delete':
         // Un-verify
-        foreach ($accnameList as $value)
+        foreach ($leaveIDList as $value)
         {
             unset($_SESSION['teacherVerified'][$value]);
         }
         
+        // DB op
+        
         $output['error']=0;
         break;
+        
     default: $output['error']=2;
 }
 

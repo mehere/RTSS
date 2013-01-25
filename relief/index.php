@@ -79,13 +79,13 @@ EOD;
                                 $keyList=array_keys(NameMap::$RELIEF['teacherOnLeave']['display']);
                                 $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
                                 foreach ($teacherOnLeaveList as $teacher) 
-                                {
+                                {                                    
                                     $datetime=$teacher[$keyList[2]];
-                                    $teacherAccname=$teacher[$keyExtraList[0]];
-                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacherAccname]);
-                                    $scheduledStr=PageConstant::stateRepresent($teacherScheduledList[$teacherAccname]);
+                                    $leaveID=$teacher[$keyExtraList[1]];
+                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$leaveID]);
+                                    $scheduledStr=PageConstant::stateRepresent($teacherScheduledList[$leaveID]);
                                     echo <<< EOD
-<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname=$teacherAccname">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>$verifiedStr</td><td>$scheduledStr</td></tr>   
+<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>$verifiedStr</td><td>$scheduledStr</td></tr>   
 EOD;
                                 }
                                 if (empty($teacherOnLeaveList))

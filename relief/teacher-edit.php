@@ -70,22 +70,22 @@ EOD;
                                 // construct reason option array and time option array
                                 $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
                                 $timeArr=array();
-                                for ($i=PageConstant::$SCHOOL_START_TIME; $i<=PageConstant::$SCHOOL_END_TIME; $i+=PageConstant::SCHOOL_TIME_INTERVAL*60)
+                                for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
                                 {
-                                    $timeStr=date("H:i", $i);
-                                    $timeArr[$timeStr]=$timeStr;
+                                    $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
+                                    $timeArr[$i]=$timeStr;
                                 }
                                 
                                 $numOfTeacher=count($teacherList);
                                 for ($i=0; $i<$numOfTeacher; $i++)
                                 {
                                     $teacher=$teacherList[$i];
-                                    
+                          
                                     $datetime=$teacher[$keyList[2]];
                                     $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
                                     $timeFromOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[0][1]);
                                     $timeToOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[1][1]);
-                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacher[$keyExtraList[0]]]);
+                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacher[$keyExtraList[1]]]);
                                     echo <<< EOD
 <tr>
     <td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>
@@ -107,7 +107,7 @@ EOD;
         </div>
     </td>
     <td><div class="toggle-display">{$teacher[$keyList[3]]}</div><textarea name="remark-$i" class="toggle-edit">{$teacher[$keyList[3]]}</textarea></td>
-    <td>$verifiedStr</td>
+    <td>$verifiedStr <input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" /></td>
 </tr>
 EOD;
                                 }

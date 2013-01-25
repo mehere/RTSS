@@ -11,6 +11,8 @@ class PageConstant
     public static $SCHOOL_START_TIME, $SCHOOL_END_TIME;
     const SCHOOL_TIME_INTERVAL=30; // minute
     
+    public static $DAY=array('Mon', 'Tue', 'Wed', 'Thu', 'Fri');
+    
     public static $ERROR_TEXT=array(
         'login' => array(
             'mismatch' => 'Username or Password was entered incorrectly.',
@@ -81,7 +83,7 @@ class NameMap
                 'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
             ),
             'hidden' => array(
-                'accname'
+                'accname', 'leaveID'
             )
         ),
         
@@ -121,7 +123,7 @@ class NameMap
                 'fullname' => 'Name', 'reason' => 'Reason', 'datetime' => 'Time', 'remark' => 'Remark'
             ),
             'hidden' => array(
-                'accname'
+                'accname', 'leaveID'
             )
         ),
         

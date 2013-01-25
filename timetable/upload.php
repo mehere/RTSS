@@ -1,5 +1,6 @@
 <?php 
-    include_once '../head-frag.php'; include_once '../php-head.php';
+    include_once '../php-head.php';
+    include_once '../head-frag.php'; 
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -15,13 +16,13 @@
 <div id="container">  	
     <div id="content-wrapper">
     	<div id="content">
-            <div id="topbar">
-            	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
-                <ul class="breadcrumb">
-                    <li><a href="/RTSS/timetable/">Timetable</a></li>
-                    <li>Upload</li>
-                </ul>                
-            </div>
+            <?php 
+                $TOPBAR_LIST=array(
+                    array('tabname'=>'Timetable', 'url'=>"/RTSS/timetable/upload.php"), 
+                    array('tabname'=>'Admin', 'url'=>""), 
+                );
+                include '../topbar-frag.php';
+            ?>
             <form class="main" name="timetable" action="" method="post">
             	<div class="line"><span class="label">Year:</span>
                 	<select name="year">
@@ -46,6 +47,93 @@ EOD;
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
                 <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em; margin: 10px 0" class="button" /></div>                
             </form>
+            <div class="main">
+                <form name="add-class">
+                    <table class="form-table">
+                    	<thead>
+                            <tr>
+                                <?php 
+                                    $width=array("55px", "20%", "55px", "40%", "65px", "40%", "70px");
+                                    foreach ($width as $value)
+                                    {
+                                        echo <<< EOD
+<td style="width: $value"></td>
+EOD;
+                                    }
+                                ?>
+                            </tr>
+                        </thead>                    	
+                    	<tr>
+                            <td class="label">Day:</td>
+                            <td>
+                                <select name="day">
+                                    <option value="0">Monday</option>
+                                    <option value="1">Tuesday</option>                        
+                                </select>
+                            </td>                        
+                            <td class="label">Time:</td>
+                            <td>
+                                <select name="time-from">
+                                    <option value="1">07:15</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                                <select name="time-to" style="margin-left: 10px">
+                                    <option value="1">07:15</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </td>
+                            <td class="label">Subject:</td>
+                            <td><input type="text" name="subject" style="width: 90%" /></td>
+                            <td></td>
+                    	</tr>
+                        <tr>
+                        	<td class="label">Venue:</td>
+                            <td><input type="text" name="venue" class="text-field" style="width: 100%" /></td>
+                            <td class="label">Class:</td>
+                            <td colspan="3"><input type="text" name="class" class="text-field" style="width: 50%" /> <span class="comment">Use <strong class="punc">;</strong> or <strong class="punc">,</strong> to separate classes</span></td>
+                            <td><input type="submit" class="button" value="Add" style="font-size: 14px" /></td>
+                        </tr>
+                    </table>
+                </form>
+                <form name="AED" action="" method="post" style="position: relative">            	
+                    <table class="table-info">
+                        <thead>
+                            <th style="width: 90px"></th>
+                            <?php 
+                                $dayArr=PageConstant::$DAY;
+                                foreach($dayArr as $day)
+                                {
+                                    echo <<< EOD
+                                        <th style="width: 20%">$day</th>
+EOD;
+                                }
+                            ?>                    	
+                        </thead>
+                        <tbody>
+                            <?php 
+                                $timeArr=array();
+                                for ($i=0; $i<(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
+                                {
+                                    $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
+                                    $timeToStr=date("H:i", ($i+1)*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
+                                    $timeArr[$i]=$timeStr;
+                                    echo <<< EOD
+<tr><td class="time-col">$timeStr<span style="margin: 0 3px">-</span>$timeToStr</td><td></td><td></td><td></td><td></td><td></td></tr>
+EOD;
+                                }
+                            ?>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                    	<span class="label">AED Name:</span><input type="text" name="fullname" />
+                        <input type="submit" class="button" value="Submit" style="margin-left: 30px" />
+                    </div>
+                    <div class="subject">PLC MA12<br />P1<br />CL VEN 3
+                    </div>
+                </form>
+            </div>
         </div>        
     </div>
     <?php include '../sidebar-frag.php'; ?>

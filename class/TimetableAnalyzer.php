@@ -343,6 +343,36 @@ class TimetableAnalyzer {
         }
          * 
          */
+        /*
+        $result = User::login("S0127975J", 'S0127975J');
+        echo $result['accname'];
+        echo $result['type'];
+         * 
+         */
+        /*
+        $result = Teacher::getTeacherName('');
+        foreach($result as $one_teacher)
+        {
+            echo $one_teacher['accname']."<br>";
+            echo $one_teacher['fullname']."<br><br>";
+        }
+         * 
+         */
+        /*
+        $result = Teacher::getIndividualTeacherDetail("178984");
+        print_r($result);
+         * 
+         */
+        
+        //$result1 = Teacher::add('', 'temp', 'Robot Haphati Fckek', '', 'I am new here', '2013-01-15', '2013-01-16', '08:00', '18:00', '11111111', '111@adb.com', 'tamil');
+        //$result2 = Teacher::add('TMP1234566', 'temp', '',"", 'I am available today',  '2013-01-15', '2013-01-16', '08:00', '18:00', '11111111', '111@adb.com', 'tamil');
+        //$result3 = Teacher::add('1692161' , 'leave','',"medical leave", 'I am sick today', '2013-01-15', '2013-01-16', '08:00', '18:00',  '', '', '');
+        //echo $result3;
+        //
+        //echo Teacher::delete(Array(2, 3,), 'leave');
+        
+        //Teacher::edit(1, "leave", Array('accname'=>"38383838", 'reaaason'=>'dcdcdcdasde', 'remark'=>'cdc','datetime-from'=>'1919-11-11 11:11', 'datetime-to'=>'2020-11-11 22:22'));
+        //Teacher::edit(1, "temp", Array('accname'=>'TMP1234566','remark'=>'cdc','datetime-from'=>'1919-11-11 11:11', 'datetime-to'=>'2020-11-11 22:22', 'email'=>'afasd', 'handphone'=>'8888', 'MT'=>'nin'));
         //********xue : testing end
          }
          

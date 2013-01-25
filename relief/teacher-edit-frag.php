@@ -4,11 +4,11 @@ require_once '../constant.php';
 if (!$reasonArr)
 {
     $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
-    $timeArr=array();
-    for ($i=PageConstant::$SCHOOL_START_TIME; $i<=PageConstant::$SCHOOL_END_TIME; $i+=PageConstant::SCHOOL_TIME_INTERVAL*60)
+    $timeArr=array();    
+    for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
     {
-        $timeStr=date("H:i", $i);
-        $timeArr[$timeStr]=$timeStr;
+        $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
+        $timeArr[$i]=$timeStr;
     }
 }
 
@@ -41,7 +41,7 @@ echo <<< EOD
         </div>
     </td>
     <td><span class="toggle-display"></span><textarea name="remark-$numOfTeacher" class="toggle-edit"></textarea></td>
-    <td><div class="add-edit">$verifiedNotStr</div></td>
+    <td><div class="add-edit">$verifiedNotStr</div> <input type="hidden" name="leaveID-$numOfTeacher" value="" /></td>
 </tr>
 EOD;
 ?>

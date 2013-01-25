@@ -11,12 +11,15 @@ include('class/User.php');
 $destination = "/RTSS/index.php";
 
 //call function to verify username and password and store user type
-$_SESSION['type'] = User::login(trim($_POST['username']), trim($_POST['password']));
+$userInfo = User::login(trim($_POST['username']), trim($_POST['password']));
+
+$_SESSION['type']=$userInfo['type'];
 
 //based on user type, decide where to redirect or simply go back with error message
 if($_SESSION['type']){
     //store user name
-    $_SESSION['accname'] = $_POST['username'];
+    $_SESSION['username'] = $_POST['username'];
+    $_SESSION['accname'] = $userInfo['accname'];
     if($_SESSION['type'] == "admin")
         $destination = "/RTSS/relief/index.php";
     else

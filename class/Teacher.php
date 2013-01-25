@@ -226,269 +226,449 @@ class Teacher {
         return $result;
     }
     
-    //this function returns the details of a teacher
+    public static function getTeacherName($type)
+    {
+        $normal_list = Array();
+        $temp_list = Array();
+        
+        if(empty($type) || strcmp($type, "normal")===0)
+        {
+            $ifins_db_url = Constant::ifins_db_url;
+            $ifins_db_username = Constant::ifins_db_username;
+            $ifins_db_password = Constant::ifins_db_password;
+            $ifins_db_name = Constant::ifins_db_name;
+
+            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
+
+            if ($ifins_db_con)
+            {
+                mysql_select_db($ifins_db_name);
+                
+                $sql_query_normal = "select user_id, user_name from actatek_user where user_position = 'Teacher';";
+                $query_normal_result = mysql_query($sql_query_normal);
+                
+                if($query_normal_result)
+                {
+                    $index = 0;
+                    while($row = mysql_fetch_assoc($query_normal_result))
+                    {
+                        $normal_list[$index] = Array(
+                            'fullname' => $row['user_name'],
+                            'accname' => $row['user_id']
+                        );
+                        $index++;
+                    }
+                }
+            }    
+        }
+        if(empty($type) || strcmp($type, "temp")===0)
+        {
+            $db_url = Constant::db_url;
+            $db_username = Constant::db_username;
+            $db_password = Constant::db_password;
+            $db_name = Constant::db_name;
+
+            $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+            if ($db_con)
+            {
+                mysql_select_db($db_name);
+                
+                $sql_query_temp = "select teacher_id, name from rs_temp_relief_teacher;";
+                $query_temp_result = mysql_query($sql_query_temp);
+                
+                if($query_temp_result)
+                {
+                    $index = 0;
+                    while($row = mysql_fetch_assoc($query_temp_result))
+                    {
+                        $temp_list[$index] = Array(
+                            'fullname' => $row['name'],
+                            'accname' => $row['teacher_id']
+                        );
+                        $index++;
+                    }
+                }
+            }
+        }
+        
+        return array_merge($normal_list, $temp_list);
+    }
+    
+    //this function returns the details of a normal teacher
     //input : accname - the name used to log in
     //output : associative array of information. Before retrieving any information, check if($output['found']) to see whether the teacher record is found
-    /* temporarily disabled, will release later
     public static function getIndividualTeacherDetail($accname)
     {
         $result = Array(
             'found' => false,
             'ID' => $accname,
-            'name' => NULL,
-            'gender' => NULL,
-            'mobile' => NULL,
-            'email' => NULL
         );
 
-        $ifins_db_url = Constant::ifins_db_url;
-        $ifins_db_username = Constant::ifins_db_username;
-        $ifins_db_password = Constant::ifins_db_password;
-        $ifins_db_name = Constant::ifins_db_name;
-        
-        $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
-        
-        if (!$ifins_db_con)
+        if(substr($accname, 0, 3) === 'TMP')
         {
-            return $result;
-        }
-        
-        mysql_select_db($ifins_db_name);
-        
-        //with accname, get fullname from ntu.ac_all_teacher
-        $sql_query_fullname = "select name from ac_all_teacher where acc_name = '".mysql_real_escape_string($accname)."';";
-        $db_query_result = mysql_query($sql_query_fullname);
-        if(!$db_query_result)
-        {
-            return $result;
-        }
-        
-        $row = mysql_fetch_array($db_query_result);
-        if($row)
-        {
+            $db_url = Constant::db_url;
+            $db_username = Constant::db_username;
+            $db_password = Constant::db_password;
+            $db_name = Constant::db_name;
+
+            $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+            if (!$db_con)
+            {
+                return $result;
+            }
+
+            mysql_select_db($db_name);
+
+            //with full name, query information from ifins_2012.actatek_user
+            $sql_query_detail = "select * from rs_temp_relief_teacher where teacher_id = '".mysql_real_escape_string($accname)."';";
+            $query_result = mysql_query($sql_query_detail);
+
+            if(!$query_result)
+            {
+                return $result;
+            }
+
+            $row = mysql_fetch_array($query_result);
+            if(!$row)
+            {
+                return $result;
+            }
+
+            $result['found'] = true;
             $result['name'] = $row['name'];
+            $result['gender'] = $row['gender'];
+            $result['mobile'] = $row['mobile'];
+            $result['email'] = $row['email'];
+
+            return $result;
         }
         else
         {
-            return $result;
-        }
-        
-        //with full name, query information from ifins_2012.actatek_user
-        $sql_query_detail = "select * from actatek_user where user_name = '".mysql_real_escape_string($result['name'])."';";
-        $ifins_query_result = mysql_query($sql_query_detail);
-        
-        if(!$ifins_query_result)
-        {
-            return $result;
-        }
-        
-        $ifins_row = mysql_fetch_array($ifins_query_result);
-        if(!$ifins_row)
-        {
-            return $result;
-        }
-       
-        $result['found'] = true;
-        $result['gender'] = $ifins_row['user_gender'];
-        $result['mobile'] = $ifins_row['user_mobile'];
-        $result['email'] = $ifins_row['user_email'];
-       
-        return $result;
-    }
-     * 
-     */
-    
-    //this function finds a list of alternatives for abbre name of all teachers
-    //this function is used when the 1-to-1 match of abbre and full name is not established
-    //input : an array of teacher objects, with abbre name provided
-    //output : NA
-    /* temporarily disabled. not updated
-    public static function abbreToFullnameBatchSetup($teacher_list)
-    {
-        $db_url = Constant::ifins_db_url;
-        $db_username = Constant::ifins_db_username;
-        $db_password = Constant::ifins_db_password;
-        $db_name = Constant::ifins_db_name;
-        
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-        
-        if (!$db_con)
-        {
-            die("function Teacher::abbreToFullnameBatch : Could not connect to database");
-        }
-        
-        mysql_select_db($db_name);
-        
-        foreach($teacher_list as $a_teacher)
-        {
-            $abbre_name = $a_teacher->abbreviation;
-            
-            echo $abbre_name." : ";
-            
-            //array of teacher objects
-            $full_alternatives = Teacher::abbreToFullnameSingleSetup($abbre_name);
-            
-            foreach($full_alternatives as $a_name_object)
+            $ifins_db_url = Constant::ifins_db_url;
+            $ifins_db_username = Constant::ifins_db_username;
+            $ifins_db_password = Constant::ifins_db_password;
+            $ifins_db_name = Constant::ifins_db_name;
+
+            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
+
+            if (!$ifins_db_con)
             {
-                $teacher_accname = $a_name_object->accname;
-                $teacher_fullname = $a_name_object->name;
-                
-                echo " ( ".$teacher_accname." , ".$teacher_fullname.") ";
+                return $result;
             }
-            
-            echo "<br><br>";
+
+            mysql_select_db($ifins_db_name);
+
+            //with full name, query information from ifins_2012.actatek_user
+            $sql_query_detail = "select * from actatek_user where user_id = '".mysql_real_escape_string($accname)."' and user_position = 'Teacher';";
+            $ifins_query_result = mysql_query($sql_query_detail);
+
+            if(!$ifins_query_result)
+            {
+                return $result;
+            }
+
+            $ifins_row = mysql_fetch_array($ifins_query_result);
+            if(!$ifins_row)
+            {
+                return $result;
+            }
+
+            $result['found'] = true;
+            $result['name'] = $ifins_row['user_name'];
+            $result['gender'] = $ifins_row['user_gender'];
+            $result['mobile'] = $ifins_row['user_mobile'];
+            $result['email'] = $ifins_row['user_email'];
+
+            return $result;
         }
-        
     }
-     * 
-     */
     
     /**
-     * Return the list of teacher's name, followed by accname
-     * @param string $type possible input: '' (empty string <-- default, means all), normal, temp
-     * @return type 
+     * add both temp teacher and leave teacher
+     * @param type $accname
+     * @param type $prop - 'leave', 'temp'
+     * @param type $fullname
+     * @param type $reason
+     * @param type $remark
+     * @param type $date_from - 2013-01-13
+     * @param type $date_to - 2013-01-13
+     * @param type $time_from - 07:30
+     * @param type $time_to - 07:30
+     * @param type $handphone
+     * @param type $email
+     * @param type $MT
+     * @return int >=0:add leave successfully, leaveID, -1:add temp successfully, -2:error
      */
-    public static function getTeahcerName($type='')
-    {
-        return array(array('fullname'=>'Chia Siew Eng', 'accname'=>'cse'),
-            array('fullname'=>'Chin Yi Xuan Xuanie', 'accname'=>'cyx'), array('fullname'=>'Tian Zhe', 'accname'=>'tz'),
-            array('fullname'=>'Jade Lim Swee Chern', 'accname'=>'lsc'), array('fullname'=>'Caris Ong ', 'accname'=>'co'));
-    }
-    
-    
-    /*
-     The following functions are for testing purpose
-     * 
-     */
-    
-    //this function lists all abbre name (in teacher_list) that dont have a match
-    //input : $teacher_list, a list of Teacher object, with abbre_name provided
-    //output : na
-    /* temporarily disabled. not updated
-    public static function listUnmatchedAbbreName($teacher_list)
+    public static function add($accname, $prop, $fullname, $reason, $remark, $datetime_from, $datetime_to, $handphone, $email, $MT)
     {
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;
         $db_password = Constant::db_password;
         $db_name = Constant::db_name;
-        
+
         $db_con = mysql_connect($db_url, $db_username, $db_password);
-        
+
         if (!$db_con)
         {
-            die("function Teacher::listUnmatchedAbbreName : Could not connect to database");
+            return -2;
         }
-        
+
         mysql_select_db($db_name);
         
-        $sql_query = "select abbre_name from ct_name_abbre_matching;";
-        
-        $sql_result = mysql_query($sql_query);
-        
-        $result_index = 0;
-        $all_matched_abbre = Array();
-        
-        while($row = mysql_fetch_array($sql_result))
+        if(strcmp($prop, "leave")===0)
         {
-            $all_matched_abbre[$result_index] = $row['abbre_name'];
+            $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified) values
+                ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
+                    '".mysql_real_escape_string(trim($datetime_from))."', '".mysql_real_escape_string(trim($datetime_to))."', 'NO');";
             
-            $result_index++;
-        }
-        
-        $not_matched_abbre = Array();
-        $not_matched_index = 0;
-        
-        foreach($teacher_list as $a_teacher)
-        {
-            $abbre = $a_teacher->abbreviation;
-         
-            if(!in_array($abbre, $all_matched_abbre))
+            $insert_leave_result = mysql_query($sql_insert_leave);
+            
+            if(!$insert_leave_result)
             {
-                $not_matched_abbre[$not_matched_index] = $abbre;
-                $not_matched_index++;
+                return -2;
             }
+            
+            return mysql_insert_id();
         }
-        
-        //print out 
-        foreach($not_matched_abbre as $an_abbre)
+        else if(strcmp($prop, "temp")===0)
         {
-            echo "<br>";
-            echo $an_abbre;
-            echo "<br>";
+            if(empty($accname))
+            {
+                $name_array = explode(" ", $fullname);
+                if(count($name_array)>0)
+                {
+                    if(strlen($name_array[0])>2)
+                    {
+                        $name_short = substr($name_array[0], 0, 3); 
+                    }
+                    else if(strlen($name_array[0])==2)
+                    {
+                        $name_short = $name_array[0].rand(0, 9);
+                    }
+                    else if(strlen($name_array[0])==1)
+                    {
+                        $name_short = $name_array[0].rand(11, 99);
+                    }
+                    else
+                    {
+                        return -2;
+                    }
+                }
+                else
+                {
+                    return -2;
+                }
+                    
+                //time since 2010-1-1 00:00:00
+                $accname = "TMP".(time() - 1261440000).$name_short;
+                
+                $sql_insert_temp_teacher = "insert into rs_temp_relief_teacher(teacher_id, name, mobile, email, mother_tongue) values
+                    ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($fullname))."', '".mysql_real_escape_string(trim($handphone))."',
+                        '".mysql_real_escape_string(trim($email))."', '".mysql_real_escape_string(trim($MT))."');";
+                
+                $insert_temp_result = mysql_query($sql_insert_temp_teacher);
+            
+                if(!$insert_temp_result)
+                {
+                    return -2;
+                }
+            }
+            
+            $sql_insert_temp_time = "insert into rs_temp_relief_teacher_availability(teacher_id, start_datetime, end_datetime, slot_remark) values
+                ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($datetime_from))."', 
+                    '".mysql_real_escape_string(trim($datetime_to))."', '".mysql_real_escape_string(trim($remark))."');";
+            
+            $insert_temp_time_result = mysql_query($sql_insert_temp_time);
+            
+            if(!$insert_temp_time_result)
+            {
+                return -2;
+            }
+            
+            return mysql_insert_id();
+        }
+        else
+        {
+            return -2;
         }
     }
-     * 
-     */
     
-    /*
-     The following are private functions
-     * 
-     */
-    
-    //this function finds a list of alternatives for abbre name of a single teacher
-    //this function is used when the 1-to-1 match of abbre and full name is not established
-    //input : abbre name - string
-    //output : an array of teacher objects, with accname and fullname
-    /* temporarily disabled. not updated
-    private static function abbreToFullnameSingleSetup($teacher_abbre_name)
+    public static function delete($leaveIDList, $prop)
     {
-        $result = Array();
-        
-        //algorithm to find a search token
-        //normally will take the first token, but when the first token is a letter and the seond exist
-        //the second is used
-        
-        $name_pieces = explode(" ", $teacher_abbre_name);
-        $search_token = $name_pieces[0];
-        
-        $key_replacement = Constant::$abbre_token_replace;
-        
-        $teacher_abbre_name_modified = str_replace(' ', '_', $teacher_abbre_name);
-        
-        if(array_key_exists($teacher_abbre_name_modified, $key_replacement))
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
         {
-            $search_token = $key_replacement[$teacher_abbre_name_modified];
+            return false;
         }
-        else if(strlen($search_token)<=1)
+
+        mysql_select_db($db_name);
+        
+        if(strcmp($prop, "leave") === 0)
         {
-            if(isset($name_pieces[1]) && strlen($name_pieces[1])>1)
+            $sql_delete_leave = "delete from rs_leave_info where leave_id in (".  implode(', ', $leaveIDList).");";
+            
+            $delete_leave_result = mysql_query($sql_delete_leave);
+            
+            if(!$delete_leave_result)
             {
-                $search_token = $name_pieces[1];
+                return false;
             }
-            else
-            {
-                return results;
-            }
+            
+            return true;
         }
-        
-        //search in database
-        
-        //use table astatek
-        //$sql_query = "select user_id, user_name from actatek_user where user_position = 'Teacher' and user_name like '%".$search_token."%';";
-        
-        //user table fs_accounts_pri
-        $sql_query = "select accname, accfullname from fs_accounts_pri where accfullname like '%".mysql_real_escape_string($search_token)."%';";
-        
-        $sql_result = mysql_query($sql_query);
-        
-        $result_index = 0;
-        
-        while($row = mysql_fetch_array($sql_result))
+        else if(strcmp($prop, "temp") === 0)
         {
-            $oneAlternative = new Teacher($teacher_abbre_name);
+            $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";
             
-            $oneAlternative->accname = $row['accname'];
-            $oneAlternative->name = $row['accfullname'];
+            $delete_temp_result = mysql_query($sql_delete_temp);
             
-            $result[$result_index] = $oneAlternative;
+            if(!$delete_temp_result)
+            {
+                return false;
+            }
             
-            $result_index++;
+            return true;
         }
-        
-        return $result;
+        else
+        {
+            return false;
+        }
     }
-     * 
+    
+    /**
+     * For prop=leave, only accname, reason, remark, datetime-from, datetime-to can be updated; 
+     * For prop=temp, only datetime-from, datetime-to, remark, phone, email, MT can be updated;
+     * !!!!!!Important!!!!!! : pass the teacher's accname if prop = temp
+     * @param type $leaveID
+     * @param type $prop
+     * @param type $change
+     * @return boolean
      */
+    public static function edit($leaveID, $prop, $change)
+    {
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
+        {
+            return false;
+        }
+
+        mysql_select_db($db_name);
+        
+        if(empty($change) || count($change)===0)
+        {
+            return false;
+        }
+        
+        if(strcmp($prop, "leave") === 0)
+        {
+            $match_array = Array(
+                'accname' => 'teacher_id',
+                'reason' => 'reason',
+                'remark' => 'remark',
+                'datetime-from' => 'start_time',
+                'datetime-to' => 'end_time'
+            );
+            
+            $sql_update_leave = "update rs_leave_info set ";
+            
+            foreach($change as $key => $value)
+            {
+                if(array_key_exists($key, $match_array))
+                {
+                    $sql_update_leave .= $match_array[$key]."='".mysql_real_escape_string($value)."',";
+                }
+            }
+            
+            $sql_update_leave = substr($sql_update_leave, 0 ,-1)." ";
+            $sql_update_leave .= "where leave_id = ".$leaveID.";";
+            
+            $update_leave_result = mysql_query($sql_update_leave);
+            
+            if(!$update_leave_result)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        else if(strcmp($prop, "temp") === 0)
+        {
+            $teacher_match_array = Array(
+                'handphone' => 'mobile',
+                'email' => 'email',
+                'MT' => 'mother_tongue'
+            );
+            $temp_match_array = Array(
+                'remark' => 'slot_remark',
+                'datetime-from' => 'start_datetime',
+                'datetime-to' => 'end_datetime'
+            );
+            
+
+            $sql_update_teacher = "update rs_temp_relief_teacher set ";
+            $sql_update_temp = "update rs_temp_relief_teacher_availability set ";
+
+            $teacher_change = false;
+            $temp_change = false;
+
+            foreach($change as $key => $value)
+            {
+                if(array_key_exists($key, $teacher_match_array))
+                {
+                    $teacher_change = true;
+                    $sql_update_teacher .= $teacher_match_array[$key]."='".mysql_real_escape_string($value)."',";
+                }
+                else if(array_key_exists($key, $temp_match_array))
+                {
+                    $temp_change = true;
+                    $sql_update_temp .= $temp_match_array[$key]."='".mysql_real_escape_string($value)."',";
+                }
+            }
+
+            $teacher_id = $change['accname'];
+         
+            $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
+            $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
+            
+            $sql_update_temp = substr($sql_update_temp, 0 ,-1)." ";
+            $sql_update_temp .= "where temp_availability_id = ".$leaveID.";";
+            echo $sql_update_teacher."<br>".$sql_update_temp;
+            if($teacher_change)
+            {
+                $update_teacher_result = mysql_query($sql_update_teacher);
+            
+                if(!$update_teacher_result)
+                {
+                    return false;
+                }
+            }
+            if($temp_change)
+            {
+                $update_temp_result = mysql_query($sql_update_temp);
+            
+                if(!$update_temp_result)
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+    }
     
     //this function retrieve all teachers from database ifins
     private static function getAllTeachers()
