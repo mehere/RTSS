@@ -248,10 +248,9 @@ class TimetableAnalyzer {
         }
          * 
          */
-        
         /*
-        $arrTeachersNew=Teacher::getTeachersAccnameAndFullname($arrTeachers);
-        foreach($arrTeachersNew as $a_teacher)
+        Teacher::getTeachersAccnameAndFullname($arrTeachers);
+        foreach($arrTeachers as $a_teacher)
         {
             echo $a_teacher->abbreviation."<br>";
             echo $a_teacher->name."<br>";
@@ -259,8 +258,6 @@ class TimetableAnalyzer {
         }
          * 
          */
-        
-      
        /*
         $query_date = "2013-01-12";
         $teacher_on_leave = Teacher::getTeacherOnLeave($query_date);
@@ -350,7 +347,7 @@ class TimetableAnalyzer {
          * 
          */
         /*
-        $result = Teacher::getTeacherName('');
+        $result = Teacher::getTeacherName('normal');
         foreach($result as $one_teacher)
         {
             echo $one_teacher['accname']."<br>";
