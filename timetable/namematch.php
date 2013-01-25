@@ -52,7 +52,7 @@ EOD;
                                         	<option value="accxxx">Tan Hong Lin</option>
                                         </optgroup>
                                         <optgroup label="All Teachers">
-                                        	<option value="asd">Astin Sun</option>
+                                        	<option value="asd">Austin Sun</option>
                                         </optgroup>
                                     </select>
                                 </td>
