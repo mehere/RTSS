@@ -16,6 +16,13 @@ class TimetableAnalyzer {
     public $arrClasses = array();
     public $arrLessons = array();
     public $noCol = 0;
+    public $year;
+    public $semester;
+
+    public function __construct($year, $semester) {
+        $this->year = $year;
+        $this->semester = $semester;
+    }
 
     //put your code here
     public function readCsv($filePath) {
@@ -392,6 +399,19 @@ class TimetableAnalyzer {
                 $aLessonOld = $aLesson;
             }
         }
+    }
+
+    public function getUnknownTeachers(){
+        $unknown = array();
+
+        $arrTeachers = $this->arrTeachers;
+        foreach ($arrTeachers as $abbreviation => $aTeacher) {
+            if (empty($aTeacher->accname)){
+                $unknown[$abbreviation] = $aTeacher;
+            }
+        }
+
+        return $unknown;
     }
 
 }
