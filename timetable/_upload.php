@@ -24,11 +24,18 @@ if ($_FILES["timetableFile"]["error"] > 0)
 
         $arrTeachers = $analyzer->arrTeachers;
         $arrTeachers = Teacher::getTeachersAccnameAndFullname($arrTeachers);
-        $analyzer->printTeachers();
+        //$analyzer->printTeachers();
+        $unknownTeachers = array();
+        foreach ($arrTeachers as $abbreviation->$aTeacher){
+            /* @var $aTeacher Teacher */
+            if (empty($aTeacher->accname)){
+                $unknownTeachers[$abbreviation]=$abbreviation;
+            }
+        }
+        $_SESSION["abbrNameList"]=$unknownTeachers;
+        $_SESSION["timetableAnalyzer"] = $analyzer;
 
         $destination = "/RTSS/timetable/namematch.php";
-
-        $_SESSION["timetableAnalyzer"] = $analyzer;
     } catch (Exception $e)
     {
         echo "Error: Wrong file<br>Message:" . $e->getMessage();

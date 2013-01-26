@@ -1,4 +1,5 @@
 <?php
+
 header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
@@ -13,24 +14,25 @@ $destination = "/RTSS/index.php";
 //call function to verify username and password and store user type
 $userInfo = User::login(trim($_POST['username']), trim($_POST['password']));
 
-$_SESSION['type']=$userInfo['type'];
+$_SESSION['type'] = $userInfo['type'];
 
 //based on user type, decide where to redirect or simply go back with error message
-if($_SESSION['type']){
+if ($_SESSION['type'])
+{
     //store user name
     $_SESSION['username'] = $_POST['username'];
     $_SESSION['accname'] = $userInfo['accname'];
-    if($_SESSION['type'] == "admin")
+    if ($_SESSION['type'] == "admin")
         $destination = "/RTSS/relief/index.php";
     else
         $destination = "/RTSS/timetable/index.php";
 }
-else{
+else
+{
     $_SESSION["loginError"] = true;
 }
 
 //redirect
 session_regenerate_id();
 header("Location: $destination");
-
 ?>
