@@ -1,3 +1,10 @@
+<?php
+
+$accname=$_POST['accname'];
+$type=$_POST['type'];
+
+?>
+
 <form class="main" name="report-overall">
     <fieldset>
         <legend>Filter</legend>
@@ -17,7 +24,7 @@
                 </tr>
             </thead>
             <tbody id="table-overall">
-                <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname=1234">haha asdf</a></td><td>AED</td><td>4</td><td>2</td><td>2</td></tr>
+                <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname=1234" class="teacher-detail-link">haha asdf</a></td><td>AED</td><td>4</td><td>2</td><td>2</td></tr>
                 <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname=cxas">haha xsa</a></td><td>AED</td><td>1</td><td>2</td><td>-1</td></tr>
                 <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname=1234">haha asdf</a></td><td>AED</td><td>4</td><td>2</td><td>2</td></tr>
             </tbody>

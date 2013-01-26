@@ -1,25 +1,19 @@
 $(document).ready(function(){
     $( "#tabs" ).tabs({
-        beforeLoad: function( event, ui ) {
-            ui.jqXHR.error(function() {
-                ui.panel.html(
-                    "Error in fetching the content." );
-            });
-        },
         load: function(event, ui) {
             var field={}, formR={}, list=[];
-            switch (ui.tab.text.toLowerCase())
+            switch (ui.index)
             {
-                case 'overall':
-                    formR=document.forms['report-overall'];
-                    field=formR['fullname'];
-                    list=["Ana Mill", "Anto Till", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
-                    break;
-                case 'individual':
+                // Individual
+                case 1:
                     formR=document.forms['report-individual'];
                     field=formR['name-email'];
                     list=["Ana Mill", "AntoTill@com.com", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
                     break;
+                default:
+                    formR=document.forms['report-overall'];
+                    field=formR['fullname'];
+                    list=["Ana Mill", "Anto Till", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
             }
 
             // Auto complete
