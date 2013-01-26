@@ -1,7 +1,8 @@
 <?php
 
 spl_autoload_register(
-        function ($class) {
+        function ($class)
+        {
             include '../class/' . $class . '.php';
         });
 
@@ -10,24 +11,27 @@ $semester = $_POST["sem"];
 echo '<br>year:' . $year;
 echo '<br>sem:' . $semester;
 
-if ($_FILES["timetableFile"]["error"] > 0) {
+if ($_FILES["timetableFile"]["error"] > 0)
+{
     echo "Error: " . $_FILES["timetableFile"]["error"] . "<br>";
-} else {
+} else
+{
     $fileName = $_FILES["timetableFile"]["tmp_name"];
-    $analyzer = new TimetableAnalyzer();
-    try {
+    $analyzer = new TimetableAnalyzer($year, $semester);
+    try
+    {
         $analyzer->readCsv($fileName);
-
 
         $arrTeachers = $analyzer->arrTeachers;
         $arrTeachers = Teacher::getTeachersAccnameAndFullname($arrTeachers);
         $analyzer->printTeachers();
 
-        $destination = "/RTSS/timetable/index.php";
+        $destination = "/RTSS/timetable/namematch.php";
 
         $_SESSION["timetableAnalyzer"] = $analyzer;
-    } catch (Exception $e) {
-        echo "Error: Wrong file<br>Message:".$e->getMessage();
+    } catch (Exception $e)
+    {
+        echo "Error: Wrong file<br>Message:" . $e->getMessage();
         /// To-Do: Where to forward to if there is error?
         //$destination = ""
     }
