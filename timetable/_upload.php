@@ -21,27 +21,39 @@ if ($_FILES["timetableFile"]["error"] > 0)
     try
     {
         $analyzer->readCsv($fileName);
+        //echo 'Lesson View';
+        //$analyzer->printLessons();
+//        $analyzer->printTeachers();
+//        $analyzer->printClasses();
 
         $arrTeachers = $analyzer->arrTeachers;
-        $arrTeachers = Teacher::getTeachersAccnameAndFullname($arrTeachers);
-        //$analyzer->printTeachers();
-        $unknownTeachers = array();
-        foreach ($arrTeachers as $abbreviation->$aTeacher){
-            /* @var $aTeacher Teacher */
-            if (empty($aTeacher->accname)){
-                $unknownTeachers[$abbreviation]=$abbreviation;
+        $results = Teacher::getTeachersAccnameAndFullname($arrTeachers);
+        if ($results)
+        {
+            //$analyzer->printTeachers();
+            $unknownTeachers = array();
+            foreach ($arrTeachers as $abbreviation => $aTeacher)
+            {
+                /* @var $aTeacher Teacher */
+                if (empty($aTeacher->accname))
+                {
+                    $unknownTeachers[$abbreviation] = $abbreviation;
+                }
             }
-        }
-        $_SESSION["abbrNameList"]=$unknownTeachers;
-        $_SESSION["timetableAnalyzer"] = $analyzer;
+            $_SESSION["abbrNameList"] = $unknownTeachers;
+            $_SESSION["timetableAnalyzer"] = $analyzer;
 
-        $destination = "/RTSS/timetable/namematch.php";
+            $destination = "/RTSS/timetable/namematch.php";
+        }
+        else {
+            throw new Exception("_upload.php: db returns false");
+        }
     } catch (Exception $e)
     {
         echo "Error: Wrong file<br>Message:" . $e->getMessage();
         /// To-Do: Where to forward to if there is error?
         //$destination = ""
     }
-    header("Location: $destination");
+     header("Location: $destination");
 }
 ?>

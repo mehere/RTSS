@@ -24,7 +24,7 @@ class Teacher
      * @param Array $teacher_list
      * @return boolean
      */
-    public static function getTeachersAccnameAndFullname(&$teacher_list)
+    public static function getTeachersAccnameAndFullname($teacher_list)
     {
         //get abbre-accname list
         $db_url = Constant::db_url;
@@ -49,26 +49,24 @@ class Teacher
         }
 
         $abbre_dict = Array();
+
         while ($row = mysql_fetch_array($result))
         {
-            $abbre_dict[str_replace(" ", "_", $row['abbre_name'])] = $row['teacher_id'];
+            $abbre_dict[$row['abbre_name']] = $row['teacher_id'];
         }
 
         //get accname - teacher list
         $teacher_dict = Teacher::getAllTeachers();
 
         //search teacher name
-        foreach ($teacher_list as $key => $a_teacher)
+        foreach ($teacher_list as $abbreviation => $a_teacher)
         {
-            if (!empty($abbre_dict[str_replace(" ", "_", $a_teacher->abbreviation)]))
+            if (!empty($abbre_dict[$abbreviation]))
             {
-                $a_teacher->accname = $abbre_dict[str_replace(" ", "_", $a_teacher->abbreviation)];
+                $a_teacher->accname = $abbre_dict[$abbreviation];
                 $a_teacher->name = $teacher_dict[$a_teacher->accname]['name'];
             }
-
-            $teacher_list[$key] = $a_teacher;
         }
-
         return true;
     }
 
