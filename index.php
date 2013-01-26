@@ -1,5 +1,8 @@
 <?php 
-include_once 'php-head.php';
+require_once 'constant.php';
+
+session_start();
+
 include_once 'head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>

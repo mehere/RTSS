@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $( "#tabs" ).tabs({
+    /*$( "#tabs" ).tabs({
         beforeLoad: function( event, ui ) {
             ui.jqXHR.error(function() {
                 ui.panel.html(
@@ -14,5 +14,5 @@ $(document).ready(function(){
     if (selectedInd != 0)
     {
         $( "#tabs" ).tabs('select', selectedInd);
-    }
+    }*/
 });
