@@ -16,14 +16,13 @@ class Teacher {
         $this->timetable = array();
     }
     
-    //this function finds full name and accname for a list of teachers, given abbre name
-    //input : Array of teachers, with abbre nave known
-    //output : Array of teachers, with name and accname returned
-    //error : An empty array is returned
-    public static function getTeachersAccnameAndFullname($teacher_list)
+    /**
+     * This function finds accname and fullname of teachers. Pass by reference
+     * @param Array $teacher_list
+     * @return boolean
+     */
+    public static function getTeachersAccnameAndFullname(&$teacher_list)
     {
-        $result_list = Array();
-        
         //get abbre-accname list
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;
@@ -34,7 +33,7 @@ class Teacher {
         
         if (!$db_con)
         {
-            return $result_list;
+            return false;
         }
         
         mysql_select_db($db_name, $db_con);
@@ -43,7 +42,7 @@ class Teacher {
         $result = mysql_query($sql_query);
         if(!$result)
         {
-            return $result_list;
+            return false;
         }
         
         $abbre_dict = Array();
@@ -58,18 +57,16 @@ class Teacher {
         //search teacher name
         foreach($teacher_list as $key => $a_teacher)
         {
-            $temp_teacher = new Teacher($a_teacher->abbreviation);
-            
             if(!empty($abbre_dict[str_replace(" ", "_", $a_teacher->abbreviation)]))
             {
-                $temp_teacher->accname=$abbre_dict[str_replace(" ", "_", $a_teacher->abbreviation)];
-                $temp_teacher->name=$teacher_dict[$temp_teacher->accname]['name'];
+                $a_teacher->accname=$abbre_dict[str_replace(" ", "_", $a_teacher->abbreviation)];
+                $a_teacher->name=$teacher_dict[$a_teacher->accname]['name'];
             }
             
-            $result_list[$key] = $temp_teacher;
+            $teacher_list[$key] = $a_teacher;
         }
         
-        return $result_list;
+        return true;
     }
     
     //this functio returns all teachers on leave today
@@ -244,7 +241,7 @@ class Teacher {
             {
                 mysql_select_db($ifins_db_name);
                 
-                $sql_query_normal = "select user_id, user_name from actatek_user where user_position = 'Teacher';";
+                $sql_query_normal = "select user_id, user_name from actatek_user where user_position = 'Teacher' order by user_name;";
                 $query_normal_result = mysql_query($sql_query_normal);
                 
                 if($query_normal_result)
@@ -274,7 +271,7 @@ class Teacher {
             {
                 mysql_select_db($db_name);
                 
-                $sql_query_temp = "select teacher_id, name from rs_temp_relief_teacher;";
+                $sql_query_temp = "select teacher_id, name from rs_temp_relief_teacher order by name;";
                 $query_temp_result = mysql_query($sql_query_temp);
                 
                 if($query_temp_result)
@@ -292,7 +289,19 @@ class Teacher {
             }
         }
         
-        return array_merge($normal_list, $temp_list);
+        $result_array = array_merge($normal_list, $temp_list);
+        
+        if(empty($type))
+        {
+            foreach($result_array as $key=>$value)
+            {
+                $fullname[$key] = $value['fullname'];
+            }
+            
+            array_multisort($fullname, SORT_ASC, $result_array);
+        }
+        
+        return $result_array;
     }
     
     //this function returns the details of a normal teacher

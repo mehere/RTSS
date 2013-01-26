@@ -5,7 +5,7 @@
         <?php if ($_SESSION['type'] == 'admin') { ?>
         <li><a href="/RTSS/relief/">Scheduling</a></li>
         <li><a href="/RTSS/report/">Report</a></li>
-        <li><a href="/RTSS/timetable/upload.php">Timetable - Admin</a></li>
+        <li><a href="/RTSS/timetable/admin.php">Timetable - Admin</a></li>
         <?php } ?>
         <li><a href="/RTSS/timetable/">View Timetable</a></li>
     </ul>

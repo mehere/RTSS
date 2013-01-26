@@ -1,11 +1,6 @@
 <?php 
 include_once '../php-head.php';
-    
-if (!$_SESSION['accname'])
-{
-    header("Location: /RTSS/");
-}
-    
+
 $isTemp=$_GET['teacher'] == 'temp';
 
 include_once '../head-frag.php'; 

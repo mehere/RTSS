@@ -1,0 +1,22 @@
+@charset "UTF-8";
+.section {
+	margin-top: 15px;
+}
+
+.table-info {
+	width: 80%
+}
+
+.link-control {
+	margin-top: 20px;
+	margin-right: 150px;
+}
+
+.ui-autocomplete {
+	max-height: 10em;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.ui-autocomplete .ui-menu-item {
+	font-size: .9em;
+}

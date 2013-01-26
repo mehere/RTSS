@@ -5,8 +5,8 @@
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />
-<link href="/RTSS/css/timetable.css" rel="stylesheet" type="text/css" />
-<script src="/RTSS/js/timetable.js"></script>
+<!--<link href="/RTSS/css/timetable.css" rel="stylesheet" type="text/css" />
+<script src="/RTSS/js/timetable.js"></script>-->
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
