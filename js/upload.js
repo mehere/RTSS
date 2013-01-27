@@ -21,21 +21,25 @@ $(document).ready(function(){
     var formAdd=document.forms['add-class'], formAED=document.forms['AED'],
         matrixTime=[]; // [day][time]={subject, teachingClass[], venue, period, boxObj, isHighlighted};
 
-    $(formAdd['time-from']).change(function(){
-        var curIndex=this.options[this.selectedIndex].value;
-        if (curIndex-formAdd['time-to'].value > 0)
-        {
-            formAdd['time-to'].selectedIndex=curIndex;
-        }
-    });
+    function constrainTimeSelect(selectFromObj, selectToObj)
+    {
+        selectFromObj.change(function(){
+            var curIndex=this.selectedIndex;
+            if (curIndex-selectToObj.prop('selectedIndex') > 0)
+            {
+                selectToObj.prop('selectedIndex', curIndex);
+            }
+        });
 
-    $(formAdd['time-to']).change(function(){
-        var curIndex=this.options[this.selectedIndex].value;
-        if (curIndex-formAdd['time-from'].value < 0)
-        {
-            formAdd['time-from'].selectedIndex=curIndex;
-        }
-    });
+        selectToObj.change(function(){
+            var curIndex=this.selectedIndex;
+            if (curIndex-selectFromObj.prop('selectedIndex')  < 0)
+            {
+                selectFromObj.prop('selectedIndex', curIndex);
+            }
+        });
+    }
+    constrainTimeSelect($(formAdd['time-from']), $(formAdd['time-to']));
 
     $(formAdd).submit(function(){
         var failToSubmit=false;

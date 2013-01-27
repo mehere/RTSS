@@ -4,6 +4,8 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 
 require_once '../controller-head.php';
+require_once '../constant.php';
+require_once '../class/Teacher.php';
 
 $mode=$_POST['mode'];
 $prop=$_POST['prop'];
@@ -16,9 +18,11 @@ for ($i=0; $i<$_POST['num']; $i++)
 
 $output=array();
 
+$output['error']=0;
 switch ($mode)
 {
     case 'verify':
+    {
         if (!$_SESSION['teacherVerified'])
         {
             $_SESSION['teacherVerified']=array();        
@@ -28,11 +32,12 @@ switch ($mode)
         {
             $_SESSION['teacherVerified'][$value]=1;
         }
-        
-        $output['error']=0;
+                
         break;
+    }
         
     case 'delete':
+    {
         // Un-verify
         foreach ($leaveIDList as $value)
         {
@@ -41,8 +46,24 @@ switch ($mode)
         
         // DB op
         
-        $output['error']=0;
         break;
+    }
+        
+    case 'save':
+    {
+        $input=array();
+        foreach (NameMap::$RELIEF_EDIT['saveKey'] as $postKey)
+        {
+            $input[$postKey]=$_POST[$postKey];            
+        }
+        
+        if (!Teacher::edit($_POST['leaveID'], 'normal', $input))
+        {
+            $output['error']=1;
+        }
+        
+        break;
+    }
         
     default: $output['error']=2;
 }

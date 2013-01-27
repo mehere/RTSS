@@ -1,6 +1,6 @@
 $(document).ready(function(){
     var CONFIRM_TEXT=["Confirm to verify selected teachers?", "Confirm to delete selected teachers?",
-            "Please select at least one teacher before proceeding."],
+            "Please select at least one teacher before proceeding.", "Failed to add this teacher."],
         FADE_DUR=400;
 
     function setDatePicker(target, dateValue /*, dateToField */)
@@ -20,6 +20,26 @@ $(document).ready(function(){
         }).datepicker('setDate', dateValue?new Date(dateValue):new Date());
     }
 
+    function constrainTimeSelect(selectFromObj, selectToObj)
+    {
+        selectFromObj.change(function(){
+            var curIndex=this.selectedIndex;
+            if (curIndex-selectToObj.prop('selectedIndex') > 0)
+            {
+                selectToObj.prop('selectedIndex', curIndex);
+            }
+        });
+
+        selectToObj.change(function(){
+            var curIndex=this.selectedIndex;
+            if (curIndex-selectFromObj.prop('selectedIndex')  < 0)
+            {
+                selectFromObj.prop('selectedIndex', curIndex);
+            }
+        });
+    }
+
+
     var formEdit=document.forms['edit'];
 
     var num=formEdit['num'].value;
@@ -27,6 +47,8 @@ $(document).ready(function(){
     {
         setDatePicker($(formEdit['date-from-' + i]), formEdit['server-date-from-' + i].value, $(formEdit['date-to-' + i]));
         setDatePicker($(formEdit['date-to-' + i]), formEdit['server-date-to-' + i].value);
+
+        constrainTimeSelect($(formEdit['time-from-' + i]), $(formEdit['time-to-' + i]));
     }
 
     // For verify and delete
@@ -163,6 +185,26 @@ $(document).ready(function(){
                 $(fieldObj['remark']).parents('td').first().find('.toggle-display').text(fieldObj['remark'].value);
 
                 // Save remotely
+                var leaveID=formEdit['leaveID-'+index].value;
+                if (formEdit['leaveID-'+index].value)
+                {
+                    var dataPost={'leave-ID': leaveID, 'mode': 'save', 'prop': 'normal'};
+                    $.extend(dataPost, fieldObj);
+                    dataPost['datetime-from']=dataPost['time'][0] + " " + dataPost['time'][1];
+                    dataPost['datetime-to']=dataPost['time'][2] + " " + dataPost['time'][3];
+                    delete dataPost['time'];
+                    /*$.post(formEdit.action, dataPost, function(data){
+                        if (data['error'] > 0)
+                        {
+                            confirm(CONFIRM_TEXT[3], function(){});
+                        }
+                        else
+                        {
+                            alert('good');
+                        }
+
+                    }, 'json');*/
+                }
 
                 // Save leaveID
 

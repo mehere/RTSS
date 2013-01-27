@@ -1,20 +1,9 @@
 <?php 
 require_once '../constant.php';
 
-if (!$reasonArr)
-{
-    $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
-    $timeArr=array();    
-    for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
-    {
-        $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
-        $timeArr[$i]=$timeStr;
-    }
-}
-
-if (!$reasonOptionStr) $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, '');
-if (!$timeFromOptionStr) $timeFromOptionStr=PageConstant::formatOptionInSelect($timeArr, '');
-if (!$timeToOptionStr) $timeToOptionStr=PageConstant::formatOptionInSelect($timeArr, '');
+if (!$reasonOptionStr) $reasonOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['leaveReason']['display'], '');
+if (!$timeFromOptionStr) $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), '', true);
+if (!$timeToOptionStr) $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), '', true);
 
 if ($_GET['num']) $numOfTeacher=$_GET['num'];
 
