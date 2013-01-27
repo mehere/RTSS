@@ -395,22 +395,13 @@ class Teacher {
     }
     
     /**
-     * add both temp teacher and leave teacher
-     * @param type $accname
-     * @param type $prop - 'leave', 'temp'
-     * @param type $fullname
-     * @param type $reason
-     * @param type $remark
-     * @param type $date_from - 2013-01-13
-     * @param type $date_to - 2013-01-13
-     * @param type $time_from - 07:30
-     * @param type $time_to - 07:30
-     * @param type $handphone
-     * @param type $email
-     * @param type $MT
-     * @return int >=0:add leave successfully, leaveID, -1:add temp successfully, -2:error
+     * add leave and temp teacher
+     * @param string $accname
+     * @param type $prop : leave or temp
+     * @param type $entry : associative array specified in docs
+     * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me)
      */
-    public static function add($accname, $prop, $fullname, $reason, $remark, $datetime_from, $datetime_to, $handphone, $email, $MT)
+    public static function add($accname, $prop, $entry)
     {
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;
@@ -428,23 +419,43 @@ class Teacher {
         
         if(strcmp($prop, "leave")===0)
         {
+            if(empty($accname) || empty($entry['datetime-from']) || empty($entry['datetime-to']))
+            {
+                return -3;
+            }
+            
+            $reason = empty($entry['reason'])?'':$entry['reason'];
+            $remark = empty($entry['remark'])?'':$entry['remark'];
+            
             $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified) values
                 ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
-                    '".mysql_real_escape_string(trim($datetime_from))."', '".mysql_real_escape_string(trim($datetime_to))."', 'NO');";
+                    '".mysql_real_escape_string(trim($entry['datetime-from']))."', '".mysql_real_escape_string(trim($entry['datetime-to']))."', 'NO');";
             
             $insert_leave_result = mysql_query($sql_insert_leave);
             
             if(!$insert_leave_result)
             {
-                return -2;
+                return -4;
             }
             
             return mysql_insert_id();
         }
         else if(strcmp($prop, "temp")===0)
         {
+            if(empty($entry['datetime-from']) || empty($entry['datetime-to']))
+            {
+                return -3;
+            }
+            
             if(empty($accname))
             {
+                if(empty($entry['fullname']))
+                {
+                    return -3;
+                }
+                
+                $fullname = $entry['fullname'];
+                
                 $name_array = explode(" ", $fullname);
                 if(count($name_array)>0)
                 {
@@ -462,16 +473,20 @@ class Teacher {
                     }
                     else
                     {
-                        return -2;
+                        return -5;
                     }
                 }
                 else
                 {
-                    return -2;
+                    return -3;
                 }
                     
                 //time since 2010-1-1 00:00:00
                 $accname = "TMP".(time() - 1261440000).$name_short;
+                
+                $handphone = empty($entry['handphone'])?'':$entry['handphone'];
+                $email = empty($entry['email'])?'':$entry['email'];
+                $MT = empty($entry['MT'])?'':$entry['MT'];
                 
                 $sql_insert_temp_teacher = "insert into rs_temp_relief_teacher(teacher_id, name, mobile, email, mother_tongue) values
                     ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($fullname))."', '".mysql_real_escape_string(trim($handphone))."',
@@ -484,23 +499,24 @@ class Teacher {
                     return -2;
                 }
             }
+            $temp_remark = empty($entry['remark'])?'':$entry['remark'];
             
             $sql_insert_temp_time = "insert into rs_temp_relief_teacher_availability(teacher_id, start_datetime, end_datetime, slot_remark) values
-                ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($datetime_from))."', 
-                    '".mysql_real_escape_string(trim($datetime_to))."', '".mysql_real_escape_string(trim($remark))."');";
+                ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($entry['datetime-from']))."', 
+                    '".mysql_real_escape_string(trim($entry['datetime-to']))."', '".mysql_real_escape_string(trim($temp_remark))."');";
             
             $insert_temp_time_result = mysql_query($sql_insert_temp_time);
             
             if(!$insert_temp_time_result)
             {
-                return -2;
+                return -4;
             }
             
             return mysql_insert_id();
         }
         else
         {
-            return -2;
+            return -3;
         }
     }
     
