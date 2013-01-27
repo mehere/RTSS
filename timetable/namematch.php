@@ -1,6 +1,6 @@
-<?php 
-    include_once '../php-head.php';
-    include_once '../head-frag.php';        
+<?php
+include_once '../php-head.php';
+include_once '../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -14,60 +14,59 @@
 </head>
 <body>
 
-<div id="container">  	
-    <div id="content-wrapper">
-    	<div id="content">
-            <?php 
-                $TOPBAR_LIST=array(
-                    array('tabname'=>'Timetable', 'url'=>"/RTSS/timetable/admin.php"), 
-                    array('tabname'=>'Name Match', 'url'=>""), 
+    <div id="container">
+        <div id="content-wrapper">
+            <div id="content">
+                <?php
+                $TOPBAR_LIST = array(
+                    array('tabname' => 'Timetable', 'url' => "/RTSS/timetable/admin.php"),
+                    array('tabname' => 'Name Match', 'url' => ""),
                 );
                 include '../topbar-frag.php';
-            ?>
-            <form class="main" name="edit" action="" method="post">
-                <div class="section">
-                    <table class="table-info">
-                        <thead>
-                            <tr>
-                                <?php                                 
-                                    $width=array('150px', '100%');
-                                                                        
-                                    $tableHeaderList=array_values(NameMap::$TIMETABLE['namematch']['display']);
-                                    
-                                    for ($i=0; $i<count($tableHeaderList); $i++)
+                ?>
+                <form class="main" name="edit" action="" method="post">
+                    <div class="section">
+                        <table class="table-info">
+                            <thead>
+                                <tr>
+                                    <?php
+                                    $width = array('150px', '100%');
+
+                                    $tableHeaderList = array_values(NameMap::$TIMETABLE['namematch']['display']);
+
+                                    for ($i = 0; $i < count($tableHeaderList); $i++)
                                     {
                                         echo <<< EOD
                                             <th style="width: $width[$i]">$tableHeaderList[$i]</th>
 EOD;
                                     }
-                                ?>                                
-                            </tr>
-                        </thead>
-                        <tbody>
-                        	<tr>
-                            	<td>ASCNAME</td>
-                            	<td>
-                                	<select name="fullname">
-                                    	<optgroup label="Suggested">
-                                        	<option value="accxxx">Tan Hong Lin</option>
-                                        </optgroup>
-                                        <optgroup label="All Teachers">
-                                        	<option value="asd">Austin Sun</option>
-                                        </optgroup>
-                                    </select>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="link-control">
-                    <input type="submit" value="Submit" class="button fltrt" />
-                </div>               
-            </form>            
-        </div>        
+                                    ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ASCNAME</td>
+                                    <td>
+                                        <select name="fullname">
+                                            <optgroup label="Suggested">
+                                                <option value="accxxx">Tan Hong Lin</option>
+                                            </optgroup>
+                                            <optgroup label="All Teachers">
+                                                <option value="asd">Austin Sun</option>
+                                            </optgroup>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="link-control">
+                        <input type="submit" value="Submit" class="button fltrt" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <?php include '../sidebar-frag.php'; ?>
     </div>
-    <?php include '../sidebar-frag.php'; ?>
-</div>
-    
 </body>
 </html>

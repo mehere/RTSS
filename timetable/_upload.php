@@ -1,7 +1,8 @@
 <?php
 
 spl_autoload_register(
-        function ($class) {
+        function ($class)
+        {
             include '../class/' . $class . '.php';
         });
 
@@ -10,27 +11,49 @@ $semester = $_POST["sem"];
 echo '<br>year:' . $year;
 echo '<br>sem:' . $semester;
 
-if ($_FILES["timetableFile"]["error"] > 0) {
+if ($_FILES["timetableFile"]["error"] > 0)
+{
     echo "Error: " . $_FILES["timetableFile"]["error"] . "<br>";
-} else {
+} else
+{
     $fileName = $_FILES["timetableFile"]["tmp_name"];
-    $analyzer = new TimetableAnalyzer();
-    try {
+    $analyzer = new TimetableAnalyzer($year, $semester);
+    try
+    {
         $analyzer->readCsv($fileName);
-
+        //echo 'Lesson View';
+        //$analyzer->printLessons();
+//        $analyzer->printTeachers();
+//        $analyzer->printClasses();
 
         $arrTeachers = $analyzer->arrTeachers;
-        $arrTeachers = Teacher::getTeachersAccnameAndFullname($arrTeachers);
-        $analyzer->printTeachers();
+        $results = Teacher::getTeachersAccnameAndFullname($arrTeachers);
+        if ($results)
+        {
+            //$analyzer->printTeachers();
+            $unknownTeachers = array();
+            foreach ($arrTeachers as $abbreviation => $aTeacher)
+            {
+                /* @var $aTeacher Teacher */
+                if (empty($aTeacher->accname))
+                {
+                    $unknownTeachers[$abbreviation] = $abbreviation;
+                }
+            }
+            $_SESSION["abbrNameList"] = $unknownTeachers;
+            $_SESSION["timetableAnalyzer"] = $analyzer;
 
-        $destination = "/RTSS/timetable/index.php";
-
-        $_SESSION["timetableAnalyzer"] = $analyzer;
-    } catch (Exception $e) {
-        echo "Error: Wrong file<br>Message:".$e->getMessage();
+            $destination = "/RTSS/timetable/namematch.php";
+        }
+        else {
+            throw new Exception("_upload.php: db returns false");
+        }
+    } catch (Exception $e)
+    {
+        echo "Error: Wrong file<br>Message:" . $e->getMessage();
         /// To-Do: Where to forward to if there is error?
         //$destination = ""
     }
-    header("Location: $destination");
+     header("Location: $destination");
 }
 ?>
