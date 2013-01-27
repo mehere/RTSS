@@ -24,7 +24,7 @@ include_once '../head-frag.php';
 </head>
 <body>
 
-<div id="container">  	
+<div id="container">
     <div id="content-wrapper">
     	<div id="content">
             <?php 

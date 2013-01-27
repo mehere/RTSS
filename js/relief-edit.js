@@ -173,6 +173,7 @@ $(document).ready(function(){
                     fieldObj['fullname']=formEdit['fullname-'+index];
                     if (!fieldObj['fullname'].value) return false;
                     formEdit['fullname-'+index].parentNode.replaceChild(document.createTextNode(fieldObj['fullname'].value), formEdit['fullname-'+index]);
+                    fieldObj['accname']=formEdit['accname-'+index];
                 }
 
                 $(this).button('option', SMALL_BT_ARR[0]);
@@ -185,15 +186,32 @@ $(document).ready(function(){
                 $(fieldObj['remark']).parents('td').first().find('.toggle-display').text(fieldObj['remark'].value);
 
                 // Save remotely
-                var leaveID=formEdit['leaveID-'+index].value;
+                var dataPost={'prop': 'leave'};
+                dataPost['reason']=fieldObj['reason'].value;
+                dataPost['remark']=fieldObj['remark'].value;
+                dataPost['datetime-from']=fieldObj['time'][0].value + " " + fieldObj['time'][1].value;
+                dataPost['datetime-to']=fieldObj['time'][2].value + " " + fieldObj['time'][3].value;
+
                 if (formEdit['leaveID-'+index].value)
                 {
-                    var dataPost={'leave-ID': leaveID, 'mode': 'save', 'prop': 'normal'};
-                    $.extend(dataPost, fieldObj);
-                    dataPost['datetime-from']=dataPost['time'][0] + " " + dataPost['time'][1];
-                    dataPost['datetime-to']=dataPost['time'][2] + " " + dataPost['time'][3];
-                    delete dataPost['time'];
-                    /*$.post(formEdit.action, dataPost, function(data){
+                    dataPost['leaveID']=formEdit['leaveID-'+index].value;
+                    dataPost['mode']='edit';
+
+                    $.post(formEdit.action, dataPost, function(data){
+                        if (data['error'] > 0)
+                        {
+                            confirm(CONFIRM_TEXT[3], function(){});
+                        }
+                    }, 'json');
+                }
+                else
+                {
+                    // Check for new row (save)
+                    dataPost['fullname']=fieldObj['fullname'].value;
+                    dataPost['accname']=fieldObj['accname'].value;
+                    dataPost['mode']='add';
+
+                    $.post(formEdit.action, dataPost, function(data){
                         if (data['error'] > 0)
                         {
                             confirm(CONFIRM_TEXT[3], function(){});
@@ -202,11 +220,8 @@ $(document).ready(function(){
                         {
                             alert('good');
                         }
-
-                    }, 'json');*/
+                    }, 'json');
                 }
-
-                // Save leaveID
 
                 // Clear 'isSaveButton'
                 if (isSaveButton) isSaveButton=null;
@@ -260,7 +275,7 @@ $(document).ready(function(){
 
     // Auto complete
     var nameList=[], nameAccMap=[];
-    $.getJSON("/RTSS/relief/_teacher_name.php", function(data){
+    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "normal"}, function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){

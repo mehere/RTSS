@@ -3,7 +3,7 @@ header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 
-require_once '../controller-head.php';
+//require_once '../controller-head.php';
 require_once '../constant.php';
 require_once '../class/Teacher.php';
 
@@ -25,7 +25,7 @@ switch ($mode)
     {
         if (!$_SESSION['teacherVerified'])
         {
-            $_SESSION['teacherVerified']=array();        
+            $_SESSION['teacherVerified']=array();
         }
         
         foreach ($leaveIDList as $value)
@@ -49,20 +49,27 @@ switch ($mode)
         break;
     }
         
-    case 'save':
+    case 'edit':
     {
         $input=array();
-        foreach (NameMap::$RELIEF_EDIT['saveKey'] as $postKey)
+        foreach (NameMap::$RELIEF_EDIT['teacherOnLeave']['saveKey'] as $postKey)
         {
             $input[$postKey]=$_POST[$postKey];            
         }
+                
+//        error_log(var_export($input, true)."\n".var_export($_POST['leaveID'], true), 3, "/Users/yjavaw/Desktop/error.log");
         
-        if (!Teacher::edit($_POST['leaveID'], 'normal', $input))
+        if (!Teacher::edit($_POST['leaveID'], $_POST['prop'], $input))
         {
             $output['error']=1;
         }
         
         break;
+    }
+    
+    case 'add':
+    {
+//        Teacher::add($accname, $prop, $fullname, $reason, $remark, $datetime_from, $datetime_to, $handphone, $email, $MT);
     }
         
     default: $output['error']=2;

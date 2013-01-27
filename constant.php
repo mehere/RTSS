@@ -118,7 +118,7 @@ class SchoolTime
         return array_map(array('SchoolTime', 'formatTime'), array_slice(self::$SCHOOL_TIME_ARR, $start, $end-$start+1));
     }
 }
-var_dump(array(2,3,4));
+
 class NameMap
 {
     // For /RTSS/relief/index.php

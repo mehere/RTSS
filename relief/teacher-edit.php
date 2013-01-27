@@ -69,7 +69,7 @@ EOD;
                                 for ($i=0; $i<$numOfTeacher; $i++)
                                 {
                                     $teacher=$teacherList[$i];
-                          
+
                                     $datetime=$teacher[$keyList[2]];
                                     $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
                                     $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), $datetime[0][1], true);
@@ -81,7 +81,7 @@ EOD;
     <td><input type="checkbox" name="select-$i" /></td>
     <td>{$teacher[$keyList[0]]} <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /></td>
     <td>
-        <span class="toggle-display">{$teacher[$keyList[1]]}</span>
+        <span class="toggle-display">{$reasonArr[$teacher[$keyList[1]]]}</span>
         <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>
     </td>
     <td>
