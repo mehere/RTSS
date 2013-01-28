@@ -43,6 +43,7 @@
 }
 .table-info #last-row {
 	display: none;
+	min-height: 100px;
 }
 .table-info #last-row .add-edit {
 	display: none;

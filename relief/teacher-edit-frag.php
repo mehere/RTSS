@@ -13,7 +13,7 @@ echo <<< EOD
 <tr id="last-row">
     <td><div class="add-edit"><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></div></td>
     <td><div class="add-edit"><input type="checkbox" name="select-$numOfTeacher" /></div></td>
-    <td><input type="text" name="fullname-$numOfTeacher" style="width: 90%;" class="fullname-server" /><input type="hidden" name="accname-$numOfTeacher" value="" /></td>
+    <td><input type="text" name="fullname-$numOfTeacher" style="width: 90%; margin: 15px 0" class="fullname-server" /><input type="hidden" name="accname-$numOfTeacher" value="" /></td>
     <td>
 		<div class="add-edit">
             <span class="toggle-display"></span>
