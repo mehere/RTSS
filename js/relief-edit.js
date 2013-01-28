@@ -1,6 +1,8 @@
 $(document).ready(function(){
     var CONFIRM_TEXT=["Confirm to verify selected teachers?", "Confirm to delete selected teachers?",
-            "Please select at least one teacher before proceeding.", "Failed to add this teacher."],
+            "Please select at least one teacher before proceeding."],
+        TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
+            "Failed to delete this teacher."];
         FADE_DUR=400;
 
     function setDatePicker(target, dateValue /*, dateToField */)
@@ -71,20 +73,25 @@ $(document).ready(function(){
 
     function multipleOp(mode)
     {
-        var dataPost={}, numOfAcc= 0, rowList=null;
+        var dataPost={'prop': 'leave'}, numOfAcc= 0, rowList=null;
         for (var i=0; i<this.form['num'].value; i++)
         {
-            if (this.form['select-'+i].checked)
+            if ($('input[name="select-' + i + '"]', this.form).is(':checked'))
             {
-                dataPost['leaveID-'+numOfAcc]=this.form['leaveID-'+i].value;
+                var leaveID=this.form['leaveID-'+i].value;
+                if (leaveID.length > 0)
+                {
+                    dataPost['leaveID-'+numOfAcc]=leaveID;
+                    numOfAcc++;
+                }
+
                 var curRow=$(this.form['leaveID-'+i]).parents('tr').first();
                 if (!rowList) rowList=curRow;
                 else rowList=rowList.add(curRow);
-                numOfAcc++;
             }
         }
 
-        if (numOfAcc == 0)
+        if (!rowList || rowList.length == 0)
         {
             confirm(CONFIRM_TEXT[2], function(){});
             return;
@@ -96,16 +103,16 @@ $(document).ready(function(){
         var url=this.form.action;
         confirm(CONFIRM_TEXT[mode=='verify'?0:1], function(){
             $.post(url, dataPost, function(data){
-                if (data['error'] > 0) return;
-                if (mode == 'verify')
-                {
-                    window.location.href="index.php";
-                }
-                else
+                if (mode == 'delete')
                 {
                     rowList.fadeOut(FADE_DUR, function(){
                         $(this).remove();
                     });
+                }
+                if (data['error'] > 0) return;
+                if (mode == 'verify')
+                {
+                    window.location.href="index.php";
                 }
             }, 'json');
         });
@@ -200,7 +207,7 @@ $(document).ready(function(){
                     $.post(formEdit.action, dataPost, function(data){
                         if (data['error'] > 0)
                         {
-                            confirm(CONFIRM_TEXT[3], function(){});
+                            confirm(TEACHER_OP_TEXT[1], function(){});
                         }
                     }, 'json');
                 }
@@ -214,11 +221,11 @@ $(document).ready(function(){
                     $.post(formEdit.action, dataPost, function(data){
                         if (data['error'] > 0)
                         {
-                            confirm(CONFIRM_TEXT[3], function(){});
+                            confirm(TEACHER_OP_TEXT[0], function(){});
                         }
                         else
                         {
-                            alert('good');
+                            formEdit['leaveID-'+index].value=data['leaveID'];
                         }
                     }, 'json');
                 }
@@ -241,11 +248,31 @@ $(document).ready(function(){
         obj.data('index', index).button(SMALL_BT_ARR[2]).click(function(){
             var curRow=$(this).parents('tr').first();
             confirm("Confirm to delete this row?", function(){
-                curRow.fadeOut(FADE_DUR, function(){
-                    $(this).remove();
-
+                // Delete empty
+                if (!formEdit['leaveID-' + index].value)
+                {
+                    curRow.fadeOut(FADE_DUR, function(){
+                        $(this).remove();
+                    });
+                }
+                else
+                {
                     // Delete this acc
-                });
+                    var dataPost={'mode': 'delete', 'prop': 'leave', 'num': 1};
+                    dataPost['leaveID-0']=formEdit['leaveID-' + index].value;
+                    $.post(formEdit.action, dataPost, function(data){
+                        if (data['error'] > 0)
+                        {
+                            confirm(TEACHER_OP_TEXT[2], function(){});
+                        }
+                        else
+                        {
+                            curRow.fadeOut(FADE_DUR, function(){
+                                $(this).remove();
+                            });
+                        }
+                    }, 'json');
+                }
             });
             return false;
         });

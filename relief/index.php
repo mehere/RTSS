@@ -42,7 +42,7 @@ include_once '../head-frag.php';
                     if (!$date) $date=date('Y-m-d');
                 }
                 $_SESSION['scheduleDate']=$date;
-                
+
                 // Teacher verified
                 $teacherVerifiedList=$_SESSION['teacherVerified'];
                 $teacherScheduledList=$_SESSION['teacherScheduled'];
@@ -71,8 +71,11 @@ EOD;
                             <?php 
                                 $teacherOnLeaveList=Teacher::getTeacherOnLeave($date);
                                 PageConstant::escapeHTMLEntity($teacherOnLeaveList);
+                                
                                 $keyList=array_keys(NameMap::$RELIEF['teacherOnLeave']['display']);
-                                $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
+                                $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];                                
+                                $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
+                                
                                 foreach ($teacherOnLeaveList as $teacher) 
                                 {                                    
                                     $datetime=$teacher[$keyList[2]];
@@ -80,7 +83,7 @@ EOD;
                                     $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$leaveID]);
                                     $scheduledStr=PageConstant::stateRepresent($teacherScheduledList[$leaveID]);
                                     echo <<< EOD
-<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>$verifiedStr</td><td>$scheduledStr</td></tr>   
+<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$reasonArr[$teacher[$keyList[3]]]}</td><td>$verifiedStr</td><td>$scheduledStr</td></tr>   
 EOD;
                                 }
                                 if (empty($teacherOnLeaveList))

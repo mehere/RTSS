@@ -3,7 +3,7 @@ header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 
-//require_once '../controller-head.php';
+require_once '../controller-head.php';
 require_once '../constant.php';
 require_once '../class/Teacher.php';
 
@@ -23,14 +23,21 @@ switch ($mode)
 {
     case 'verify':
     {
-        if (!$_SESSION['teacherVerified'])
+        if (count($leaveIDList) == 0)
         {
-            $_SESSION['teacherVerified']=array();
+            $output['error']=1;
         }
-        
-        foreach ($leaveIDList as $value)
+        else
         {
-            $_SESSION['teacherVerified'][$value]=1;
+            if (!$_SESSION['teacherVerified'])
+            {
+                $_SESSION['teacherVerified']=array();
+            }
+
+            foreach ($leaveIDList as $value)
+            {
+                $_SESSION['teacherVerified'][$value]=1;
+            }            
         }
                 
         break;
@@ -42,9 +49,13 @@ switch ($mode)
         foreach ($leaveIDList as $value)
         {
             unset($_SESSION['teacherVerified'][$value]);
-        }
+        }                
         
         // DB op
+        if (!Teacher::delete($leaveIDList, $_POST['prop']))
+        {
+            $output['error']=1;
+        }
         
         break;
     }
@@ -69,7 +80,21 @@ switch ($mode)
     
     case 'add':
     {
-//        Teacher::add($accname, $prop, $fullname, $reason, $remark, $datetime_from, $datetime_to, $handphone, $email, $MT);
+        $input=array();
+        $postKeyArr=array_merge(NameMap::$RELIEF_EDIT['teacherOnLeave']['addKey'], NameMap::$RELIEF_EDIT['teacherOnLeave']['saveKey']);
+        foreach ($postKeyArr as $postKey)
+        {
+            $input[$postKey]=$_POST[$postKey];            
+        }
+
+        $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input['fullname'], $input['reason'],
+                $input['remark'], $input['datetime-from'], $input['datetime-to'], '', '', '');
+        if (!$output['leaveID'])
+        {
+            $output['error']=1;
+        }
+        
+        break;
     }
         
     default: $output['error']=2;

@@ -119,6 +119,10 @@ class SchoolTime
     }
 }
 
+//include_once 'class/teacher.php';
+//var_dump(Teacher::add(7341327, 'leave', 'Bernard Wong Weng Keong', 'MC',
+//                'sdf', '2013-01-27 07:25', '2013-01-27 14:15', '', '', ''));
+
 class NameMap
 {
     // For /RTSS/relief/index.php
@@ -171,7 +175,8 @@ class NameMap
             'hidden' => array(
                 'accname', 'leaveID'
             ),
-            'saveKey' => array('datetime-from', 'datetime-to', 'reason', 'remark')
+            'saveKey' => array('datetime-from', 'datetime-to', 'reason', 'remark'),
+            'addKey' => array('accname', 'fullname')
         ),
         
         'tempTeacher' => array(

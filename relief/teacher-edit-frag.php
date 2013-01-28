@@ -1,7 +1,7 @@
 <?php 
 require_once '../constant.php';
 
-if (!$reasonOptionStr) $reasonOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['leaveReason']['display'], '');
+$reasonOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['leaveReason']['display'], '');
 if (!$timeFromOptionStr) $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), '', true);
 if (!$timeToOptionStr) $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), '', true);
 
