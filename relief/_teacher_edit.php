@@ -87,8 +87,7 @@ switch ($mode)
             $input[$postKey]=$_POST[$postKey];            
         }
 
-        $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input['fullname'], $input['reason'],
-                $input['remark'], $input['datetime-from'], $input['datetime-to'], '', '', '');
+        $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input);
         if (!$output['leaveID'])
         {
             $output['error']=1;

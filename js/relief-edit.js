@@ -22,11 +22,11 @@ $(document).ready(function(){
         }).datepicker('setDate', dateValue?new Date(dateValue):new Date());
     }
 
-    function constrainTimeSelect(selectFromObj, selectToObj)
+    function constrainTimeSelect(selectFromObj, selectToObj, otherFrom, otherTo)
     {
         selectFromObj.change(function(){
             var curIndex=this.selectedIndex;
-            if (curIndex-selectToObj.prop('selectedIndex') > 0)
+            if (otherFrom.value == otherTo.value && curIndex-selectToObj.prop('selectedIndex') > 0)
             {
                 selectToObj.prop('selectedIndex', curIndex);
             }
@@ -34,7 +34,7 @@ $(document).ready(function(){
 
         selectToObj.change(function(){
             var curIndex=this.selectedIndex;
-            if (curIndex-selectFromObj.prop('selectedIndex')  < 0)
+            if (otherFrom.value == otherTo.value && curIndex-selectFromObj.prop('selectedIndex')  < 0)
             {
                 selectFromObj.prop('selectedIndex', curIndex);
             }
@@ -50,7 +50,7 @@ $(document).ready(function(){
         setDatePicker($(formEdit['date-from-' + i]), formEdit['server-date-from-' + i].value, $(formEdit['date-to-' + i]));
         setDatePicker($(formEdit['date-to-' + i]), formEdit['server-date-to-' + i].value);
 
-        constrainTimeSelect($(formEdit['time-from-' + i]), $(formEdit['time-to-' + i]));
+        constrainTimeSelect($(formEdit['time-from-' + i]), $(formEdit['time-to-' + i]), formEdit['date-from-' + i], formEdit['date-to-' + i]);
     }
 
     // For verify and delete
@@ -356,7 +356,10 @@ $(document).ready(function(){
         setDatePicker($(formEdit['date-from-' + numOfTeacher]), '');
         setDatePicker($(formEdit['date-to-' + numOfTeacher]), '');
         formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + numOfTeacher].options.length-1;
-        $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic')
+        $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic');
+
+        constrainTimeSelect($(formEdit['time-from-' + numOfTeacher]), $(formEdit['time-to-' + numOfTeacher]),
+            formEdit['date-from-' + numOfTeacher], formEdit['date-to-' + numOfTeacher]);
 
         $("#last-row").find(".toggle-edit, .toggle-display").toggle();
 

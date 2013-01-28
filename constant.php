@@ -28,8 +28,8 @@ class PageConstant
         foreach ($optionArr as $key => $value)
         {
             $optionSelectedStr="";
-            if (strcasecmp($selectedOption, $key) == 0) $optionSelectedStr='selected="selected"';
             $optionKey=$useValueOnly?$value:$key;
+            if (strcasecmp($selectedOption, $optionKey) == 0) $optionSelectedStr='selected="selected"';            
             $output .= <<< EOD
                 <option value="$optionKey" $optionSelectedStr>$value</option>
 EOD;
