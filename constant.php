@@ -11,8 +11,7 @@ class PageConstant
     
     public static $ERROR_TEXT=array(
         'login' => array(
-            'mismatch' => 'Username or Password was entered incorrectly.',
-            'loginFirst' => 'Please log in first.'
+            'mismatch' => 'Username or Password was entered incorrectly.'            
         )
     );
     
@@ -119,10 +118,6 @@ class SchoolTime
     }
 }
 
-//include_once 'class/teacher.php';
-//var_dump(Teacher::add(7341327, 'leave', 'Bernard Wong Weng Keong', 'MC',
-//                'sdf', '2013-01-27 07:25', '2013-01-27 14:15', '', '', ''));
-
 class NameMap
 {
     // For /RTSS/relief/index.php
@@ -163,6 +158,13 @@ class NameMap
                 'others' => 'Others'
             ),
             'hidden' => array()
+        ),
+        
+        'MT' => array(
+            'display' => array(
+                'en' => 'English', 'zh' => 'Chinese', 'ms' => 'Malay', 'ta' => 'Tamil'
+            ),
+            'hidden' => array()
         )
     );
     
@@ -181,10 +183,11 @@ class NameMap
         
         'tempTeacher' => array(
             'display' => array(
-                'fullname' => 'Name', 'handphone' => 'Phone', 'datetime' => 'Time Available', 'remark' => 'Remark'
+                'fullname' => 'Name', 'handphone' => 'Contact', 'email' => 'Contact', 'MT' => 'MT',
+                'datetime' => 'Time Available', 'remark' => 'Remark'
             ),
             'hidden' => array(
-                'accname'
+                'accname', 'leaveID'
             )
         )
     );

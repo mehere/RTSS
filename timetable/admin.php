@@ -28,7 +28,7 @@ $timeToArr=SchoolTime::getTimeArrSub(1, 0);
                 include '../topbar-frag.php';
             ?>
             <form class="main" name="timetable" action="namematch.php" method="post">                
-            	<h3>Upload Timetable</h3>
+            	<h3>Upload Timetable (Master Table)</h3>
                 <div class="line"><span class="label">Year:</span>
                 	<select name="year">
                         <?php 
@@ -89,12 +89,12 @@ EOD;
                             <td>
                                 <select name="time-from">
                                     <?php 
-                                        echo PageConstant::formatOptionInSelect($timeFromArr, '', true);
+                                        echo PageConstant::formatOptionInSelect($timeFromArr, '');
                                     ?>
                                 </select>
                                 <select name="time-to" style="margin-left: 10px">
                                     <?php 
-                                        echo PageConstant::formatOptionInSelect($timeToArr, '', true);
+                                        echo PageConstant::formatOptionInSelect($timeToArr, '');
                                     ?>
                                 </select>
                             </td>
