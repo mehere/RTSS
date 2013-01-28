@@ -9,6 +9,7 @@ $type=$_POST['type'];
     <fieldset>
         <legend>Filter</legend>
         Name: <input type="text" name="fullname" class="textfield" style="width: 150px; margin-right: 20px" />
+        <input type="hidden" name="accname" /> 
         Type: <select name="type"><option value="">Any</option><option value="normal">Normal</option></select>
         <input type="submit" value="Go" class="button" style="margin-left: 30px" />
     </fieldset>
