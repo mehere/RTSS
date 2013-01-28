@@ -71,8 +71,7 @@ require_once 'Teacher.php';
           echo $a_leave_teacher['handphone']."<br>";
           echo "end<br><br>";
           }
-         *
-         */
+        */
 
         /*
           $test_result = Teacher::getIndividualTeacherDetail("aie");
