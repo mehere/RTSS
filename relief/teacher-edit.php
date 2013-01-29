@@ -38,7 +38,7 @@ include_once '../head-frag.php';
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=array('45px', '50px', '30%', '170px', '240px', '50%', '70px');
+                                    $width=array('45px', '50px', '30%', '170px', '245px', '50%', '70px');
                                                                         
                                     $tableHeaderList=array_values(NameMap::$RELIEF_EDIT[$isTemp ? 'tempTeacher' : 'teacherOnLeave']['display']);
                                     array_unshift($tableHeaderList, '', 'Select');
@@ -64,22 +64,16 @@ EOD;
                                 
                                 // construct reason option array and time option array
                                 $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
-                                $timeArr=array();
-                                for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
-                                {
-                                    $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
-                                    $timeArr[$i]=$timeStr;
-                                }
                                 
                                 $numOfTeacher=count($teacherList);
                                 for ($i=0; $i<$numOfTeacher; $i++)
                                 {
                                     $teacher=$teacherList[$i];
-                          
+
                                     $datetime=$teacher[$keyList[2]];
                                     $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
-                                    $timeFromOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[0][1]);
-                                    $timeToOptionStr=PageConstant::formatOptionInSelect($timeArr, $datetime[1][1]);
+                                    $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), $datetime[0][1], true);
+                                    $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), $datetime[1][1], true);
                                     $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacher[$keyExtraList[1]]]);
                                     echo <<< EOD
 <tr>
@@ -87,7 +81,7 @@ EOD;
     <td><input type="checkbox" name="select-$i" /></td>
     <td>{$teacher[$keyList[0]]} <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /></td>
     <td>
-        <span class="toggle-display">{$teacher[$keyList[1]]}</span>
+        <span class="toggle-display">{$reasonArr[$teacher[$keyList[1]]]}</span>
         <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>
     </td>
     <td>

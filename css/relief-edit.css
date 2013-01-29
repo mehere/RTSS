@@ -21,7 +21,7 @@
 	text-align: left;
 }
 .table-info input, .table-info select {
-	font-size: .85em;
+	font-size: 12px;
 }
 .table-info textarea {
 	font-size: 14px;
@@ -43,6 +43,7 @@
 }
 .table-info #last-row {
 	display: none;
+	min-height: 100px;
 }
 .table-info #last-row .add-edit {
 	display: none;
