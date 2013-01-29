@@ -2,12 +2,8 @@
 include_once '../php-head.php';
 include_once '../head-frag.php';
 
-$timeArr=array();
-for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
-{
-    $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
-    $timeArr[$i]=$timeStr;
-}
+$timeFromArr=SchoolTime::getTimeArrSub(0, -1);
+$timeToArr=SchoolTime::getTimeArrSub(1, 0);
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -92,23 +88,13 @@ EOD;
                             <td class="label">Time:</td>
                             <td>
                                 <select name="time-from">
-                                    <?php                                         
-                                        foreach (array_slice($timeArr, 0, -1) as $key => $value)
-                                        {
-                                            echo <<< EOD
-<option value="$key">$value</option>
-EOD;
-                                        }
-                                    ?>                                    
+                                    <?php 
+                                        echo PageConstant::formatOptionInSelect($timeFromArr, '', true);
+                                    ?>
                                 </select>
                                 <select name="time-to" style="margin-left: 10px">
-                                    <?php                                         
-                                        foreach (array_slice($timeArr, 1) as $key => $value)
-                                        {
-                                            echo <<< EOD
-<option value="$key">$value</option>
-EOD;
-                                        }
+                                    <?php 
+                                        echo PageConstant::formatOptionInSelect($timeToArr, '', true);
                                     ?>
                                 </select>
                             </td>
@@ -140,11 +126,11 @@ EOD;
                         </thead>
                         <tbody>
                             <?php                                 
-                                for ($i=0; $i<count($timeArr)-1; $i++)
+                                for ($i=0; $i<count($timeFromArr); $i++)
                                 {
                                     // Debug: <td>{$timeArr[$i]} Mon</td><td>{$timeArr[$i]} Tue</td><td>{$timeArr[$i]} Wed</td><td>{$timeArr[$i]} Thu</td><td>{$timeArr[$i]} Fri</td>
                                     echo <<< EOD
-<tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i+1]}</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="time-col">{$timeFromArr[$i]}<span style="margin: 0 3px">-</span>{$timeToArr[$i]}</td><td></td><td></td><td></td><td></td><td></td></tr>
 EOD;
                                 }
                             ?>

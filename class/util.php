@@ -17,25 +17,6 @@ Class Constant
     const num_of_time_slot = 15;
     const num_of_week_day = 5;
     
-    public static $time_conversion = array(
-        0 => '0000',
-        1 => '0725',
-        2 => '0745',
-        3 => '0815',
-        4 => '0845',
-        5 => '0915',
-        6 => '0945',
-        7 => '1015',
-        8 => '1045',
-        9 => '1115',
-        10 => '1145',
-        11 => '1215',
-        12 => '1245',
-        13 => '1315',
-        14 => '1345',
-        15 => '1415'
-    );
-    
     //error handling
     const default_var_value = "n.a.";
     const default_num_value = 0;

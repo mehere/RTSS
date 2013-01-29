@@ -5,11 +5,7 @@ class PageConstant
     const SCH_NAME_ABBR="CHIJ";
     const SCH_NAME="CHIJ St Nicholas Girl's School";
     
-    const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'
-    
-    // School start/end time
-    public static $SCHOOL_START_TIME, $SCHOOL_END_TIME;
-    const SCHOOL_TIME_INTERVAL=30; // minute
+    const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'        
     
     public static $DAY=array('Monday', 'Tuesday', 'Wedsday', 'Thursday', 'Friday');
     
@@ -26,15 +22,16 @@ class PageConstant
      * @param string $selectedOption option is to be selected
      * @return string output 
      */
-    public static function formatOptionInSelect($optionArr, $selectedOption)
+    public static function formatOptionInSelect($optionArr, $selectedOption, $useValueOnly=false)
     {        
         $output="";
         foreach ($optionArr as $key => $value)
         {
             $optionSelectedStr="";
-            if (strcasecmp($selectedOption, $key) == 0) $optionSelectedStr='selected="selected"';
+            $optionKey=$useValueOnly?$value:$key;
+            if (strcasecmp($selectedOption, $optionKey) == 0) $optionSelectedStr='selected="selected"';            
             $output .= <<< EOD
-                <option value="$key" $optionSelectedStr>$value</option>
+                <option value="$optionKey" $optionSelectedStr>$value</option>
 EOD;
         }
         return $output;
@@ -70,8 +67,61 @@ EOD;
         return '';
     }
 }
-PageConstant::$SCHOOL_START_TIME=mktime(7, 15);
-PageConstant::$SCHOOL_END_TIME=mktime(14, 15);
+
+class SchoolTime
+{
+    private static $SCHOOL_TIME_ARR=null; // interval -- minute
+    
+    public function __construct()
+    {
+        if (is_null(self::$SCHOOL_TIME_ARR)) 
+        {            
+            self::$SCHOOL_TIME_ARR=array(mktime(7, 25));
+            
+            $endTime=mktime(14,15);            
+            for ($curTime=mktime(7, 45); $curTime<=$endTime; $curTime+=30*60)
+            {
+                self::$SCHOOL_TIME_ARR[]=$curTime;
+            }
+        }        
+    }    
+    
+    private static function formatTime($time)
+    {
+        return date("H:i", $time);
+    }
+    
+    /**
+     * Get specific time value for an index
+     * @param int $index
+     * @return formatted string
+     */
+    public static function getTimeValue($index)
+    {
+        new SchoolTime;
+        return self::formatTime(self::$SCHOOL_TIME_ARR[$index]);
+    }
+    
+    /**
+     * Get an array of time representation
+     * @param int $start
+     * @param int $end non-positive means counting from the end
+     * @return an array of formatted string
+     */
+    public static function getTimeArrSub($start, $end)
+    {
+        new SchoolTime;
+        if ($end <= 0)
+        {
+            $end=count(self::$SCHOOL_TIME_ARR)+$end-1;
+        }
+        return array_map(array('SchoolTime', 'formatTime'), array_slice(self::$SCHOOL_TIME_ARR, $start, $end-$start+1));
+    }
+}
+
+//include_once 'class/teacher.php';
+//var_dump(Teacher::add(7341327, 'leave', 'Bernard Wong Weng Keong', 'MC',
+//                'sdf', '2013-01-27 07:25', '2013-01-27 14:15', '', '', ''));
 
 class NameMap
 {
@@ -124,7 +174,9 @@ class NameMap
             ),
             'hidden' => array(
                 'accname', 'leaveID'
-            )
+            ),
+            'saveKey' => array('datetime-from', 'datetime-to', 'reason', 'remark'),
+            'addKey' => array('accname', 'fullname')
         ),
         
         'tempTeacher' => array(

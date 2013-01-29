@@ -65,14 +65,7 @@ EOD;
                                 array("class"=>array('5aaF'), 'subject'=>'Science', 'teacher-fullname'=>'Ng Qian ZZ', 'relief-teacher-fullname'=>'Xon Ming', 'venue'=>'LT52dd0')
                             ));
                             
-                            $timeArr=array();
-                            for ($i=0; $i<=(PageConstant::$SCHOOL_END_TIME-PageConstant::$SCHOOL_START_TIME)/PageConstant::SCHOOL_TIME_INTERVAL/60; $i++)
-                            {
-                                $timeStr=date("H:i", $i*PageConstant::SCHOOL_TIME_INTERVAL*60+PageConstant::$SCHOOL_START_TIME);
-                                $timeArr[$i]=$timeStr;
-                            }
-                            
-                            
+                            $timeArr=SchoolTime::getTimeArrSub(0, 0);                           
                             for ($i=0; $i<count($timeArr)-1; $i++)
                             {                                
                                 $teachingList=$timetable[$i];

@@ -1,6 +1,8 @@
 $(document).ready(function(){
     var CONFIRM_TEXT=["Confirm to verify selected teachers?", "Confirm to delete selected teachers?",
             "Please select at least one teacher before proceeding."],
+        TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
+            "Failed to delete this teacher."];
         FADE_DUR=400;
 
     function setDatePicker(target, dateValue /*, dateToField */)
@@ -20,6 +22,26 @@ $(document).ready(function(){
         }).datepicker('setDate', dateValue?new Date(dateValue):new Date());
     }
 
+    function constrainTimeSelect(selectFromObj, selectToObj, otherFrom, otherTo)
+    {
+        selectFromObj.change(function(){
+            var curIndex=this.selectedIndex;
+            if (otherFrom.value == otherTo.value && curIndex-selectToObj.prop('selectedIndex') > 0)
+            {
+                selectToObj.prop('selectedIndex', curIndex);
+            }
+        });
+
+        selectToObj.change(function(){
+            var curIndex=this.selectedIndex;
+            if (otherFrom.value == otherTo.value && curIndex-selectFromObj.prop('selectedIndex')  < 0)
+            {
+                selectFromObj.prop('selectedIndex', curIndex);
+            }
+        });
+    }
+
+
     var formEdit=document.forms['edit'];
 
     var num=formEdit['num'].value;
@@ -27,6 +49,8 @@ $(document).ready(function(){
     {
         setDatePicker($(formEdit['date-from-' + i]), formEdit['server-date-from-' + i].value, $(formEdit['date-to-' + i]));
         setDatePicker($(formEdit['date-to-' + i]), formEdit['server-date-to-' + i].value);
+
+        constrainTimeSelect($(formEdit['time-from-' + i]), $(formEdit['time-to-' + i]), formEdit['date-from-' + i], formEdit['date-to-' + i]);
     }
 
     // For verify and delete
@@ -49,20 +73,25 @@ $(document).ready(function(){
 
     function multipleOp(mode)
     {
-        var dataPost={}, numOfAcc= 0, rowList=null;
+        var dataPost={'prop': 'leave'}, numOfAcc= 0, rowList=null;
         for (var i=0; i<this.form['num'].value; i++)
         {
-            if (this.form['select-'+i].checked)
+            if ($('input[name="select-' + i + '"]', this.form).is(':checked'))
             {
-                dataPost['leaveID-'+numOfAcc]=this.form['leaveID-'+i].value;
+                var leaveID=this.form['leaveID-'+i].value;
+                if (leaveID.length > 0)
+                {
+                    dataPost['leaveID-'+numOfAcc]=leaveID;
+                    numOfAcc++;
+                }
+
                 var curRow=$(this.form['leaveID-'+i]).parents('tr').first();
                 if (!rowList) rowList=curRow;
                 else rowList=rowList.add(curRow);
-                numOfAcc++;
             }
         }
 
-        if (numOfAcc == 0)
+        if (!rowList || rowList.length == 0)
         {
             confirm(CONFIRM_TEXT[2], function(){});
             return;
@@ -74,16 +103,16 @@ $(document).ready(function(){
         var url=this.form.action;
         confirm(CONFIRM_TEXT[mode=='verify'?0:1], function(){
             $.post(url, dataPost, function(data){
-                if (data['error'] > 0) return;
-                if (mode == 'verify')
-                {
-                    window.location.href="index.php";
-                }
-                else
+                if (mode == 'delete')
                 {
                     rowList.fadeOut(FADE_DUR, function(){
                         $(this).remove();
                     });
+                }
+                if (data['error'] > 0) return;
+                if (mode == 'verify')
+                {
+                    window.location.href="index.php";
                 }
             }, 'json');
         });
@@ -151,6 +180,7 @@ $(document).ready(function(){
                     fieldObj['fullname']=formEdit['fullname-'+index];
                     if (!fieldObj['fullname'].value) return false;
                     formEdit['fullname-'+index].parentNode.replaceChild(document.createTextNode(fieldObj['fullname'].value), formEdit['fullname-'+index]);
+                    fieldObj['accname']=formEdit['accname-'+index];
                 }
 
                 $(this).button('option', SMALL_BT_ARR[0]);
@@ -163,8 +193,42 @@ $(document).ready(function(){
                 $(fieldObj['remark']).parents('td').first().find('.toggle-display').text(fieldObj['remark'].value);
 
                 // Save remotely
+                var dataPost={'prop': 'leave'};
+                dataPost['reason']=fieldObj['reason'].value;
+                dataPost['remark']=fieldObj['remark'].value;
+                dataPost['datetime-from']=fieldObj['time'][0].value + " " + fieldObj['time'][1].value;
+                dataPost['datetime-to']=fieldObj['time'][2].value + " " + fieldObj['time'][3].value;
 
-                // Save leaveID
+                if (formEdit['leaveID-'+index].value)
+                {
+                    dataPost['leaveID']=formEdit['leaveID-'+index].value;
+                    dataPost['mode']='edit';
+
+                    $.post(formEdit.action, dataPost, function(data){
+                        if (data['error'] > 0)
+                        {
+                            confirm(TEACHER_OP_TEXT[1], function(){});
+                        }
+                    }, 'json');
+                }
+                else
+                {
+                    // Check for new row (save)
+                    dataPost['fullname']=fieldObj['fullname'].value;
+                    dataPost['accname']=fieldObj['accname'].value;
+                    dataPost['mode']='add';
+
+                    $.post(formEdit.action, dataPost, function(data){
+                        if (data['error'] > 0)
+                        {
+                            confirm(TEACHER_OP_TEXT[0], function(){});
+                        }
+                        else
+                        {
+                            formEdit['leaveID-'+index].value=data['leaveID'];
+                        }
+                    }, 'json');
+                }
 
                 // Clear 'isSaveButton'
                 if (isSaveButton) isSaveButton=null;
@@ -184,11 +248,31 @@ $(document).ready(function(){
         obj.data('index', index).button(SMALL_BT_ARR[2]).click(function(){
             var curRow=$(this).parents('tr').first();
             confirm("Confirm to delete this row?", function(){
-                curRow.fadeOut(FADE_DUR, function(){
-                    $(this).remove();
-
+                // Delete empty
+                if (!formEdit['leaveID-' + index].value)
+                {
+                    curRow.fadeOut(FADE_DUR, function(){
+                        $(this).remove();
+                    });
+                }
+                else
+                {
                     // Delete this acc
-                });
+                    var dataPost={'mode': 'delete', 'prop': 'leave', 'num': 1};
+                    dataPost['leaveID-0']=formEdit['leaveID-' + index].value;
+                    $.post(formEdit.action, dataPost, function(data){
+                        if (data['error'] > 0)
+                        {
+                            confirm(TEACHER_OP_TEXT[2], function(){});
+                        }
+                        else
+                        {
+                            curRow.fadeOut(FADE_DUR, function(){
+                                $(this).remove();
+                            });
+                        }
+                    }, 'json');
+                }
             });
             return false;
         });
@@ -218,7 +302,7 @@ $(document).ready(function(){
 
     // Auto complete
     var nameList=[], nameAccMap=[];
-    $.getJSON("/RTSS/relief/_teacher_name.php", function(data){
+    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "normal"}, function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){
@@ -272,7 +356,10 @@ $(document).ready(function(){
         setDatePicker($(formEdit['date-from-' + numOfTeacher]), '');
         setDatePicker($(formEdit['date-to-' + numOfTeacher]), '');
         formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + numOfTeacher].options.length-1;
-        $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic')
+        $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic');
+
+        constrainTimeSelect($(formEdit['time-from-' + numOfTeacher]), $(formEdit['time-to-' + numOfTeacher]),
+            formEdit['date-from-' + numOfTeacher], formEdit['date-to-' + numOfTeacher]);
 
         $("#last-row").find(".toggle-edit, .toggle-display").toggle();
 
