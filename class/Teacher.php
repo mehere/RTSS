@@ -190,7 +190,7 @@ class Teacher {
         mysql_select_db($db_name);
         
         $sql_query_temp_teacher = "select *, DATE(rs_temp_relief_teacher_availability.start_datetime) as start_date, DATE(rs_temp_relief_teacher_availability.end_datetime) as end_date, TIME_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%H:%i') as start_time, TIME_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%H:%i') as end_time 
-            from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.start_datetime);";
+            from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.end_datetime);";
         
         $query_temp_teacher = mysql_query($sql_query_temp_teacher);
         
@@ -427,9 +427,11 @@ class Teacher {
             $reason = empty($entry['reason'])?'':$entry['reason'];
             $remark = empty($entry['remark'])?'':$entry['remark'];
             
-            $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified) values
+            $num_of_slot = Teacher::calculateLeaveSlot($accname, $entry['datetime-from'], $entry['datetime-to']);
+            
+            $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified, num_of_slot) values
                 ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
-                    '".mysql_real_escape_string(trim($entry['datetime-from']))."', '".mysql_real_escape_string(trim($entry['datetime-to']))."', 'NO');";
+                    '".mysql_real_escape_string(trim($entry['datetime-from']))."', '".mysql_real_escape_string(trim($entry['datetime-to']))."', 'NO', ".$num_of_slot.");";
             
             $insert_leave_result = mysql_query($sql_insert_leave);
             
@@ -730,6 +732,204 @@ class Teacher {
         }
         
         return $teacher_dict;
+    }
+    
+    /**
+     * 
+     * @param string $datetime_from
+     * @param string $datetime_to
+     * @return int number of time slot in between, excludig holidays; -1 if error
+     */
+    private static function calculateLeaveSlot($teacher_id, $datetime_from, $datetime_to)
+    {
+        $datetime_from_arr = explode(" ", trim($datetime_from));
+        $datetime_to_arr = explode(" ", trim($datetime_to));
+        
+        $start_date = new DateTime($datetime_from_arr[0]);
+        $end_date = new DateTime($datetime_to_arr[0]);
+        
+        //to change
+        $readable_time_from = str_replace(":", "", $datetime_from_arr[1]);
+        $readable_time_to = str_replace(":", "", $datetime_to_arr[1]);
+        $first_index = 1;
+        $last_index = 15;
+        
+        if(!array_key_exists($readable_time_from, Constant::$inverse_time_conversion))
+        {
+            $start_time_index = $first_index;
+        }
+        else
+        {
+            $start_time_index = Constant::$inverse_time_conversion[$readable_time_from];
+        }
+        if(!array_key_exists($readable_time_to, Constant::$inverse_time_conversion))
+        {
+            $end_time_index = $last_index;
+        }
+        else
+        {
+            $end_time_index = Constant::$inverse_time_conversion[$readable_time_to];
+        }
+        //end
+        
+        $interval = $end_date->diff($start_date);
+        
+        $num_of_slot = 0;
+        $slot_dict = Teacher::getLessonSlotsOfTeacher($teacher_id);
+        $start_end = Array();
+        
+        //put start and end time of each day into $start_end
+        if($interval->d<0)
+        {
+            return -1;
+        }
+        else if($interval->d===0)
+        {
+            $weekday = $start_date->format('N');
+            if($weekday === '6' || $weekday === '7')
+            {
+                return 0;
+            }
+            
+            $start_end[$weekday-0] = Array($start_time_index, $end_time_index, 1);
+        }
+        else if($interval->d===1)
+        {
+            $weekday_start = $start_date->format('N');
+            if($weekday_start !== '6' && $weekday_start !== '7')
+            {
+                $start_end[$weekday_start-0] = Array($start_time_index, $last_index, 1);
+            }
+            $weekday_end = $end_date->format('N');
+            if($weekday_end !== '6' && $weekday_end !== '7')
+            {
+                $start_end[$weekday_end-0] = Array($first_index, $end_time_index, 1);
+            }
+        }
+        else
+        {
+            $day_interval = new DateInterval('P0Y0M1DT0H0M0S');
+            
+            $weekday_start = $start_date->format('N');
+            if($weekday_start !== '6' && $weekday_start !== '7')
+            {
+                $start_end[8] = Array($start_time_index, $last_index, 1, $weekday_start-0);
+            }
+            $weekday_end = $end_date->format('N');
+            if($weekday_end !== '6' && $weekday_end !== '7')
+            {
+                $start_end[9] = Array($first_index, $end_time_index, 1, $weekday_end-0);
+            }
+            
+            $begin_loop = $start_date->add($day_interval);
+            while($begin_loop->diff($end_date, true)->d>0)
+            {
+                $weekday_loop = $begin_loop->format('N');
+                if($weekday_loop !== '6' && $weekday_loop !== '7')
+                {
+                    if(empty($start_end[$weekday_loop-0]))
+                    {
+                        $start_end[$weekday_loop-0] = Array($first_index, $last_index, 1);
+                    }
+                    else
+                    {
+                        $start_end[$weekday_loop-0][2]++;
+                    }
+                }
+                
+                $begin_loop = $begin_loop->add($day_interval);
+            }
+        }
+        
+        //calculate num of slots
+        foreach($start_end as $key=>$value)
+        {
+            //line 797, 802, start and end date of a leave is handled separately
+            if($key===8 || $key===9)
+            {
+                $slots = $slot_dict[$value[3]];
+            }
+            else
+            {
+                $slots = $slot_dict[$key];
+            }
+            
+            $weekday_num=0;
+            
+            foreach($slots as $a_slot)
+            {
+                if($value[0]>=$a_slot[1])
+                {
+                    continue;
+                }
+                if($value[1]<=$a_slot[0])
+                {
+                    continue;
+                }
+                if($a_slot[0]<$value[0] && $a_slot[1]>$value[1])
+                {
+                    $weekday_num+=$value[1]-$value[0];
+                    break;
+                }
+                if($value[0]<$a_slot[1] && $value[0]>$a_slot[0])
+                {
+                    //assumption: when a lesson span over multiple time slots, teacher on leave will take the time slots lessons outside the leave time duration
+                    $weekday_num+=$a_slot[1]-$value[0];
+                    continue;
+                }
+                if($value[1]<$a_slot[1] && $value[1]>$a_slot[0])
+                {
+                    //assumption: when a lesson span over multiple time slots, teacher on leave will take the time slots lessons outside the leave time duration
+                    $weekday_num+=$value[1]-$a_slot[0];
+                    continue;
+                }
+                
+                $weekday_num+=$a_slot[1]-$a_slot[0];
+            }
+            $weekday_num *= $value[2];
+            $num_of_slot += $weekday_num;
+        }
+        
+        return $num_of_slot;
+    }
+    
+    private static function getLessonSlotsOfTeacher($teacher_id)
+    {
+        $result = Array(
+            1 => Array(),
+            2 => Array(),
+            3 => Array(),
+            4 => Array(),
+            5 => Array()
+        );
+        
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
+        {
+            return $result;
+        }
+
+        mysql_select_db($db_name);
+        
+        $sql_query_time_slot = "select distinct weekday, start_time, end_time from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id='".  mysql_real_escape_string($teacher_id)."';";
+        $query_time_slot_result = mysql_query($sql_query_time_slot);
+        if(!$query_time_slot_result)
+        {
+            return $result;
+        }
+        
+        while($row = mysql_fetch_array($query_time_slot_result))
+        {
+            $result[$row['weekday']][] = Array($row['start_time'], $row['end_time']);
+        }
+        
+        return $result;
     }
 }
 

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Teacher.php';
+require_once 'TimetableAnalyzer.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -8,9 +9,25 @@ require_once 'Teacher.php';
  */
 
 //********xue : testing
+//echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 0915", "2013-01-08 1315");
+//$result = Teacher::getLessonSlotsOfTeacher("8104329");
+/*
+foreach($result as $key=>$a_result)
+{
+    echo $key." : ";
+    foreach($a_result as $a_slot)
+    {
+        print_r($a_slot);
+    }
+    echo "<br>";
+}
+ * 
+ */
         //Teacher::listUnmatchedAbbreName($arrTeachers);
         //Teacher::abbreToFullnameBatchSetup($arrTeachers);
 
+        //$timetableanalyzer = new TimetableAnalyzer("13", '1');
+        //$timetableanalyzer->readCsv('teacher.csv');
         /*
           $err_message = TimetableDB::insertTimetable($arrLessons, $arrTeachers);
           foreach($err_message as $key=>$error)
@@ -20,8 +37,9 @@ require_once 'Teacher.php';
           echo "Key : ".$key."<br> : ".$error;
           }
           }
-         *
+         * 
          */
+         
 
         /*
           $arrTeachersNew=Teacher::getTeachersAccnameAndFullname($arrTeachers);
@@ -31,7 +49,6 @@ require_once 'Teacher.php';
           echo $a_teacher->name."<br>";
           echo $a_teacher->accname."<br><br>";
           }
-         *
          */
 
 
@@ -140,7 +157,7 @@ require_once 'Teacher.php';
 
         //$result1 = Teacher::add('', 'temp', Array('fullname' => 'Robot Haphati Fckek', 'remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00',  'email' => '111@adb.com', 'MT' => 'tamil'));
         //$result2 = Teacher::add('TMP1232312', 'temp', Array('remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'handphone' =>  '11111111'));
-        //$result3 = Teacher::add('1692161' , 'leave',Array('datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'remark' => 'okay haha'));
+        $result3 = Teacher::add('1692161' , 'leave',Array('datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'remark' => 'okay haha'));
         //echo $result2;
         //
         //echo Teacher::delete(Array(2, 3,), 'leave');

@@ -204,7 +204,7 @@ class TimetableAnalyzer
 
         fclose($file);
         
-   }
+       }
 
     public function printLessons()
     {
