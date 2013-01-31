@@ -39,7 +39,7 @@ include_once '../head-frag.php';
                 if (!$date)
                 {
                     $date=$_SESSION['scheduleDate'];
-                    if (!$date) $date=date('Y-m-d');
+                    if (!$date) $date=date(PageConstant::DATE_FORMAT_ISO);
                 }
                 $_SESSION['scheduleDate']=$date;
 
@@ -48,7 +48,7 @@ include_once '../head-frag.php';
                 $teacherScheduledList=$_SESSION['teacherScheduled'];
             ?>
             <form class="main" name="schedule" action="schedule/" method="post">
-            	Date: <input type="text" class="textfield" name="date" maxlength="10" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+            	Date: <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                 <div class="section">
                 	Teacher on Leave: <a href="teacher-edit.php">Edit/Add</a>
                     <table class="table-info">
@@ -79,11 +79,14 @@ EOD;
                                 foreach ($teacherOnLeaveList as $teacher) 
                                 {                                    
                                     $datetime=$teacher[$keyList[2]];
+                                    $dateFromDisplay=SchoolTime::convertDate($datetime[0][0]);
+                                    $dateToDisplay=SchoolTime::convertDate($datetime[1][0]);
+                                    
                                     $leaveID=$teacher[$keyExtraList[1]];
                                     $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$leaveID]);
                                     $scheduledStr=PageConstant::stateRepresent($teacherScheduledList[$leaveID]);
                                     echo <<< EOD
-<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][0]} {$datetime[0][1]}<br />{$datetime[1][0]} {$datetime[1][1]}</td><td>{$reasonArr[$teacher[$keyList[3]]]}</td><td>$verifiedStr</td><td>$scheduledStr</td></tr>   
+<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>$dateFromDisplay {$datetime[0][1]}<br />$dateToDisplay {$datetime[1][1]}</td><td>{$reasonArr[$teacher[$keyList[3]]]}</td><td>$verifiedStr</td><td>$scheduledStr</td></tr>   
 EOD;
                                 }
                                 if (empty($teacherOnLeaveList))

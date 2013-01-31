@@ -114,6 +114,9 @@ EOD;
 EOD;
                                     }
                                     
+                                    $dateFromDisplay=SchoolTime::convertDate($datetime[0][0]);
+                                    $dateToDisplay=SchoolTime::convertDate($datetime[1][0]);
+                                    
                                     $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), $datetime[0][1], true);
                                     $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), $datetime[1][1], true);                                    
                                     echo <<< EOD
@@ -123,7 +126,7 @@ EOD;
     <td>{$teacher[$keyList[0]]} <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /></td>
     $nameTimeInBetweenFrag
     <td>
-        <div class="toggle-display"><span>{$datetime[0][0]}</span> <span>{$datetime[0][1]}</span><br /><span>{$datetime[1][0]}</span> <span>{$datetime[1][1]}</span></div>
+        <div class="toggle-display"><span>$dateFromDisplay</span> <span>{$datetime[0][1]}</span><br /><span>$dateToDisplay</span> <span>{$datetime[1][1]}</span></div>
         <div class="toggle-edit">
             <div class="time-line">From: <input type="text" name="date-from-$i" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-$i" value="{$datetime[0][0]}" />
                 <select name="time-from-$i">$timeFromOptionStr</select>

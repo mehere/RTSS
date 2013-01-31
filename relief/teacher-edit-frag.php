@@ -43,6 +43,7 @@ else
 EOD;
 }
 
+$date=date(PageConstant::DATE_FORMAT_ISO);
 echo <<< EOD
 <tr id="last-row">
     <td><div class="add-edit"><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></div></td>
@@ -58,10 +59,10 @@ echo <<< EOD
     	<div class="add-edit">
             <div class="toggle-display"><span></span> <span></span><br /><span></span> <span></span></div>
             <div class="toggle-edit">
-                <div class="time-line">From: <input type="text" name="date-from-$numOfTeacher" maxlength="10" style="width: 7em; margin-right: 5px" />
+                <div class="time-line">From: <input type="text" name="date-from-$numOfTeacher" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-$numOfTeacher" value="$date" />
                     <select name="time-from-$numOfTeacher">$timeFromOptionStr</select>
                 </div>
-                <div class="time-line">To: <input type="text" name="date-to-$numOfTeacher" maxlength="10" style="width: 7em; margin-right: 5px" />
+                <div class="time-line">To: <input type="text" name="date-to-$numOfTeacher" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-to-$numOfTeacher" value="$date" />
                     <select name="time-to-$numOfTeacher">$timeToOptionStr</select>
                 </div>
             </div>
