@@ -68,6 +68,13 @@ class TimetableAnalyzer
             $timeSlots[$i] = new DayTime($dayIndex, $timeIndex);
             $timeIndex++;
         }
+
+        //To-Do:
+        //Upload $times[][]
+        //
+        //
+        //
+        //
 //        echo "<br> start:<br>";
 //        print_r($timeSlots);
 //        echo "<br>end<br>";
@@ -203,7 +210,7 @@ class TimetableAnalyzer
         $this->noCol = $noCol;
 
         fclose($file);
-        
+
    }
 
     public function printLessons()
