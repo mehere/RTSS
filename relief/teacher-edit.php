@@ -38,15 +38,16 @@ include_once '../head-frag.php';
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=$isTemp ? array('45px', '40px', '40%', '170px', '100px',  '245px', '60%') : 
-                                        array('45px', '40px', '40%', '170px', '245px', '60%', '70px');
+                                    $width=$isTemp ? array('45px', '40px', '40%', '150px', '100px',  '235px', '60%') : 
+//                                        array('45px', '40px', '40%', '170px', '235px', '60%', '70px');
+                                        array('45px', '40px', '40%', '170px', '235px', '60%');
                                         
                                     $teacherKey=$isTemp? 'tempTeacher' : 'teacherOnLeave';
                                     
                                     $tableHeaderList=array_values(NameMap::$RELIEF_EDIT[$teacherKey]['display']);
-                                    if ($isTemp) $tableHeaderList=array_unique ($tableHeaderList);
+                                    if ($isTemp) $tableHeaderList=array_unique($tableHeaderList);
                                     array_unshift($tableHeaderList, '', '');
-                                    if (!$isTemp) $tableHeaderList[]='Verified';
+//                                    if (!$isTemp) $tableHeaderList[]='Verified';
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
                                     {
@@ -74,24 +75,26 @@ EOD;
                                 for ($i=0; $i<$numOfTeacher; $i++)
                                 {
                                     $teacher=$teacherList[$i];
+                                    $verifiedFrag='';
 
                                     if (!$isTemp)
                                     {
                                         $datetime=$teacher[$keyList[2]];
                                         $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
                                         $remarkStr=$teacher[$keyList[3]];
-                                        $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacher[$keyExtraList[1]]]);
+//                                        $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$teacher[$keyExtraList[1]]]);
                                         
                                         $nameTimeInBetweenFrag= <<< EOD
 <td>
     <span class="toggle-display">{$reasonArr[$teacher[$keyList[1]]]}</span>
     <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>
+    <input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" />
 </td>
 EOD;
     
-                                        $verifiedFrag= <<< EOD
-<td>$verifiedStr <input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" /></td>   
-EOD;
+//                                        $verifiedFrag= <<< EOD
+//<td>$verifiedStr</td>   
+//EOD;
                                     }
                                     else
                                     {
@@ -103,7 +106,7 @@ EOD;
 <td>
     <div class="toggle-display">{$teacher[$keyList[1]]}<br />{$teacher[$keyList[2]]}</div>
     <div class="toggle-edit">
-        <div class="time-line"><input type="text" name="phone-$i" value="{$teacher[$keyList[1]]}" /></div>
+        <div class="time-line"><input type="text" name="handphone-$i" value="{$teacher[$keyList[1]]}" /></div>
         <div class="time-line"><input type="text" name="email-$i" value="{$teacher[$keyList[2]]}" /></div>
     </div>
 </td>
@@ -148,7 +151,7 @@ EOD;
                     </table>
                 </div>
                 <div class="bt-control">
-                	<input type="button" name="verify" value="Verify Selected" class="button" />
+<!--                	<input type="button" name="verify" value="Verify Selected" class="button" />-->
                     <input type="button" name="delete" value="Delete Selected" class="button" />
                 </div>
                 <input type="hidden" name="num" value="<?php echo count($teacherList); ?>" />

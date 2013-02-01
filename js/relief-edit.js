@@ -68,14 +68,39 @@ $(document).ready(function(){
         });
     }
 
+    // defaultStyle, newValueStyle: {'cssStyle': 'value', etc}
+    function textfieldDefault(textfieldObj, defaultV, defaultStyle, newValueStyle)
+    {
+        textfieldObj.val() == defaultV ? textfieldObj.css(defaultStyle) : textfieldObj.css(newValueStyle);
 
-    var formEdit=document.forms['edit'];
+        textfieldObj.focus(function(){
+            if (this.value == defaultV)
+            {
+                this.value='';
+                $(this).css(newValueStyle);
+            }
+        }).blur(function(){
+            if (this.value == '')
+            {
+                this.value=defaultV;
+                $(this).css(defaultStyle);
+            }
+        });
+    }
+
+    var formEdit=document.forms['edit'],
+        PROP_OPTION=['temp', 'leave'], CONTACT_INFO=['HP', 'Email'], CONTACT_STYLE=[{'color': '#aaa'}, {'color': 'black'}];
 
     var num=formEdit['num'].value;
     for (var i=0; i<num; i++)
     {
         setDatePicker($(formEdit['date-from-' + i]), $(formEdit['date-to-' + i]), formEdit['server-date-from-' + i], formEdit['server-date-to-' + i]);
         constrainTimeSelect($(formEdit['time-from-' + i]), $(formEdit['time-to-' + i]), formEdit['date-from-' + i], formEdit['date-to-' + i]);
+        if (formEdit['prop'].value == PROP_OPTION[0])
+        {
+            textfieldDefault($(formEdit['handphone-' + i]), CONTACT_INFO[0], CONTACT_STYLE[0], CONTACT_STYLE[1]);
+            textfieldDefault($(formEdit['email-' + i]), CONTACT_INFO[1], CONTACT_STYLE[0], CONTACT_STYLE[1]);
+        }
     }
 
     // For verify and delete
@@ -143,9 +168,9 @@ $(document).ready(function(){
         });
     }
 
-    $(formEdit['verify']).click(function(){
+    /*$(formEdit['verify']).click(function(){
         multipleOp.call(this, 'verify');
-    });
+    });*/
     $(formEdit['delete']).click(function(){
         multipleOp.call(this, 'delete');
     });
@@ -156,42 +181,41 @@ $(document).ready(function(){
 
     // Edit, Save and Delete
     var SMALL_BT_ARR=[
-            {
-                icons: {
-                    primary: "ui-icon-pencil"
-                },
-                text: false,
-                label: 'Edit'
+        {
+            icons: {
+                primary: "ui-icon-pencil"
             },
-            {
-                icons: {
-                    primary: "ui-icon-disk"
-                },
-                text: false,
-                label: 'Save'
+            text: false,
+            label: 'Edit'
+        },
+        {
+            icons: {
+                primary: "ui-icon-disk"
             },
-            {
-                icons: {
-                    primary: "ui-icon-trash"
-                },
-                text: false,
-                label: 'Delete'
-            }
-        ];
+            text: false,
+            label: 'Save'
+        },
+        {
+            icons: {
+                primary: "ui-icon-trash"
+            },
+            text: false,
+            label: 'Delete'
+        }
+    ];
     var prevTextfield=null;
 
     function makeEditButton(obj, index /*, isSaveButton */)
     {
         // Create button
         var isSaveButton=arguments[2];
-        obj.data('index', index).button(SMALL_BT_ARR[isSaveButton?1:0]).click(function(){
+        obj.button(SMALL_BT_ARR[isSaveButton?1:0]).click(function(){
             if ($(this).button('option', 'label') == SMALL_BT_ARR[0]['label'])
             {
                 $(this).button('option', SMALL_BT_ARR[1]);
             }
             else
             {
-                var index=$(this).data('index');
                 var fieldObj={
                     'reason': formEdit['reason-'+index],
                     'time': [formEdit['date-from-'+index], formEdit['time-from-'+index],
@@ -280,7 +304,7 @@ $(document).ready(function(){
 
     function makeDeleteButton(obj, index)
     {
-        obj.data('index', index).button(SMALL_BT_ARR[2]).click(function(){
+        obj.button(SMALL_BT_ARR[2]).click(function(){
             var curRow=$(this).parents('tr').first();
             confirm("Confirm to delete this row?", function(){
                 // Delete empty
@@ -387,6 +411,12 @@ $(document).ready(function(){
         $("#last-row").show(FADE_DUR).one('focus', ":input:not(:checkbox)", addRowFunc);
         makeEditButton($("#last-row .edit-bt"), numOfTeacher, true);
         makeDeleteButton($("#last-row .delete-bt"), numOfTeacher);
+
+        if (formEdit['prop'].value == PROP_OPTION[0])
+        {
+            textfieldDefault($(formEdit['handphone-' + numOfTeacher]), CONTACT_INFO[0], CONTACT_STYLE[0], CONTACT_STYLE[1]);
+            textfieldDefault($(formEdit['email-' + numOfTeacher]), CONTACT_INFO[1], CONTACT_STYLE[0], CONTACT_STYLE[1]);
+        }
 
         setDatePicker($(formEdit['date-from-' + numOfTeacher]), $(formEdit['date-to-' + numOfTeacher]), $(formEdit['server-date-from-' + numOfTeacher]), $(formEdit['server-date-to-' + numOfTeacher]));
         formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + numOfTeacher].options.length-1;

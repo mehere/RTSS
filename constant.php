@@ -173,8 +173,10 @@ class NameMap
     public static $RELIEF=array(
         'teacherOnLeave' => array(
             'display' => array(
-                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason', 
-                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
+//                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason', 
+//                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
+                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'handphone' => 'Handphone', 'reason' => 'Reason', 
+                'teacherScheduled' => 'Scheduled'
             ),
             'hidden' => array(
                 'accname', 'leaveID'

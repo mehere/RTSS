@@ -352,7 +352,7 @@ class Teacher {
             $result['found'] = true;
             $result['name'] = $row['name'];
             $result['gender'] = $row['gender'];
-            $result['mobile'] = $row['mobile'];
+            $result['handphone'] = $row['mobile'];
             $result['email'] = $row['email'];
 
             return $result;
@@ -391,7 +391,7 @@ class Teacher {
             $result['found'] = true;
             $result['name'] = $ifins_row['user_name'];
             $result['gender'] = $ifins_row['user_gender'];
-            $result['mobile'] = $ifins_row['user_mobile'];
+            $result['handphone'] = $ifins_row['user_mobile'];
             $result['email'] = $ifins_row['user_email'];
 
             return $result;
