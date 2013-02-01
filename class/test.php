@@ -126,12 +126,13 @@ foreach($result as $key=>$a_result)
 
 
         /*
-          $query_date = "2013-01-12";
+          $query_date = "2013-01-15";
           $teacher_on_leave = Teacher::getTeacherOnLeave($query_date);
           foreach($teacher_on_leave as $a_leave_teacher)
           {
           echo "start<br>";
           echo $a_leave_teacher['accname']."<br>";
+          echo $a_leave_teacher['handphone']."<br>";
           echo $a_leave_teacher['fullname']."<br>";
           echo $a_leave_teacher['type']."<br>";
           echo $a_leave_teacher['reason']."<br>";
@@ -143,8 +144,9 @@ foreach($result as $key=>$a_result)
           echo ($a_leave_teacher['isScheduled']?"YES":"NO")."<br>";
           echo "end<br><br>";
           }
-         *
+         * 
          */
+         
         /*
           $query_date = "2013-01-12";
           $temp_teacher = Teacher::getTempTeacher($query_date);

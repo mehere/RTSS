@@ -164,6 +164,7 @@ class Teacher {
             
             $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['name'];
             $each_record['type'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['type'];
+            $each_record['handphone'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['mobile'];
             
             array_push($result, $each_record);
         }
@@ -741,7 +742,7 @@ class Teacher {
         
         mysql_select_db($ifins_db_name, $ifins_db_con);
         
-        $sql_query_teacher = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher';";
+        $sql_query_teacher = "select user_id, user_name, dept_name, user_mobile from student_details where user_position = 'Teacher';";
         $result_teacher = mysql_query($sql_query_teacher);
         if(!$result_teacher)
         {
@@ -752,11 +753,29 @@ class Teacher {
         {
             $teacher_dict[$row['user_id']] = Array(
                 'name' => $row['user_name'],
-                'type' => $row['dept_name']
+                'type' => $row['dept_name'],
+                'mobile' => $row['user_mobile']
             );
         }
         
         return $teacher_dict;
+    }
+    
+    public static function insertAbbrMatch($all_matches)
+    {
+        $db_con = Constant::connect_to_db();
+        
+        if(empty($db_con))
+        {
+            return false;
+        }
+        
+        $sql_insert_match = "insert into ct_name_abbre_matching values (";
+        
+        foreach($all_matches as $abbre->$accname)
+        {
+            
+        }
     }
     
     /**

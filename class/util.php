@@ -81,6 +81,25 @@ Class Constant
         'WEESHEON' => 'yuin',
         'WONGBER' => 'WONG'
     );
+    
+    public static function connect_to_db()
+    {
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
+        {
+            return null;
+        }
+
+        mysql_select_db($db_name);
+        
+        return $db_con;
+    }
 }
 
 ?>
