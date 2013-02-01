@@ -74,7 +74,7 @@ class Scheduling
         
         $lesson_dict = Array();
         $teacher_dict = Array();
-        
+        $all_normal_teachers = Teacher::getTeacherName("normal");
         //convert date to weekday
         $weekday_string = date("D",  strtotime($this->date));
         
@@ -109,6 +109,25 @@ class Scheduling
         }
         
         mysql_select_db($db_name);
+        
+        //create teacher dict
+        foreach($all_normal_teachers as $a_normal)
+        {
+            $temp_normal = new Teacher("dummy name");
+            $temp_normal->accname = $a_normal["accname"];
+            $temp_normal->name = $a_normal["fullname"];;
+
+            if(array_key_exists($a_normal["accname"], $this->leave_dict))
+            {
+                $temp_normal->noLessonMissed = $this->leave_dict[$a_normal["accname"]];
+            }
+            if(array_key_exists($a_normal["accname"], $this->relief_dict))
+            {
+                $temp_normal->noLessonRelived = $this->relief_dict[$a_normal["accname"]];
+            }
+
+            $teacher_dict[$a_normal["accname"]] = $temp_normal;
+        }
         
         //create lesson dictionary
         $sql_query_lessons = "select * from ct_lesson where weekday = ".$weekday_number." and type = 'N';";
@@ -251,6 +270,7 @@ class Scheduling
         $lesson_dict = Array();
         $teacher_dict = Array();
         $highlight_dict = Array();
+        $all_aed_teachers = Teacher::getTeacherName("AED");
         
         //convert date to weekday
         $weekday_string = date("D",  strtotime($this->date));
@@ -299,6 +319,25 @@ class Scheduling
         while($row = mysql_fetch_array($query_highlighted_result))
         {
             $highlight_dict[] = $row['lesson_id'];
+        }
+        
+        //create teacher dict
+        foreach($all_aed_teachers as $a_aed)
+        {
+            $temp_aed = new Teacher("dummy name");
+            $temp_aed->accname = $a_aed["accname"];
+            $temp_aed->name = $a_aed["fullname"];;
+
+            if(array_key_exists($a_aed["accname"], $this->leave_dict))
+            {
+                $temp_aed->noLessonMissed = $this->leave_dict[$a_aed["accname"]];
+            }
+            if(array_key_exists($a_aed["accname"], $this->relief_dict))
+            {
+                $temp_aed->noLessonRelived = $this->relief_dict[$a_aed["accname"]];
+            }
+
+            $teacher_dict[$a_aed["accname"]] = $temp_aed;
         }
         
         //create lesson dictionary

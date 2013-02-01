@@ -239,7 +239,7 @@ class Teacher {
         $normal_list = Array();
         $temp_list = Array();
         
-        if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0)
+        if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0 || strcmp($type, "all_normal")===0)
         {
             $ifins_db_url = Constant::ifins_db_url;
             $ifins_db_username = Constant::ifins_db_username;
@@ -252,7 +252,7 @@ class Teacher {
             {
                 mysql_select_db($ifins_db_name);
                 
-                if(empty($type))
+                if(empty($type) || strcmp($type, "all_normal")===0)
                 {
                     $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' order by user_name;";
                 }
@@ -276,14 +276,13 @@ class Teacher {
                 
                 if($query_normal_result)
                 {
-                    $index = 0;
                     while($row = mysql_fetch_assoc($query_normal_result))
                     {
-                        $normal_list[$index] = Array(
+                        //special attention: a 'N' is appended here. without it array_merge will view the key as number
+                        $normal_list['N'.$row['user_id']] = Array(
                             'fullname' => $row['user_name'],
                             'accname' => $row['user_id']
                         );
-                        $index++;
                     }
                 }
             }    
@@ -306,21 +305,17 @@ class Teacher {
                 
                 if($query_temp_result)
                 {
-                    $index = 0;
                     while($row = mysql_fetch_assoc($query_temp_result))
                     {
-                        $temp_list[$index] = Array(
+                        $temp_list[$row['teacher_id']] = Array(
                             'fullname' => $row['name'],
                             'accname' => $row['teacher_id']
                         );
-                        $index++;
                     }
                 }
             }
         }
-        
         $result_array = array_merge($normal_list, $temp_list);
-        
         if(empty($type))
         {
             foreach($result_array as $key=>$value)

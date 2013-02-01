@@ -215,12 +215,15 @@ foreach($result as $key=>$a_result)
          */
         /*
           $result = Teacher::getTeacherName('');
-          foreach($result as $one_teacher)
+         
+          foreach($result as $key=>$one_teacher)
           {
-          echo $one_teacher['accname']."<br>";
-          echo $one_teacher['fullname']."<br><br>";
+                echo $key."<br>";
+                echo $one_teacher['accname']."<br>";
+                echo $one_teacher['fullname']."<br><br>";
           }
-         *
+         
+         * 
          */
         /*
           $result = Teacher::getIndividualTeacherDetail("178984");
