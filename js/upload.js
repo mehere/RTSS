@@ -143,4 +143,38 @@ $(document).ready(function(){
             }
         });
     }
+
+    // AED name auto complete
+    var nameList=[], nameAccMap=[];
+    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "AED"}, function(data){
+        if (data['error']) return;
+
+        $.each(data, function(key, value){
+            nameList.push(value['fullname']);
+            nameAccMap[value['fullname']]=value['accname'];
+        });
+    });
+    $(formAED['fullname']).autocomplete({
+        source: nameList,
+        delay: 0,
+        autoFocus: true,
+        position: { my: "left bottom", at: "left top", collision: "none" }
+    }).focusout(function(){
+        var curText= $.trim(this.value), isMatch=false;
+        $.each(nameList, function(index, value){
+            if (curText.toLowerCase() == value.toLowerCase())
+            {
+                isMatch=true;
+                formAED["accname"].value=nameAccMap[value];
+
+                return false;
+            }
+        });
+        if (!isMatch)
+        {
+            this.value="";
+        }
+
+        prevTextfield=this;
+    });
 });

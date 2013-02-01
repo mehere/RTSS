@@ -5,14 +5,16 @@ class PageConstant
     const SCH_NAME_ABBR="CHIJ";
     const SCH_NAME="CHIJ St Nicholas Girl's School";
     
-    const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'        
+    const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'
+    
+    const DATE_FORMAT_ISO='Y-m-d';
+    const DATE_FORMAT_SG='d/m/Y';
     
     public static $DAY=array('Monday', 'Tuesday', 'Wedsday', 'Thursday', 'Friday');
     
     public static $ERROR_TEXT=array(
         'login' => array(
-            'mismatch' => 'Username or Password was entered incorrectly.',
-            'loginFirst' => 'Please log in first.'
+            'mismatch' => 'Username or Password was entered incorrectly.'            
         )
     );
     
@@ -93,13 +95,35 @@ class SchoolTime
     
     /**
      * Get specific time value for an index
-     * @param int $index
-     * @return formatted string
+     * @param int $index (starting from 1)
+     * @return formatted string; if $index out of range, return null
      */
     public static function getTimeValue($index)
     {
         new SchoolTime;
-        return self::formatTime(self::$SCHOOL_TIME_ARR[$index]);
+        if ($index < 1 || $index > count(self::$SCHOOL_TIME_ARR)) return null;
+        return self::formatTime(self::$SCHOOL_TIME_ARR[$index-1]);
+    }
+    
+    /**
+     * Get an index for a specific time value
+     * @param string $timeValue if ($isTimeObject is true) then here a time obj is expected; otherwise, string of format H:m i.e. 07:25
+     * @param bool $isTimeObject (false by default)
+     * @return int index (starting from 1); -1 means not exist 
+     */
+    public static function getTimeIndex($timeValue, $isTimeObject=false)
+    {
+        new SchoolTime;
+        for ($i=0; $i<count(self::$SCHOOL_TIME_ARR); $i++)
+        {
+            $time=self::$SCHOOL_TIME_ARR[$i];
+            if ($isTimeObject && $time == $timeValue || !$isTimeObject && self::formatTime($time) == $timeValue)
+            {
+                return $i+1;
+            }
+        }
+        
+        return -1;
     }
     
     /**
@@ -117,11 +141,31 @@ class SchoolTime
         }
         return array_map(array('SchoolTime', 'formatTime'), array_slice(self::$SCHOOL_TIME_ARR, $start, $end-$start+1));
     }
+    
+    /**
+     *
+     * @param type $dateString
+     * @param type $formatOption 0 (default) -- from ISO to SG, 1 -- from SG to ISO
+     * @return type 
+     */
+    public static function convertDate($dateString, $formatOption=0)
+    {
+        return $formatOption==0 ? 
+            date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString), PageConstant::DATE_FORMAT_SG) :
+            date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_SG, $dateString), PageConstant::DATE_FORMAT_ISO);
+    }
+    
+    /**
+     *
+     * @param type $dateObject
+     * @param type $formatOption 0 (default) -- ISO, 1 -- SG
+     * @return type 
+     */
+    public static function displayDate($dateObject, $formatOption=0)
+    {
+        return date_format($dateObject, $formatOption==0?PageConstant::DATE_FORMAT_ISO:PageConstant::DATE_FORMAT_SG);
+    }
 }
-
-//include_once 'class/teacher.php';
-//var_dump(Teacher::add(7341327, 'leave', 'Bernard Wong Weng Keong', 'MC',
-//                'sdf', '2013-01-27 07:25', '2013-01-27 14:15', '', '', ''));
 
 class NameMap
 {
@@ -163,6 +207,13 @@ class NameMap
                 'others' => 'Others'
             ),
             'hidden' => array()
+        ),
+        
+        'MT' => array(
+            'display' => array(
+                'en' => 'English', 'zh' => 'Chinese', 'ms' => 'Malay', 'ta' => 'Tamil'
+            ),
+            'hidden' => array()
         )
     );
     
@@ -181,10 +232,11 @@ class NameMap
         
         'tempTeacher' => array(
             'display' => array(
-                'fullname' => 'Name', 'handphone' => 'Phone', 'datetime' => 'Time Available', 'remark' => 'Remark'
+                'fullname' => 'Name', 'handphone' => 'Contact', 'email' => 'Contact', 'MT' => 'MT',
+                'datetime' => 'Time Available', 'remark' => 'Remark'
             ),
             'hidden' => array(
-                'accname'
+                'accname', 'leaveID'
             )
         )
     );

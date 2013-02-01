@@ -76,3 +76,12 @@
 .subject .subject-close .ui-button-text {
 	padding: 0;
 }
+
+.ui-autocomplete {
+	max-height: 10em;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.ui-autocomplete .ui-menu-item {
+	font-size: .9em;
+}
