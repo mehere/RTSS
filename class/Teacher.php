@@ -5,15 +5,25 @@ class Teacher {
 
     //put your code here
     public $abbreviation;
-    public $timetable;
     public $name;
     public $accname;
+    public $noLessonMissed;
+    public $noLessonRelived;
+    public $leave;
+    public $availability;
+    public $timetable;
+    public $isHighlighted;
 
     public function __construct($abbreviation) {
         $this->abbreviation = $abbreviation;
         $this->name = NULL;
         $this->accname = NULL;
         $this->timetable = array();
+        $this->noLessonMissed = 0;
+        $this->noLessonRelived = 0;
+        $this->leave = array();
+        $this->availability = array();
+        $this->isHighlighted = true;
     }
     
     /**
@@ -216,6 +226,7 @@ class Teacher {
             $one_teacher['MT'] = (empty($row['mother_tongue'])?'':$row['mother_tongue']);
             $one_teacher['email'] = (empty($row['email'])?'':$row['email']);
             $one_teacher['handphone'] = (empty($row['mobile'])?'':$row['mobile']);
+            $one_teacher['availability_id'] = $row['temp_availability_id'];
             
             array_push($result, $one_teacher);
         }
@@ -228,7 +239,7 @@ class Teacher {
         $normal_list = Array();
         $temp_list = Array();
         
-        if(empty($type) || strcmp($type, "normal")===0)
+        if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0)
         {
             $ifins_db_url = Constant::ifins_db_url;
             $ifins_db_username = Constant::ifins_db_username;
@@ -241,7 +252,26 @@ class Teacher {
             {
                 mysql_select_db($ifins_db_name);
                 
-                $sql_query_normal = "select user_id, user_name from actatek_user where user_position = 'Teacher' order by user_name;";
+                if(empty($type))
+                {
+                    $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' order by user_name;";
+                }
+                else
+                {
+                    if(strcmp($type, "normal")===0)
+                    {
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'Teacher' order by user_name;";
+                    }
+                    if(strcmp($type, "AED")===0)
+                    {
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'AED' order by user_name;";
+                    }
+                    if(strcmp($type, "untrained")===0)
+                    {
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'untrained' order by user_name;";
+                    }
+                }
+                
                 $query_normal_result = mysql_query($sql_query_normal);
                 
                 if($query_normal_result)
@@ -698,7 +728,7 @@ class Teacher {
     }
     
     //this function retrieve all teachers from database ifins
-    private static function getAllTeachers()
+    public static function getAllTeachers()
     {
         $teacher_dict = Array();
         

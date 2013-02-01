@@ -2,6 +2,9 @@
 
 require_once 'Teacher.php';
 require_once 'TimetableAnalyzer.php';
+require_once 'Scheduling.php';
+require_once 'DayTime.php';
+require_once 'Lesson.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -9,6 +12,73 @@ require_once 'TimetableAnalyzer.php';
  */
 
 //********xue : testing
+$scheduling = new Scheduling("2013-01-15");
+/*
+$result = $scheduling->getNormalLessonsToday();
+echo $result['success']?"okay<br>":"no<br>";
+echo $result['error_msg']."<br>";
+foreach($result["teachers"] as $key=>$value)
+{
+    echo $key." : <br>";
+    print_r($value->leave);
+    echo "<br>";
+    print_r($value->timetable);
+    echo "<br>";
+    echo $value->accname."<br>";
+    echo $value->name."<br>";
+    echo $value->noLessonMissed."<br>";
+    echo $value->noLessonRelived."<br>";
+    echo "<br>";
+}
+ * 
+ */
+/*
+$result = $scheduling->getAEDLessonsToday();
+echo $result['success']?"okay<br>":"no<br>";
+echo $result['error_msg']."<br>";
+foreach($result["teachers"] as $key=>$value)
+{
+    echo $key." : <br>";
+    print_r($value->leave);
+    echo "<br>";
+    print_r($value->timetable);
+    echo "<br>";
+    echo $value->accname."<br>";
+    echo $value->name."<br>";
+    echo $value->noLessonMissed."<br>";
+    echo $value->noLessonRelived."<br>";
+    echo "<br>";
+}
+ * 
+ */
+/*
+$result = $scheduling->getUntrainedTeachers();
+echo $result['success']?"okay<br>":"no<br>";
+echo $result['error_msg']."<br>";
+foreach($result["teachers"] as $key=>$value)
+{
+    echo $key." : <br>";
+    echo $value->accname."<br>";
+    echo $value->name."<br>";
+    echo $value->noLessonMissed."<br>";
+    echo $value->noLessonRelived."<br>";
+    echo "<br>";
+}
+ * 
+ */
+$result = $scheduling->getTempTeachers();
+echo $result['success']?"okay<br>":"no<br>";
+echo $result['error_msg']."<br>";
+foreach($result["teachers"] as $key=>$value)
+{
+    echo $key." : <br>";
+    echo $value->accname."<br>";
+    echo $value->name."<br>";
+    echo $value->noLessonRelived."<br>";
+    echo print_r($value->availability);
+    echo "<br>";
+}
+
 //echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 0915", "2013-01-08 1315");
 //$result = Teacher::getLessonSlotsOfTeacher("8104329");
 /*
@@ -157,7 +227,7 @@ foreach($result as $key=>$a_result)
 
         //$result1 = Teacher::add('', 'temp', Array('fullname' => 'Robot Haphati Fckek', 'remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00',  'email' => '111@adb.com', 'MT' => 'tamil'));
         //$result2 = Teacher::add('TMP1232312', 'temp', Array('remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'handphone' =>  '11111111'));
-        $result3 = Teacher::add('1692161' , 'leave',Array('datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'remark' => 'okay haha'));
+        //$result3 = Teacher::add('1692161' , 'leave',Array('datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'remark' => 'okay haha'));
         //echo $result2;
         //
         //echo Teacher::delete(Array(2, 3,), 'leave');
