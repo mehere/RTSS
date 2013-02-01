@@ -2,24 +2,51 @@ $(document).ready(function(){
     var CONFIRM_TEXT=["Confirm to verify selected teachers?", "Confirm to delete selected teachers?",
             "Please select at least one teacher before proceeding."],
         TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
-            "Failed to delete this teacher."];
+            "Failed to delete this teacher."],
         FADE_DUR=400;
 
-    function setDatePicker(target, dateValue /*, dateToField */)
+    var DATE_WARN_TEXT=["Date should not be empty.", "To-Date should be no smaller than From-Date."];
+    function setDatePicker(target1, target2, altTarget1, altTarget2)
     {
-        var dateToField=arguments[2];
-        target.datepicker({
-            dateFormat: "yy-mm-dd",
+        var curDate1=altTarget1.value?new Date(altTarget1.value):new Date(),
+            curDate2=altTarget2.value?new Date(altTarget2.value):new Date();
+        target1.datepicker({
+            dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
-            onSelect: function(selectedDate) {
-                if (dateToField && selectedDate)
+            altField: altTarget1,
+            altFormat: "yy-mm-dd",
+            onSelect: function(dateText){
+                target2.datepicker( "option", "minDate", dateText );
+            },
+            onClose: function(dateText){
+                if (!dateText)
                 {
-                    dateToField.datepicker( "option", "minDate", selectedDate );
+                    var self=$(this);
+                    confirm(DATE_WARN_TEXT[0], function(){
+                        self.datepicker('setDate', curDate1);
+                    });
                 }
             }
+        }).datepicker('setDate', curDate1);
 
-        }).datepicker('setDate', dateValue?new Date(dateValue):new Date());
+        target2.datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: curDate1,
+            altField: altTarget2,
+            altFormat: "yy-mm-dd",
+            onClose: function(dateText){
+                var self=$(this);
+                if (self.datepicker('getDate') < target1.datepicker('getDate'))
+                {
+                    confirm(DATE_WARN_TEXT[1], function(){
+                        self.datepicker('setDate', target1.datepicker('getDate'));
+                    });
+                }
+            }
+        }).datepicker('setDate', curDate2);
     }
 
     function constrainTimeSelect(selectFromObj, selectToObj, otherFrom, otherTo)
@@ -47,9 +74,7 @@ $(document).ready(function(){
     var num=formEdit['num'].value;
     for (var i=0; i<num; i++)
     {
-        setDatePicker($(formEdit['date-from-' + i]), formEdit['server-date-from-' + i].value, $(formEdit['date-to-' + i]));
-        setDatePicker($(formEdit['date-to-' + i]), formEdit['server-date-to-' + i].value);
-
+        setDatePicker($(formEdit['date-from-' + i]), $(formEdit['date-to-' + i]), formEdit['server-date-from-' + i], formEdit['server-date-to-' + i]);
         constrainTimeSelect($(formEdit['time-from-' + i]), $(formEdit['time-to-' + i]), formEdit['date-from-' + i], formEdit['date-to-' + i]);
     }
 
@@ -171,6 +196,7 @@ $(document).ready(function(){
                     'reason': formEdit['reason-'+index],
                     'time': [formEdit['date-from-'+index], formEdit['time-from-'+index],
                         formEdit['date-to-'+index], formEdit['time-to-'+index]],
+                    'datePost': [formEdit['server-date-from-'+index], formEdit['server-date-to-'+index]],
                     'remark': formEdit['remark-'+index]
                 };
 
@@ -186,18 +212,21 @@ $(document).ready(function(){
                 $(this).button('option', SMALL_BT_ARR[0]);
 
                 // Save locally
-                $(fieldObj['reason']).parents('td').first().find('.toggle-display').text(fieldObj['reason'].options[fieldObj['reason'].selectedIndex].innerHTML);
-                $(fieldObj['time']).parents('td').first().find('.toggle-display > span').text(function(index){
-                    return fieldObj['time'][index].value;
-                });
-                $(fieldObj['remark']).parents('td').first().find('.toggle-display').text(fieldObj['remark'].value);
+                function saveLocally()
+                {
+                    $(fieldObj['reason']).parents('td').first().find('.toggle-display').text(fieldObj['reason'].options[fieldObj['reason'].selectedIndex].innerHTML);
+                    $(fieldObj['time']).parents('td').first().find('.toggle-display > span').text(function(index){
+                        return fieldObj['time'][index].value;
+                    });
+                    $(fieldObj['remark']).parents('td').first().find('.toggle-display').text(fieldObj['remark'].value);
+                }
 
                 // Save remotely
                 var dataPost={'prop': 'leave'};
                 dataPost['reason']=fieldObj['reason'].value;
                 dataPost['remark']=fieldObj['remark'].value;
-                dataPost['datetime-from']=fieldObj['time'][0].value + " " + fieldObj['time'][1].value;
-                dataPost['datetime-to']=fieldObj['time'][2].value + " " + fieldObj['time'][3].value;
+                dataPost['datetime-from']=fieldObj['datePost'][0].value + " " + fieldObj['time'][1].value;
+                dataPost['datetime-to']=fieldObj['datePost'][1].value + " " + fieldObj['time'][3].value;
 
                 if (formEdit['leaveID-'+index].value)
                 {
@@ -208,6 +237,10 @@ $(document).ready(function(){
                         if (data['error'] > 0)
                         {
                             confirm(TEACHER_OP_TEXT[1], function(){});
+                        }
+                        else
+                        {
+                            saveLocally();
                         }
                     }, 'json');
                 }
@@ -226,6 +259,8 @@ $(document).ready(function(){
                         else
                         {
                             formEdit['leaveID-'+index].value=data['leaveID'];
+
+                            saveLocally();
                         }
                     }, 'json');
                 }
@@ -353,8 +388,7 @@ $(document).ready(function(){
         makeEditButton($("#last-row .edit-bt"), numOfTeacher, true);
         makeDeleteButton($("#last-row .delete-bt"), numOfTeacher);
 
-        setDatePicker($(formEdit['date-from-' + numOfTeacher]), '');
-        setDatePicker($(formEdit['date-to-' + numOfTeacher]), '');
+        setDatePicker($(formEdit['date-from-' + numOfTeacher]), $(formEdit['date-to-' + numOfTeacher]), $(formEdit['server-date-from-' + numOfTeacher]), $(formEdit['server-date-to-' + numOfTeacher]));
         formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + numOfTeacher].options.length-1;
         $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic');
 

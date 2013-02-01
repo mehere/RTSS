@@ -88,13 +88,13 @@ EOD;
                             <td class="label">Time:</td>
                             <td>
                                 <select name="time-from">
-                                    <?php
-                                        echo PageConstant::formatOptionInSelect($timeFromArr, '', true);
+                                    <?php 
+                                        echo PageConstant::formatOptionInSelect($timeFromArr, '');
                                     ?>
                                 </select>
                                 <select name="time-to" style="margin-left: 10px">
-                                    <?php
-                                        echo PageConstant::formatOptionInSelect($timeToArr, '', true);
+                                    <?php 
+                                        echo PageConstant::formatOptionInSelect($timeToArr, '');
                                     ?>
                                 </select>
                             </td>
@@ -137,7 +137,7 @@ EOD;
                         </tbody>
                     </table>
                     <div class="row">
-                    	<span class="label">AED Name:</span><input type="text" name="fullname" />
+                    	<span class="label">AED Name:</span><input type="text" name="fullname" /><input type="hidden" name="accname" />
                         <input type="submit" class="button" value="Submit" style="margin-left: 30px" />
                     </div>
                 </form>
