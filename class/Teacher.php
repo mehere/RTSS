@@ -190,7 +190,7 @@ class Teacher {
         mysql_select_db($db_name);
         
         $sql_query_temp_teacher = "select *, DATE(rs_temp_relief_teacher_availability.start_datetime) as start_date, DATE(rs_temp_relief_teacher_availability.end_datetime) as end_date, TIME_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%H:%i') as start_time, TIME_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%H:%i') as end_time 
-            from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.start_datetime);";
+            from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.end_datetime);";
         
         $query_temp_teacher = mysql_query($sql_query_temp_teacher);
         
@@ -227,6 +227,10 @@ class Teacher {
     {
         $normal_list = Array();
         $temp_list = Array();
+        
+        // XGY delete!!!
+        if ($type == 'AED') $type='';
+        // XGY delete!!!
         
         if(empty($type) || strcmp($type, "normal")===0)
         {
