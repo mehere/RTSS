@@ -12,7 +12,7 @@ require_once 'Lesson.php';
  */
 
 //********xue : testing
-$scheduling = new Scheduling("2013-01-15");
+//$scheduling = new Scheduling("2013-01-15");
 /*
 $result = $scheduling->getNormalLessonsToday();
 echo $result['success']?"okay<br>":"no<br>";
@@ -66,6 +66,7 @@ foreach($result["teachers"] as $key=>$value)
 }
  * 
  */
+/*
 $result = $scheduling->getTempTeachers();
 echo $result['success']?"okay<br>":"no<br>";
 echo $result['error_msg']."<br>";
@@ -78,6 +79,8 @@ foreach($result["teachers"] as $key=>$value)
     echo print_r($value->availability);
     echo "<br>";
 }
+ * 
+ */
 
 //echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 0915", "2013-01-08 1315");
 //$result = Teacher::getLessonSlotsOfTeacher("8104329");
