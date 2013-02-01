@@ -222,7 +222,6 @@ foreach($result as $key=>$a_result)
                 echo $one_teacher['accname']."<br>";
                 echo $one_teacher['fullname']."<br><br>";
           }
-         
          * 
          */
         /*

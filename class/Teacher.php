@@ -279,7 +279,7 @@ class Teacher {
                     while($row = mysql_fetch_assoc($query_normal_result))
                     {
                         //special attention: a 'N' is appended here. without it array_merge will view the key as number
-                        $normal_list['N'.$row['user_id']] = Array(
+                        $normal_list[] = Array(
                             'fullname' => $row['user_name'],
                             'accname' => $row['user_id']
                         );
@@ -307,7 +307,7 @@ class Teacher {
                 {
                     while($row = mysql_fetch_assoc($query_temp_result))
                     {
-                        $temp_list[$row['teacher_id']] = Array(
+                        $temp_list[] = Array(
                             'fullname' => $row['name'],
                             'accname' => $row['teacher_id']
                         );
