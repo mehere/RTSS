@@ -54,6 +54,8 @@ Class Constant
         '1415' => 15
     );
     
+    public static $mother_tongue = array("Chiese", "Tamil", "Malay");
+    
     //error handling
     const default_var_value = "n.a.";
     const default_num_value = 0;
@@ -82,23 +84,48 @@ Class Constant
         'WONGBER' => 'WONG'
     );
     
-    public static function connect_to_db()
+    public static function connect_to_db($db_name)
     {
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
+        if(strcmp($db_name, "ntu")===0)
+        {
+            $db_url = Constant::db_url;
+            $db_username = Constant::db_username;
+            $db_password = Constant::db_password;
+            $db_name = Constant::db_name;
 
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
+            $db_con = mysql_connect($db_url, $db_username, $db_password);
 
-        if (!$db_con)
+            if (!$db_con)
+            {
+                return null;
+            }
+
+            mysql_select_db($db_name);
+
+            return $db_con;
+        }
+        else if(strcmp($db_name, "ifins")===0)
+        {
+            $ifins_db_url = Constant::ifins_db_url;
+            $ifins_db_username = Constant::ifins_db_username;
+            $ifins_db_password = Constant::ifins_db_password;
+            $ifins_db_name = Constant::ifins_db_name;
+
+            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
+
+            if (!$ifins_db_con)
+            {
+                return null;
+            }
+
+            mysql_select_db($ifins_db_name, $ifins_db_con);
+            
+            return $ifins_db_con;
+        }
+        else
         {
             return null;
         }
-
-        mysql_select_db($db_name);
-        
-        return $db_con;
     }
 }
 
