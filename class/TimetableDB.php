@@ -4,11 +4,15 @@ require_once 'Teacher.php';
 
 class TimetableDB
 {
-    //this function insert lesson_list into database
-    //input : lesson_list, teacher_list
-    //output : array of error message strings.
-    //Each of output[0] - output[6] represents a type of error. if, e.g. empty(output[1]), then there is no error type 1. echo output[0]~output[6] to see the error details. 
-    //pay special attention of output[6], which represents abbre name not found error.
+    
+    /**
+     * this function insert lesson_list into database
+     * @param type $lesson_list
+     * @param type $teacher_list
+     * @param type $year  e.g. '12' representing 2012,  string
+     * @param type $sem   '1' or '2'
+     * @return Array : array of error message strings. Each of output[0] - output[6] represents a type of error. if, e.g. empty(output[1]), then there is no error type 1. echo output[0]~output[6] to see the error details. pay special attention of output[6], which represents abbre name not found error.
+     */
     public static function insertTimetable($lesson_list, $teacher_list, $year='13', $sem='1')
     {
         //error information
@@ -28,9 +32,9 @@ class TimetableDB
         $empty_subject = Array();
         $empty_class = Array();
         $empty_teacher = Array();
-        
+     
         //teacher list
-        $teacher_full_acc_name_full_list = Teacher::getTeachersAccnameAndFullname($teacher_list);
+        Teacher::getTeachersAccnameAndFullname($teacher_list);
         
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson values ";
@@ -72,27 +76,30 @@ class TimetableDB
                 $end_time_index  = Constant::default_num_value;
             }
             
-            $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, $value->classes);
+            $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, $value->classes, $value->teachers);
             
             $sql_insert_lesson .= "('".mysql_real_escape_string($lesson_id)."', ".$day_index.", ".$start_time_index.", ".$end_time_index.", '".mysql_real_escape_string($subject)."', '".mysql_real_escape_string($venue)."', 'N'), ";
             
             //insert into ct_class_matching
             $classes = $value->classes;
             
-            foreach ($classes as $aClass) {
-                $class_name = $aClass->name;
-                
-                if(empty($class_name))
-                {
-                    if(!in_array($key, $empty_class))
+            if(count($classes)>0)
+            {
+                foreach ($classes as $aClass) {
+                    $class_name = $aClass->name;
+
+                    if(empty($class_name))
                     {
-                        array_push($empty_class, $key);
+                        if(!in_array($key, $empty_class))
+                        {
+                            array_push($empty_class, $key);
+                        }
+
+                        $class_name  = Constant::default_var_value;
                     }
-                    
-                    $class_name  = Constant::default_var_value;
+
+                    $sql_insert_lesson_class .= "('".mysql_real_escape_string($lesson_id)."', '".mysql_real_escape_string($class_name)."'), ";
                 }
-                
-                $sql_insert_lesson_class .= "('".mysql_real_escape_string($lesson_id)."', '".mysql_real_escape_string($class_name)."'), ";
             }
             
             //insert into ct_teacher_matching
@@ -100,7 +107,7 @@ class TimetableDB
             
             foreach ($teachers as $a_teacher){
                 $abbre_name = $a_teacher->abbreviation;
-                $teacher_accname = $teacher_full_acc_name_full_list[$abbre_name]->accname;
+                $teacher_accname = $teacher_list[$abbre_name]->accname;
                 
                 if(empty($teacher_accname))
                 {
@@ -120,9 +127,12 @@ class TimetableDB
         $sql_insert_lesson_class = substr($sql_insert_lesson_class, 0, -2).';';
         $sql_insert_lesson_teacher = substr($sql_insert_lesson_teacher, 0, -2).';';
         
+        /*
         echo $sql_insert_lesson.'<br><br>';
         echo $sql_insert_lesson_class.'<br><br>';
         echo $sql_insert_lesson_teacher.'<br><br>';
+         * 
+         */
         
         //DB operation
         $db_url = Constant::db_url;
@@ -259,7 +269,7 @@ class TimetableDB
         return $error_array;
     }
     
-    private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_obj_list)
+    private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_obj_list, $teacher_obj_list)
     {
         if(count($class_obj_list) === 0)
         {
@@ -299,7 +309,53 @@ class TimetableDB
             }
         }
         
-        return $type.$year.$sem.$weekday.$start_time.$end_time.$class_short;
+        if(count($teacher_obj_list) === 0)
+        {
+            $teacher_short = 'emp';
+        }
+        else
+        {
+            $teacher_list = array_keys($teacher_obj_list);
+            
+            if(count($teacher_list) > 1)
+            {
+                sort($teacher_list);
+            }
+            
+            $first_teacher = $teacher_list[0];
+            
+            $break_teacher_name = explode(" ", $first_teacher);
+            
+            if(count($break_teacher_name) === 1)
+            {
+                if(strlen($break_teacher_name[0])>=3)
+                {
+                    $teacher_short = substr($break_teacher_name[0], 0, 3);
+                }
+                else
+                {
+                    $teacher_short = $break_teacher_name[0].rand(0, 99);
+                }
+                
+            }
+            else
+            {
+                if(strlen($break_teacher_name[0]) > 1)
+                {
+                    $teacher_short = substr($break_teacher_name[0], 0, 2).substr($break_teacher_name[1], 0, 1);
+                }
+                else if(strlen($break_teacher_name[1]) > 1)
+                {
+                    $teacher_short = $break_teacher_name[0].substr($break_teacher_name[1], 0, 2);
+                }
+                else
+                {
+                    $teacher_short = $break_teacher_name[0].$break_teacher_name[1];
+                }
+            }
+        }
+        
+        return $type.$year.$sem.$weekday.$start_time.$end_time.$class_short.$teacher_short;
     }
 }
 ?>
