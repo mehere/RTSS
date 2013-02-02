@@ -5,15 +5,25 @@ class Teacher {
 
     //put your code here
     public $abbreviation;
-    public $timetable;
     public $name;
     public $accname;
+    public $noLessonMissed;
+    public $noLessonRelived;
+    public $leave;
+    public $availability;
+    public $timetable;
+    public $isHighlighted;
 
     public function __construct($abbreviation) {
         $this->abbreviation = $abbreviation;
         $this->name = NULL;
         $this->accname = NULL;
         $this->timetable = array();
+        $this->noLessonMissed = 0;
+        $this->noLessonRelived = 0;
+        $this->leave = array();
+        $this->availability = array();
+        $this->isHighlighted = true;
     }
     
     /**
@@ -154,6 +164,7 @@ class Teacher {
             
             $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['name'];
             $each_record['type'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['type'];
+            $each_record['handphone'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['mobile'];
             
             array_push($result, $each_record);
         }
@@ -216,6 +227,7 @@ class Teacher {
             $one_teacher['MT'] = (empty($row['mother_tongue'])?'':$row['mother_tongue']);
             $one_teacher['email'] = (empty($row['email'])?'':$row['email']);
             $one_teacher['handphone'] = (empty($row['mobile'])?'':$row['mobile']);
+            $one_teacher['availability_id'] = $row['temp_availability_id'];
             
             array_push($result, $one_teacher);
         }
@@ -228,11 +240,7 @@ class Teacher {
         $normal_list = Array();
         $temp_list = Array();
         
-        // XGY delete!!!
-        if ($type == 'AED') $type='';
-        // XGY delete!!!
-        
-        if(empty($type) || strcmp($type, "normal")===0)
+        if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0 || strcmp($type, "all_normal")===0)
         {
             $ifins_db_url = Constant::ifins_db_url;
             $ifins_db_username = Constant::ifins_db_username;
@@ -245,19 +253,37 @@ class Teacher {
             {
                 mysql_select_db($ifins_db_name);
                 
-                $sql_query_normal = "select user_id, user_name from actatek_user where user_position = 'Teacher' order by user_name;";
+                if(empty($type) || strcmp($type, "all_normal")===0)
+                {
+                    $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' order by user_name;";
+                }
+                else
+                {
+                    if(strcmp($type, "normal")===0)
+                    {
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'Teacher' order by user_name;";
+                    }
+                    if(strcmp($type, "AED")===0)
+                    {
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'AED' order by user_name;";
+                    }
+                    if(strcmp($type, "untrained")===0)
+                    {
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'untrained' order by user_name;";
+                    }
+                }
+                
                 $query_normal_result = mysql_query($sql_query_normal);
                 
                 if($query_normal_result)
                 {
-                    $index = 0;
                     while($row = mysql_fetch_assoc($query_normal_result))
                     {
-                        $normal_list[$index] = Array(
+                        //special attention: a 'N' is appended here. without it array_merge will view the key as number
+                        $normal_list[] = Array(
                             'fullname' => $row['user_name'],
                             'accname' => $row['user_id']
                         );
-                        $index++;
                     }
                 }
             }    
@@ -280,21 +306,17 @@ class Teacher {
                 
                 if($query_temp_result)
                 {
-                    $index = 0;
                     while($row = mysql_fetch_assoc($query_temp_result))
                     {
-                        $temp_list[$index] = Array(
+                        $temp_list[] = Array(
                             'fullname' => $row['name'],
                             'accname' => $row['teacher_id']
                         );
-                        $index++;
                     }
                 }
             }
         }
-        
         $result_array = array_merge($normal_list, $temp_list);
-        
         if(empty($type))
         {
             foreach($result_array as $key=>$value)
@@ -431,9 +453,11 @@ class Teacher {
             $reason = empty($entry['reason'])?'':$entry['reason'];
             $remark = empty($entry['remark'])?'':$entry['remark'];
             
-            $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified) values
+            $num_of_slot = Teacher::calculateLeaveSlot($accname, $entry['datetime-from'], $entry['datetime-to']);
+            
+            $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified, num_of_slot) values
                 ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
-                    '".mysql_real_escape_string(trim($entry['datetime-from']))."', '".mysql_real_escape_string(trim($entry['datetime-to']))."', 'NO');";
+                    '".mysql_real_escape_string(trim($entry['datetime-from']))."', '".mysql_real_escape_string(trim($entry['datetime-to']))."', 'NO', ".$num_of_slot.");";
             
             $insert_leave_result = mysql_query($sql_insert_leave);
             
@@ -700,7 +724,7 @@ class Teacher {
     }
     
     //this function retrieve all teachers from database ifins
-    private static function getAllTeachers()
+    public static function getAllTeachers()
     {
         $teacher_dict = Array();
         
@@ -718,7 +742,7 @@ class Teacher {
         
         mysql_select_db($ifins_db_name, $ifins_db_con);
         
-        $sql_query_teacher = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher';";
+        $sql_query_teacher = "select user_id, user_name, dept_name, user_mobile from student_details where user_position = 'Teacher';";
         $result_teacher = mysql_query($sql_query_teacher);
         if(!$result_teacher)
         {
@@ -729,11 +753,227 @@ class Teacher {
         {
             $teacher_dict[$row['user_id']] = Array(
                 'name' => $row['user_name'],
-                'type' => $row['dept_name']
+                'type' => $row['dept_name'],
+                'mobile' => $row['user_mobile']
             );
         }
         
         return $teacher_dict;
+    }
+    
+    public static function insertAbbrMatch($all_matches)
+    {
+        $db_con = Constant::connect_to_db();
+        
+        if(empty($db_con))
+        {
+            return false;
+        }
+        
+        $sql_insert_match = "insert into ct_name_abbre_matching values (";
+        
+        foreach($all_matches as $abbre->$accname)
+        {
+            
+        }
+    }
+    
+    /**
+     * 
+     * @param string $datetime_from
+     * @param string $datetime_to
+     * @return int number of time slot in between, excludig holidays; -1 if error
+     */
+    private static function calculateLeaveSlot($teacher_id, $datetime_from, $datetime_to)
+    {
+        $datetime_from_arr = explode(" ", trim($datetime_from));
+        $datetime_to_arr = explode(" ", trim($datetime_to));
+        
+        $start_date = new DateTime($datetime_from_arr[0]);
+        $end_date = new DateTime($datetime_to_arr[0]);
+        
+        //to change
+        $readable_time_from = str_replace(":", "", $datetime_from_arr[1]);
+        $readable_time_to = str_replace(":", "", $datetime_to_arr[1]);
+        $first_index = 1;
+        $last_index = 15;
+        
+        if(!array_key_exists($readable_time_from, Constant::$inverse_time_conversion))
+        {
+            $start_time_index = $first_index;
+        }
+        else
+        {
+            $start_time_index = Constant::$inverse_time_conversion[$readable_time_from];
+        }
+        if(!array_key_exists($readable_time_to, Constant::$inverse_time_conversion))
+        {
+            $end_time_index = $last_index;
+        }
+        else
+        {
+            $end_time_index = Constant::$inverse_time_conversion[$readable_time_to];
+        }
+        //end
+        
+        $interval = $end_date->diff($start_date);
+        
+        $num_of_slot = 0;
+        $slot_dict = Teacher::getLessonSlotsOfTeacher($teacher_id);
+        $start_end = Array();
+        
+        //put start and end time of each day into $start_end
+        if($interval->d<0)
+        {
+            return -1;
+        }
+        else if($interval->d===0)
+        {
+            $weekday = $start_date->format('N');
+            if($weekday === '6' || $weekday === '7')
+            {
+                return 0;
+            }
+            
+            $start_end[$weekday-0] = Array($start_time_index, $end_time_index, 1);
+        }
+        else if($interval->d===1)
+        {
+            $weekday_start = $start_date->format('N');
+            if($weekday_start !== '6' && $weekday_start !== '7')
+            {
+                $start_end[$weekday_start-0] = Array($start_time_index, $last_index, 1);
+            }
+            $weekday_end = $end_date->format('N');
+            if($weekday_end !== '6' && $weekday_end !== '7')
+            {
+                $start_end[$weekday_end-0] = Array($first_index, $end_time_index, 1);
+            }
+        }
+        else
+        {
+            $day_interval = new DateInterval('P0Y0M1DT0H0M0S');
+            
+            $weekday_start = $start_date->format('N');
+            if($weekday_start !== '6' && $weekday_start !== '7')
+            {
+                $start_end[8] = Array($start_time_index, $last_index, 1, $weekday_start-0);
+            }
+            $weekday_end = $end_date->format('N');
+            if($weekday_end !== '6' && $weekday_end !== '7')
+            {
+                $start_end[9] = Array($first_index, $end_time_index, 1, $weekday_end-0);
+            }
+            
+            $begin_loop = $start_date->add($day_interval);
+            while($begin_loop->diff($end_date, true)->d>0)
+            {
+                $weekday_loop = $begin_loop->format('N');
+                if($weekday_loop !== '6' && $weekday_loop !== '7')
+                {
+                    if(empty($start_end[$weekday_loop-0]))
+                    {
+                        $start_end[$weekday_loop-0] = Array($first_index, $last_index, 1);
+                    }
+                    else
+                    {
+                        $start_end[$weekday_loop-0][2]++;
+                    }
+                }
+                
+                $begin_loop = $begin_loop->add($day_interval);
+            }
+        }
+        
+        //calculate num of slots
+        foreach($start_end as $key=>$value)
+        {
+            //line 797, 802, start and end date of a leave is handled separately
+            if($key===8 || $key===9)
+            {
+                $slots = $slot_dict[$value[3]];
+            }
+            else
+            {
+                $slots = $slot_dict[$key];
+            }
+            
+            $weekday_num=0;
+            
+            foreach($slots as $a_slot)
+            {
+                if($value[0]>=$a_slot[1])
+                {
+                    continue;
+                }
+                if($value[1]<=$a_slot[0])
+                {
+                    continue;
+                }
+                if($a_slot[0]<$value[0] && $a_slot[1]>$value[1])
+                {
+                    $weekday_num+=$value[1]-$value[0];
+                    break;
+                }
+                if($value[0]<$a_slot[1] && $value[0]>$a_slot[0])
+                {
+                    //assumption: when a lesson span over multiple time slots, teacher on leave will take the time slots lessons outside the leave time duration
+                    $weekday_num+=$a_slot[1]-$value[0];
+                    continue;
+                }
+                if($value[1]<$a_slot[1] && $value[1]>$a_slot[0])
+                {
+                    //assumption: when a lesson span over multiple time slots, teacher on leave will take the time slots lessons outside the leave time duration
+                    $weekday_num+=$value[1]-$a_slot[0];
+                    continue;
+                }
+                
+                $weekday_num+=$a_slot[1]-$a_slot[0];
+            }
+            $weekday_num *= $value[2];
+            $num_of_slot += $weekday_num;
+        }
+        
+        return $num_of_slot;
+    }
+    
+    private static function getLessonSlotsOfTeacher($teacher_id)
+    {
+        $result = Array(
+            1 => Array(),
+            2 => Array(),
+            3 => Array(),
+            4 => Array(),
+            5 => Array()
+        );
+        
+        $db_url = Constant::db_url;
+        $db_username = Constant::db_username;
+        $db_password = Constant::db_password;
+        $db_name = Constant::db_name;
+
+        $db_con = mysql_connect($db_url, $db_username, $db_password);
+
+        if (!$db_con)
+        {
+            return $result;
+        }
+
+        mysql_select_db($db_name);
+        
+        $sql_query_time_slot = "select distinct weekday, start_time, end_time from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id='".  mysql_real_escape_string($teacher_id)."';";
+        $query_time_slot_result = mysql_query($sql_query_time_slot);
+        if(!$query_time_slot_result)
+        {
+            return $result;
+        }
+        
+        while($row = mysql_fetch_array($query_time_slot_result))
+        {
+            $result[$row['weekday']][] = Array($row['start_time'], $row['end_time']);
+        }
+        
+        return $result;
     }
 }
 
