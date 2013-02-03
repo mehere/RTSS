@@ -224,9 +224,13 @@ class Teacher {
                 $one_teacher['datetime'] = Array(Array($row['start_date'], $row['start_time']), Array($row['end_date'], $row['end_time']));
                 $one_teacher['remark'] = (empty($row['slot_remark'])?'':$row['slot_remark']);
                 $one_teacher['availability_id'] = $row['temp_availability_id'];
+                
+                $result[] = $one_teacher;
             }
-            
-            $result[] = $one_teacher;
+            else
+            {
+                $result[$row['teacher_id']] = $one_teacher;
+            }
         }
         
         return $result;

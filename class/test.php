@@ -163,8 +163,8 @@ foreach($result as $key=>$a_result)
          */
          
         /*
-          $query_date = "2013-01-15";
-          $temp_teacher = Teacher::getTempTeacher($query_date);
+          $query_date = "2013-01-14";
+          $temp_teacher = Teacher::getTempTeacher("");
           foreach($temp_teacher as $key=>$a_leave_teacher)
           {
             echo "start<br>";

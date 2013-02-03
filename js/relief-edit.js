@@ -81,15 +81,16 @@ $(document).ready(function(){
                 $(this).css(newValueStyle);
             }
         }).blur(function(){
+            if (mismatch && this.value!='' && !this.value.match(mismatch[0]))
+            {
+                confirm(mismatch[1], function(){});
+                this.value="";
+            }
+
             if (this.value == '')
             {
                 this.value=defaultV;
                 $(this).css(defaultStyle);
-            }
-            else if (mismatch && !this.value.match(mismatch[0]))
-            {
-                confirm(mismatch[1], function(){});
-                this.value="";
             }
         });
     }
@@ -131,7 +132,7 @@ $(document).ready(function(){
 
     function multipleOp(mode)
     {
-        var dataPost={'prop': 'leave'}, numOfAcc= 0, rowList=null;
+        var dataPost={'prop': formEdit['prop'].value}, numOfAcc= 0, rowList=null;
         for (var i=0; i<this.form['num'].value; i++)
         {
             if ($('input[name="select-' + i + '"]', this.form).is(':checked'))
@@ -235,6 +236,15 @@ $(document).ready(function(){
                     fieldObj['handphone']=formEdit['handphone-'+index];
                     fieldObj['email']=formEdit['email-'+index];
                     fieldObj['MT']=formEdit['MT-'+index];
+
+                    if (formEdit['handphone-'+index].value == CONTACT_INFO[0])
+                    {
+                        fieldObj['handphone'].value='';
+                    }
+                    if (formEdit['email-'+index].value == CONTACT_INFO[1])
+                    {
+                        fieldObj['email'].value='';
+                    }
                 }
                 else
                 {
@@ -355,7 +365,7 @@ $(document).ready(function(){
                 else
                 {
                     // Delete this acc
-                    var dataPost={'mode': 'delete', 'prop': 'leave', 'num': 1};
+                    var dataPost={'mode': 'delete', 'prop': formEdit['prop'].value, 'num': 1};
                     dataPost['leaveID-0']=formEdit['leaveID-' + index].value;
                     $.post(formEdit.action, dataPost, function(data){
                         if (data['error'] > 0)
