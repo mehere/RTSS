@@ -17,7 +17,7 @@ $type=$_POST['type'];
         <table class="table-info">
             <thead>
                 <tr>
-                    <th style="width: 100%" class="sort">Name<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
+                    <th style="width: 100%" class="sort">Name<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
                     <th style="width: 90px" class="sort">Type</th>
                     <th style="width: 80px" class="sort">MC</th>
                     <th style="width: 80px" class="sort">Relief</th>

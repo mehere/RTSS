@@ -699,7 +699,7 @@ class Teacher {
             
             $sql_update_temp = substr($sql_update_temp, 0 ,-1)." ";
             $sql_update_temp .= "where temp_availability_id = ".$leaveID.";";
-            echo $sql_update_teacher."<br>".$sql_update_temp;
+//            echo $sql_update_teacher."<br>".$sql_update_temp;
             if($teacher_change)
             {
                 $update_teacher_result = mysql_query($sql_update_teacher);

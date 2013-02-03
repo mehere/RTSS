@@ -5,8 +5,14 @@
 	font-size: 1.1em;
 	max-width: 800px;
 }
+.main fieldset {    
+	padding-bottom: 10px;
+	padding-left: 15px;
+}
 .main fieldset>legend {
-	margin-left: 10px;
+	margin-left: 15px;
+	color: white;
+	padding: 0 10px;
 }
 
 .table-info {

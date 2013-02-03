@@ -6,7 +6,7 @@ $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1,
 
 if ($_GET['num']) $numOfTeacher=$_GET['num'];
 
-if (!$isTemp)
+if ($isTemp===false || $_GET['teacher'] != 'temp')
 {
     $reasonOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['leaveReason']['display'], '');
     
@@ -15,8 +15,7 @@ if (!$isTemp)
     <div class="add-edit">
         <span class="toggle-display"></span>
         <select name="reason-$numOfTeacher" class="toggle-edit">$reasonOptionStr</select>
-    </div>
-    <input type="hidden" name="leaveID-$numOfTeacher" />
+    </div>    
 </td>
 EOD;
     
@@ -32,7 +31,7 @@ else
     $nameTimeInBetweenFrag= <<< EOD
 <td>
     <div class="add-edit">
-        <div class="toggle-display"><br /></div>
+        <div class="toggle-display"><span></span><br /><span></span></div>
         <div class="toggle-edit">
             <div class="time-line"><input type="text" name="handphone-$numOfTeacher" value="HP" class="textfield" /></div>
             <div class="time-line"><input type="text" name="email-$numOfTeacher" value="Email" class="textfield" /></div>
@@ -53,7 +52,7 @@ echo <<< EOD
 <tr id="last-row">
     <td><div class="add-edit"><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></div></td>
     <td><div class="add-edit"><input type="checkbox" name="select-$numOfTeacher" /></div></td>
-    <td><input type="text" name="fullname-$numOfTeacher" style="width: 90%; margin: 15px 0" class="fullname-server" /><input type="hidden" name="accname-$numOfTeacher" value="" /></td>
+    <td><input type="text" name="fullname-$numOfTeacher" style="width: 90%; margin: 15px 0" class="fullname-server" /><input type="hidden" name="accname-$numOfTeacher" /><input type="hidden" name="leaveID-$numOfTeacher" /></td>
     $nameTimeInBetweenFrag
     <td>
     	<div class="add-edit">

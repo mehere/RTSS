@@ -60,7 +60,7 @@ EOD;
                         </thead>
                         <tbody>
                             <?php 
-                                $teacherList=$isTemp? Teacher::getTempTeacher($_SESSION['scheduleDate']) : Teacher::getTeacherOnLeave($_SESSION['scheduleDate']);
+                                $teacherList=$isTemp? Teacher::getTempTeacher($_SESSION['scheduleDate']) : Teacher::getTeacherOnLeave($_SESSION['scheduleDate']);                                
                                 PageConstant::escapeHTMLEntity($teacherList);                                
                                 $keyList=array_keys(NameMap::$RELIEF_EDIT[$teacherKey]['display']);
                                 $keyExtraList=NameMap::$RELIEF_EDIT[$teacherKey]['hidden'];
@@ -87,8 +87,7 @@ EOD;
                                         $nameTimeInBetweenFrag= <<< EOD
 <td>
     <span class="toggle-display">{$reasonArr[$teacher[$keyList[1]]]}</span>
-    <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>
-    <input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" />
+    <select name="reason-$i" class="toggle-edit">$reasonOptionStr</select>    
 </td>
 EOD;
     
@@ -98,13 +97,16 @@ EOD;
                                     }
                                     else
                                     {
+                                        $teacher['leaveID']=$teacher['availability_id'];
+                                        unset($teacher['availability_id']);
+                                        
                                         $datetime=$teacher[$keyList[4]];                                        
                                         $motherTongueOptionStr=PageConstant::formatOptionInSelect($motherTongueArr, $teacher[$keyList[3]]);
                                         $remarkStr=$teacher[$keyList[5]];
                                         
                                         $nameTimeInBetweenFrag= <<< EOD
 <td>
-    <div class="toggle-display">{$teacher[$keyList[1]]}<br />{$teacher[$keyList[2]]}</div>
+    <div class="toggle-display"><span>{$teacher[$keyList[1]]}</span><br /><span>{$teacher[$keyList[2]]}</span></div>
     <div class="toggle-edit">
         <div class="time-line"><input type="text" name="handphone-$i" value="{$teacher[$keyList[1]]}" /></div>
         <div class="time-line"><input type="text" name="email-$i" value="{$teacher[$keyList[2]]}" /></div>
@@ -126,7 +128,7 @@ EOD;
 <tr>
     <td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>
     <td><input type="checkbox" name="select-$i" /></td>
-    <td>{$teacher[$keyList[0]]} <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /></td>
+    <td>{$teacher[$keyList[0]]} <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /><input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" /></td>
     $nameTimeInBetweenFrag
     <td>
         <div class="toggle-display"><span>$dateFromDisplay</span> <span>{$datetime[0][1]}</span><br /><span>$dateToDisplay</span> <span>{$datetime[1][1]}</span></div>
@@ -144,7 +146,7 @@ EOD;
 </tr>
 EOD;
                                 }
-                                
+
                                 include 'teacher-edit-frag.php';
                             ?>                            
                         </tbody>

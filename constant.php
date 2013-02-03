@@ -239,7 +239,9 @@ class NameMap
             ),
             'hidden' => array(
                 'accname', 'leaveID'
-            )
+            ),
+            'saveKey' => array('datetime-from', 'datetime-to', 'handphone', 'email', 'MT', 'remark', 'accname'),
+            'addKey' => array('fullname')
         )
     );
     

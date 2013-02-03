@@ -9,6 +9,7 @@ require_once '../class/Teacher.php';
 
 $mode=$_POST['mode'];
 $prop=$_POST['prop'];
+$teacherKey= $prop=='temp' ? 'tempTeacher' : 'teacherOnLeave';
 
 $leaveIDList=array();
 for ($i=0; $i<$_POST['num']; $i++)
@@ -63,14 +64,12 @@ switch ($mode)
     case 'edit':
     {
         $input=array();
-        foreach (NameMap::$RELIEF_EDIT['teacherOnLeave']['saveKey'] as $postKey)
+        foreach (NameMap::$RELIEF_EDIT[$teacherKey]['saveKey'] as $postKey)
         {
             $input[$postKey]=$_POST[$postKey];            
-        }
-                
-//        error_log(var_export($input, true)."\n".var_export($_POST['leaveID'], true), 3, "/Users/yjavaw/Desktop/error.log");
-        
-        if (!Teacher::edit($_POST['leaveID'], $_POST['prop'], $input))
+        }                
+
+        if (!Teacher::edit($_POST['leaveID'], $prop, $input))
         {
             $output['error']=1;
         }
@@ -81,14 +80,14 @@ switch ($mode)
     case 'add':
     {
         $input=array();
-        $postKeyArr=array_merge(NameMap::$RELIEF_EDIT['teacherOnLeave']['addKey'], NameMap::$RELIEF_EDIT['teacherOnLeave']['saveKey']);
+        $postKeyArr=array_merge(NameMap::$RELIEF_EDIT[$teacherKey]['addKey'], NameMap::$RELIEF_EDIT[$teacherKey]['saveKey']);
         foreach ($postKeyArr as $postKey)
         {
-            $input[$postKey]=$_POST[$postKey];            
+            $input[$postKey]=$_POST[$postKey];
         }
 
         $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input);
-        if (!$output['leaveID'])
+        if ($output['leaveID'] < 0)
         {
             $output['error']=1;
         }
