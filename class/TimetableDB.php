@@ -269,6 +269,126 @@ class TimetableDB
         return $error_array;
     }
     
+    /**
+     * 
+     * @param type $accname - accname of leave teacher or ""
+     * @param type $class - standard class name or ""
+     * @param string $date "yyyy-mm-dd"
+     * @return Complex data structure if succeed. null if fail.
+     */
+    public static function getReliefTimetable($accname, $class, $date)
+    {
+        $normal_dict = Teacher::getAllTeachers();
+        $temp_dict = Teacher::getTempTeacher("");
+        
+        $db_con = Constant::connect_to_db('ntu');
+        
+        if(empty($db_con))
+        {
+            return null;
+        }
+        
+        if(empty($accname) && empty($class))
+        {
+            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."');";
+        }
+        else if(empty($accname) && !empty($class))
+        {
+            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
+        }
+        else if(!empty($accname) && empty($class))
+        {
+            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+        }
+        else
+        {
+            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+        }
+        
+        $query_relief_result = mysql_query($sql_query_relief);
+        if(!$query_relief_result)
+        {
+            return null;
+        }
+        
+        $result = Array();
+        
+        while($row = mysql_fetch_assoc($query_relief_result))
+        {
+            $start_time_index = $row['start_time_index']-1;
+            $end_time_index = $row['end_time_index']-1;
+            
+            for($i = $start_time_index; $i<$end_time_index; $i++)
+            {
+                if(empty($result[$i]))
+                {
+                    $result[$i] = Array();
+                }
+
+                $leave_teacher_id = $row['leave_teacher'];
+                $relief_teacher_id = $row['relief_teacher'];
+                $subject = $row['subj_code'];
+                $venue = empty($row['venue'])?"":$row['venue'];
+                
+                $existed = false;
+                
+                for($j=0; $j<count($result[$i]);$j++)
+                {
+                    if(empty($result[$i][$j]))
+                    {
+                        continue;
+                    }
+                    
+                    if(strcmp($result[$i][$j]['subject'], $subject)===0 && strcmp($result[$i][$j]['teacher-accname'], $leave_teacher_id)===0 && strcmp($result[$i][$j]['relief-teacher-accname'], $relief_teacher_id)===0 && strcmp($result[$i][$j]['venue'], $venue)===0)
+                    {
+                        $existed = true;
+                        $result[$i][$j]['class'][] = $row['class_name'];
+                        break;
+                    }
+                }
+                
+                if(!$existed)
+                {
+                    if(array_key_exists($leave_teacher_id, $normal_dict))
+                    {
+                        $leave_name = $normal_dict[$leave_teacher_id]['name'];
+                    }
+                    else
+                    {
+                        $leave_name = "";
+                    }
+
+                    if(array_key_exists($relief_teacher_id, $temp_dict))
+                    {
+                        $relief_name = $temp_dict[$relief_teacher_id]['fullname'];
+                    }
+                    else if(array_key_exists($relief_teacher_id, $normal_dict))
+                    {
+                        $relief_name = $normal_dict[$relief_teacher_id]['name'];
+                    }
+                    else
+                    {
+                        $relief_name = "";
+                    }
+
+                    $new_teaching = Array(
+                        'subject' => $subject,
+                        'venue' => $venue,
+                        'teacher-accname' => $leave_teacher_id,
+                        'teacher-fullname' => $leave_name,
+                        'relief-teacher-accname' => $relief_teacher_id,
+                        'relief-teacher-fullname' => $relief_name,
+                        'class' => Array($row['class_name'])
+                    );
+                    
+                    $result[$i][] = $new_teaching;
+                }
+            }
+        }
+        
+        return $result;
+    }
+    
     private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_obj_list, $teacher_obj_list)
     {
         if(count($class_obj_list) === 0)

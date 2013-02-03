@@ -66,7 +66,7 @@ EOD;
                                 $keyExtraList=NameMap::$RELIEF_EDIT[$teacherKey]['hidden'];
                                 
                                 $teacherVerifiedList=$_SESSION['teacherVerified'];
-                                
+
                                 // construct reason option array and time option array
                                 $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
                                 $motherTongueArr=NameMap::$RELIEF['MT']['display'];

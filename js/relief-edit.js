@@ -282,7 +282,6 @@ $(document).ready(function(){
                     dataPost['handphone']=fieldObj['handphone'].value;
                     dataPost['email']=fieldObj['email'].value;
                     dataPost['MT']=fieldObj['MT'].value;
-                    dataPost['accname']=formEdit['accname-' + index].value;
                 }
                 else
                 {
