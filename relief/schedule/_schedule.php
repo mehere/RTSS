@@ -100,7 +100,7 @@ foreach ($arrAedLeave as $accname => $leaveRecords){
 foreach ($arrAedTeachers as $key => $value)
 {
 
-}c
+}
 
 
 $lessonsNeedRelief = array();
