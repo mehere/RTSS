@@ -40,12 +40,25 @@ if ($_FILES["timetableFile"]["error"] > 0)
                     $unknownTeachers[$abbreviation] = $abbreviation;
                 }
             }
-            $_SESSION["abbrNameList"] = $unknownTeachers;
             $_SESSION["timetableAnalyzer"] = $analyzer;
+            if (count($unknownTeachers) === 0)
+            {
+                $arrLesson = $analyzer->arrLessons;
+                $errorMsg = TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
+                if (count($errorMsg) !== 0){
+                    // error has encountered
 
-            $destination = "/RTSS/timetable/namematch.php";
-        }
-        else {
+                    //To: Do
+                    throw new Exception("_upload.php: db error");
+                }
+                $destination = "/RTSS/timetable/admin.php";
+            }
+            else {
+                $_SESSION["abbrNameList"] = $unknownTeachers;
+                $destination = "/RTSS/timetable/namematch.php";
+            }
+        } else
+        {
             throw new Exception("_upload.php: db returns false");
         }
     } catch (Exception $e)
@@ -54,6 +67,6 @@ if ($_FILES["timetableFile"]["error"] > 0)
         /// To-Do: Where to forward to if there is error?
         //$destination = ""
     }
-     header("Location: $destination");
+    header("Location: $destination");
 }
 ?>
