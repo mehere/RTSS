@@ -15,13 +15,15 @@ class ReliefLesson
     //put your code here
 
     public $lessonId;
+    public $subject;
     public $startTimeSlot;
     public $endTimeSlot;
 
-    function __construct($lessonId,$startTimeIndex) {
+    function __construct($aLesson,$startTimeIndex) {
 
         /* @var $aLesson Lesson */
-        $this->lessonId = $lessonId;
+        $this->subject = $aLesson->subject;
+        $this->lessonId = $aLesson->lessonId;
         $this->startTimeSlot = $startTimeIndex;
         $this->endTimeSlot = $startTimeIndex + 1;
     }
