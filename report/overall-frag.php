@@ -1,27 +1,30 @@
 <?php
-
-$accname=$_POST['accname'];
-$type=$_POST['type'];
-
+require_once '../constant.php';
 ?>
 
-<form class="main" name="report-overall">
+<form class="main" name="report-overall" method="post">
     <fieldset>
         <legend>Filter</legend>
-        Name: <input type="text" name="fullname" class="textfield" style="width: 150px; margin-right: 20px" />
-        <input type="hidden" name="accname" /> 
-        Type: <select name="type"><option value="">Any</option><option value="normal">Normal</option></select>
-        <input type="submit" value="Go" class="button" style="margin-left: 30px" />
+        <div class="line">
+            Type: <select name="type"><?php echo PageConstant::formatOptionInSelect(array_merge(NameMap::$REPORT['teacherType']['hidden'], NameMap::$REPORT['teacherType']['display']), '') ?></select>
+            <input type="submit" value="Go" class="button" style="margin-left: 30px" />
+        </div>        
     </fieldset>
     <div class="section">
         <table class="table-info">
             <thead>
                 <tr>
-                    <th style="width: 100%" class="sort">Name<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
-                    <th style="width: 90px" class="sort">Type</th>
-                    <th style="width: 80px" class="sort">MC</th>
-                    <th style="width: 80px" class="sort">Relief</th>
-                    <th style="width: 80px" class="sort">Net</th>
+                    <?php
+                        $width=array('100%', '90px', '80px', '80px', '80px');
+                        $tableHeaderList=array_values(NameMap::$REPORT['overall']['display']);
+
+                        for ($i=0; $i<count($tableHeaderList); $i++)
+                        {
+                            echo <<< EOD
+                                <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+EOD;
+                        }
+                    ?>
                 </tr>
             </thead>
             <tbody id="table-overall">

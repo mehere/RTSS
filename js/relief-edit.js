@@ -68,14 +68,48 @@ $(document).ready(function(){
         });
     }
 
+    // defaultStyle, newValueStyle: {'cssStyle': 'value', etc}
+    // mismatch: [regexp, alertText]
+    function textfieldDefault(textfieldObj, defaultV, defaultStyle, newValueStyle, mismatch)
+    {
+        textfieldObj.val() == defaultV ? textfieldObj.css(defaultStyle) : textfieldObj.css(newValueStyle);
 
-    var formEdit=document.forms['edit'];
+        textfieldObj.focus(function(){
+            if (this.value == defaultV)
+            {
+                this.value='';
+                $(this).css(newValueStyle);
+            }
+        }).blur(function(){
+            if (mismatch && this.value!='' && !this.value.match(mismatch[0]))
+            {
+                confirm(mismatch[1], function(){});
+                this.value="";
+            }
+
+            if (this.value == '')
+            {
+                this.value=defaultV;
+                $(this).css(defaultStyle);
+            }
+        });
+    }
+
+    var formEdit=document.forms['edit'],
+        PROP_OPTION=['temp', 'leave'], CONTACT_INFO=['HP', 'Email'], CONTACT_STYLE=[{'color': '#aaa'}, {'color': 'black'}],
+        PHONE_CHECK=[/^(\+\d+\-?)?\d+$/, "Please enter digits with + or - for the phone number."],
+        EMAIL_CHECK=[/^[^@]+@[^@]+(\.[^@]+)+$/, "Please enter a valid email address."];
 
     var num=formEdit['num'].value;
     for (var i=0; i<num; i++)
     {
         setDatePicker($(formEdit['date-from-' + i]), $(formEdit['date-to-' + i]), formEdit['server-date-from-' + i], formEdit['server-date-to-' + i]);
         constrainTimeSelect($(formEdit['time-from-' + i]), $(formEdit['time-to-' + i]), formEdit['date-from-' + i], formEdit['date-to-' + i]);
+        if (formEdit['prop'].value == PROP_OPTION[0])
+        {
+            textfieldDefault($(formEdit['handphone-' + i]), CONTACT_INFO[0], CONTACT_STYLE[0], CONTACT_STYLE[1], PHONE_CHECK);
+            textfieldDefault($(formEdit['email-' + i]), CONTACT_INFO[1], CONTACT_STYLE[0], CONTACT_STYLE[1], EMAIL_CHECK);
+        }
     }
 
     // For verify and delete
@@ -98,7 +132,7 @@ $(document).ready(function(){
 
     function multipleOp(mode)
     {
-        var dataPost={'prop': 'leave'}, numOfAcc= 0, rowList=null;
+        var dataPost={'prop': formEdit['prop'].value}, numOfAcc= 0, rowList=null;
         for (var i=0; i<this.form['num'].value; i++)
         {
             if ($('input[name="select-' + i + '"]', this.form).is(':checked'))
@@ -143,9 +177,9 @@ $(document).ready(function(){
         });
     }
 
-    $(formEdit['verify']).click(function(){
+    /*$(formEdit['verify']).click(function(){
         multipleOp.call(this, 'verify');
-    });
+    });*/
     $(formEdit['delete']).click(function(){
         multipleOp.call(this, 'delete');
     });
@@ -156,49 +190,66 @@ $(document).ready(function(){
 
     // Edit, Save and Delete
     var SMALL_BT_ARR=[
-            {
-                icons: {
-                    primary: "ui-icon-pencil"
-                },
-                text: false,
-                label: 'Edit'
+        {
+            icons: {
+                primary: "ui-icon-pencil"
             },
-            {
-                icons: {
-                    primary: "ui-icon-disk"
-                },
-                text: false,
-                label: 'Save'
+            text: false,
+            label: 'Edit'
+        },
+        {
+            icons: {
+                primary: "ui-icon-disk"
             },
-            {
-                icons: {
-                    primary: "ui-icon-trash"
-                },
-                text: false,
-                label: 'Delete'
-            }
-        ];
+            text: false,
+            label: 'Save'
+        },
+        {
+            icons: {
+                primary: "ui-icon-trash"
+            },
+            text: false,
+            label: 'Delete'
+        }
+    ];
     var prevTextfield=null;
 
     function makeEditButton(obj, index /*, isSaveButton */)
     {
         // Create button
         var isSaveButton=arguments[2];
-        obj.data('index', index).button(SMALL_BT_ARR[isSaveButton?1:0]).click(function(){
+        obj.button(SMALL_BT_ARR[isSaveButton?1:0]).click(function(){
             if ($(this).button('option', 'label') == SMALL_BT_ARR[0]['label'])
             {
                 $(this).button('option', SMALL_BT_ARR[1]);
             }
             else
             {
-                var index=$(this).data('index');
                 var fieldObj={
-                    'reason': formEdit['reason-'+index],
                     'time': [formEdit['date-from-'+index], formEdit['time-from-'+index],
                         formEdit['date-to-'+index], formEdit['time-to-'+index]],
                     'datePost': [formEdit['server-date-from-'+index], formEdit['server-date-to-'+index]],
                     'remark': formEdit['remark-'+index]
                 };
+                if (formEdit['prop'].value == PROP_OPTION[0]) // For Temp
+                {
+                    fieldObj['handphone']=formEdit['handphone-'+index];
+                    fieldObj['email']=formEdit['email-'+index];
+                    fieldObj['MT']=formEdit['MT-'+index];
+
+                    if (formEdit['handphone-'+index].value == CONTACT_INFO[0])
+                    {
+                        fieldObj['handphone'].value='';
+                    }
+                    if (formEdit['email-'+index].value == CONTACT_INFO[1])
+                    {
+                        fieldObj['email'].value='';
+                    }
+                }
+                else
+                {
+                    fieldObj['reason']=formEdit['reason-'+index];
+                }
 
                 // for new rows
                 if (isSaveButton)
@@ -214,7 +265,17 @@ $(document).ready(function(){
                 // Save locally
                 function saveLocally()
                 {
-                    $(fieldObj['reason']).parents('td').first().find('.toggle-display').text(fieldObj['reason'].options[fieldObj['reason'].selectedIndex].innerHTML);
+                    if (formEdit['prop'].value == PROP_OPTION[0]) // For Temp
+                    {
+                        $(fieldObj['handphone']).parents('td').first().find('.toggle-display > span').text(function(index){
+                            return index == 0 ? fieldObj['handphone'].value : fieldObj['email'].value;
+                        });
+                        $(fieldObj['MT']).parents('td').first().find('.toggle-display').text(fieldObj['MT'].options[fieldObj['MT'].selectedIndex].innerHTML);
+                    }
+                    else
+                    {
+                        $(fieldObj['reason']).parents('td').first().find('.toggle-display').text(fieldObj['reason'].options[fieldObj['reason'].selectedIndex].innerHTML);
+                    }
                     $(fieldObj['time']).parents('td').first().find('.toggle-display > span').text(function(index){
                         return fieldObj['time'][index].value;
                     });
@@ -222,11 +283,20 @@ $(document).ready(function(){
                 }
 
                 // Save remotely
-                var dataPost={'prop': 'leave'};
-                dataPost['reason']=fieldObj['reason'].value;
+                var dataPost={'prop': formEdit['prop'].value};
                 dataPost['remark']=fieldObj['remark'].value;
                 dataPost['datetime-from']=fieldObj['datePost'][0].value + " " + fieldObj['time'][1].value;
                 dataPost['datetime-to']=fieldObj['datePost'][1].value + " " + fieldObj['time'][3].value;
+                if (formEdit['prop'].value == PROP_OPTION[0]) // For Temp
+                {
+                    dataPost['handphone']=fieldObj['handphone'].value;
+                    dataPost['email']=fieldObj['email'].value;
+                    dataPost['MT']=fieldObj['MT'].value;
+                }
+                else
+                {
+                    dataPost['reason']=fieldObj['reason'].value;
+                }
 
                 if (formEdit['leaveID-'+index].value)
                 {
@@ -255,6 +325,8 @@ $(document).ready(function(){
                         if (data['error'] > 0)
                         {
                             confirm(TEACHER_OP_TEXT[0], function(){});
+
+                            $(formEdit['accname-'+index]).parents('tr').first().remove();
                         }
                         else
                         {
@@ -280,7 +352,7 @@ $(document).ready(function(){
 
     function makeDeleteButton(obj, index)
     {
-        obj.data('index', index).button(SMALL_BT_ARR[2]).click(function(){
+        obj.button(SMALL_BT_ARR[2]).click(function(){
             var curRow=$(this).parents('tr').first();
             confirm("Confirm to delete this row?", function(){
                 // Delete empty
@@ -293,7 +365,7 @@ $(document).ready(function(){
                 else
                 {
                     // Delete this acc
-                    var dataPost={'mode': 'delete', 'prop': 'leave', 'num': 1};
+                    var dataPost={'mode': 'delete', 'prop': formEdit['prop'].value, 'num': 1};
                     dataPost['leaveID-0']=formEdit['leaveID-' + index].value;
                     $.post(formEdit.action, dataPost, function(data){
                         if (data['error'] > 0)
@@ -388,6 +460,12 @@ $(document).ready(function(){
         makeEditButton($("#last-row .edit-bt"), numOfTeacher, true);
         makeDeleteButton($("#last-row .delete-bt"), numOfTeacher);
 
+        if (formEdit['prop'].value == PROP_OPTION[0])
+        {
+            textfieldDefault($(formEdit['handphone-' + numOfTeacher]), CONTACT_INFO[0], CONTACT_STYLE[0], CONTACT_STYLE[1], PHONE_CHECK);
+            textfieldDefault($(formEdit['email-' + numOfTeacher]), CONTACT_INFO[1], CONTACT_STYLE[0], CONTACT_STYLE[1], EMAIL_CHECK);
+        }
+
         setDatePicker($(formEdit['date-from-' + numOfTeacher]), $(formEdit['date-to-' + numOfTeacher]), $(formEdit['server-date-from-' + numOfTeacher]), $(formEdit['server-date-to-' + numOfTeacher]));
         formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + numOfTeacher].options.length-1;
         $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic');
@@ -397,7 +475,16 @@ $(document).ready(function(){
 
         $("#last-row").find(".toggle-edit, .toggle-display").toggle();
 
-        addAutoComplete($("#last-row .fullname-server"));
+        if (formEdit['prop'].value == PROP_OPTION[0])
+        {
+            $("#last-row .fullname-server").focusout(function(){
+                prevTextfield=this;
+            });
+        }
+        else
+        {
+            addAutoComplete($("#last-row .fullname-server"));
+        }
     }
 
     var addRowFunc=function(event){
@@ -405,7 +492,7 @@ $(document).ready(function(){
         selfDelegate.removeAttribute('id');
 
         var numOfTeacher=formEdit['num'].value-0+1;
-        $.get("/RTSS/relief/teacher-edit-frag.php", {"num": numOfTeacher}, function(data){
+        $.get("/RTSS/relief/teacher-edit-frag.php", {"num": numOfTeacher, "teacher": formEdit['prop'].value}, function(data){
             formEdit['num'].value=numOfTeacher;
             $(selfDelegate).parent().append(data);
 

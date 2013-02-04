@@ -183,28 +183,28 @@ class Teacher {
         $result = Array();
 
         //check input
-        if(!preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
+        if(!empty($query_date) && !preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
         {
             return $result;
         }
-
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
-
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-        if (!$db_con)
+        
+        $db_con = Constant::connect_to_db("ntu");
+        
+        if (empty($db_con))
         {
             return $result;
         }
-
-        mysql_select_db($db_name);
-
-        $sql_query_temp_teacher = "select *, DATE(rs_temp_relief_teacher_availability.start_datetime) as start_date, DATE(rs_temp_relief_teacher_availability.end_datetime) as end_date, TIME_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%H:%i') as start_time, TIME_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%H:%i') as end_time
-            from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.end_datetime);";
-
+        
+        if(!empty($query_date))
+        {
+            $sql_query_temp_teacher = "select *, DATE(rs_temp_relief_teacher_availability.start_datetime) as start_date, DATE(rs_temp_relief_teacher_availability.end_datetime) as end_date, TIME_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%H:%i') as start_time, TIME_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%H:%i') as end_time 
+                from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.end_datetime);";
+        }
+        else
+        {
+            $sql_query_temp_teacher = "select * from rs_temp_relief_teacher;";
+        }
+        
         $query_temp_teacher = mysql_query($sql_query_temp_teacher);
 
         if(!$query_temp_teacher)
@@ -214,29 +214,34 @@ class Teacher {
 
         while($row = mysql_fetch_assoc($query_temp_teacher))
         {
-            $one_teacher = Array(
-                'remark' => '',
-                'MT' => '',
-                'email' => '',
-                'datetime' => Array()
-            );
-
             $one_teacher['accname'] = $row['teacher_id'];
             $one_teacher['fullname'] = $row['name'];
             $one_teacher['type'] = "Temporary";
-            $one_teacher['datetime'] = Array(Array($row['start_date'], $row['start_time']), Array($row['end_date'], $row['end_time']));
-            $one_teacher['remark'] = (empty($row['slot_remark'])?'':$row['slot_remark']);
             $one_teacher['MT'] = (empty($row['mother_tongue'])?'':$row['mother_tongue']);
             $one_teacher['email'] = (empty($row['email'])?'':$row['email']);
             $one_teacher['handphone'] = (empty($row['mobile'])?'':$row['mobile']);
-            $one_teacher['availability_id'] = $row['temp_availability_id'];
-
-            array_push($result, $one_teacher);
+            
+            if(!empty($query_date))
+            {
+                $one_teacher['datetime'] = Array(Array($row['start_date'], $row['start_time']), Array($row['end_date'], $row['end_time']));
+                $one_teacher['remark'] = (empty($row['slot_remark'])?'':$row['slot_remark']);
+                $one_teacher['availability_id'] = $row['temp_availability_id'];
+                
+                $result[] = $one_teacher;
+            }
+            else
+            {
+                $result[$row['teacher_id']] = $one_teacher;
+            }
         }
 
         return $result;
     }
-
+    /**
+     * 
+     * @param string $type : "", "temp", "all_normal", "normal", "AED", "untrained"
+     * @return array
+     */
     public static function getTeacherName($type)
     {
         $normal_list = Array();
@@ -376,7 +381,7 @@ class Teacher {
             $result['found'] = true;
             $result['name'] = $row['name'];
             $result['gender'] = $row['gender'];
-            $result['mobile'] = $row['mobile'];
+            $result['handphone'] = $row['mobile'];
             $result['email'] = $row['email'];
 
             return $result;
@@ -415,7 +420,7 @@ class Teacher {
             $result['found'] = true;
             $result['name'] = $ifins_row['user_name'];
             $result['gender'] = $ifins_row['user_gender'];
-            $result['mobile'] = $ifins_row['user_mobile'];
+            $result['handphone'] = $ifins_row['user_mobile'];
             $result['email'] = $ifins_row['user_email'];
 
             return $result;
@@ -601,7 +606,6 @@ class Teacher {
     /**
      * For prop=leave, only accname, reason, remark, datetime-from, datetime-to can be updated;
      * For prop=temp, only datetime-from, datetime-to, remark, phone, email, MT can be updated;
-     * !!!!!!Important!!!!!! : pass the teacher's accname if prop = temp
      * @param type $leaveID
      * @param type $prop
      * @param type $change
@@ -685,25 +689,39 @@ class Teacher {
                 if(array_key_exists($key, $teacher_match_array))
                 {
                     $teacher_change = true;
-                    $sql_update_teacher .= $teacher_match_array[$key]."='".mysql_real_escape_string($value)."',";
+                    $sql_update_teacher .= $teacher_match_array[$key]."='".mysql_real_escape_string(trim($value))."',";
                 }
                 else if(array_key_exists($key, $temp_match_array))
                 {
                     $temp_change = true;
-                    $sql_update_temp .= $temp_match_array[$key]."='".mysql_real_escape_string($value)."',";
+                    $sql_update_temp .= $temp_match_array[$key]."='".mysql_real_escape_string(trim($value))."',";
                 }
             }
 
-            $teacher_id = $change['accname'];
-
-            $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
-            $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
-
             $sql_update_temp = substr($sql_update_temp, 0 ,-1)." ";
-            $sql_update_temp .= "where temp_availability_id = ".$leaveID.";";
-            echo $sql_update_teacher."<br>".$sql_update_temp;
+            $sql_update_temp .= "where temp_availability_id = ".mysql_real_escape_string(trim($leaveID)).";";
+            
             if($teacher_change)
             {
+                $sql_get_teacher_id = "select teacher_id from rs_temp_relief_teacher_availability where temp_availability_id = ".mysql_real_escape_string(trim($leaveID)).";";
+                $get_teacher_id_result = mysql_query($sql_get_teacher_id);
+                if(!$get_teacher_id_result)
+                {
+                    return false;
+                }
+                $row = mysql_fetch_assoc($get_teacher_id_result);
+                if(!$row)
+                {
+                    return false;
+                }
+                else
+                {
+                    $teacher_id = $row['teacher_id'];
+                }
+                
+                $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
+                $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
+            
                 $update_teacher_result = mysql_query($sql_update_teacher);
 
                 if(!$update_teacher_result)
@@ -724,26 +742,22 @@ class Teacher {
             return true;
         }
     }
-
-    //this function retrieve all teachers from database ifins
+    
+    /**
+     * return all teachers in ifins
+     * @return array of teachers asso array. key: name, type, mobile
+     */
     public static function getAllTeachers()
     {
         $teacher_dict = Array();
-
-        $ifins_db_url = Constant::ifins_db_url;
-        $ifins_db_username = Constant::ifins_db_username;
-        $ifins_db_password = Constant::ifins_db_password;
-        $ifins_db_name = Constant::ifins_db_name;
-
-        $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
-
-        if (!$ifins_db_con)
+        
+        $ifins_db_con = Constant::connect_to_db("ifins");
+        
+        if (empty($ifins_db_con))
         {
             return $teacher_dict;
         }
-
-        mysql_select_db($ifins_db_name, $ifins_db_con);
-
+        
         $sql_query_teacher = "select user_id, user_name, dept_name, user_mobile from student_details where user_position = 'Teacher';";
         $result_teacher = mysql_query($sql_query_teacher);
         if(!$result_teacher)
@@ -765,19 +779,74 @@ class Teacher {
 
     public static function insertAbbrMatch($all_matches)
     {
-        $db_con = Constant::connect_to_db();
-
+        $abbre_dict = Teacher::getAbbreMatch();
+        
+        $db_con = Constant::connect_to_db("ntu");
+        
         if(empty($db_con))
         {
             return false;
         }
-
-        $sql_insert_match = "insert into ct_name_abbre_matching values (";
-
-        foreach($all_matches as $abbre->$accname)
+        
+        $have_exist = false;
+        $sql_delete_exist = "delete from ct_name_abbre_matching where teacher_id in (";
+        $sql_insert_match = "insert into ct_name_abbre_matching values ";
+        
+        foreach($all_matches as $abbre=>$accname)
         {
-
+            if(array_key_exists($accname, $abbre_dict))
+            {
+                $have_exist = true;
+                $sql_delete_exist .= $accname.",";
+            }
+            
+            $sql_insert_match .= "('".$accname."', '".$abbre."'),";
         }
+        
+        if($have_exist)
+        {
+            $sql_delete_exist = substr($sql_delete_exist, 0, -1).');';
+            if(!mysql_query($sql_delete_exist))
+            {
+                return false;
+            }
+        }
+        
+        $sql_insert_match = substr($sql_insert_match, 0, -1).';';
+        
+        if(!mysql_query($sql_insert_match))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private static function getAbbreMatch()
+    {
+        $result = Array();
+        
+        $db_con = Constant::connect_to_db("ntu");
+        
+        if(empty($db_con))
+        {
+            return $result;
+        }
+        
+        $sql_query_match = "select * from ct_name_abbre_matching;";
+        
+        $query_match_result = mysql_query($sql_query_match);
+        if(!$query_match_result)
+        {
+            return $result;
+        }
+        
+        while($row = mysql_fetch_assoc($query_match_result))
+        {
+            $result[$row['teacher_id']] = $row['abbre_name'];
+        }
+        
+        return $result;
     }
 
     /**

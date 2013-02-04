@@ -68,6 +68,17 @@ EOD;
         }
         return '';
     }
+    
+    /**
+     * Calculate net value based on $numOfMC and $numOfRelief
+     * @param int $numOfMC
+     * @param int $numOfRelief
+     * @return int net value 
+     */
+    public static function calculateNet($numOfMC, $numOfRelief)
+    {
+        return $numOfMC-$numOfRelief;
+    }
 }
 
 class SchoolTime
@@ -173,8 +184,10 @@ class NameMap
     public static $RELIEF=array(
         'teacherOnLeave' => array(
             'display' => array(
-                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason', 
-                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
+//                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason', 
+//                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
+                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'handphone' => 'Handphone', 'reason' => 'Reason', 
+                'teacherScheduled' => 'Scheduled'
             ),
             'hidden' => array(
                 'accname', 'leaveID'
@@ -237,7 +250,9 @@ class NameMap
             ),
             'hidden' => array(
                 'accname', 'leaveID'
-            )
+            ),
+            'saveKey' => array('datetime-from', 'datetime-to', 'handphone', 'email', 'MT', 'remark', 'accname'),
+            'addKey' => array('fullname')
         )
     );
     
@@ -288,7 +303,7 @@ class NameMap
     public static $REPORT=array(
         'overall' => array(
             'display' => array(
-                'fullname' => 'Name', 'type' => 'Type', 'mc' => 'MC', 'relief' => 'Relief', 'net' => 'Net'                
+                'fullname' => 'Name', 'type' => 'Type', 'numOfMC' => 'MC', 'numOfRelief' => 'Relief', 'net' => 'Net'
             ),
             'hidden' => array(
                 'accname'
@@ -297,10 +312,20 @@ class NameMap
         
         'individual' => array(
             'display' => array(
-                'mc' => 'MC Date', 'relief' => 'Relief Date'
+                'numOfMC' => 'MC(times)', 'numOfRelief' => 'Relief(times)', 'net' => 'Net',
+                'mc' => 'MC Period', 'relief' => 'relief Period'
             ),
             'hidden' => array(
                 'accname'
+            )
+        ),
+        
+        'teacherType' => array(
+            'display' => array(
+                'normal' => 'Normal', 'temp' => 'Temp', 'AED' => 'AED'
+            ),
+            'hidden' => array(
+                'all' => 'Any'
             )
         )
     );

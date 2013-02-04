@@ -1,41 +1,59 @@
 $(document).ready(function(){
-    $( "#tabs" ).tabs({
-        load: function(event, ui) {
-            var field={}, formR={}, list=[];
+    $("#tabs").tabs({
+        show: function(event, ui)
+        {
             switch (ui.index)
             {
-                // Individual
                 case 1:
-                    formR=document.forms['report-individual'];
-                    field=formR['name-email'];
-                    list=["Ana Mill", "AntoTill@com.com", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
-                    break;
-                default:
-                    formR=document.forms['report-overall'];
-                    field=formR['fullname'];
-                    list=["Ana Mill", "Anto Till", "Cad Cool", "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "Ak Dill"];
-            }
-
-            // Auto complete
-            $(field).autocomplete({
-                source: list,
-                delay: 0,
-                autoFocus: true
-            }).blur(function(){
-                var curText= $.trim(this.value), isMatch=false;
-                $.each(list, function(index, value){
-                    if (curText.toLowerCase() == value.toLowerCase())
-                    {
-                        isMatch=true;
-                        return false;
-                    }
-                });
-                if (!isMatch)
                 {
-                    this.value="";
+                    // Auto complete
+                    var formR=document.forms['report-individual'];
+
+                    $(formR['fullname']).autocomplete({
+                        source: nameList,
+                        delay: 0,
+                        autoFocus: true
+                    }).focusout(function(){
+                        var curText= $.trim(this.value), isMatch=false, selfObj=$(this);
+                        $.each(nameList, function(index, value){
+                            if (curText.toLowerCase() == value.toLowerCase())
+                            {
+                                isMatch=true;
+                                selfObj.parents('fieldset').first().find('input[name^="accname"]').val(nameAccMap[value]);
+
+                                return false;
+                            }
+                        });
+                        if (!isMatch)
+                        {
+                            this.value="";
+                        }
+                    });
+
+                    // Submit
+                    $(formR).submit(function(){
+                        var dataPost={}, dataKey=["accname"];
+                        dataPost[dataKey[0]]=formR[dataKey[0]].value;
+                        $(ui.panel).load(ui.tab.href, dataPost);
+                        return false;
+                    });
+
+                    break;
                 }
-            });
+            }
         }
+
+    });
+
+    // Auto complete setup
+    var nameList=[], nameAccMap=[];
+    $.getJSON("/RTSS/relief/_teacher_name.php", function(data){
+        if (data['error']) return;
+
+        $.each(data, function(key, value){
+            nameList.push(value['fullname']);
+            nameAccMap[value['fullname']]=value['accname'];
+        });
     });
 
     $(".gradient-top").css('top', $('.ui-tabs-panel').position().top);
