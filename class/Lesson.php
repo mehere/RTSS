@@ -19,6 +19,7 @@ class Lesson {
 
     //put your code here
 
+    public $lessonId;
     public $teachers;
     public $classes;
     public $venue;
@@ -27,7 +28,7 @@ class Lesson {
     public $startTimeSlot;
     public $endTimeSlot;
     public $isHighlighted;
-    
+
     function __construct(DayTime $dayTime, $subject, $venue) {
 
         $this->teachers = array();
