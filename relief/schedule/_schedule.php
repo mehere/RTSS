@@ -35,71 +35,50 @@ echo "<br>type: $typeSchedule";
 $format = "Y-m-d";
 $dateScheduled = DateTime::createFromFormat($format, $dateScheduledString);
 /* @var $dateScheduled DateTime */
-$day = $dateScheduled->format("N");
+
 //echo "<br>Day: $day";
 $scheduler = new SchedulerDB($dateScheduled);
-$scheduleTempTeachers = $scheduler->getTempTeachers();
-$scheduleAedTeachers = $scheduler->getAEDLessonsToday();
-$scheduleUntrainedTeachers = $scheduler->getUntrainedTeachers();
-$scheduleNormTeachers = $scheduler->getNormLessonsToday();
-$scheduleLeaves = $scheduler->getLeave();
-
-$resultTempTeachers = $scheduleTempTeachers["success"];
-$resultAedTeachers = $scheduleAedTeachers["success"];
-$resultUntrainedTeachers = $scheduleUntrainedTeachers["success"];
-$resultNormTeachers = $scheduleNormTeachers["success"];
-$arrLeave = $scheduleLeaves["success"];
-
-// if error
-if (!($resultTempTeachers && $resultAedTeachers && $resultUntrainedTeachers
-        && $resultNormTeachers))
-{
-    $errorMsg = "";
-    if (isset($resultTempTeachers["error_msg"]))
-    {
-        $errorMsg = $errorMsg . $resultTempTeachers["error_msg"] . '<br>';
-    }
-    if (isset($resultAedTeachers["error_msg"]))
-    {
-        $errorMsg = $errorMsg . $resultAedTeachers["error_msg"] . '<br>';
-    }
-    if (isset($resultUntrainedTeachers["error_msg"]))
-    {
-        $errorMsg = $errorMsg . $resultUntrainedTeachers["error_msg"] . '<br>';
-    }
-    if (isset($resultNormTeachers["error_msg"]))
-    {
-        $errorMsg = $errorMsg . $resultNormTeachers["error_msg"] . '<br>';
-    }
-
-    echo "An erro has occured: $errorMsg";
-    exit();
-}
-
-$tempTeachers = $scheduleTempTeachers["teachers"];
-$aedTeachers = $scheduleAedTeachers["teachers"];
-$untrainedTeachers = $scheduleUntrainedTeachers["teachers"];
-$normTeachers = $scheduleNormTeachers["teachers"];
+$arrTempTeachers = $scheduler->getTempTeachers();
+$arrAedTeachers = $scheduler->getAedTeachers();
+$arrUntrainedTeachers = $scheduler->getUntrainedTeachers();
+$arrNormalTeachers = $scheduler->getNormalTeachers();
+$arrLeaves = $scheduler->getLeave();
 
 $arrTempCTeachers = array();
-foreach ($tempTeachers as $aTeacher){
+foreach ($arrTempTeachers as $aTeacher){
     $aCompactTeacher = new TeacherCompact($aTeacher,"Temp");
     $arrTempCTeachers[$aCompactTeacher->accname] = $aCompactTeacher;
 }
 
 $arrAedCTeachers = array();
-foreach ($aedTeachers as $aTeacher){
+foreach ($arrAedTeachers as $aTeacher){
     $aCompactTeacher = new TeacherCompact($aTeacher,"Aed");
     $arrAedCTeachers[$aCompactTeacher->accname] = $aCompactTeacher;
 }
-$arrAedLeave = $arrLeave["Aed"];
+$arrAedLeave = $arrLeaves["Aed"];
 foreach ($arrAedLeave as $accname => $leaveRecords){
     $arrAedCTeachers[$accname]->onLeave($leaveRecord);
 }
 
-foreach ($arrAedTeachers as $key => $value)
-{
+$arrUntrainedCTeachers = array();
+foreach ($arrUntrainedTeachers as $aTeacher){
+    $aCompactTeacher = new TeacherCompact($aTeacher,"Untrained");
+    $arrUntrainedCTeachers[$aCompactTeacher->accname] = $aCompactTeacher;
+}
+$arrUntrainedLeave = $arrLeaves["Untrained"];
+foreach ($arrUntrainedLeave as $accname => $leaveRecords){
+    $arrUntrainedCTeachers[$accname]->onLeave($leaveRecord);
+}
 
+
+$arrNormalCTeachers = array();
+foreach ($arrUntrainedTeachers as $aTeacher){
+    $aCompactTeacher = new TeacherCompact($aTeacher,"Untrained");
+    $arrNormalCTeachers[$aCompactTeacher->accname] = $aCompactTeacher;
+}
+$arrNormalLeave = $arrLeaves["Untrained"];
+foreach ($arrNormalLeave as $accname => $leaveRecords){
+    $arrNormalCTeachers[$accname]->onLeave($leaveRecord);
 }
 
 

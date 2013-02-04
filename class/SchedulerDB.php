@@ -15,8 +15,10 @@ class SchedulerDB
     private $on_leave_info;
     private $teacher_list;
 
-    public function __construct($date)
+    public function __construct($dateScheduled)
     {
+        $day = $dateScheduled->format("N");
+
         $this->date = $date;
         $this->leave_dict = Array();
         $this->relief_dict = Array();
