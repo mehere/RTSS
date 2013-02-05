@@ -37,7 +37,7 @@ class TimetableDB
         Teacher::getTeachersAccnameAndFullname($teacher_list);
         
         //sql statement construction
-        $sql_insert_lesson = "insert into ct_lesson values ";
+        $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time, end_time, subj_code, venue, type) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
         

@@ -81,7 +81,7 @@ class Teacher {
         return true;
     }
 
-    //this functio returns all teachers on leave today
+    //this function returns all teachers on leave today
     //input : date string, in format 2012-12-11
     //output : array of associative arrays each representing a piece of leave info that's on the input date. Empty - possibly there are errors. Check database for confirmation.
     public static function getTeacherOnLeave($query_date)
@@ -165,7 +165,14 @@ class Teacher {
              */
 
             $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['name'];
-            $each_record['type'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['type'];
+            if(strcmp(substr($each_record['accname'], 0, 3), "TMP") === 0)
+            {
+                $each_record['type'] = Constant::$teacher_type[2];
+            }
+            else
+            {
+                $each_record['type'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['type'];
+            }
             $each_record['handphone'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['mobile'];
 
             array_push($result, $each_record);
@@ -239,7 +246,7 @@ class Teacher {
     }
     /**
      * 
-     * @param string $type : "", "temp", "all_normal", "normal", "AED", "untrained"
+     * @param string $type : "", "temp", "all_normal", "normal", "AED", "untrained", "HOD"
      * @return array
      */
     public static function getTeacherName($type)
@@ -247,7 +254,7 @@ class Teacher {
         $normal_list = Array();
         $temp_list = Array();
 
-        if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0 || strcmp($type, "all_normal")===0)
+        if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0 || strcmp($type, "all_normal")===0 || strcmp($type, "HOD")===0)
         {
             $ifins_db_url = Constant::ifins_db_url;
             $ifins_db_username = Constant::ifins_db_username;
@@ -268,15 +275,19 @@ class Teacher {
                 {
                     if(strcmp($type, "normal")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'Teacher' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[0]."' order by user_name;";
                     }
                     if(strcmp($type, "AED")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'AED' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[1]."' order by user_name;";
                     }
                     if(strcmp($type, "untrained")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = 'untrained' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[4]."' order by user_name;";
+                    }
+                    if(strcmp($type, "HOD")===0)
+                    {
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[3]."' order by user_name;";
                     }
                 }
 
