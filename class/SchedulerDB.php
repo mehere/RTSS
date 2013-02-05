@@ -8,7 +8,7 @@ require_once 'Teacher.php';
  * and open the template in the editor.
  */
 
-class Scheduling
+class SchedulerDB
 {
     private $date;
     private $leave_dict;
@@ -62,6 +62,11 @@ class Scheduling
         {
             $this->relief_dict[$row['teacher_id']] = $row['num_of_relief'];
         }
+    }
+    
+    public function getLeave()
+    {
+        
     }
     
     public function getNormalLessonsToday()
