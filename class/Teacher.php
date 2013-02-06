@@ -90,10 +90,10 @@ class Teacher {
         $teacher_dict = Teacher::getAllTeachers();
         
         //check input
-        if(!preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
-        {
-            return $result;
-        }
+//        if(!preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
+//        {
+//            return $result;
+//        }
         
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;
@@ -181,10 +181,10 @@ class Teacher {
         $result = Array();
         
         //check input
-        if(!empty($query_date) && !preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
-        {
-            return $result;
-        }
+//        if(!empty($query_date) && !preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
+//        {
+//            return $result;
+//        }
         
         $db_con = Constant::connect_to_db("ntu");
         

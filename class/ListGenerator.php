@@ -60,7 +60,7 @@ class ListGenerator
                 $fullname = "";
             }
             
-            $result[] = Array("fullname" => $fullname, "accname" => $row['teacher_id']);
+            $result[$row['teacher_id']] = $fullname;
         }
         
         return $result;

@@ -7,7 +7,7 @@ class PageConstant
     
     const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'
     
-    const DATE_FORMAT_ISO='Y-m-d';
+    const DATE_FORMAT_ISO='Y/m/d';    
     const DATE_FORMAT_SG='d/m/Y';
     
     public static $DAY=array('Monday', 'Tuesday', 'Wedsday', 'Thursday', 'Friday');
@@ -63,8 +63,8 @@ EOD;
     {
         switch ($state)
         {
-            case 0: return "&#x2717";
-            case 1: return "&#x2713";
+            case 0: return "&#x2717;";
+            case 1: return "&#x2713;";
         }
         return '';
     }
@@ -174,7 +174,14 @@ class SchoolTime
      */
     public static function displayDate($dateObject, $formatOption=0)
     {
-        return date_format($dateObject, $formatOption==0?PageConstant::DATE_FORMAT_ISO:PageConstant::DATE_FORMAT_SG);
+        switch ($formatOption)
+        {
+            case 1:
+                return date_format($dateObject, PageConstant::DATE_FORMAT_SG);
+                break;
+            default:
+                return date_format($dateObject, PageConstant::DATE_FORMAT_ISO);
+        }
     }
 }
 
@@ -313,7 +320,7 @@ class NameMap
         'individual' => array(
             'display' => array(
                 'numOfMC' => 'MC(times)', 'numOfRelief' => 'Relief(times)', 'net' => 'Net',
-                'mc' => 'MC Period', 'relief' => 'relief Period'
+                'mc' => 'MC Period', 'relief' => 'Relief Period'
             ),
             'hidden' => array(
                 'accname'

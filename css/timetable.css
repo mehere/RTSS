@@ -1,8 +1,19 @@
+@charset "UTF-8";
+
+.textfield {
+	margin: 15px 5px 0;
+	font-size: 15px;
+	width: 80px;
+}
+
 .main .control {
 	margin: 10px;
 }
 .main .control select {
 	margin-right: 15px;
+}
+.main .control .line {
+    padding-bottom: 10px;
 }
 
 .table-info {
@@ -45,4 +56,9 @@
 	background: -ms-linear-gradient(top, #6c6c6c 0%,#505050 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6c6c6c), color-stop(100%,#505050));
 	background: linear-gradient(to bottom, #6c6c6c 0%,#505050 100%);
+}
+
+div.ui-datepicker {
+	font-size: .75em;
+	box-shadow: 0 2px 6px 1px black;
 }

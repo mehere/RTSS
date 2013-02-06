@@ -19,28 +19,53 @@ $headerArr=NameMap::$REPORT['individual']['display'];
         </div>            
     </fieldset>
     <div class="section">
-        <table class="table-info">
-            <tbody id="table-individual">
-                <tr>
-                    <?php 
-                        foreach (array('numOfMC', 'numOfRelief', 'net') as $headerKey) 
+        <table class="table-info" id="individual-summary">
+            <tbody>
+                <?php 
+                    foreach (array('numOfMC', 'numOfRelief', 'net') as $headerKey) 
+                    {
+                        echo <<< EOD
+<tr><th>{$headerArr[$headerKey]}</th><td>{$teacher[$headerKey]}</td></tr>
+EOD;
+                    }
+                ?>
+            </tbody>
+        </table>
+        <table class="table-info" id="individual-detail">
+            <tbody>
+                <?php 
+                    foreach (array('mc', 'relief') as $headerKey) 
+                    {
+                        if ($teacher[$headerKey])
+                        {
+                            foreach ($teacher[$headerKey] as $tInd => $record)
+                            {
+                                echo "<tr>";
+                                if ($tInd == 0)
+                                {
+                                    $rowspan=count($teacher[$headerKey]);
+                                    echo <<< EOD
+<th rowspan="$rowspan">{$headerArr[$headerKey]}</th>
+EOD;
+                                }
+
+                                $dateFromDisplay=SchoolTime::convertDate($record[0][0]);
+                                $dateToDisplay=SchoolTime::convertDate($record[1][0]);
+                                echo <<< EOD
+<td colspan="3">$dateFromDisplay {$record[0][1]} - $dateToDisplay {$record[1][1]}</td>
+EOD;
+                                echo "</tr>";
+                            }                                    
+                        }
+                        else
                         {
                             echo <<< EOD
-<th>{$headerArr[$headerKey]}</th><td>{$teacher[$headerKey]}</td>
+<tr><th>{$headerArr[$headerKey]}</th><td colspan="3"></td></tr>
 EOD;
                         }
-                    ?>
-                </tr>
-                <tr>
-                    <?php 
-                        foreach (array('mc', 'relief') as $headerKey) 
-                        {
-                            echo <<< EOD
-<th>{$headerArr[$headerKey]}</th><td colspan="2">{$teacher[$headerKey]}</td>
-EOD;
-                        }
-                    ?>
-                </tr>        
+
+                    }
+                ?>
             </tbody>
         </table>
     </div>               

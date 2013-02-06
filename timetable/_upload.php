@@ -1,4 +1,9 @@
 <?php
+header("Expires: 0");
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+
+require_once '../php-head.php';
 
 spl_autoload_register(
         function ($class)

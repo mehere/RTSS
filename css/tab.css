@@ -60,3 +60,7 @@
 #tabs .ui-widget-header .ui-state-active a {
 	color: black;
 }
+
+#tabs.ui-widget select {
+    font-size: .85em;
+}
