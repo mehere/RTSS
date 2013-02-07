@@ -42,13 +42,14 @@ include_once '../head-frag.php';
                 );
                 include '../topbar-frag.php';
             ?>
-            <div id="tabs">
-            	<div class="gradient-top"></div>
+            <div id="tabs">            	
                 <ul>
                     <li><a href="#tabs-1">Overall</a></li>
                     <li><a href="#tabs-2">Individual</a></li>
                 </ul>
                 <div id="tabs-1" class="ie8-tab-border">
+                    <div class="gradient-top-fill"></div>
+                    <div class="gradient-top"></div>
                     <form class="main" name="report-overall" method="post">
                         <fieldset>
                             <legend>Filter</legend>
@@ -85,11 +86,13 @@ EOD;
                     <div id="teacher-detail">Loading ...</div>                    
                 </div>
                 <div id="tabs-2" class="ie8-tab-border">
+                    <div class="gradient-top-fill"></div>
+                    <div class="gradient-top"></div>
                     <form class="main" name="report-individual" method="post">
                         <fieldset>
                             <legend>Enter</legend>
                             <div class="line">
-                                Name: <input type="text" name="fullname" style="width: 150px; margin-right: 20px" />
+                                Name: <input type="text" name="fullname" class="textfield" />
                                 <input type="hidden" name="accname" />
                                 <input type="submit" value="Go" class="button" />
                             </div>            

@@ -54,7 +54,8 @@ Class Constant
         '1415' => 15
     );
     
-    public static $mother_tongue = array("Chiese", "Tamil", "Malay");
+    public static $mother_tongue = array("Chinese", "Tamil", "Malay");
+    public static $teacher_type = array("Teacher", "AED", "Temp", "HOD", "untrained");   //key: types in database; value: types in websystem. Due to history reason, we maintain the two list
     
     //error handling
     const default_var_value = "n.a.";

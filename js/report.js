@@ -2,6 +2,7 @@ $(document).ready(function(){
     var COOKIE_KEY=['report-tab-index'];
 
     $("#tabs").tabs({
+        active: $.cookie(COOKIE_KEY[0]),
         select: function(event, ui){
             $.cookie(COOKIE_KEY[0], ui.index);
         }
@@ -26,12 +27,12 @@ $(document).ready(function(){
         delay: 0,
         autoFocus: true
     }).focusout(function(){
-        var curText= $.trim(this.value), isMatch=false, selfObj=$(this);
+        var curText= $.trim(this.value), isMatch=false;
         $.each(nameList, function(index, value){
             if (curText.toLowerCase() == value.toLowerCase())
             {
                 isMatch=true;
-                selfObj.parents('fieldset').first().find('input[name^="accname"]').val(nameAccMap[value]);
+                formR["accname"].value=nameAccMap[value];
 
                 return false;
             }
@@ -49,7 +50,4 @@ $(document).ready(function(){
         $(ui.panel).load(ui.tab.href, dataPost);
         return false;
     });
-
-    // UI
-    $(".gradient-top").css('top', $('.ui-tabs-panel').position().top);
 });

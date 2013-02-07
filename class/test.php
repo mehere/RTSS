@@ -2,38 +2,62 @@
 
 require_once 'Teacher.php';
 require_once 'TimetableAnalyzer.php';
-require_once 'Scheduling.php';
+require_once 'SchedulerDB.php';
 require_once 'DayTime.php';
 require_once 'Lesson.php';
 require_once 'TimetableDB.php';
 require_once 'ListGenerator.php';
+require_once 'DBException.php';
 
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-//********xue : testing
-//$scheduling = new Scheduling("2013-01-15");
 /*
-$result = $scheduling->getNormalLessonsToday();
-echo $result['success']?"okay<br>":"no<br>";
-echo $result['error_msg']."<br>";
-foreach($result["teachers"] as $key=>$value)
+$test = new DBException("Test Error", __FILE__, __LINE__);
+echo $test;
+ * 
+ */
+//********xue : testing
+//$scheduling = new SchedulerDB(new DateTime("2013-02-06"));
+
+/*
+$result = $scheduling->getLeave();
+foreach($result as $key=>$value)
 {
     echo $key." : <br>";
-    print_r($value->leave);
-    echo "<br>";
-    print_r($value->timetable);
+    print_r($value);
+    echo "<br><br>";
+}
+ * 
+ */
+//print_r($scheduling->getExcludedTeachers());
+/*
+$result = $scheduling->getAedTeachers();
+foreach($result as $key=>$value)
+{
+    echo $key." : <br>";
+    foreach($value->timetable as $t=>$one)
+    {
+        echo $t." : <br>";
+        echo $one->lessonId."<br>";
+        echo $one->subject."<br>";
+        echo $one->highlighted."<br>";
+        echo $one->venue."<br>";
+        echo $one->endTimeSlot."<br>";
+        print_r($one->classes);
+        echo "<br>";
+    }
     echo "<br>";
     echo $value->accname."<br>";
     echo $value->name."<br>";
     echo $value->noLessonMissed."<br>";
     echo $value->noLessonRelived."<br>";
-    echo "<br>";
+    echo "<br><br><br>";
 }
  * 
  */
+
 /*
 $result = $scheduling->getAEDLessonsToday();
 echo $result['success']?"okay<br>":"no<br>";
@@ -70,9 +94,7 @@ foreach($result["teachers"] as $key=>$value)
  */
 /*
 $result = $scheduling->getTempTeachers();
-echo $result['success']?"okay<br>":"no<br>";
-echo $result['error_msg']."<br>";
-foreach($result["teachers"] as $key=>$value)
+foreach($result as $key=>$value)
 {
     echo $key." : <br>";
     echo $value->accname."<br>";

@@ -132,6 +132,11 @@ ul.breadcrumb li:last-child {
 	padding: 15px 25px;
 }
 
+#content .error-msg {
+	color: red;
+	padding-top: 10px;
+}
+
 #footer {
 	font-size: .9em;
 	color: #949594;
