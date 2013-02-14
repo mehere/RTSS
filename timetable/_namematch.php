@@ -7,7 +7,7 @@ spl_autoload_register(
         });
 
 $numOfUnknown = $_POST["num"];
-$analyzer = $_SESSION["timetableanalyzer"];
+$analyzer = $_SESSION["timetableAnalyzer"];
 /* @var $analyzer TimeTableAnalyzer */
 $arrTeachers = $analyzer->arrTeachers;
 
@@ -29,6 +29,8 @@ $arrLesson = $analyzer->arrLessons;
 $arrTeachers = $analyzer->arrTeachers;
 $year = $analyzer->year;
 $semester = $analyzer->semester;
+
+// To-Do: Add try catch exceptions.
 TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
 
 /// To-Do: Add abbreviations to db
