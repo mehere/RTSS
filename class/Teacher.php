@@ -14,6 +14,7 @@ class Teacher {
     public $timetable;
     public $isHighlighted;
     public $speciality;
+    public $classes;
 
     public function __construct($abbreviation) {
         $this->abbreviation = $abbreviation;
@@ -25,7 +26,8 @@ class Teacher {
         $this->leave = array();
         $this->availability = array();
         $this->isHighlighted = true;
-        $this->speciality = array();
+        $this->speciality = null;
+        $this->classes = null;
     }
 
     /**
@@ -91,12 +93,6 @@ class Teacher {
         //query teacher dict
         $teacher_dict = Teacher::getAllTeachers();
 
-        //check input
-        if(!preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
-        {
-            return $result;
-        }
-
         $db_url = Constant::db_url;
         $db_username = Constant::db_username;
         $db_password = Constant::db_password;
@@ -136,7 +132,7 @@ class Teacher {
          */
 
         //query leave
-        $sql_query_leave = "select *, DATE(rs_leave_info.start_time) as start_date, DATE(rs_leave_info.end_time) as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info
+        $sql_query_leave = "select *, DATE_FORMAT(rs_leave_info.start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_leave_info.end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info
             where '".mysql_real_escape_string($query_date)."' between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
 
         $query_leave_result = mysql_query($sql_query_leave);
@@ -189,12 +185,6 @@ class Teacher {
     {
         $result = Array();
 
-        //check input
-        if(!empty($query_date) && !preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $query_date))
-        {
-            return $result;
-        }
-        
         $db_con = Constant::connect_to_db("ntu");
         
         if (empty($db_con))
@@ -204,14 +194,14 @@ class Teacher {
         
         if(!empty($query_date))
         {
-            $sql_query_temp_teacher = "select *, DATE(rs_temp_relief_teacher_availability.start_datetime) as start_date, DATE(rs_temp_relief_teacher_availability.end_datetime) as end_date, TIME_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%H:%i') as start_time, TIME_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%H:%i') as end_time 
+            $sql_query_temp_teacher = "select *, DATE_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_temp_relief_teacher_availability.start_datetime, '%H:%i') as start_time, TIME_FORMAT(rs_temp_relief_teacher_availability.end_datetime, '%H:%i') as end_time 
                 from rs_temp_relief_teacher_availability, rs_temp_relief_teacher where rs_temp_relief_teacher_availability.teacher_id=rs_temp_relief_teacher.teacher_id and '".mysql_real_escape_string($query_date)."' between date(rs_temp_relief_teacher_availability.start_datetime) and date(rs_temp_relief_teacher_availability.end_datetime);";
         }
         else
         {
             $sql_query_temp_teacher = "select * from rs_temp_relief_teacher;";
         }
-        
+        echo $sql_query_temp_teacher;
         $query_temp_teacher = mysql_query($sql_query_temp_teacher);
 
         if(!$query_temp_teacher)
@@ -760,7 +750,7 @@ class Teacher {
      * return all teachers in ifins
      * @return array of teachers asso array. key: name, type, mobile
      */
-    public static function getAllTeachers()
+    public static function  getAllTeachers()
     {
         $teacher_dict = Array();
         
