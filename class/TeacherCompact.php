@@ -54,7 +54,7 @@ class TeacherCompact
                 $freeSlots[$i] = true;
             }
         }
-        for ($i = 1; $i <= MAX_LESSON; $i++)
+        for ($i = 1; $i <= self::MAX_LESSONS; $i++)
         {
             if (!isset($freeSlots))
             {
@@ -186,7 +186,7 @@ class TeacherCompact
 
     public function isAvailable()
     {
-        $filteredTimetable = array_filter($this->timetable, 'isOptional');
+        $filteredTimetable = array_filter($this->timetable, array($this,"isOptional"));
         $noBusyLesson = count($filteredTimetable);
         if ($noBusyLesson < self::$recommendedNoOfLessons)
         {
