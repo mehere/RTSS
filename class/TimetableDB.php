@@ -76,7 +76,7 @@ class TimetableDB
                 $end_time_index  = Constant::default_num_value;
             }
             
-            $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, $value->classes, $value->teachers);
+            $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, array_keys($value->classes), array_keys($value->teachers));
             
             $sql_insert_lesson .= "('".mysql_real_escape_string($lesson_id)."', ".$day_index.", ".$start_time_index.", ".$end_time_index.", '".mysql_real_escape_string($subject)."', '".mysql_real_escape_string($venue)."', 'N'), ";
             
@@ -151,7 +151,7 @@ class TimetableDB
         mysql_select_db($db_name, $db_con);
         
         //clear existing data
-        $delete_sql_lesson = "delete from ct_lesson;";
+        $delete_sql_lesson = "delete from ct_lesson where type = 'N';";
         if (!mysql_query($delete_sql_lesson, $db_con))
         {
             $error_array[0] = "Fail to clear database. Please contact system admin";
@@ -389,16 +389,78 @@ class TimetableDB
         return $result;
     }
     
-    private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_obj_list, $teacher_obj_list)
+    public static function uploadAEDTimetable($timetable, $year='13', $sem='1')
     {
-        if(count($class_obj_list) === 0)
+        //sql statement construction
+        $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time, end_time, subj_code, venue, type, highlighted) values ";
+        $sql_insert_lesson_class = "insert into ct_class_matching values ";
+        $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
+        
+        foreach($timetable as $a_table)
+        {
+            if(!is_int($a_table['day']) || !is_int($a_table['time-from']) || !is_int($a_table['time-to']))
+            {
+                return false;
+            }
+            
+            $venue = empty($a_table["venue"])?"":mysql_real_escape_string(trim($a_table["venue"]));
+            $highlighted = $a_table['isHighlighted']?"true":"false";
+            
+            $lesson_id = TimetableDB::generateLessonPK('A', $year, $sem, $a_table['day'], $a_table['time-from'], $a_table['time-to'], $a_table['class'], Array($a_table['accname']));
+            $sql_insert_lesson .= "('".mysql_real_escape_string($lesson_id)."', ".$a_table['day'].", ".$a_table['time-from'].", ".$a_table['time-to'].", '".mysql_real_escape_string(trim($a_table['subject']))."', '".$venue."', 'A', ".$highlighted."), ";
+            
+            //teacher
+            $sql_insert_lesson_teacher .= "('".mysql_real_escape_string(trim($a_table['accname']))."', '".mysql_real_escape_string($lesson_id)."'), ";
+            
+            //class
+            foreach($a_table['class'] as $class_name)
+            {
+                $sql_insert_lesson_class .= "('".mysql_real_escape_string($lesson_id)."', '".mysql_real_escape_string(trim($class_name))."'), ";
+            }
+        }
+        
+        $sql_insert_lesson = substr($sql_insert_lesson, 0, -2).';';
+        $sql_insert_lesson_class = substr($sql_insert_lesson_class, 0, -2).';';
+        $sql_insert_lesson_teacher = substr($sql_insert_lesson_teacher, 0, -2).';';
+        
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            return false;
+        }
+        
+        //********to change
+        $sql_delete_lesson = "delete from ct_lesson where type = 'A'";
+        if (!mysql_query($sql_delete_lesson, $db_con))
+        {
+            return false;
+        }
+        //********end
+        
+        if(!mysql_query($sql_insert_lesson))
+        {
+            return false;
+        }
+        if(!mysql_query($sql_insert_lesson_class))
+        {
+            return false;
+        }
+        if(!mysql_query($sql_insert_lesson_teacher))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_list, $teacher_list)
+    {
+        if(count($class_list) === 0)
         {
             $class_short = 'emp';
         }
         else
         {
-            $class_list = array_keys($class_obj_list);
-            
             if(count($class_list) > 1)
             {
                 sort($class_list);
@@ -429,14 +491,12 @@ class TimetableDB
             }
         }
         
-        if(count($teacher_obj_list) === 0)
+        if(count($teacher_list) === 0)
         {
             $teacher_short = 'emp';
         }
         else
         {
-            $teacher_list = array_keys($teacher_obj_list);
-            
             if(count($teacher_list) > 1)
             {
                 sort($teacher_list);

@@ -14,6 +14,31 @@ require_once 'DBException.php';
  * and open the template in the editor.
  */
 /*
+$lesson_1 = Array(
+    "subject" => "Math",
+    "venue" => "LT 2A",
+    "accname" => "1234567",
+    "time-from" => 2,
+    "time-to" => 4,
+    "day" => 1,
+    "isHighlighted" => true,
+    "class" => Array('1A', '2B', '3C')
+);
+$lesson_2 = Array(
+    "subject" => "Eco",
+    "venue" => null,
+    "accname" => "2323123",
+    "time-from" => 2,
+    "time-to" => 6,
+    "day" => 5,
+    "isHighlighted" => false,
+    "class" => Array('5A', '2B', '3C')
+);
+$input = Array($lesson_1, $lesson_2);
+echo TimetableDB::uploadAEDTimetable($input)?"okay":"no";
+ * 
+ */
+/*
 $test = new DBException("Test Error", __FILE__, __LINE__);
 echo $test;
  * 
@@ -36,59 +61,56 @@ foreach($result as $key=>$value)
 $result = $scheduling->getAedTeachers();
 foreach($result as $key=>$value)
 {
+    echo "**************************<br>";
     echo $key." : <br>";
     foreach($value->timetable as $t=>$one)
     {
+        echo "&&&&&&&&&&&&&&&&&&<br>";
         echo $t." : <br>";
         echo $one->lessonId."<br>";
         echo $one->subject."<br>";
-        echo $one->highlighted."<br>";
+        echo $one->isHighlighted?"yes":"no"."*****<br>";
         echo $one->venue."<br>";
         echo $one->endTimeSlot."<br>";
         print_r($one->classes);
         echo "<br>";
+        echo "&&&&&&&&&&&&&&&&&&<br>";
     }
     echo "<br>";
     echo $value->accname."<br>";
     echo $value->name."<br>";
     echo $value->noLessonMissed."<br>";
     echo $value->noLessonRelived."<br>";
+    echo "**************************<br>";
     echo "<br><br><br>";
 }
  * 
  */
-
 /*
-$result = $scheduling->getAEDLessonsToday();
-echo $result['success']?"okay<br>":"no<br>";
-echo $result['error_msg']."<br>";
-foreach($result["teachers"] as $key=>$value)
+$result = $scheduling->getNormalTeachers();
+foreach($result as $key=>$value)
 {
+    echo "**************************<br>";
     echo $key." : <br>";
-    print_r($value->leave);
-    echo "<br>";
-    print_r($value->timetable);
+    foreach($value->timetable as $t=>$one)
+    {
+        echo "&&&&&&&&&&&&&&<br>";
+        echo $t." : <br>";
+        echo $one->lessonId."<br>";
+        echo $one->subject."<br>";
+        echo $one->venue."<br>";
+        echo $one->endTimeSlot."<br>";
+        print_r($one->classes);
+        echo "<br>";
+        echo "&&&&&&&&&&&&&&<br>";
+    }
     echo "<br>";
     echo $value->accname."<br>";
     echo $value->name."<br>";
     echo $value->noLessonMissed."<br>";
     echo $value->noLessonRelived."<br>";
-    echo "<br>";
-}
- * 
- */
-/*
-$result = $scheduling->getUntrainedTeachers();
-echo $result['success']?"okay<br>":"no<br>";
-echo $result['error_msg']."<br>";
-foreach($result["teachers"] as $key=>$value)
-{
-    echo $key." : <br>";
-    echo $value->accname."<br>";
-    echo $value->name."<br>";
-    echo $value->noLessonMissed."<br>";
-    echo $value->noLessonRelived."<br>";
-    echo "<br>";
+    echo "**************************<br>";
+    echo "<br><br><br>";
 }
  * 
  */

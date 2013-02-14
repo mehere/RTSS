@@ -160,6 +160,8 @@ class SchedulerDB
             "Hod" => Array()
         );
         
+        $db_type = array_keys(Constant::$teacher_type);
+        
         while($row = mysql_fetch_assoc($query_exclude_result))
         {
             $teacher_id = $row['teacher_id'];
@@ -170,22 +172,14 @@ class SchedulerDB
             }
             else if(!empty($this->temp_list[$teacher_id]))
             {
-                $type = Constant::$teacher_type[2];
+                $type = $db_type[2];
             }
             else
             {
-                $type = Constant::$teacher_type[0];
+                $type = $db_type[0];
             }
             
-            switch($type)
-            {
-                case Constant::$teacher_type[1] : $result["Aed"][$teacher_id] = true;break;
-                case Constant::$teacher_type[2] : $result["Temp"][$teacher_id] = true;break;
-                case Constant::$teacher_type[3] : $result["HOD"][$teacher_id] = true;break;
-                case Constant::$teacher_type[4] : $result["Untrained"][$teacher_id] = true;break;
-                case Constant::$teacher_type[0] : 
-                default : $result["Normal"][$teacher_id] = true;break;
-            }
+            $result[Constant::$teacher_type[$type]][$teacher_id] = true;
         }
         
         return $result;
