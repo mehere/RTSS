@@ -94,8 +94,6 @@ class ScheduleState
         /* @var $fullTeacher Teacher */
         /* @var $fullLesson Lesson */
 
-        $noOfPeriods = $aLesson->endTimeSlot - $aLesson->startTimeSlot;
-
         // moving from unallocated to allocated
         $aLesson = $this->lessonsNotAllocated[$key];
         unset($this->lessonsNotAllocated[$key]);
@@ -112,6 +110,9 @@ class ScheduleState
             if ($hasSkipped)
             {
                 $numberLessonSkipped++;
+            } else
+            {
+                $this->factor1_fairnessCost += $firstTeacher->netRelived;
             }
         }
         $numberLessonSkipped += $firstTeacher->cancelExcess();
@@ -184,7 +185,7 @@ class ScheduleState
         $typeNo = $aTeacher->getTypeNo();
 
         $propertyName = "noGrp$typeNo";
-        $count = $this->$propertyName--;
+        $this->$propertyName--;
 
         if (empty($this->teachersAlive))
         {

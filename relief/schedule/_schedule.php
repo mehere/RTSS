@@ -58,7 +58,7 @@ function cmpStates($state1, $state2)
     $factor1_fairnessCost2 = $state2->factor1_fairnessCost;
     if ($factor1_fairnessCost1 != $factor1_fairnessCost2)
     {
-        return ($factor1_fairnessCost1 > $factor1_fairnessCost2 ) ? -1 : 1;
+        return ($factor1_fairnessCost1 < $factor1_fairnessCost2 ) ? -1 : 1;
     }
 
     $factor2_hassleCost1 = $state1->factor2_hassleCost;
@@ -153,7 +153,6 @@ function scheduling($visitedStates, $activeStates, $successStates,$stoppedStates
 
             if (!empty($aState->teachersAlive))
             {
-                $aState->factor1_fairnessCost += $firstTeacher->netRelived;
                 uasort($activeStates, 'cmpStates');
             } else
             {
