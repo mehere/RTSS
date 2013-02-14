@@ -255,6 +255,8 @@ class Teacher {
         $normal_list = Array();
         $temp_list = Array();
 
+        $db_type = array_keys(Constant::$teacher_type);
+        
         if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0 || strcmp($type, "all_normal")===0 || strcmp($type, "HOD")===0)
         {
             $ifins_db_url = Constant::ifins_db_url;
@@ -276,19 +278,19 @@ class Teacher {
                 {
                     if(strcmp($type, "normal")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[0]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[0]."' order by user_name;";
                     }
                     if(strcmp($type, "AED")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[1]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[1]."' order by user_name;";
                     }
                     if(strcmp($type, "untrained")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[4]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[4]."' order by user_name;";
                     }
                     if(strcmp($type, "HOD")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".Constant::$teacher_type[3]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[3]."' order by user_name;";
                     }
                 }
 
