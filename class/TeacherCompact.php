@@ -134,8 +134,10 @@ class TeacherCompact
 
     public function onLeave($aTeacher, $leaveRecords)
     {
-        if ($this->type == "Normal")
+
+        if (($this->type == "Normal") || ($this->type == "Hod"))
         {
+
             /* @var $aTeacher Teacher */
             $lessonsNeedRelief = array();
             $accname = $aTeacher->accname;
@@ -145,14 +147,22 @@ class TeacherCompact
                 $startLeaveIndex = $aLeave["startLeave"];
                 $endLeaveIndex = $aLeave["endLeave"];
 
+//                echo "*** ENTERED **";
+//                echo "<br> Start Index: $startLeaveIndex";
+//                echo "<br> End Index: $endLeaveIndex";
+
                 $lastLesson = null;
                 $aReliefLesson = null;
+//                echo "<br><b>timetable:<br>";
+                print_r($aTeacher);
+
 
                 for ($i = $startLeaveIndex; $i < $endLeaveIndex; $i++)
                 {
                     if ((isset($aTeacher->timetable[$i])) &&
                             (!empty($aTeacher->timetable[$i]->classes)))
                     {
+//                        echo "Got Lesson";
                         $aLesson = $aTeacher->timetable[$i];
                         /* @var $aLesson Lesson */
 
@@ -186,7 +196,7 @@ class TeacherCompact
 
     public function isAvailable()
     {
-        $filteredTimetable = array_filter($this->timetable, array($this,"isOptional"));
+        $filteredTimetable = array_filter($this->timetable, array($this, "isOptional"));
         $noBusyLesson = count($filteredTimetable);
         if ($noBusyLesson < self::$recommendedNoOfLessons)
         {
@@ -249,7 +259,8 @@ class TeacherCompact
         }
     }
 
-    public function getTypeNo(){
+    public function getTypeNo()
+    {
         return self::$typeMap[$this->type];
     }
 
@@ -262,7 +273,6 @@ class TeacherCompact
     {
         self::$typeMap = array("Temp" => 1, "Aed" => 1, "Untrained" => 1, "Normal" => 2, "Aed" => 3);
     }
-
 
 }
 

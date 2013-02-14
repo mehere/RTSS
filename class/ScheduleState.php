@@ -52,7 +52,7 @@ class ScheduleState
             $this->lessonsNotAllocated[$key] = clone $value;
         }
 
-        $this->noGrp1 = array_count_values($teachersAlive);
+        $this->noGrp1 = count($teachersAlive);
         $this->noGrp2 = 0;
         $this->noGrp3 = 0;
 

@@ -12,7 +12,8 @@ function cmpTeachers($teacher1, $teacher2)
     /* @var $teacher2 TeacherCompact */
     $type1 = $teacher1->getTypeNo();
     $type2 = $teacher2->getTypeNo();
-    if ($type1 != $type2){
+    if ($type1 != $type2)
+    {
         return ($type1 < $type2) ? -1 : 1;
     }
 
@@ -71,12 +72,16 @@ function cmpStates($state1, $state2)
     return 0;
 }
 
-function scheduling($visitedStates, $activeStates, $successStates,$stoppedStates)
+function scheduling($visitedStates, $activeStates, $successStates, $stoppedStates)
 {
     $breakingScore = NULL;
+    echo "<br><br>Active States:<br>";
+    print_r($activeStates);
     // group 1 scheduling
     while (!empty($activeStates))
     {
+        print_r(count($activeStates));
+        echo "<br><br>";
         $aState = current($activeStates);
         $aStateKey = key($activeStates);
         /* @var $aState ScheduleState */
@@ -84,6 +89,7 @@ function scheduling($visitedStates, $activeStates, $successStates,$stoppedStates
         $firstTeacher = current($aState->teachersAlive);
         if (empty($firstTeacher))
         {
+            echo "<br>first teacher is empty<br>";
             $aState = array_shift($activeStates);
             $stoppedStates[$aState->toString()] = $aState;
             continue;
@@ -94,19 +100,23 @@ function scheduling($visitedStates, $activeStates, $successStates,$stoppedStates
         {
             if ($breakingScore < $aState->expectedTotalCost)
             {
+                echo "Break here";
                 break;
             }
         }
         if (empty($lessonsNotAllocated))
         {
+            echo "No more lessons not allocated";
             $breakingScore = $aState->expectedTotalCost;
             $successStates[$aStateKey] = $aState;
+            array_shift($activeStates);
             continue;
         }
         $newStates = array();
         $overallAvailability = ReliefLesson::AVAILABILITY_BUSY;
         foreach ($lessonsNotAllocated as $key => $aLesson)
         {
+            echo "<br><br>creating $key<br>";
             /* @var $aLesson ReliefLesson */
             $availability = $aLesson->canBeDoneBy($firstTeacher);
             if ($availability == ReliefLesson::AVAILABILITY_FREE)
@@ -223,6 +233,7 @@ try
     exit();
 }
 
+
 // initialization
 ScheduleState::$arrTeachers = array();
 $lessonsNeedRelief = array();
@@ -254,6 +265,7 @@ foreach ($typesOfTeachers as $aType)
         ${$varArrCompactTeachers}[$accname] = $aCompactTeacher;
     }
 
+
     // Applying Leave
     $varArrTeacherLeaves = "arr{$aType}TeachersLeaves";
     $$varArrTeacherLeaves = $arrLeaves[$aType];
@@ -261,10 +273,21 @@ foreach ($typesOfTeachers as $aType)
     echo "<br><br>Type: $aType";
     echo "<br>Leaves<br>";
     print_r($arrLeaves[$aType]);
-    echo "<br>Teacher:<br>";
-//    print_r("<br>name of variable:<br>");
-//    print_r($varArrCompactTeachers);
-    print_r($$varArrCompactTeachers);
+    echo "<br>Teachers: <br>";
+    foreach ($$varArrTeachers as $aTeacher)
+    {
+        print_r($aTeacher);
+        echo "<br>";
+    }
+//    print_r($$varArrTeachers);
+    echo "<br>Compact Teacher:<br>";
+    foreach ($$varArrCompactTeachers as $aTeacher)
+    {
+        print_r($aTeacher);
+        echo "<br>";
+    }
+//    print_r($$varArrCompactTeachers);
+
     foreach ($$varArrTeacherLeaves as $accname => $leaveRecords)
     {
 //        echo '<br> accname:'.$accname;
@@ -322,13 +345,19 @@ $activeStates = array();
 $successStates = array();
 $stoppedStates = array();
 
-$startState = new ScheduleState();
+$startState = new ScheduleState($arrGroup1, $lessonsNeedRelief);
 $activeStates[$startState->toString()] = $startState;
 $visitedStates[$startState->toString()] = TRUE;
 
-scheduling($visitedStates, $activeStates, $successStates,$stoppedStates);
 
-if (empty($successStates)){
+
+scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
+
+print_r($lessonsNeedRelief);
+die;
+
+if (empty($successStates))
+{
     $arrGroup2 = array();
     foreach ($group2Types as $aType)
     {
@@ -342,12 +371,11 @@ if (empty($successStates)){
     }
     $activeStates = $stoppedStates;
     $stoppedStates = array();
-    scheduling($visitedStates, $activeStates, $successStates,$stoppedStates);
+    scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 
-    if (empty($successStates)){
+    if (empty($successStates))
+    {
 
     }
 }
-
-
 ?>
