@@ -124,14 +124,14 @@ class SchedulerDB
                 "endLeave" => $leave_time[1]
             );
             
-            switch($a_info['type'])
+            $algo_type = Constant::$teacher_type[$a_info['type']];
+            if(array_key_exists($a_info['accname'], $result[$algo_type]))
             {
-                case Constant::$teacher_type[1] : $result["Aed"][$a_info['accname']] = $a_leave;break;
-                case Constant::$teacher_type[2] : $result["Temp"][$a_info['accname']] = $a_leave;break;
-                case Constant::$teacher_type[3] : $result["HOD"][$a_info['accname']] = $a_leave;break;
-                case Constant::$teacher_type[4] : $result["Untrained"][$a_info['accname']] = $a_leave;break;
-                case Constant::$teacher_type[0] : 
-                default : $result["Normal"][$a_info['accname']] = $a_leave;break;
+                $result[$algo_type][$a_info['accname']][] = $a_leave;
+            }
+            else
+            {
+                $result[$algo_type][$a_info['accname']] = Array($a_leave);
             }
         }
         
