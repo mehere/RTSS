@@ -201,7 +201,7 @@ class Teacher {
         {
             $sql_query_temp_teacher = "select * from rs_temp_relief_teacher;";
         }
-        echo $sql_query_temp_teacher;
+        
         $query_temp_teacher = mysql_query($sql_query_temp_teacher);
 
         if(!$query_temp_teacher)
