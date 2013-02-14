@@ -147,6 +147,34 @@ EOD;
                         </tbody>
                     </table>
                 </div>
+                <div class="section">
+                	Excluding List: <a href="exclude-list.php">Edit</a>
+                    <table class="table-info">
+                    	<?php
+                            $list=Teacher::getExcludingList();
+                            
+                            $adminList=array();
+                            $normalList=array();                            
+                            
+                            foreach ($list as $value)
+                            {
+                                if ($value['checked'])
+                                {
+                                    if (strcasecmp($value['type'], 'HOD') === 0)
+                                    {
+                                        $adminList[]=$value['fullname'];
+                                    }
+                                    else
+                                    {
+                                        $normalList[]=$value['fullname'];
+                                    }
+                                }                                
+                            }
+                        ?>
+                        <tr><th style="width: 120px">HOD/ExCo</th><td><?php echo implode(', ', $adminList); ?></td></tr>
+                        <tr><th>Others</th><td><?php echo implode(', ', $normalList); ?></td></tr>
+                    </table>
+                </div>
                 <div class="bt-control">
                 	<input type="submit" value="Schedule All" class="button" />
                     <input type="submit" value="Adhoc Schedule" class="button" />

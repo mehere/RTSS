@@ -45,9 +45,8 @@ include_once '../head-frag.php';
                             $date=$_SESSION['scheduleDate'];
                         }
                     ?>
-                    <div class="line">Date: <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" /></div>
-                    <div class="line">
-                        <select name="class">
+                    <div class="line">Date: <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+                        <select name="class" style="margin-left: 30px">
                             <option value="">-- Any --</option>
                             <?php echo PageConstant::formatOptionInSelect(ListGenerator::getClassName($date), $class, true); ?>
                         </select>

@@ -347,6 +347,17 @@ class Teacher {
 
         return $result_array;
     }
+    
+    /**
+     *
+     * @return type 
+     */
+    public static function getExcludingList()
+    {
+        return array(array('accname'=>'abc', 'fullname'=>'Ann Dow', 'type'=>'HOD', 'checked'=>true), array('accname'=>'dbc', 'fullname'=>'Dann Bow', 'type'=>'HOD', 'checked'=>true), 
+            array('accname'=>'xabc', 'fullname'=>'Xin Jow', 'type'=>'AED', 'checked'=>true), array('accname'=>'qabc', 'fullname'=>'Queen King', 'type'=>'normal', 'checked'=>false),
+            array('accname'=>'dabc', 'fullname'=>'Din Vow', 'type'=>'HOD', 'checked'=>true), array('accname'=>'jabc', 'fullname'=>'John Cow', 'type'=>'normal', 'checked'=>true));
+    }
 
     //this function returns the details of a normal teacher
     //input : accname - the name used to log in
