@@ -4,9 +4,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+include './weeclass.php';
 
-$type = "Norm";
-echo "construct{$type}Teacher";
+$tester = WEECLASS::$bar;
+print_r($tester);
+
+//$type = "Norm";
+//echo "construct{$type}Teacher";
 
 //$arr1 = array();
 //$arr2 = array("b1"=>1,"b2"=>2,"b3"=>3);
