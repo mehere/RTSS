@@ -35,4 +35,5 @@ EOD;
         </table>
     </div>
 </form>
+<div id="teacher-detail">Loading ...</div>
 <script src="/RTSS/js/teacher-detail.js"></script>

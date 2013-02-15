@@ -15,7 +15,7 @@ $(document).ready(function(){
             changeMonth: true,
             changeYear: true,
             altField: altTarget1,
-            altFormat: "yy-mm-dd",
+            altFormat: "yy/mm/dd",
             onSelect: function(dateText){
                 target2.datepicker( "option", "minDate", dateText );
             },
@@ -36,7 +36,7 @@ $(document).ready(function(){
             changeYear: true,
             minDate: curDate1,
             altField: altTarget2,
-            altFormat: "yy-mm-dd",
+            altFormat: "yy/mm/dd",
             onClose: function(dateText){
                 var self=$(this);
                 if (self.datepicker('getDate') < target1.datepicker('getDate'))

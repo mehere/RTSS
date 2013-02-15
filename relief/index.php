@@ -48,7 +48,7 @@ include_once '../head-frag.php';
                 $teacherScheduledList=$_SESSION['teacherScheduled'];
             ?>
             <form class="main" name="schedule" action="schedule/" method="post">
-            	Date: <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+            	Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 80px" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                 <div class="section">
                 	Teacher on Leave: <a href="teacher-edit.php">Edit/Add</a>
                     <table class="table-info">
@@ -145,6 +145,34 @@ EOD;
                                 }
                             ?>
                         </tbody>
+                    </table>
+                </div>
+                <div class="section">
+                	Excluding List: <a href="exclude-list.php">Edit</a>
+                    <table class="table-info">
+                    	<?php
+                            $list=Teacher::getExcludingList();
+                            
+                            $adminList=array();
+                            $normalList=array();                            
+                            
+                            foreach ($list as $value)
+                            {
+                                if ($value['checked'])
+                                {
+                                    if (strcasecmp($value['type'], 'HOD') === 0)
+                                    {
+                                        $adminList[]=$value['fullname'];
+                                    }
+                                    else
+                                    {
+                                        $normalList[]=$value['fullname'];
+                                    }
+                                }                                
+                            }
+                        ?>
+                        <tr><th style="width: 120px">HOD/ExCo</th><td><?php echo implode(', ', $adminList); ?></td></tr>
+                        <tr><th>Others</th><td><?php echo implode(', ', $normalList); ?></td></tr>
                     </table>
                 </div>
                 <div class="bt-control">

@@ -1,4 +1,9 @@
 <?php
+header("Expires: 0");
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+
+require_once '../php-head.php';
 
 spl_autoload_register(
         function ($class)
@@ -8,13 +13,16 @@ spl_autoload_register(
 
 $year = $_POST["year"];
 $semester = $_POST["sem"];
-echo '<br>year:' . $year;
-echo '<br>sem:' . $semester;
+//echo '<br>year:' . $year;
+//echo '<br>sem:' . $semester;
 
+$destination="admin.php";
 if ($_FILES["timetableFile"]["error"] > 0)
 {
-    echo "Error: " . $_FILES["timetableFile"]["error"] . "<br>";
-} else
+//    echo "Error: " . $_FILES["timetableFile"]["error"] . "<br>";
+    $_SESSION['uploadError']="Please choose the correct file to upload.";    
+} 
+else
 {
     $fileName = $_FILES["timetableFile"]["tmp_name"];
     $analyzer = new TimetableAnalyzer($year, $semester);
@@ -37,7 +45,7 @@ if ($_FILES["timetableFile"]["error"] > 0)
                 /* @var $aTeacher Teacher */
                 if (empty($aTeacher->accname))
                 {
-                    $unknownTeachers[$abbreviation] = $abbreviation;
+                    $unknownTeachers[] = $abbreviation;
                 }
             }
             $_SESSION["timetableAnalyzer"] = $analyzer;
@@ -54,16 +62,16 @@ if ($_FILES["timetableFile"]["error"] > 0)
                 $_SESSION["abbrNameList"] = $unknownTeachers;
                 $destination = "/RTSS/timetable/namematch.php";
             }
-        } else
+        } 
+        else
         {
-            throw new Exception("_upload.php: db returns false");
+//            throw new Exception("_upload.php: db returns false");
         }
     } catch (DBException $e)
     {
-        echo "Error: Wrong file<br>Message:" . $e->getMessage();
-        /// To-Do: Where to forward to if there is error?
-        //$destination = ""
-    }
-    header("Location: $destination");
+        $_SESSION['uploadError']="Wrong file. " . $e->getMessage();
+    }    
 }
+
+header("Location: $destination");
 ?>

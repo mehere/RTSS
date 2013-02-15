@@ -1,4 +1,9 @@
 <?php
+header("Expires: 0");
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+
+require_once '../php-head.php';
 
 spl_autoload_register(
         function ($class)
@@ -29,13 +34,11 @@ $arrLesson = $analyzer->arrLessons;
 $arrTeachers = $analyzer->arrTeachers;
 $year = $analyzer->year;
 $semester = $analyzer->semester;
-
-// To-Do: Add try catch exceptions.
-TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
+var_dump(TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester));
 
 /// To-Do: Add abbreviations to db
-// TimetableDB::insertAbbrMatching($newMatches);
+//TimetableDB::insertAbbrMatching($newMatches);
 
-$destination = "/RTSS/timetable/admin.php";
-header("Location: $destination");
+//$destination = "/RTSS/timetable/admin.php";
+//header("Location: $destination");
 ?>
