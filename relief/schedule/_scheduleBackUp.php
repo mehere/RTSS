@@ -74,34 +74,50 @@ function cmpStates($state1, $state2)
 
 function scheduling(&$visitedStates, &$activeStates, &$successStates, &$stoppedStates)
 {
-    /* @var $activeStates ScheduleStateHeap */
-    /* @var $successStates ScheduleStateHeap */
-    /* @var $stoppedStates ScheduleStateHeap */
     $breakingScore = NULL;
-    while (!($activeStates->isEmpty()))
+//    echo "<br><br>Active States:<br>";
+//    print_r($activeStates);
+    $count = 0;
+    while (!empty($activeStates))
     {
-        $aState = $activeStates->extract();
+//        $count ++;
+//        if ($count == 10) {
+//            die;
+//            print_r($activeStates);
+//
+//        }
+
+        $aState = current($activeStates);
+        $aStateKey = key($activeStates);
         /* @var $aState ScheduleState */
         /* @var $firstTeacher TeacherCompact */
         $lessonsNotAllocated = $aState->lessonsNotAllocated;
         if (!empty($breakingScore))
         {
+
+//            echo "<br><br><br>!!!!!!!!!!!!!!!!!!$breakingScore";
             if ($breakingScore < $aState->expectedTotalCost)
             {
+                echo "Break here";
                 break;
             }
         }
         if (empty($lessonsNotAllocated))
         {
+//            echo "<br><br>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~No more lessons not allocated";
+
             $breakingScore = $aState->expectedTotalCost;
-            $successStates->insert($aState);
+            $successStates[$aStateKey] = $aState;
+            unset($activeStates[$aStateKey]);
             continue;
         }
 
         $firstTeacher = current($aState->teachersAlive);
         if (empty($firstTeacher))
         {
-            $stoppedStates->insert($aState);
+//            echo "<br>****************************************first teacher is empty<br>";
+            unset($activeStates[$aStateKey]);
+            $stoppedStates[$aState->toString()] = $aState;
             continue;
         }
 
@@ -109,6 +125,7 @@ function scheduling(&$visitedStates, &$activeStates, &$successStates, &$stoppedS
         $overallAvailability = ReliefLesson::AVAILABILITY_BUSY;
         foreach ($lessonsNotAllocated as $key => $aLesson)
         {
+//            echo "<br><br>creating $key<br>";
             /* @var $aLesson ReliefLesson */
             $availability = $aLesson->canBeDoneBy($firstTeacher);
             if ($availability == ReliefLesson::AVAILABILITY_FREE)
@@ -117,6 +134,9 @@ function scheduling(&$visitedStates, &$activeStates, &$successStates, &$stoppedS
                 $aNewState = clone $aState;
                 $aNewState->allocateLessonToFirstTeacher($key);
                 $newStates[$aNewState->toString()] = $aNewState;
+//                echo "<br>Impt here:::<br>";
+//                print_r ($aNewState->toString());
+//                echo "<br>end<br>";
             } else if (($availability == ReliefLesson::AVAILABILITY_SKIPPED) && ($overallAvailability != ReliefLesson::AVAILABILITY_FREE))
             {
                 $overallAvailability = $availability;
@@ -127,31 +147,41 @@ function scheduling(&$visitedStates, &$activeStates, &$successStates, &$stoppedS
         }
         if ($overallAvailability == ReliefLesson::AVAILABILITY_FREE)
         {
+//            echo "hello....<br><br>";;
+//            print_r($newStates);
+            $performed = FALSE;
             foreach ($newStates as $key => $aNewState)
             {
                 if (!isset($visitedStates[$key]))
                 {
                     $visitedStates[$key] = TRUE;
                     $performed = TRUE;
-                    $activeStates->insert($aNewState);
+                    $activeStates[$key] = $aNewState;
                 }
             }
+            if ($performed)
+            {
+//                uasort($activeStates, 'cmpStates');
+            }
+            unset($activeStates[$aStateKey]);
         } else if ($overallAvailability == ReliefLesson::AVAILABILITY_SKIPPED)
         {
             // creating new states
+            $performed = FALSE;
             foreach ($newStates as $key => $aNewState)
             {
+
                 if (!isset($visitedStates[$key]))
                 {
                     $visitedStates[$key] = TRUE;
                     $performed = true;
-                    $activeStates->insert($aNewState);
+                    $activeStates[$key] = $aNewState;
                 }
             }
 
             // retain current state, but skip teacher
             $aState->removeFirstTeacher();
-            $activeStates->insert($aState);
+//            uasort($activeStates, 'cmpStates');
         } else
         {
             if ($overallAvailability == ReliefLesson::AVAILABILITY_PARTIAL)
@@ -160,7 +190,7 @@ function scheduling(&$visitedStates, &$activeStates, &$successStates, &$stoppedS
             }
             // skip this teacher
             $aState->removeFirstTeacher();
-            $activeStates->insert($aState);
+//            uasort($activeStates, 'cmpStates');
         }
     }
 }
@@ -338,12 +368,12 @@ uasort($arrGroup1, 'cmpTeachers');
 //}
 
 $visitedStates = array();
-$activeStates = new ScheduleStateHeap();
-$successStates = new ScheduleStateHeap();
-$stoppedStates = new ScheduleStateHeap();
+$activeStates = array();
+$successStates = array();
+$stoppedStates = array();
 
 $startState = new ScheduleState($arrGroup1, $lessonsNeedRelief);
-$activeStates->insert($startState);
+$activeStates[$startState->toString()] = $startState;
 $visitedStates[$startState->toString()] = TRUE;
 
 print_r($activeStates);
@@ -356,7 +386,7 @@ echo "<br>active:<br>:";
 print_r($activeStates);
 echo "<br>";
 echo "<br>:success<br>:";
-print_r($successStates);
+//print_r($successStates);
 for ($i = 0; $i < 3; $i++){
     print_r(current($successStates));
     next($successStates);

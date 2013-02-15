@@ -57,6 +57,11 @@ class ScheduleState
         $this->noGrp3 = 0;
 
         $this->baseCostIndex = 1;
+        $this->actualIncurredCost = 0;
+        $baseCost = constant("ScheduleState::COST_TYPE_$this->baseCostIndex");
+        echo "$baseCost";
+        $this->estimatedFutureCost = count($this->lessonsNotAllocated) * $baseCost;
+        $this->expectedTotalCost = $this->actualIncurredCost + $this->estimatedFutureCost;
     }
 
     public function toString()
@@ -104,6 +109,7 @@ class ScheduleState
         $firstTeacher = current($this->teachersAlive);
         $fullTeacher = self::$arrTeachers[$firstTeacher->accname];
         $numberLessonSkipped = 0;
+        $firstTeacher->hasDone = TRUE;
 
         for ($i = $aLesson->startTimeSlot; $i < $aLesson->endTimeSlot; $i++)
         {
@@ -150,10 +156,13 @@ class ScheduleState
 
         $this->actualIncurredCost += $typeCost;
         $this->actualIncurredCost += $skippingCost;
-        $this->actualIncurredCost + - $classCost;
+        $this->actualIncurredCost += $classCost;
 
-        $this->baseCost = constant("ScheduleState::COST_TYPE_$this->baseCostIndex");
-        $this->expectedTotalCost = count($this->lessonsNotAllocated) * $this->baseCost;
+        $baseCost = constant("ScheduleState::COST_TYPE_$this->baseCostIndex");
+        $this->estimatedFutureCost = count($this->lessonsNotAllocated) * $baseCost;
+        $this->expectedTotalCost = $this->actualIncurredCost + $this->estimatedFutureCost;
+
+//        echo "<br>Cost: $this->expectedTotalCost <br><br>";
     }
 
     public function splitLessons()
