@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require_once 'util.php';
 
 class Teacher {
@@ -430,6 +432,52 @@ class Teacher {
         }
     }
 
+    /**
+     * 
+     * @param array $list : all excluded teachers, including default one
+     * @return bool 
+     */
+    public static function setExcludingList($date, $list)
+    {
+        if(!isset($_SESSION['excluded']))
+        {
+            $_SESSION['excluded'] = Array();
+        }
+        
+        $_SESSION['excluded'][$date] = implode(",", $list);
+    }
+    
+    public static function getExcludingList($date)
+    {
+        if(!isset($_SESSION['excluded']) || empty($_SESSION['excluded'][$date]))
+        {
+            $db_con = Constant::connect_to_db("ntu");
+            if(empty($db_con))
+            {
+                return Array();
+            }
+            $sql_query_exclude = "select * from rs_exclude_list;";
+            $query_exclude_result = mysql_query($sql_query_exclude);
+            if(!$query_exclude_result)
+            {
+                return Array();
+            }
+
+            $result = Array();
+            
+            while($row = mysql_fetch_assoc($query_exclude_result))
+            {
+                $result[] = $row['teacher_id'];
+            }
+            
+            return $result;
+        }
+        else
+        {
+            return explode(",", $_SESSION['excluded'][$date]);
+        }
+    }
+    
     /**
      * add leave and temp teacher
      * @param string $accname
