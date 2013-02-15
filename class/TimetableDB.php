@@ -395,6 +395,9 @@ class TimetableDB
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time, end_time, subj_code, venue, type, highlighted) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
+        $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id in (";
+        
+        $delete_array = Array();
         
         foreach($timetable as $a_table)
         {
@@ -417,11 +420,20 @@ class TimetableDB
             {
                 $sql_insert_lesson_class .= "('".mysql_real_escape_string($lesson_id)."', '".mysql_real_escape_string(trim($class_name))."'), ";
             }
+            
+            //delete
+            $delete_array[] = $a_table['accname'];
+        }
+        
+        foreach($delete_array as $a_delete)
+        {
+            $sql_delete_lesson .= "'".$a_delete."', ";
         }
         
         $sql_insert_lesson = substr($sql_insert_lesson, 0, -2).';';
         $sql_insert_lesson_class = substr($sql_insert_lesson_class, 0, -2).';';
         $sql_insert_lesson_teacher = substr($sql_insert_lesson_teacher, 0, -2).';';
+        $sql_delete_lesson = substr($sql_delete_lesson, 0, -2).'));';
         
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
@@ -429,13 +441,10 @@ class TimetableDB
             return false;
         }
         
-        //********to change
-        $sql_delete_lesson = "delete from ct_lesson where type = 'A'";
         if (!mysql_query($sql_delete_lesson, $db_con))
         {
             return false;
         }
-        //********end
         
         if(!mysql_query($sql_insert_lesson))
         {

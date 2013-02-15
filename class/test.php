@@ -18,7 +18,7 @@ $lesson_1 = Array(
     "subject" => "Math",
     "venue" => "LT 2A",
     "accname" => "1234567",
-    "time-from" => 2,
+    "time-from" => 1,
     "time-to" => 4,
     "day" => 1,
     "isHighlighted" => true,
@@ -28,7 +28,7 @@ $lesson_2 = Array(
     "subject" => "Eco",
     "venue" => null,
     "accname" => "2323123",
-    "time-from" => 2,
+    "time-from" => 4,
     "time-to" => 6,
     "day" => 5,
     "isHighlighted" => false,
@@ -58,58 +58,34 @@ foreach($result as $key=>$value)
  */
 //print_r($scheduling->getExcludedTeachers());
 /*
-$result = $scheduling->getAedTeachers();
-foreach($result as $key=>$value)
-{
-    echo "**************************<br>";
-    echo $key." : <br>";
-    foreach($value->timetable as $t=>$one)
-    {
-        echo "&&&&&&&&&&&&&&&&&&<br>";
-        echo $t." : <br>";
-        echo $one->lessonId."<br>";
-        echo $one->subject."<br>";
-        echo $one->isHighlighted?"yes":"no"."*****<br>";
-        echo $one->venue."<br>";
-        echo $one->endTimeSlot."<br>";
-        print_r($one->classes);
-        echo "<br>";
-        echo "&&&&&&&&&&&&&&&&&&<br>";
-    }
-    echo "<br>";
-    echo $value->accname."<br>";
-    echo $value->name."<br>";
-    echo $value->noLessonMissed."<br>";
-    echo $value->noLessonRelived."<br>";
-    echo "**************************<br>";
-    echo "<br><br><br>";
-}
- * 
- */
-/*
 $result = $scheduling->getNormalTeachers();
 foreach($result as $key=>$value)
 {
-    echo "**************************<br>";
-    echo $key." : <br>";
+    echo "S**************************<br>";
+    echo "key : ".$key."<br>";
+    echo "accname : ".$value->accname."<br>";
+    echo "name : ".$value->name."<br>";
+    echo "noLessonMissed : ".$value->noLessonMissed."<br>";
+    echo "noLessonRelived : ".$value->noLessonRelived."<br>";
+    echo "noLessonRelived : ".$value->noLessonRelived."<br>";
+    print_r($value->classes);
+    echo "<br>";
+    //echo "speciality : ".$value->speciality."<br>";
+    echo "<br>";
     foreach($value->timetable as $t=>$one)
     {
-        echo "&&&&&&&&&&&&&&<br>";
-        echo $t." : <br>";
-        echo $one->lessonId."<br>";
-        echo $one->subject."<br>";
-        echo $one->venue."<br>";
-        echo $one->endTimeSlot."<br>";
+        echo "S &&&&&&&&&&&&&&<br>";
+        echo "lesson ID : ".$one->lessonId."<br>";
+        echo "lesson subj : ".$one->subject."<br>";
+        echo "lesson venue : ".$one->venue."<br>";
+        echo "start time : ".$t." : <br>";
+        echo "end time : ".$one->endTimeSlot."<br>";
         print_r($one->classes);
         echo "<br>";
-        echo "&&&&&&&&&&&&&&<br>";
+        echo "E &&&&&&&&&&&&&&<br>";
     }
     echo "<br>";
-    echo $value->accname."<br>";
-    echo $value->name."<br>";
-    echo $value->noLessonMissed."<br>";
-    echo $value->noLessonRelived."<br>";
-    echo "**************************<br>";
+    echo "E**************************<br>";
     echo "<br><br><br>";
 }
  * 
@@ -185,7 +161,7 @@ foreach($result as $key=>$a_result)
         //Teacher::insertAbbrMatch(array('ADE'=>'122333121', 'ASDFASF'=>'434332333','AF ADF'=>'2344244','CDDE'=>'ASFEAF'));
         
         /*
-          $query_date = "2013-01-15";
+          $query_date = "2013-02-06";
           $teacher_on_leave = Teacher::getTeacherOnLeave($query_date);
           foreach($teacher_on_leave as $a_leave_teacher)
           {
@@ -206,9 +182,9 @@ foreach($result as $key=>$a_result)
          * 
          */
          
-        /*
-          $query_date = "2013-01-14";
-          $temp_teacher = Teacher::getTempTeacher("");
+       /*
+          $query_date = "2013-02-06";
+          $temp_teacher = Teacher::getTempTeacher($query_date);
           foreach($temp_teacher as $key=>$a_leave_teacher)
           {
             echo "start<br>";
@@ -224,8 +200,8 @@ foreach($result as $key=>$a_result)
             echo $a_leave_teacher['handphone']."<br>";
             echo "end<br><br>";
           }
-         * 
-         */
+        * 
+        */
         /*
           $test_result = Teacher::getIndividualTeacherDetail("aie");
           echo $test_result['found']."<br>";
