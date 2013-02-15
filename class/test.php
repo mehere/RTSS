@@ -47,7 +47,7 @@ echo $test;
  * 
  */
 //********xue : testing
-//$scheduling = new SchedulerDB(new DateTime("2013-02-06"));
+//$scheduling = new SchedulerDB(new DateTime("2013-01-01"));
 
 /*
 $result = $scheduling->getLeave();
@@ -151,15 +151,15 @@ foreach($result as $key=>$a_result)
         
        
         /*
-          $arrTeachersNew=Teacher::getTeachersAccnameAndFullname($arrTeachers);
-          foreach($arrTeachersNew as $a_teacher)
+          Teacher::getTeachersAccnameAndFullname($arrTeachers);
+          foreach($arrTeachers as $a_teacher)
           {
           echo $a_teacher->abbreviation."<br>";
           echo $a_teacher->name."<br>";
           echo $a_teacher->accname."<br><br>";
           }
+         * 
          */
-
         //Teacher::insertAbbrMatch(array('AF ADF'=>'2344244'));
         //Teacher::insertAbbrMatch(array('ADE'=>'122333121', 'ASDFASF'=>'434332333','AF ADF'=>'2344244','CDDE'=>'ASFEAF'));
         
@@ -261,6 +261,7 @@ foreach($result as $key=>$a_result)
           {
                 echo $key."<br>";
                 echo $one_teacher['accname']."<br>";
+                echo $one_teacher['type']."<br>";
                 echo $one_teacher['fullname']."<br><br>";
           }
          * 
@@ -271,7 +272,7 @@ foreach($result as $key=>$a_result)
          *
          */
 /*
-$result = TimetableDB::getReliefTimetable("", "", "2013-01-14");
+$result = TimetableDB::getReliefTimetable("", "", "2013-02-06");
 foreach($result as $key=>$value)
 {
     echo 'start : '.$key.' :<br><br>';
@@ -293,13 +294,15 @@ foreach($result as $key=>$value)
  */
 
 //print_r(ListGenerator::getTeacherType());
-//print_r(ListGenerator::getClassName('2013-02-09'));
+//print_r(ListGenerator::getClassName('2013-02-06'));
+
+//$result = ListGenerator::getTeacherName('2013-02-08');
+//print_r($result);
 /*
-$result = ListGenerator::getTeacherName('2013-02-08');
-foreach($result as $value)
+foreach($result as $key => $value)
 {
-    echo $value['accname'].'<br>';
-    echo $value['fullname'].'<br>';
+    echo $key.'<br>';
+    echo $value.'<br>';
     echo '<br>';
 }
  * 
