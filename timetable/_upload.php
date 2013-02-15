@@ -53,11 +53,16 @@ else
             {
                 $arrLesson = $analyzer->arrLessons;
                 $errorMsg = TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
+                if (count($errorMsg) !== 0)
+                {
+                    // error has encountered
 
-                // TO-DO: To be removed
-                print_r($errorMsg);
+                    //To: Do
+                    throw new Exception("Database Error.");
+                }
                 $destination = "/RTSS/timetable/admin.php";
-            } else
+            }
+            else 
             {
                 $_SESSION["abbrNameList"] = $unknownTeachers;
                 $destination = "/RTSS/timetable/namematch.php";
@@ -67,7 +72,8 @@ else
         {
 //            throw new Exception("_upload.php: db returns false");
         }
-    } catch (DBException $e)
+    } 
+    catch (Exception $e)
     {
         $_SESSION['uploadError']="Wrong file. " . $e->getMessage();
     }    
