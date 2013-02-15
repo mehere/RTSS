@@ -154,7 +154,7 @@ class TeacherCompact
                 $lastLesson = null;
                 $aReliefLesson = null;
 //                echo "<br><b>timetable:<br>";
-                print_r($aTeacher);
+//                print_r($aTeacher);
 
 
                 for ($i = $startLeaveIndex; $i < $endLeaveIndex; $i++)
