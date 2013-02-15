@@ -210,7 +210,7 @@ class TimetableAnalyzer
         $this->noCol = $noCol;
 
         fclose($file);
- 
+
    }
 
     public function printLessons()
