@@ -34,12 +34,14 @@ class TimetableDB
         $empty_teacher = Array();
      
         //teacher list
-        Teacher::getTeachersAccnameAndFullname($teacher_list);
+        //Teacher::getTeachersAccnameAndFullname($teacher_list);
         
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time, end_time, subj_code, venue, type) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
+        
+        $has_teacher = false;
         
         //a unique identifier for lesson
         //why i dont use $key: what if the $key is string not int
@@ -76,7 +78,7 @@ class TimetableDB
                 $end_time_index  = Constant::default_num_value;
             }
             
-            $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, array_keys($value->classes), array_keys($value->teachers));
+            $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, empty($value->classes)?array():array_keys($value->classes), empty($value->teachers)?array():array_keys($value->teachers));
             
             $sql_insert_lesson .= "('".mysql_real_escape_string($lesson_id)."', ".$day_index.", ".$start_time_index.", ".$end_time_index.", '".mysql_real_escape_string($subject)."', '".mysql_real_escape_string($venue)."', 'N'), ";
             
@@ -120,6 +122,8 @@ class TimetableDB
                 }
                 
                 $sql_insert_lesson_teacher .= "('".mysql_real_escape_string($teacher_accname)."', '".mysql_real_escape_string($lesson_id)."'), ";
+                
+                $has_teacher = true;
             }
         }
         
@@ -157,18 +161,6 @@ class TimetableDB
             $error_array[0] = "Fail to clear database. Please contact system admin";
             return $error_array;
         }
-        $delete_sql_class = "delete from ct_class_matching;";
-        if (!mysql_query($delete_sql_class, $db_con))
-        {
-            $error_array[0] = "Fail to clear database. Please contact system admin";
-            return $error_array;
-        }
-        $delete_sql_teacher = "delete from ct_teacher_matching;";
-        if (!mysql_query($delete_sql_teacher, $db_con))
-        {
-            $error_array[0] = "Fail to clear database. Please contact system admin";
-            return $error_array;
-        }
         
         if(!mysql_query($sql_insert_lesson))
         {
@@ -180,10 +172,13 @@ class TimetableDB
             $error_array[0] = "Error in ct_class_matching table. Fail to insert timetable. Please try again later";
             return $error_array;
         }
-        if(!mysql_query($sql_insert_lesson_teacher))
+        if($has_teacher)
         {
-            $error_array[0] = "Error in ct_teacher_matching table. Fail to insert timetable. Please try again later";
-            return $error_array;
+            if(!mysql_query($sql_insert_lesson_teacher))
+            {
+                $error_array[0] = "Error in ct_teacher_matching table. Fail to insert timetable. Please try again later";
+                return $error_array;
+            }
         }
         
         //print error info
