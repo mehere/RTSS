@@ -13,6 +13,9 @@ require_once 'DBException.php';
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+//Teacher::setExcludingList("2013/01/01", Array('123','2345'));
+//print_r(Teacher::getExcludingList("2013/01/02"));
+
 /*
 $lesson_1 = Array(
     "subject" => "Math",
@@ -135,16 +138,16 @@ foreach($result as $key=>$a_result)
         //$timetableanalyzer = new TimetableAnalyzer("13", '1');
         //$timetableanalyzer->readCsv('teacher.csv');
        /*
-          $err_message = TimetableDB::insertTimetable($arrLessons, $arrTeachers);
-          foreach($err_message as $key=>$error)
-          {
-          if(!empty($error))
-          {
-          echo "Key : ".$key."<br> : ".$error;
-          }
-          }
+        $err_message = TimetableDB::insertTimetable($arrLessons, $arrTeachers);
+        foreach($err_message as $key=>$error)
+        {
+            if(!empty($error))
+            {
+                echo "Key : ".$key."<br> : ".$error;
+            }
+        }
         * 
-        */
+        */ 
         
        
         /*
