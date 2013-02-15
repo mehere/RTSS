@@ -191,18 +191,6 @@ class SchedulerDB
 
     public function getExcludedTeachers()
     {
-        $db_con = Constant::connect_to_db("ntu");
-        if(empty($db_con))
-        {
-            throw new DBException("Fail to connect to database", __FILE__, __LINE__);
-        }
-        $sql_query_exclude = "select * from rs_exclude_list;";
-        $query_exclude_result = mysql_query($sql_query_exclude);
-        if(!$query_exclude_result)
-        {
-            throw new DBException("Fail to query exclude list from database", __FILE__, __LINE__);
-        }
-
         $result = Array(
             "Temp" => Array(),
             "Aed" => Array(),
@@ -213,10 +201,10 @@ class SchedulerDB
 
         $db_type = array_keys(Constant::$teacher_type);
 
-        while($row = mysql_fetch_assoc($query_exclude_result))
+        $all_excluded = Teacher::getExcludingList($this->date->format('Y/m/d'));
+        
+        foreach($all_excluded as $teacher_id)
         {
-            $teacher_id = $row['teacher_id'];
-
             if(!empty($this->teacher_list[$teacher_id]))
             {
                 $type = $this->teacher_list[$teacher_id]['type'];

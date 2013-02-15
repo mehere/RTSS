@@ -118,7 +118,7 @@ class ScheduleState
         $numberLessonSkipped += $firstTeacher->cancelExcess();
 
         // setting status of lesson
-        $aLesson->teacherRelief = $firstTeacher;
+        $aLesson->teacherRelief = $firstTeacher->accname;
         $teacherType = $firstTeacher->getTypeNo();
 
         // caluculating costs --------------------------------------------------
@@ -151,7 +151,7 @@ class ScheduleState
         $this->actualIncurredCost += $skippingCost;
         $this->actualIncurredCost + - $classCost;
 
-        $baseCost = constant("ScheduleState::COST_TYPE_$this->baseCostIndex");
+        $this->baseCost = constant("ScheduleState::COST_TYPE_$this->baseCostIndex");
         $this->expectedTotalCost = count($this->lessonsNotAllocated) * $this->baseCost;
     }
 

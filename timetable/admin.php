@@ -50,7 +50,12 @@ EOD;
                     </select>
                 </div>
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
-                <div class="error-msg"><?php echo $_SESSION['uploadError']; ?></div>
+                <?php
+                if (isset($_SESSION['uploadError'])){
+                    $msg = $_SESSION['uploadError'];
+                    echo "<div class=\"error-msg\"> $msg</div>";
+                }
+                ?>
                 <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em" class="button" /></div>
             </form>
             <hr style="margin: 0 30px" />
@@ -89,12 +94,12 @@ EOD;
                             <td class="label">Time:</td>
                             <td>
                                 <select name="time-from">
-                                    <?php 
+                                    <?php
                                         echo PageConstant::formatOptionInSelect($timeFromArr, '');
                                     ?>
                                 </select>
                                 <select name="time-to" style="margin-left: 10px">
-                                    <?php 
+                                    <?php
                                         echo PageConstant::formatOptionInSelect($timeToArr, '');
                                     ?>
                                 </select>
@@ -146,8 +151,8 @@ EOD;
             <div id="dialog-alert"></div>
         </div>
     </div>
-    <?php 
-        include '../sidebar-frag.php'; 
+    <?php
+        include '../sidebar-frag.php';
         unset($_SESSION['uploadError']);
     ?>
 </div>

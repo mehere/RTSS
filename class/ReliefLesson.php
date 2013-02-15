@@ -26,14 +26,14 @@ class ReliefLesson
     public $startTimeSlot;
     public $endTimeSlot;
 
-    function __construct($aTeacherAccname, $aLesson, $startTimeIndex)
+    function __construct($aTeacherAccname, $aLessonId, $startTimeIndex)
     {
 
         /* @var $aLesson Lesson */
         $this->teacherOriginal = $aTeacherAccname;
         $this->teacherRelief = NULL;
 
-        $this->lessonId = $aLesson->lessonId;
+        $this->lessonId = $aLessonId;
         $this->startTimeSlot = $startTimeIndex;
         $this->endTimeSlot = $startTimeIndex + 1;
     }
@@ -66,10 +66,10 @@ class ReliefLesson
             if (!isset($timetable[$i]))
             {
                 $noMatch++;
-                if ($timetable[$i] == TeacherCompact::TYPE_OPTIONAL)
-                {
-                    $hasOptional = TRUE;
-                }
+            } else if ($timetable[$i] == TeacherCompact::TYPE_OPTIONAL)
+            {
+                $noMatch++;
+                $hasOptional = TRUE;
             }
         }
         $numberOfLessons = $this->endTimeSlot - $this->startTimeSlot;
@@ -82,8 +82,7 @@ class ReliefLesson
             {
                 return self::AVAILABILITY_FREE;
             }
-        }
-        else if ($noMatch > 0)
+        } else if ($noMatch > 0)
         {
             return self::AVAILABILITY_PARTIAL;
         }

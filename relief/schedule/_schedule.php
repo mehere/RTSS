@@ -133,7 +133,7 @@ function scheduling($visitedStates, $activeStates, $successStates, $stoppedState
                 $overallAvailability = $availability;
             }
         }
-        if ((overallAvailability == ReliefLesson::AVAILABILITY_FREE) || (overallAvailability == ReliefLesson::AVAILABILITY_SKIPPED))
+        if (($overallAvailability == ReliefLesson::AVAILABILITY_FREE) || ($overallAvailability == ReliefLesson::AVAILABILITY_SKIPPED))
         {
             $performed = FALSE;
             foreach ($newStates as $key => $aNewState)
@@ -151,7 +151,7 @@ function scheduling($visitedStates, $activeStates, $successStates, $stoppedState
             }
             array_shift($activeStates);
         }
-        if (overallAvailability != ReliefLesson::AVAILABILITY_FREE)
+        if ($overallAvailability != ReliefLesson::AVAILABILITY_FREE)
         {
             if ($overallAvailability == ReliefLesson::AVAILABILITY_PARTIAL)
             {
@@ -159,7 +159,7 @@ function scheduling($visitedStates, $activeStates, $successStates, $stoppedState
                 $teachersStuck[$firstTeacher->accname] = $firstTeacher;
             }
             // skip this teacher
-            $aState->removeFirstTeacher;
+            $aState->removeFirstTeacher();
 
             if (!empty($aState->teachersAlive))
             {
@@ -258,7 +258,7 @@ foreach ($typesOfTeachers as $aType)
     $varArrCompactTeachers = "arr{$aType}CompactTeachers";
     $$varArrCompactTeachers = array();
 
-    array_merge(ScheduleState::$arrTeachers, $$varArrTeachers);
+    ScheduleState::$arrTeachers = array_merge(ScheduleState::$arrTeachers, $$varArrTeachers);
     foreach ($$varArrTeachers as $accname => $aTeacher)
     {
         $aCompactTeacher = new TeacherCompact($aTeacher, $aType);
@@ -274,8 +274,9 @@ foreach ($typesOfTeachers as $aType)
     echo "<br>Leaves<br>";
     print_r($arrLeaves[$aType]);
     echo "<br>Teachers: <br>";
-    foreach ($$varArrTeachers as $aTeacher)
+    foreach ($$varArrTeachers as $key => $aTeacher)
     {
+        echo "Key: $key<br>";
         print_r($aTeacher);
         echo "<br>";
     }
@@ -353,8 +354,7 @@ $visitedStates[$startState->toString()] = TRUE;
 
 scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 
-print_r($lessonsNeedRelief);
-die;
+
 
 if (empty($successStates))
 {
@@ -377,5 +377,7 @@ if (empty($successStates))
     {
 
     }
+    print_r($successStates);
+die;
 }
 ?>
