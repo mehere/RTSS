@@ -6,7 +6,7 @@ include_once '../head-frag.php';
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/namematch.css" rel="stylesheet" type="text/css">
-<!--script src="/RTSS/js/result.js"></script-->
+<script src="/RTSS/js/namematch.js"></script>
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
@@ -24,7 +24,7 @@ include_once '../head-frag.php';
                 );
                 include '../topbar-frag.php';
                 ?>
-                <form class="main" name="edit" action="" method="post">
+                <form class="main" name="match" action="_namematch.php" method="post">
                     <div class="section">
                         <table class="table-info">
                             <thead>
@@ -43,27 +43,33 @@ EOD;
                                     ?>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>ASCNAME</td>
-                                    <td>
-                                        <select name="fullname">
-                                            <optgroup label="Suggested">
-                                                <option value="accxxx">Tan Hong Lin</option>
-                                            </optgroup>
-                                            <optgroup label="All Teachers">
-                                                <option value="asd">Austin Sun</option>
-                                            </optgroup>
-                                        </select>
-                                    </td>
-                                </tr>
+                            <tbody>                                                                    
+                                <?php
+                                    require_once '../class/Teacher.php';
+                                    
+                                    $abbrNameList=$_SESSION['abbrNameList'];
+                                    for ($i=0; $i<count($abbrNameList); $i++)
+                                    {
+                                        $abbrName=$_SESSION['abbrNameList'][$i];
+                                        echo <<< EOD
+<tr>
+    <td>$abbrName<input type="hidden" name="abbrv-$i" value="$abbrName" /></td>
+    <td>
+        <input type="text" name="fullname-$i" style="width: 80%" /><input type="hidden" name="accname-$i" />
+    </td>
+</tr>
+EOD;
+                                    }
+                                ?>                                
                             </tbody>
                         </table>
                     </div>
                     <div class="link-control">
-                        <input type="submit" value="Submit" class="button fltrt" />
+                        <input type="hidden" name="num" value="<?php echo count($abbrNameList); ?>" />
+                        <input type="submit" value="Submit" class="button" style="margin-left: 350px" />
                     </div>
                 </form>
+                <div id="dialog-alert"></div>
             </div>
         </div>
         <?php include '../sidebar-frag.php'; ?>

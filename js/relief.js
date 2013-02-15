@@ -5,7 +5,7 @@ $(document).ready(function(){
         changeMonth: true,
         changeYear: true,
         altField: formSch['date'],
-        altFormat: "yy-mm-dd"
+        altFormat: "yy/mm/dd"
     }).datepicker('setDate', new Date(formSch['date'].value));
 
     $("#calendar-trigger").click(function(){
