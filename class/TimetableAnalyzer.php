@@ -36,10 +36,10 @@ class TimetableAnalyzer
         $subjectRow = fgetcsv($file);
         if (array_key_exists(0, $subjectRow))
         {
-            echo $subjectRow[0];
+//            echo $subjectRow[0];
             if ($subjectRow[0] === 'Master Timetable by Teacher')
             {
-                echo "<br> Right File <br>";
+//                echo "<br> Right File <br>";
             } else
             {
                 throw new Exception("File format exception");

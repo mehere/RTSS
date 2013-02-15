@@ -93,12 +93,12 @@ EOD;
                             </td>
                             <td class="label">Time:</td>
                             <td>
-                                <select name="time-from">
+                                <select name="time-from" style="width: 65px">
                                     <?php
                                         echo PageConstant::formatOptionInSelect($timeFromArr, '');
                                     ?>
                                 </select>
-                                <select name="time-to" style="margin-left: 10px">
+                                <select name="time-to" style="margin-left: 10px; width: 65px">
                                     <?php
                                         echo PageConstant::formatOptionInSelect($timeToArr, '');
                                     ?>

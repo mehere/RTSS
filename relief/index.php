@@ -151,7 +151,7 @@ EOD;
                 	Excluding List: <a href="exclude-list.php">Edit</a>
                     <table class="table-info">
                     	<?php
-                            $list=Teacher::getExcludingList();
+                            $list=Teacher::getExcludingList($date);
                             
                             $adminList=array();
                             $normalList=array();                            

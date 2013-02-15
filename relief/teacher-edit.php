@@ -38,9 +38,9 @@ include_once '../head-frag.php';
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=$isTemp ? array('45px', '40px', '40%', '150px', '100px',  '235px', '60%') : 
+                                    $width=$isTemp ? array('45px', '40px', '40%', '150px', '100px',  '245px', '60%') : 
 //                                        array('45px', '40px', '40%', '170px', '235px', '60%', '70px');
-                                        array('45px', '40px', '40%', '170px', '235px', '60%');
+                                        array('45px', '40px', '40%', '170px', '245px', '60%');
                                         
                                     $teacherKey=$isTemp? 'tempTeacher' : 'teacherOnLeave';
                                     
