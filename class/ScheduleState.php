@@ -67,6 +67,7 @@ class ScheduleState
             /* @var $aReliefLesson ReliefLesson */
             $stateString = $stateString . $aReliefLesson->toString() . "; ";
         }
+        return $stateString;
     }
 
     public function __clone()
@@ -181,7 +182,8 @@ class ScheduleState
     public function removeFirstTeacher()
     {
         /* @var $aTeacher TeacherCompact */
-        $aTeacher = array_shift($this->teachersAlive);
+        $aTeacher = current($this->teachersAlive);
+        unset($this->teachersAlive[key($this->teachersAlive)]);
         $typeNo = $aTeacher->getTypeNo();
 
         $propertyName = "noGrp$typeNo";
