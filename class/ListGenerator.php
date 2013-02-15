@@ -16,23 +16,7 @@ class ListGenerator
         $teacher_dict = Teacher::getAllTeachers();
         
         //convert date to weekday
-        $weekday_string = date("D",  strtotime($date));
-        
-        $weekday_number = 1;
-        
-        switch ($weekday_string)
-        {
-            case "Mon":$weekday_number=1;break;
-            case "Tue":$weekday_number=2;break;
-            case "Wed":$weekday_number=3;break;
-            case "Thu":$weekday_number=4;break;
-            case "Fri":$weekday_number=5;break;
-            case "Sat":
-            case "Sun":
-            default:{
-                return $result;
-            }
-        }
+        $weekday_number = (new DateTime($date))->format('N') - 0;
         
         //connect to db
         $db_con = Constant::connect_to_db('ntu');
@@ -63,6 +47,8 @@ class ListGenerator
             $result[$row['teacher_id']] = $fullname;
         }
         
+        asort($result);
+        
         return $result;
     }
     
@@ -79,25 +65,9 @@ class ListGenerator
         }
         
         //convert date to weekday
-        $weekday_string = date("D",  strtotime($date));
+        $weekday_number = (new DateTime($date))->format('N') - 0;
         
-        $weekday_number = 1;
-        
-        switch ($weekday_string)
-        {
-            case "Mon":$weekday_number=1;break;
-            case "Tue":$weekday_number=2;break;
-            case "Wed":$weekday_number=3;break;
-            case "Thu":$weekday_number=4;break;
-            case "Fri":$weekday_number=5;break;
-            case "Sat":
-            case "Sun":
-            default:{
-                return $result;
-            }
-        }
-        
-        $sql_query_class = "select distinct ct_class_matching.class_name from ct_lesson, ct_class_matching where ct_lesson.lesson_id = ct_class_matching.lesson_id and ct_lesson.weekday = ".$weekday_number.";";
+        $sql_query_class = "select distinct ct_class_matching.class_name from ct_lesson, ct_class_matching where ct_lesson.lesson_id = ct_class_matching.lesson_id and ct_lesson.weekday = ".$weekday_number." order by ct_class_matching.class_name;";
         $query_class_result = mysql_query($sql_query_class);
         if(!$query_class_result)
         {
