@@ -1,18 +1,30 @@
 $(document).ready(function(){
-    /*$( "#tabs" ).tabs({
-        beforeLoad: function( event, ui ) {
-            ui.jqXHR.error(function() {
-                ui.panel.html(
-                    "Error in fetching the content." );
-            });
+    var formS=document.forms['switch'];
+    $(formS['date-display']).datepicker({
+        beforeShowDay: $.datepicker.noWeekends,
+        dateFormat: "dd/mm/yy",
+        changeMonth: true,
+        changeYear: true,
+        altField: formS['date'],
+        altFormat: "yy/mm/dd"
+    }).datepicker('setDate', new Date(formS['date'].value));
+
+    $("#calendar-trigger").click(function(){
+        $(formS['date-display']).datepicker("show");
+    });
+
+    $(formS['date-display']).change(function(){
+        if (this.value)
+        {
+            this.form.submit();
         }
     });
 
-    $(".gradient-top").css('top', $('.ui-tabs-panel').position().top);
+    $(formS['class']).change(function(){
+        this.form.submit();
+    });
 
-    var selectedInd=document.forms['tab-data']['selectedInd'].value-0;
-    if (selectedInd != 0)
-    {
-        $( "#tabs" ).tabs('select', selectedInd);
-    }*/
+    $(formS['teacher']).change(function(){
+        this.form.submit();
+    });
 });

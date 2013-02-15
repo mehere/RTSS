@@ -174,7 +174,5 @@ $(document).ready(function(){
         {
             this.value="";
         }
-
-        prevTextfield=this;
     });
 });
