@@ -16,31 +16,48 @@ require_once 'DBException.php';
 //Teacher::setExcludingList("2013/01/01", Array('123','2345'));
 //print_r(Teacher::getExcludingList("2013/01/02"));
 
-/*
-$lesson_1 = Array(
-    "subject" => "Math",
-    "venue" => "LT 2A",
-    "accname" => "1234567",
-    "time-from" => 1,
-    "time-to" => 4,
-    "day" => 1,
-    "isHighlighted" => true,
-    "class" => Array('1A', '2B', '3C')
-);
-$lesson_2 = Array(
-    "subject" => "Eco",
-    "venue" => null,
-    "accname" => "2323123",
-    "time-from" => 4,
-    "time-to" => 6,
-    "day" => 5,
-    "isHighlighted" => false,
-    "class" => Array('5A', '2B', '3C')
-);
-$input = Array($lesson_1, $lesson_2);
-echo TimetableDB::uploadAEDTimetable($input)?"okay":"no";
- * 
- */
+
+//$lesson_1 = Array(
+//    "subject" => "Math",
+//    "venue" => "LT 2A",
+//    "accname" => "1234567",
+//    "time-from" => 1,
+//    "time-to" => 4,
+//    "day" => 1,
+//    "isHighlighted" => true,
+//    "class" => Array('1A', '2B', '3C')
+//);
+//$lesson_2 = Array(
+//    "subject" => "Eco",
+//    "venue" => null,
+//    "accname" => "2323123",
+//    "time-from" => 4,
+//    "time-to" => 6,
+//    "day" => 5,
+//    "isHighlighted" => false,
+//    "class" => Array('5A', '2B', '3C')
+//);
+//$input = Array($lesson_1, $lesson_2);
+//
+//$input=array(array (
+//      'accname' => '0142380',
+//      'class' => 
+//      array (
+//        0 => 'c',
+//        1 => 'dfl',
+//        2 => 'd',
+//        3 => 'f',
+//      ),
+//      'day' => '1',
+//      'time-from' => '1',
+//      'time-to' => '4',
+//      'subject' => 'a',
+//      'venue' => 'a',
+//      'isHighlighted' => '0',
+//    ));
+
+//echo TimetableDB::uploadAEDTimetable($input)?"okay":"no";
+ 
 /*
 $test = new DBException("Test Error", __FILE__, __LINE__);
 echo $test;

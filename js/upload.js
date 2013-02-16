@@ -76,7 +76,7 @@ $(document).ready(function(){
             "period": period,
             "isHighlighted": false
         };
-        $.map(matrixTime[day][time]["class"], function(ele, index){
+        matrixTime[day][time]["class"]=$.map(matrixTime[day][time]["class"], function(ele, index){
             ele=$.trim(ele);
             if (!ele) return null;
             return ele;

@@ -21,15 +21,20 @@ else
     $keyArr=array('day', 'time-from', 'time-to', 'subject', 'venue', 'isHighlighted');
     for ($i=0; $i<$num; $i++)
     {
-        $classInfo=array('accname'=>$_POST['accname'], 'class'=>explode(';', $_POST['class']));
+        $classInfo=array('accname'=>$_POST['accname'], 'class'=>explode(';', $_POST["class-$i"]));
         foreach ($keyArr as $keyEntry)
         {
             $classInfo[$keyEntry]=trim($_POST[$keyEntry."-$i"]);
         }
-//        $timetable[]=
+        $timetable[]=$classInfo;
     }
     
-    TimetableDB::uploadAEDTimetable($timetable, $_POST['year'], $_POST['sem']);
+//    $output['error']=var_export(array($timetable, $_POST['year'], $_POST['sem']), true);
+    
+    if (!TimetableDB::uploadAEDTimetable($timetable, $_POST['year'], $_POST['sem']))
+    {
+        $output['error']=1;
+    }
 }
 
 header('Content-type: application/json');

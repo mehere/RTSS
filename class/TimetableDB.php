@@ -289,10 +289,10 @@ class TimetableDB
         
         foreach($timetable as $a_table)
         {
-            if(!is_int($a_table['day']) || !is_int($a_table['time-from']) || !is_int($a_table['time-to']))
-            {
-                return false;
-            }
+//            if(!is_int($a_table['day']) || !is_int($a_table['time-from']) || !is_int($a_table['time-to']))
+//            {
+//                return false;
+//            }
             
             $venue = empty($a_table["venue"])?"":mysql_real_escape_string(trim($a_table["venue"]));
             $highlighted = $a_table['isHighlighted']?"true":"false";
