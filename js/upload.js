@@ -19,7 +19,7 @@ $(document).ready(function(){
 
     // Add AED
     var formAdd=document.forms['add-class'], formAED=document.forms['AED'],
-        matrixTime=[]; // [day][time]={subject, teachingClass[], venue, period, boxObj, isHighlighted};
+        matrixTime=[]; // [day][time]={subject, class[], venue, period, boxObj, isHighlighted};
 
     function constrainTimeSelect(selectFromObj, selectToObj)
     {

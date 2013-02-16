@@ -151,12 +151,11 @@ EOD;
                 	Excluding List: <a href="exclude-list.php">Edit</a>
                     <table class="table-info">
                     	<?php
-                            $list=Teacher::getExcludingList($date);
+                            $accList=Teacher::getExcludingList($date);
                             
-                            $adminList=array();
-                            $normalList=array();                            
+                            $teacherList=Teacher::getTeacherName('HOD');
                             
-                            foreach ($list as $value)
+                            foreach ($accList as $value)
                             {
                                 if ($value['checked'])
                                 {

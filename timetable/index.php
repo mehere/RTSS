@@ -6,6 +6,12 @@ function tdWrap($ele)
     return "<td>$ele</td>";
 }
 
+$isAdmin=false;
+if ($_SESSION['type'] == 'admin')
+{
+    $isAdmin=true;
+}
+
 include_once '../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
@@ -37,7 +43,7 @@ include_once '../head-frag.php';
                         require_once '../class/TimetableDB.php';
                         
                         $class=$_POST['class'];
-                        $teacher=$_POST['teacher'];
+                        $teacher=$isAdmin?$_POST['teacher']:$_SESSION['accname'];
                     
                         $date=$_POST['date'];
                         if (!$date)
@@ -46,6 +52,7 @@ include_once '../head-frag.php';
                         }
                     ?>
                     <div class="line">Date: <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+                        <?php if ($isAdmin) { ?>
                         <select name="class" style="margin-left: 30px">
                             <option value="">-- Any --</option>
                             <?php echo PageConstant::formatOptionInSelect(ListGenerator::getClassName($date), $class, true); ?>
@@ -54,6 +61,7 @@ include_once '../head-frag.php';
                             <option value="">-- Any --</option>
                             <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $teacher); ?>
                         </select>
+                        <?php } ?>
                     </div>
                 </form>
                 <table class="table-info">

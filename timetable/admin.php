@@ -117,7 +117,7 @@ EOD;
                         </tr>
                     </table>
                 </form>
-                <form name="AED" style="position: relative">
+                <form name="AED" style="position: relative" method="post" action="_timetable.php">
                     <table class="table-info">
                         <thead>
                             <th style="width: 90px"></th>
@@ -144,6 +144,24 @@ EOD;
                     </table>
                     <div class="row">
                     	<span class="label">AED Name:</span><input type="text" name="fullname" /><input type="hidden" name="accname" />
+                        <span class="label">Year:</span>
+                        <select name="year">
+                            <?php
+                                $curYear=date('Y');
+                                for ($i=$curYear-PageConstant::NUM_OF_YEAR; $i<=$curYear+PageConstant::NUM_OF_YEAR; $i++)
+                                {
+                                    $selected=$i==$curYear ? 'selected="selected"' : '';
+                                    echo <<< EOD
+                                        <option value="$i" $selected >$i</option>
+EOD;
+                                }
+                            ?>
+                        </select>
+                        <span class="label">Sem:</span>
+                        <select name="sem">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
                         <input type="submit" class="button" value="Submit" style="margin-left: 30px" />
                     </div>
                 </form>
