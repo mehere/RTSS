@@ -270,7 +270,7 @@ class Teacher {
                 {
                     if(strcmp($type, "normal")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[0]."' order by user_name;";                        
+                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[0]."' order by user_name;";
                     }
                     if(strcmp($type, "AED")===0)
                     {
