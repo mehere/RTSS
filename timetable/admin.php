@@ -117,7 +117,7 @@ EOD;
                         </tr>
                     </table>
                 </form>
-                <form name="AED" style="position: relative" method="post" action="_timetable.php">
+                <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
                     <table class="table-info">
                         <thead>
                             <th style="width: 90px"></th>

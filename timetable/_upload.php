@@ -13,18 +13,16 @@ spl_autoload_register(
 
 $year = $_POST["year"];
 $semester = $_POST["sem"];
-//echo '<br>year:' . $year;
-//echo '<br>sem:' . $semester;
 
-if ($_FILES["timetableFile"]["error"] > 0)
-{
-//    echo "Error: " . $_FILES["timetableFile"]["error"] . "<br>";
-    throw new Exception("A problem has occured in uploading");
-}
-$fileName = $_FILES["timetableFile"]["tmp_name"];
-$analyzer = new TimetableAnalyzer($year, $semester);
 try
 {
+    if ($_FILES["timetableFile"]["error"] > 0)
+    {
+        throw new Exception("Empty or wrong file choosen for uploading.");
+    }
+    $fileName = $_FILES["timetableFile"]["tmp_name"];
+    $analyzer = new TimetableAnalyzer($year, $semester);
+
     $analyzer->readCsv($fileName);
     $arrTeachers = $analyzer->arrTeachers;
     Teacher::getTeachersAccnameAndFullname($arrTeachers);
@@ -52,9 +50,8 @@ try
 } catch (Exception $e)
 {
     $destination = "/RTSS/timetable/admin.php";
-    $_SESSION['uploadError'] = "_upload.php: " . $e->getMessage();
+    $_SESSION['uploadError'] = "Uploading Error: " . $e->getMessage();
 }
-
 
 header("Location: $destination");
 ?>

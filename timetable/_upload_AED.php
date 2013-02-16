@@ -17,12 +17,19 @@ if (!$num)
 }
 else
 {
+    $timetable=array();
+    $keyArr=array('day', 'time-from', 'time-to', 'subject', 'venue', 'isHighlighted');
     for ($i=0; $i<$num; $i++)
     {
-        
+        $classInfo=array('accname'=>$_POST['accname'], 'class'=>explode(';', $_POST['class']));
+        foreach ($keyArr as $keyEntry)
+        {
+            $classInfo[$keyEntry]=trim($_POST[$keyEntry."-$i"]);
+        }
+//        $timetable[]=
     }
     
-    TimetableDB::uploadAEDTimetable($timetable);
+    TimetableDB::uploadAEDTimetable($timetable, $_POST['year'], $_POST['sem']);
 }
 
 header('Content-type: application/json');

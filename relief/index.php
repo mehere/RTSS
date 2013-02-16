@@ -45,7 +45,7 @@ include_once '../head-frag.php';
 
                 // Teacher verified
                 $teacherVerifiedList=$_SESSION['teacherVerified'];
-                $teacherScheduledList=$_SESSION['teacherScheduled'];
+                $teacherScheduledList=$_SESSION['teacherScheduled'];                
             ?>
             <form class="main" name="schedule" action="schedule/" method="post">
             	Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
@@ -152,7 +152,7 @@ EOD;
                     <table class="table-info">
                     	<?php
                             $accList=Teacher::getExcludingList($date);
-                            
+//var_dump($accList);                            
                             $teacherList=Teacher::getTeacherName('HOD');
                             
                             foreach ($accList as $value)

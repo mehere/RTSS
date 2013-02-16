@@ -75,6 +75,17 @@
 .subject .subject-close .ui-button-text {
 	padding: 0;
 }
+.subject .subject-highlight {
+	width: 16px;
+	height: 16px;
+	
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.subject .subject-highlight .ui-button-text {
+	padding: 0;
+}
 
 .ui-autocomplete {
 	max-height: 10em;

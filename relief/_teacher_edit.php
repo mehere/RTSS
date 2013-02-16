@@ -66,7 +66,7 @@ switch ($mode)
         $input=array();
         foreach (NameMap::$RELIEF_EDIT[$teacherKey]['saveKey'] as $postKey)
         {
-            $input[$postKey]=$_POST[$postKey];            
+            $input[$postKey]=trim($_POST[$postKey]);
         }                
 
         if (!Teacher::edit($_POST['leaveID'], $prop, $input))
@@ -83,7 +83,7 @@ switch ($mode)
         $postKeyArr=array_merge(NameMap::$RELIEF_EDIT[$teacherKey]['addKey'], NameMap::$RELIEF_EDIT[$teacherKey]['saveKey']);
         foreach ($postKeyArr as $postKey)
         {
-            $input[$postKey]=$_POST[$postKey];
+            $input[$postKey]=trim($_POST[$postKey]);
         }
 
         $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input);
