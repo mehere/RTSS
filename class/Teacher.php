@@ -2,6 +2,7 @@
 session_start();
 
 require_once 'util.php';
+require_once 'DBException.php';
 
 class Teacher {
 
@@ -49,7 +50,7 @@ class Teacher {
 
         if (!$db_con)
         {
-            return false;
+            throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
 
         mysql_select_db($db_name, $db_con);
@@ -58,7 +59,7 @@ class Teacher {
         $result = mysql_query($sql_query);
         if(!$result)
         {
-            return false;
+            throw new DBException("Fail to query abbre accname match", __FILE__, __LINE__);
         }
 
         $abbre_dict = Array();
@@ -263,25 +264,26 @@ class Teacher {
 
                 if(empty($type) || strcmp($type, "all_normal")===0)
                 {
-                    $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' order by user_name;";
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' order by user_name;";
                 }
                 else
                 {
                     if(strcmp($type, "normal")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[0]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[0]."' order by user_name;";
+                        echo $sql_query_normal;
                     }
                     if(strcmp($type, "AED")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[1]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[1]."' order by user_name;";
                     }
                     if(strcmp($type, "untrained")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[4]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[4]."' order by user_name;";
                     }
                     if(strcmp($type, "HOD")===0)
                     {
-                        $sql_query_normal = "select user_id, user_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[3]."' order by user_name;";
+                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[3]."' order by user_name;";
                     }
                 }
 
@@ -294,7 +296,8 @@ class Teacher {
                         //special attention: a 'N' is appended here. without it array_merge will view the key as number
                         $normal_list[] = Array(
                             'fullname' => $row['user_name'],
-                            'accname' => $row['user_id']
+                            'accname' => $row['user_id'],
+                            'type' => $row['dept_name']
                         );
                     }
                 }
@@ -322,7 +325,8 @@ class Teacher {
                     {
                         $temp_list[] = Array(
                             'fullname' => $row['name'],
-                            'accname' => $row['teacher_id']
+                            'accname' => $row['teacher_id'],
+                            'type' => 'Temp'
                         );
                     }
                 }
@@ -806,14 +810,14 @@ class Teacher {
         
         if (empty($ifins_db_con))
         {
-            return $teacher_dict;
+            throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
         
         $sql_query_teacher = "select user_id, user_name, dept_name, user_mobile from student_details where user_position = 'Teacher';";
         $result_teacher = mysql_query($sql_query_teacher);
         if(!$result_teacher)
         {
-            return $teacher_dict;
+            throw new DBException("Fail to query teacher from database", __FILE__, __LINE__);
         }
 
         while($row = mysql_fetch_array($result_teacher))
@@ -871,6 +875,15 @@ class Teacher {
         }
         
         return true;
+    }
+    
+    public static function overallReport($type = "")
+    {
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            
+        }
     }
     
     private static function getAbbreMatch()
