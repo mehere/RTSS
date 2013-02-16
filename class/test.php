@@ -255,7 +255,7 @@ foreach($result as $key=>$a_result)
          *
          */
         /*
-          $result = Teacher::getTeacherName('');
+          $result = Teacher::getTeacherName('normal');
          
           foreach($result as $key=>$one_teacher)
           {
