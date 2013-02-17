@@ -64,7 +64,7 @@ echo $test;
  * 
  */
 //********xue : testing
-$scheduling = new SchedulerDB(new DateTime("2013-01-01"));
+//$scheduling = new SchedulerDB(new DateTime("2013-01-01"));
 
 /*
 $result = $scheduling->getLeave();
@@ -77,7 +77,7 @@ foreach($result as $key=>$value)
  * 
  */
 //print_r($scheduling->getExcludedTeachers());
-
+/*
 $result = $scheduling->getNormalTeachers();
 foreach($result as $key=>$value)
 {
@@ -108,7 +108,8 @@ foreach($result as $key=>$value)
     echo "E**************************<br>";
     echo "<br><br><br>";
 }
-
+ * 
+ */
 /*
 $result = $scheduling->getTempTeachers();
 foreach($result as $key=>$value)
@@ -346,7 +347,7 @@ foreach($result as $key => $value)
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-01-14 08:15', 'datetime-to'=>'2013-01-14 12:15', 'email'=>'af@adf.com', 'handphone'=>'74787874', 'MT'=>'Chinese'));
         //********xue : testing end
 /*
-$result = Teacher::overallReport();
+$result = Teacher::overallReport('net');
 foreach($result as $value)
 {
     print_r($value);
