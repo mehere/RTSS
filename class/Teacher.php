@@ -471,6 +471,8 @@ class Teacher {
         }
         
         $_SESSION['excluded'][$date] = implode(",", $list);
+        
+        return true;
     }
     
     public static function getExcludingList($date)
