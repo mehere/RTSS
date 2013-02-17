@@ -31,7 +31,7 @@
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=array('60px', '130px', '40%', '60%');
+                                    $width=array('60px', '130px', '40%', '60%');                                                                        
                                                                         
                                     $tableHeaderList=array_values(NameMap::$SCHEDULE_RESULT['schedule']['display']);
                                     

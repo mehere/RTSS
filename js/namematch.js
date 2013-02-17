@@ -58,8 +58,8 @@ $(document).ready(function(){
         })
         if (failSubmit)
         {
-//            $("#dialog-alert").html(ALERT_TEXT[0]).dialog("open");
-//            return false;
+            $("#dialog-alert").html(ALERT_TEXT[0]).dialog("open");
+            return false;
         }
     });
 });
