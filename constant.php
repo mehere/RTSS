@@ -336,11 +336,10 @@ class NameMap
         
         'teacherType' => array(
             'display' => array(
-                'normal' => 'Normal', 'temp' => 'Temp', 'AED' => 'AED'
+                'all' => 'Any', 'normal' => 'Normal', 'AED' => 'AED', 'untrained' => 'Untrained',
+                'temp' => 'Temp', 'executive' => 'HOD/ExCo'
             ),
-            'hidden' => array(
-                'all' => 'Any'
-            )
+            'hidden' => array()
         )
     );
 }

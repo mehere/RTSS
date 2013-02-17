@@ -6,6 +6,8 @@ function tdWrap($ele)
     return "<td>$ele</td>";
 }
 
+require_once '../class/Teacher.php';
+
 include_once '../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
@@ -50,11 +52,11 @@ include_once '../head-frag.php';
                 <div id="tabs-1" class="ie8-tab-border">
                     <div class="gradient-top-fill"></div>
                     <div class="gradient-top"></div>
-                    <form class="main" name="report-overall" method="post">
+                    <form class="main" name="report-overall" method="post" action="">
                         <fieldset>
                             <legend>Filter</legend>
                             <div class="line">
-                                Type: <select name="type"><?php echo PageConstant::formatOptionInSelect(array_merge(NameMap::$REPORT['teacherType']['hidden'], NameMap::$REPORT['teacherType']['display']), '') ?></select>
+                                Type: <select name="type"><?php echo PageConstant::formatOptionInSelect(NameMap::$REPORT['teacherType']['display'], $_POST['type']) ?></select>
                                 <input type="submit" value="Go" class="button" style="margin-left: 30px" />
                             </div>        
                         </fieldset>
@@ -68,17 +70,40 @@ include_once '../head-frag.php';
 
                                             for ($i=0; $i<count($tableHeaderList); $i++)
                                             {
+                                                // class="sort"
                                                 echo <<< EOD
-                                                    <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                                    <th style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                                             }
                                         ?>
                                     </tr>
                                 </thead>
                                 <tbody id="table-overall">
-                                    <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname=1234" class="teacher-detail-link">haha asdf</a></td><td>AED</td><td>4</td><td>2</td><td>2</td></tr>
-                                    <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname=cxas">haha xsa</a></td><td>AED</td><td>1</td><td>2</td><td>-1</td></tr>
-                                    <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname=1234">haha asdf</a></td><td>AED</td><td>4</td><td>2</td><td>2</td></tr>
+                                    <?php
+                                        if ($_POST['type'] == 'all')
+                                        {
+                                            $_POST['type']='';
+                                        }
+                                        $reportArr=Teacher::overallReport($_POST['type']);
+                                        
+                                        $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
+                                        foreach ($reportArr as $value)
+                                        {
+                                            echo <<< EOD
+<tr><td><a href="/RTSS/relief/_teacher_detail.php?accname={$value['accname']}" class="teacher-detail-link">{$value['fullname']}</a></td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
+EOD;
+                                        }
+                                        
+                                        if (empty($reportArr))
+                                        {
+                                            echo '<tr>';
+                                            foreach ($tableHeaderList as $value)
+                                            {
+                                                echo tdWrap('--');
+                                            }
+                                            echo '</tr>';
+                                        }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -92,7 +117,10 @@ EOD;
                         <fieldset>
                             <legend>Enter</legend>
                             <div class="line">
-                                Name: <input type="text" name="fullname" class="textfield" />
+                                Name: <input type="text" name="fullname" class="textfield" value="<?php 
+                                    $info=Teacher::getIndividualTeacherDetail($_POST['accname']); 
+                                    echo $info['name'];
+                                ?>" />
                                 <input type="hidden" name="accname" />
                                 <input type="submit" value="Go" class="button" />
                             </div>            
@@ -100,12 +128,9 @@ EOD;
                         <div class="section">
                             <table class="table-info" id="individual-summary">
                                 <tbody>
-                                    <?php
-                                        // $_POST['accname']
-                                        $teacher=array('numOfMC' => 4, 'numOfRelief' => 3, 
-                                            'mc'=>array(array(array('2012/12/12', '11:45'), array('2012/12/13', '10:45')), array(array('2013/1/12', '13:45'), array('2013/1/13', '08:45'))),
-                                            'relief'=>''
-                                        );
+                                    <?php                                        
+                                        $teacher=Teacher::individualReport($_POST['accname']);
+                                        
                                         $teacher['net']=PageConstant::calculateNet($teacher['numOfMC'], $teacher['numOfRelief']);
                                         $headerArr=NameMap::$REPORT['individual']['display'];
                                         

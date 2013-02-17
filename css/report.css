@@ -6,7 +6,8 @@
 
 #tabs .main {
 	color: white;
-	font-size: 1.1em;	
+	font-size: 1.1em;
+	overflow: auto;	
 }
 .main fieldset {
     padding: 10px;
