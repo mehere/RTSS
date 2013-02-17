@@ -932,7 +932,7 @@ class Teacher {
         return true;
     }
     
-    public static function overallReport($order = "fullname", $type = "")
+    public static function overallReport($order = "fullname", $type = "", $direction = SORT_ASC)
     {
         $result = Array();
         
@@ -1008,7 +1008,7 @@ class Teacher {
                 $sort_arr[$key] = $value[$order];
             }
 
-            array_multisort($sort_arr, SORT_ASC, $result);
+            array_multisort($sort_arr, $direction, $result);
         }
         
         return $result;

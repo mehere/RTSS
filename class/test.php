@@ -347,7 +347,7 @@ foreach($result as $key => $value)
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-01-14 08:15', 'datetime-to'=>'2013-01-14 12:15', 'email'=>'af@adf.com', 'handphone'=>'74787874', 'MT'=>'Chinese'));
         //********xue : testing end
 /*
-$result = Teacher::overallReport('net');
+$result = Teacher::overallReport('net', '', SORT_DESC);
 foreach($result as $value)
 {
     print_r($value);
