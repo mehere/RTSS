@@ -61,8 +61,9 @@ include_once '../head-frag.php';
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
                                     {
+                                        // class="sort"
                                         echo <<< EOD
-                                            <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                            <th style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                                     }
                                 ?>
@@ -114,8 +115,9 @@ EOD;
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
                                     {
+                                        // class="sort"
                                         echo <<< EOD
-                                            <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                            <th style="width: $width[$i]" >$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                                     }
                                 ?>                               
@@ -152,26 +154,26 @@ EOD;
                     <table class="table-info">
                     	<?php
                             $accList=Teacher::getExcludingList($date);
-//var_dump($accList);                            
-                            $teacherList=Teacher::getTeacherName('HOD');
+
+                            $execInfo=Teacher::getTeacherInfo('executive');
+                            $nonexecInfo=Teacher::getTeacherInfo('non-executive');
                             
+                            $adminList=array();
+                            $normalList=array();
                             foreach ($accList as $value)
                             {
-                                if ($value['checked'])
+                                if ($execInfo[$value])
                                 {
-                                    if (strcasecmp($value['type'], 'HOD') === 0)
-                                    {
-                                        $adminList[]=$value['fullname'];
-                                    }
-                                    else
-                                    {
-                                        $normalList[]=$value['fullname'];
-                                    }
-                                }                                
+                                    $adminList[]=$execInfo[$value]['fullname'];
+                                }
+                                if ($nonexecInfo[$value])
+                                {
+                                    $normalList[]=$nonexecInfo[$value]['fullname'];
+                                }
                             }
                         ?>
-                        <tr><th style="width: 120px">HOD/ExCo</th><td><?php echo implode(', ', $adminList); ?></td></tr>
-                        <tr><th>Others</th><td><?php echo implode(', ', $normalList); ?></td></tr>
+                        <tr><th style="width: 120px"><?php echo NameMap::$RELIEF['excludingList']['display']['executive']; ?></th><td><?php echo implode(', ', $adminList); ?></td></tr>
+                        <tr><th><?php echo NameMap::$RELIEF['excludingList']['display']['non-executive']; ?></th><td><?php echo implode(', ', $normalList); ?></td></tr>
                     </table>
                 </div>
                 <div class="bt-control">

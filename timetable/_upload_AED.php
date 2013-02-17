@@ -27,9 +27,7 @@ else
             $classInfo[$keyEntry]=trim($_POST[$keyEntry."-$i"]);
         }
         $timetable[]=$classInfo;
-    }
-    
-//    $output['error']=var_export(array($timetable, $_POST['year'], $_POST['sem']), true);
+    }    
     
     if (!TimetableDB::uploadAEDTimetable($timetable, $_POST['year'], $_POST['sem']))
     {

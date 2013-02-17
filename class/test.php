@@ -64,7 +64,7 @@ echo $test;
  * 
  */
 //********xue : testing
-//$scheduling = new SchedulerDB(new DateTime("2013-01-01"));
+$scheduling = new SchedulerDB(new DateTime("2013-01-01"));
 
 /*
 $result = $scheduling->getLeave();
@@ -77,7 +77,7 @@ foreach($result as $key=>$value)
  * 
  */
 //print_r($scheduling->getExcludedTeachers());
-/*
+
 $result = $scheduling->getNormalTeachers();
 foreach($result as $key=>$value)
 {
@@ -108,8 +108,7 @@ foreach($result as $key=>$value)
     echo "E**************************<br>";
     echo "<br><br><br>";
 }
- * 
- */
+
 /*
 $result = $scheduling->getTempTeachers();
 foreach($result as $key=>$value)
@@ -272,7 +271,7 @@ foreach($result as $key=>$a_result)
          *
          */
         /*
-          $result = Teacher::getTeacherName('normal');
+          $result = Teacher::getTeacherName('non-executive');
          
           foreach($result as $key=>$one_teacher)
           {
@@ -283,6 +282,18 @@ foreach($result as $key=>$a_result)
           }
          * 
          */
+/*
+        $result = Teacher::getTeacherInfo('other_normal');
+         
+          foreach($result as $key=>$one_teacher)
+          {
+                echo $key."<br>";
+                echo $one_teacher['type']."<br>";
+                echo $one_teacher['fullname']."<br><br>";
+          }
+ * 
+ */
+
         /*
           $result = Teacher::getIndividualTeacherDetail("178984");
           print_r($result);
@@ -313,7 +324,7 @@ foreach($result as $key=>$value)
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
 
-//$result = ListGenerator::getTeacherName('2013-02-08');
+//$result = ListGenerator::getTeacherName('2013-02-06');
 //print_r($result);
 /*
 foreach($result as $key => $value)
@@ -331,7 +342,27 @@ foreach($result as $key => $value)
         //echo $result2;
         //
         //echo Teacher::delete(Array(2, 3,), 'leave');
-        //Teacher::edit(3, "leave", Array('reason'=>'He he', 'remark'=>'cdc','datetime-from'=>'2013-02-14 08:15', 'datetime-to'=>'2013-02-14 12:15'));
+        //Teacher::edit(1, "leave", Array('reason'=>'Ha ha', 'remark'=>'cdddc','datetime-from'=>'2013-02-11 11:15', 'datetime-to'=>'2013-02-11 14:15'));
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-01-14 08:15', 'datetime-to'=>'2013-01-14 12:15', 'email'=>'af@adf.com', 'handphone'=>'74787874', 'MT'=>'Chinese'));
         //********xue : testing end
+/*
+$result = Teacher::overallReport();
+foreach($result as $value)
+{
+    print_r($value);
+    echo "<br>";
+}
+ * 
+ */
+/*
+$value = Teacher::individualReport('8104329');
+
+    echo $value['numOfMC']."<br>";
+    echo $value['numOfRelief']."<br>";
+    print_r($value['mc']);
+    echo "<br>";
+    print_r($value['relief']);
+    echo "<br>";
+ * 
+ */
 ?>

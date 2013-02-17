@@ -16,7 +16,8 @@ class ListGenerator
         $teacher_dict = Teacher::getAllTeachers();
         
         //convert date to weekday
-        $weekday_number = (new DateTime($date))->format('N') - 0;
+        $date_obj = new DateTime($date);
+        $date_str = $date_obj->format('Y-m-d');
         
         //connect to db
         $db_con = Constant::connect_to_db('ntu');
@@ -26,7 +27,9 @@ class ListGenerator
             return $result;
         }
         
-        $sql_query_teacher = "select distinct ct_teacher_matching.teacher_id from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.weekday = ".$weekday_number.";";
+        //$sql_query_teacher = "select distinct ct_teacher_matching.teacher_id from rs_relief_info, ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = rs_relief_info.lesson_id and rs_relief_info.date = ".$date_str.";";
+        $sql_query_teacher = "select distinct leave_teacher from rs_relief_info where DATE(date) = '".$date_str."';";
+        
         $query_teacher_result = mysql_query($sql_query_teacher);
         if(!$query_teacher_result)
         {
@@ -35,16 +38,16 @@ class ListGenerator
         
         while($row = mysql_fetch_assoc($query_teacher_result))
         {
-            if(array_key_exists($row['teacher_id'], $teacher_dict))
+            if(array_key_exists($row['leave_teacher'], $teacher_dict))
             {
-                $fullname = $teacher_dict[$row['teacher_id']]['name'];
+                $fullname = $teacher_dict[$row['leave_teacher']]['name'];
             }
             else
             {
                 $fullname = "";
             }
             
-            $result[$row['teacher_id']] = $fullname;
+            $result[$row['leave_teacher']] = $fullname;
         }
         
         asort($result);
@@ -65,9 +68,10 @@ class ListGenerator
         }
         
         //convert date to weekday
-        $weekday_number = (new DateTime($date))->format('N') - 0;
+        $date_obj = new DateTime($date);
+        $date_str = $date_obj->format('Y-m-d');
         
-        $sql_query_class = "select distinct ct_class_matching.class_name from ct_lesson, ct_class_matching where ct_lesson.lesson_id = ct_class_matching.lesson_id and ct_lesson.weekday = ".$weekday_number." order by ct_class_matching.class_name;";
+        $sql_query_class = "select distinct ct_class_matching.class_name from rs_relief_info, ct_class_matching where rs_relief_info.lesson_id = ct_class_matching.lesson_id and DATE(rs_relief_info.date) = '".$date_str."';";
         $query_class_result = mysql_query($sql_query_class);
         if(!$query_class_result)
         {

@@ -239,7 +239,7 @@ class Teacher {
     }
     /**
      * 
-     * @param string $type : "", "temp", "all_normal", "normal", "AED", "untrained", "HOD"
+     * @param string $type : "", "temp", "all_normal", "normal", "AED", "untrained", "HOD", "ExCo", "executive", "non-executive"
      * @return array
      */
     public static function getTeacherName($type)
@@ -249,88 +249,90 @@ class Teacher {
 
         $db_type = array_keys(Constant::$teacher_type);
         
-        if(empty($type) || strcmp($type, "normal")===0 || strcmp($type, "AED")===0 || strcmp($type, "untrained")===0 || strcmp($type, "all_normal")===0 || strcmp($type, "HOD")===0)
+        if(empty($type) || strcmp($type, "temp")!==0)
         {
-            $ifins_db_url = Constant::ifins_db_url;
-            $ifins_db_username = Constant::ifins_db_username;
-            $ifins_db_password = Constant::ifins_db_password;
-            $ifins_db_name = Constant::ifins_db_name;
+            $ifins_db_con = Constant::connect_to_db("ifins");
 
-            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
-
-            if ($ifins_db_con)
+            if (!$ifins_db_con)
             {
-                mysql_select_db($ifins_db_name);
-
-                if(empty($type) || strcmp($type, "all_normal")===0)
+                return Array();
+            }
+            
+            if(empty($type) || strcmp($type, "all_normal")===0)
+            {
+                $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name in ('".$db_type[0]."', '".$db_type[1]."', '".$db_type[3]."', '".$db_type[5]."', '".$db_type[4]."') order by user_name;";
+            }
+            else
+            {
+                if(strcmp($type, "normal")===0)
                 {
-                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' order by user_name;";
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[0]."' order by user_name;";
                 }
-                else
+                if(strcmp($type, "AED")===0)
                 {
-                    if(strcmp($type, "normal")===0)
-                    {
-                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[0]."' order by user_name;";
-                    }
-                    if(strcmp($type, "AED")===0)
-                    {
-                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[1]."' order by user_name;";
-                    }
-                    if(strcmp($type, "untrained")===0)
-                    {
-                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[4]."' order by user_name;";
-                    }
-                    if(strcmp($type, "HOD")===0)
-                    {
-                        $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[3]."' order by user_name;";
-                    }
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[1]."' order by user_name;";
                 }
-
-                $query_normal_result = mysql_query($sql_query_normal);
-
-                if($query_normal_result)
+                if(strcmp($type, "untrained")===0)
                 {
-                    while($row = mysql_fetch_assoc($query_normal_result))
-                    {
-                        //special attention: a 'N' is appended here. without it array_merge will view the key as number
-                        $normal_list[] = Array(
-                            'fullname' => $row['user_name'],
-                            'accname' => $row['user_id'],
-                            'type' => $row['dept_name']
-                        );
-                    }
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[4]."' order by user_name;";
+                }
+                if(strcmp($type, "HOD")===0)
+                {
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[3]."' order by user_name;";
+                }
+                if(strcmp($type, "ExCo")===0)
+                {
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name = '".$db_type[5]."' order by user_name;";
+                }
+                if(strcmp($type, "non-executive")===0)
+                {
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name in ('".$db_type[0]."', '".$db_type[1]."', '".$db_type[4]."') order by user_name;";
+                }
+                if(strcmp($type, "executive")===0)
+                {
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name in ('".$db_type[3]."', '".$db_type[5]."') order by user_name;";
+                }
+            }
+
+            $query_normal_result = mysql_query($sql_query_normal);
+
+            if($query_normal_result)
+            {
+                while($row = mysql_fetch_assoc($query_normal_result))
+                {
+                    $normal_list[] = Array(
+                        'fullname' => $row['user_name'],
+                        'accname' => $row['user_id'],
+                        'type' => $row['dept_name']
+                    );
                 }
             }
         }
         if(empty($type) || strcmp($type, "temp")===0)
         {
-            $db_url = Constant::db_url;
-            $db_username = Constant::db_username;
-            $db_password = Constant::db_password;
-            $db_name = Constant::db_name;
+            $db_con = Constant::connect_to_db("ntu");
 
-            $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-            if ($db_con)
+            if (!$db_con)
             {
-                mysql_select_db($db_name);
+                return Array();
+            }
+            
+            $sql_query_temp = "select teacher_id, name from rs_temp_relief_teacher order by name;";
+            $query_temp_result = mysql_query($sql_query_temp);
 
-                $sql_query_temp = "select teacher_id, name from rs_temp_relief_teacher order by name;";
-                $query_temp_result = mysql_query($sql_query_temp);
-
-                if($query_temp_result)
+            if($query_temp_result)
+            {
+                while($row = mysql_fetch_assoc($query_temp_result))
                 {
-                    while($row = mysql_fetch_assoc($query_temp_result))
-                    {
-                        $temp_list[] = Array(
-                            'fullname' => $row['name'],
-                            'accname' => $row['teacher_id'],
-                            'type' => 'Temp'
-                        );
-                    }
+                    $temp_list[] = Array(
+                        'fullname' => $row['name'],
+                        'accname' => $row['teacher_id'],
+                        'type' => 'Temp'
+                    );
                 }
             }
         }
+        
         $result_array = array_merge($normal_list, $temp_list);
         if(empty($type))
         {
@@ -345,6 +347,27 @@ class Teacher {
         return $result_array;
     }
 
+    /**
+     * 
+     * @param string $type "executive" : HOD and ExCo; "non-executive" : others
+     * @return associative array key : accname
+     */
+    public static function getTeacherInfo($type)
+    {
+        $result = Array();
+        
+        $in_array = Teacher::getTeacherName($type);
+        
+        foreach($in_array as $value)
+        {
+            $result[$value['accname']] = Array();
+            $result[$value['accname']]['fullname'] = $value['fullname'];
+            $result[$value['accname']]['type'] = $value['type'];
+        }
+        
+        return $result;
+    }
+    
     //this function returns the details of a normal teacher
     //input : accname - the name used to log in
     //output : associative array of information. Before retrieving any information, check if($output['found']) to see whether the teacher record is found
@@ -706,6 +729,37 @@ class Teacher {
                 }
             }
 
+            if(array_key_exists("datetime-from", $change) || array_key_exists("datetime-to", $change))
+            {
+                $sql_query_leave = "select teacher_id, DATE_FORMAT(start_time, '%Y-%m-%d %H:%i') as start, DATE_FORMAT(end_time, '%Y-%m-%d %H:%i') as end from rs_leave_info where leave_id = ".$leaveID.";";
+                $query_leave_result = mysql_query($sql_query_leave);
+                if(!$query_leave_result)
+                {
+                    return false;
+                }
+                
+                $row = mysql_fetch_assoc($query_leave_result);
+                if(!$row)
+                {
+                    return false;
+                }
+                
+                if(array_key_exists("datetime-from", $change) && !array_key_exists("datetime-to", $change) )
+                {
+                    $num_of_slot = Teacher::calculateLeaveSlot($row['teacher_id'], $change['datetime-from'], $row['end']);
+                }
+                else if(!array_key_exists("datetime-from", $change) && array_key_exists("datetime-to", $change) )
+                {
+                    $num_of_slot = Teacher::calculateLeaveSlot($row['teacher_id'], $row['start'], $change['datetime-to']);
+                }
+                else
+                {
+                    $num_of_slot = Teacher::calculateLeaveSlot($row['teacher_id'], $change['datetime-from'], $change['datetime-to']);
+                }
+                
+                $sql_update_leave .= "num_of_slot=".$num_of_slot.",";
+            }
+            
             $sql_update_leave = substr($sql_update_leave, 0 ,-1)." ";
             $sql_update_leave .= "where leave_id = ".$leaveID.";";
 
@@ -878,13 +932,124 @@ class Teacher {
     
     public static function overallReport($type = "")
     {
+        $result = Array();
+        
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
-            
+            return $result;
         }
+        
+        $mc_dic = Array();
+        $sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info group by teacher_id";
+        $query_mc_result = mysql_query($sql_query_mc);
+        if(!$query_mc_result)
+        {
+            return $result;
+        }
+        while($row = mysql_fetch_assoc($query_mc_result))
+        {
+            $mc_dic[$row["teacher_id"]] = $row["num_of_leave"];
+        }
+        
+        $relief_dic = Array();
+        $sql_query_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from rs_relief_info group by relief_teacher";
+        $query_relief_result = mysql_query($sql_query_relief);
+        if(!$query_relief_result)
+        {
+            return $result;
+        }
+        while($row = mysql_fetch_assoc($query_relief_result))
+        {
+            $relief_dic[$row["relief_teacher"]] = $row["num_of_relief"];
+        }
+        
+        $teacher_dict = Teacher::getTeacherName($type);
+        foreach($teacher_dict as $a_teacher)
+        {
+            $a_record = Array();
+            
+            $a_record['accname'] = $a_teacher['accname'];
+            $a_record['fullname'] = $a_teacher['fullname'];
+            $a_record['type'] = $a_teacher['type'];
+            
+            if(array_key_exists($a_record['accname'], $mc_dic))
+            {
+                $a_record['numOfMC'] = $mc_dic[$a_record['accname']];
+            }
+            else
+            {
+                $a_record['numOfMC'] = 0;
+            }
+            
+            if(array_key_exists($a_record['accname'], $relief_dic))
+            {
+                $a_record['numOfRelief'] = $relief_dic[$a_record['accname']];
+            }
+            else
+            {
+                $a_record['numOfRelief'] = 0;
+            }
+            
+            $result[] =$a_record;
+        }
+        
+        return $result;
     }
     
+    public static function individualReport($accname)
+    {
+        $result = Array(
+            "numOfMC" => 0,
+            "numOfRelief" => 0,
+            "mc" => Array(),
+            "relief" => Array()
+        );
+        
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            return $result;
+        }
+        
+        //leave
+        $sql_query_leave = "select *, DATE_FORMAT(start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(start_time, '%H:%i') as start_time_point, TIME_FORMAT(end_time, '%H:%i') as end_time_point from rs_leave_info where teacher_id = '".mysql_real_escape_string(trim($accname))."';";
+        $query_leave_result = mysql_query($sql_query_leave);
+        if(!$query_leave_result)
+        {
+            return $result;
+        }
+        
+        while($row = mysql_fetch_assoc($query_leave_result))
+        {
+            $result['numOfMC'] += $row['num_of_slot'] - 0;
+            
+            $one_leave = Array(Array($row['start_date'], $row['start_time_point']), Array($row['end_date'], $row['end_time_point']));
+            
+            $result['mc'][] = $one_leave;
+        }
+       
+        //relief
+        $sql_query_relief = "select *, DATE_FORMAT(date, '%Y/%m/%d') as date from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."';";
+        $query_relief_result = mysql_query($sql_query_relief);
+        if(!$query_relief_result)
+        {
+            return $result;
+        }
+         
+        while($row = mysql_fetch_assoc($query_relief_result))
+        {
+            $result['numOfRelief'] += $row['num_of_slot'] - 0;
+            
+            $one_relief = Array(Array($row['date'], Constant::$time_conversion[$row['start_time_index']]), Array($row['date'], Constant::$time_conversion[$row['end_time_index']]));
+            
+            $result['relief'][] = $one_relief;
+        }
+        
+        return $result;
+    }
+
+
     private static function getAbbreMatch()
     {
         $result = Array();

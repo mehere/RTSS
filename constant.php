@@ -210,6 +210,13 @@ class NameMap
             )
         ),
         
+        'excludingList' => array(
+            'display' => array(
+                'non-executive' => 'Others', 'executive' => 'HOD/ExCo'
+            ),
+            'hidden' => array()
+        ),
+        
         'teacherDetail' => array(
             'display' => array(
                 'accname' => 'Account', 'fullname' => 'Name', 'subject' => 'Subject',
