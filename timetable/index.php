@@ -85,17 +85,6 @@ EOD;
                     <tbody>
                         <?php
                         $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);
-//                        var_dump($teacher, $class, $date, $timetable);
-//                        array(0 => array(
-//                                array("class" => array('5F', '4A'), 'subject' => 'Math', 'teacher-fullname' => 'Tan Kong Qian', 'relief-teacher-fullname' => 'Fan Yong Tan', 'venue' => 'LT50'),
-//                                array("class" => array('5F'), 'subject' => 'Science', 'teacher-fullname' => 'Tang Ng Qian', 'relief-teacher-fullname' => 'Yong Tan Xon', 'venue' => 'LT520')
-//                            ), 3 => array(
-//                                array("class" => array('5xF', '4A', 'BB'), 'subject' => 'Chinese', 'teacher-fullname' => 'Kong Qian SS', 'relief-teacher-fullname' => 'Haha Yong Tan', 'venue' => 'LTz50'),
-//                                array("class" => array('5F'), 'subject' => 'Science', 'teacher-fullname' => 'Ng Qian ZZ', 'relief-teacher-fullname' => 'Xon Ming', 'venue' => 'LT52dd0'),
-//                                array("class" => array('5F'), 'subject' => 'KKKK', 'teacher-fullname' => 'Tang Ng Qian', 'relief-teacher-fullname' => 'Yong Tan Xon', 'venue' => 'LT520')
-//                            ), 6 => array(
-//                                array("class" => array('5aaF'), 'subject' => 'Science', 'teacher-fullname' => 'Ng Qian ZZ', 'relief-teacher-fullname' => 'Xon Ming', 'venue' => 'LT52dd0')
-//                                ));
 
                         $timeArr=SchoolTime::getTimeArrSub(0, 0);
                         for ($i=0; $i < count($timeArr) - 1; $i++)

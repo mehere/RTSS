@@ -336,7 +336,7 @@ class NameMap
         
         'teacherType' => array(
             'display' => array(
-                'all' => 'Any', 'normal' => 'Normal', 'AED' => 'AED', 'untrained' => 'Untrained',
+                'normal' => 'Normal', 'AED' => 'AED', 'untrained' => 'Untrained',
                 'temp' => 'Temp', 'executive' => 'HOD/ExCo'
             ),
             'hidden' => array()

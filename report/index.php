@@ -56,7 +56,7 @@ include_once '../head-frag.php';
                         <fieldset>
                             <legend>Filter</legend>
                             <div class="line">
-                                Type: <select name="type"><?php echo PageConstant::formatOptionInSelect(NameMap::$REPORT['teacherType']['display'], $_POST['type']) ?></select>
+                                Type: <select name="type"><option value="">Any</option><?php echo PageConstant::formatOptionInSelect(NameMap::$REPORT['teacherType']['display'], $_POST['type']) ?></select>
                                 <input type="submit" value="Go" class="button" style="margin-left: 30px" />
                             </div>        
                         </fieldset>
@@ -80,15 +80,11 @@ EOD;
                                 </thead>
                                 <tbody id="table-overall">
                                     <?php
-                                        if ($_POST['type'] == 'all')
-                                        {
-                                            $_POST['type']='';
-                                        }
                                         $reportArr=Teacher::overallReport($_POST['type']);
-                                        
-                                        $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
+                                                                                
                                         foreach ($reportArr as $value)
                                         {
+                                            $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
                                             echo <<< EOD
 <tr><td><a href="/RTSS/relief/_teacher_detail.php?accname={$value['accname']}" class="teacher-detail-link">{$value['fullname']}</a></td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
 EOD;
