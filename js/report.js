@@ -50,4 +50,10 @@ $(document).ready(function(){
         $(ui.panel).load(ui.tab.href, dataPost);
         return false;
     });
+
+    // Sort overall report
+    var formO=document.forms['report-overall'];
+    $(".table-info .sort", formO).click(function(){
+        ;
+    });
 });

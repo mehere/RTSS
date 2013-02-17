@@ -66,21 +66,22 @@ include_once '../head-frag.php';
                                     <tr>
                                         <?php
                                             $width=array('100%', '90px', '80px', '80px', '80px');
-                                            $tableHeaderList=array_values(NameMap::$REPORT['overall']['display']);
+                                            $tableHeaderArr=NameMap::$REPORT['overall']['display'];
 
-                                            for ($i=0; $i<count($tableHeaderList); $i++)
-                                            {
-                                                // class="sort"
+                                            $i=0;
+                                            foreach ($tableHeaderArr as $key => $value)
+                                            {                                                
                                                 echo <<< EOD
-                                                    <th style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                                    <th style="width: $width[$i]" class="sort" search="$key">$value<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
 EOD;
+                                                $i++;
                                             }
                                         ?>
                                     </tr>
                                 </thead>
                                 <tbody id="table-overall">
                                     <?php
-                                        $reportArr=Teacher::overallReport($_POST['type']);
+                                        $reportArr=Teacher::overallReport($_POST['type'], $_POST['order']);
                                                                                 
                                         foreach ($reportArr as $value)
                                         {
@@ -93,7 +94,7 @@ EOD;
                                         if (empty($reportArr))
                                         {
                                             echo '<tr>';
-                                            foreach ($tableHeaderList as $value)
+                                            foreach ($tableHeaderArr as $value)
                                             {
                                                 echo tdWrap('--');
                                             }
@@ -102,6 +103,7 @@ EOD;
                                     ?>
                                 </tbody>
                             </table>
+                            <input type="hidden" name="order" />
                         </div>
                     </form>
                     <div id="teacher-detail">Loading ...</div>                    
