@@ -932,7 +932,7 @@ class Teacher {
         return true;
     }
     
-    public static function overallReport($type = "")
+    public static function overallReport($order = "fullname", $type = "")
     {
         $result = Array();
         
@@ -993,7 +993,22 @@ class Teacher {
                 $a_record['numOfRelief'] = 0;
             }
             
+            $a_record['net'] = $a_record['numOfMC'] - $a_record['numOfRelief'];
+            
             $result[] =$a_record;
+        }
+        
+        //sort
+        if(strcmp($order, 'fullname') !== 0)
+        {
+            $sort_arr = Array();
+            
+            foreach($result as $key=>$value)
+            {
+                $sort_arr[$key] = $value[$order];
+            }
+
+            array_multisort($sort_arr, SORT_ASC, $result);
         }
         
         return $result;
