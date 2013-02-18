@@ -112,10 +112,13 @@ $(document).ready(function(){
     function createSubjectBox(rect, dayEntry, time)
     {
         var teachingClassStr=dayEntry[time]['class'].join(', ');
-        var textFrag=dayEntry[time]['subject'] + '<br />' + teachingClassStr + '<br />' + dayEntry[time]['venue'];
+        var textFragArr=[dayEntry[time]['subject'], teachingClassStr, dayEntry[time]['venue']];
 
         var subjectBox=$('<div class="subject"><a class="subject-close" href=""></a><a class="subject-highlight" href=""></a>' +
-            '<table><tr><td>' + textFrag + '</td></tr></table></div>');
+            '<table><tr><td class="subject-content"> <div></div><div></div><div></div> </td></tr></table></div>');
+        $('.subject-content > div', subjectBox).text(function(index){
+            return textFragArr[index];
+        });
         subjectBox.css('left', rect[0]+BOX_ADJ[0]).css('top', rect[1]+BOX_ADJ[0]).width(rect[2]-BOX_ADJ[1]).height(rect[3]-BOX_ADJ[1]).hide();
         $(formAED).append(subjectBox);
         subjectBox.fadeIn();

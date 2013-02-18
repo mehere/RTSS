@@ -3,6 +3,7 @@ include_once '../../php-head.php';
     
 function tdWrap($ele)
 {
+    $ele=htmlentities($ele);
     return "<td>$ele</td>";
 }
 

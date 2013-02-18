@@ -4,6 +4,7 @@ include_once '../php-head.php';
 
 function tdWrap($ele)
 {
+    $ele=htmlentities($ele);
     return "<td>$ele</td>";
 }
 
@@ -45,7 +46,7 @@ include_once '../head-frag.php';
                         
                         $class=$_POST['class'];
                         $teacher=$isAdmin?$_POST['teacher']:$_SESSION['accname'];
-                    
+
                         $date=$_POST['date'];
                         if (!$date)
                         {
@@ -66,7 +67,8 @@ include_once '../head-frag.php';
                     </div>
                 </form>
                 <?php
-                    $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);                    
+                    $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);
+                    
                     include 'relief-timetable-frag.php'; 
                 ?>
             </div>

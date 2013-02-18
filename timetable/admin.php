@@ -31,22 +31,12 @@ $timeToArr=SchoolTime::getTimeArrSub(1, 0);
             	<h3>Upload Timetable</h3>
                 <div class="line"><span class="label">Year:</span>
                 	<select name="year">
-                        <?php
-                            $curYear=date('Y');
-                            for ($i=$curYear-PageConstant::NUM_OF_YEAR; $i<=$curYear+PageConstant::NUM_OF_YEAR; $i++)
-                            {
-                                $selected=$i==$curYear ? 'selected="selected"' : '';
-                                echo <<< EOD
-                                    <option value="$i" $selected >$i</option>
-EOD;
-                            }
-                        ?>
+                        <?php echo PageConstant::printYearRange(); ?>
                     </select>
                 </div>
                 <div class="line"><span class="label">Semester:</span>
                 	<select name="sem">
-                    	<option value="1">1</option>
-                    	<option value="2">2</option>
+                    	<?php echo PageConstant::printSemRange(); ?>
                     </select>
                 </div>
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
@@ -146,21 +136,11 @@ EOD;
                     	<span class="label">AED Name:</span><input type="text" name="fullname" /><input type="hidden" name="accname" />
                         <span class="label">Year:</span>
                         <select name="year">
-                            <?php
-                                $curYear=date('Y');
-                                for ($i=$curYear-PageConstant::NUM_OF_YEAR; $i<=$curYear+PageConstant::NUM_OF_YEAR; $i++)
-                                {
-                                    $selected=$i==$curYear ? 'selected="selected"' : '';
-                                    echo <<< EOD
-                                        <option value="$i" $selected >$i</option>
-EOD;
-                                }
-                            ?>
+                            <?php echo PageConstant::printYearRange(); ?>
                         </select>
                         <span class="label">Sem:</span>
                         <select name="sem">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
+                            <?php echo PageConstant::printSemRange(); ?>
                         </select>
                         <input type="submit" class="button" value="Submit" style="margin-left: 30px" />
                     </div>

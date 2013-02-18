@@ -3,9 +3,7 @@ class PageConstant
 {
     const PRODUCT_NAME="iScheduler";
     const SCH_NAME_ABBR="CHIJ";
-    const SCH_NAME="CHIJ St Nicholas Girl's School";
-    
-    const NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'
+    const SCH_NAME="CHIJ St Nicholas Girl's School";        
     
     const DATE_FORMAT_ISO='Y/m/d';    
     const DATE_FORMAT_SG='d/m/Y';
@@ -17,6 +15,38 @@ class PageConstant
             'mismatch' => 'Username or Password was entered incorrectly.'            
         )
     );
+    
+    /**
+     * Year range in timetable/admin.php
+     * @return string print format of <option>
+     */
+    public static function printYearRange()
+    {
+        $curYear=date('Y');
+        $NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'
+        
+        $result=array();
+        for ($i=$curYear-$NUM_OF_YEAR; $i<=$curYear+$NUM_OF_YEAR; $i++)
+        {
+            $result[]=$i;
+        }
+        
+        return PageConstant::formatOptionInSelect($result, $curYear, TRUE);
+    }
+    
+    /**
+     * Sem range in timetable/admin.php
+     * @return string print format of <option>
+     */
+    public static function printSemRange()
+    {
+        $curMonth=date('n');
+        $SEM_DIVIDER=6.5;
+        
+        $result=array(1, 2);
+        
+        return PageConstant::formatOptionInSelect($result, $curMonth < $SEM_DIVIDER ? 1 : 2, TRUE);
+    }
     
     /**
      * Output string representation of option array in 'select' tag

@@ -72,6 +72,7 @@ $(document).ready(function(){
     // mismatch: [regexp, alertText]
     function textfieldDefault(textfieldObj, defaultV, defaultStyle, newValueStyle, mismatch)
     {
+        if (!textfieldObj.val()) textfieldObj.val(defaultV);
         textfieldObj.val() == defaultV ? textfieldObj.css(defaultStyle) : textfieldObj.css(newValueStyle);
 
         textfieldObj.focus(function(){
@@ -182,6 +183,10 @@ $(document).ready(function(){
     });*/
     $(formEdit['delete']).click(function(){
         multipleOp.call(this, 'delete');
+    });
+
+    $(formEdit['goback']).click(function(){
+        window.location.href="/RTSS/relief/";
     });
 
     function confirm(text, func){

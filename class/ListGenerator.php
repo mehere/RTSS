@@ -13,11 +13,7 @@ class ListGenerator
     public static function getTeacherName($date)
     {
         $result = Array();
-        $teacher_dict = Teacher::getAllTeachers();
-        
-        //convert date to weekday
-        $date_obj = new DateTime($date);
-        $date_str = $date_obj->format('Y-m-d');
+        $teacher_dict = Teacher::getAllTeachers();        
         
         //connect to db
         $db_con = Constant::connect_to_db('ntu');
@@ -28,7 +24,7 @@ class ListGenerator
         }
         
         //$sql_query_teacher = "select distinct ct_teacher_matching.teacher_id from rs_relief_info, ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = rs_relief_info.lesson_id and rs_relief_info.date = ".$date_str.";";
-        $sql_query_teacher = "select distinct leave_teacher from rs_relief_info where DATE(date) = '".$date_str."';";
+        $sql_query_teacher = "select distinct leave_teacher from rs_relief_info where DATE(date) = '$date';";
         
         $query_teacher_result = mysql_query($sql_query_teacher);
         if(!$query_teacher_result)
@@ -67,11 +63,7 @@ class ListGenerator
             return $result;
         }
         
-        //convert date to weekday
-        $date_obj = new DateTime($date);
-        $date_str = $date_obj->format('Y-m-d');
-        
-        $sql_query_class = "select distinct ct_class_matching.class_name from rs_relief_info, ct_class_matching where rs_relief_info.lesson_id = ct_class_matching.lesson_id and DATE(rs_relief_info.date) = '".$date_str."';";
+        $sql_query_class = "select distinct ct_class_matching.class_name from rs_relief_info, ct_class_matching where rs_relief_info.lesson_id = ct_class_matching.lesson_id and DATE(rs_relief_info.date) = '$date';";
         $query_class_result = mysql_query($sql_query_class);
         if(!$query_class_result)
         {

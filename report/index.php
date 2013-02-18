@@ -120,7 +120,7 @@ EOD;
                                     $info=Teacher::getIndividualTeacherDetail($_POST['accname']); 
                                     echo $info['name'];
                                 ?>" />
-                                <input type="hidden" name="accname" />
+                                <input type="hidden" name="accname" value="<?php echo $_POST['accname']; ?>" />
                                 <input type="submit" value="Go" class="button" />
                             </div>            
                         </fieldset>
@@ -128,11 +128,14 @@ EOD;
                             <table class="table-info" id="individual-summary">
                                 <tbody>
                                     <?php                                        
-                                        $teacher=Teacher::individualReport($_POST['accname']);
-                                        
+                                        $teacher=Teacher::individualReport($_POST['accname']);                                        
                                         $teacher['net']=PageConstant::calculateNet($teacher['numOfMC'], $teacher['numOfRelief']);
-                                        $headerArr=NameMap::$REPORT['individual']['display'];
+                                        if (!$_POST['accname'])
+                                        {
+                                            $teacher['net']=$teacher['numOfMC']=$teacher['numOfRelief']='';
+                                        }
                                         
+                                        $headerArr=NameMap::$REPORT['individual']['display'];                                        
                                         foreach (array('numOfMC', 'numOfRelief', 'net') as $headerKey) 
                                         {
                                             echo <<< EOD

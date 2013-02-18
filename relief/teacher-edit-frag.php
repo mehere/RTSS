@@ -33,8 +33,8 @@ else
     <div class="add-edit">
         <div class="toggle-display"><span></span><br /><span></span></div>
         <div class="toggle-edit">
-            <div class="time-line"><input type="text" name="handphone-$numOfTeacher" value="HP" class="textfield" /></div>
-            <div class="time-line"><input type="text" name="email-$numOfTeacher" value="Email" class="textfield" /></div>
+            <div class="time-line"><input type="text" name="handphone-$numOfTeacher" class="textfield" /></div>
+            <div class="time-line"><input type="text" name="email-$numOfTeacher" class="textfield" /></div>
         </div>
     </div>
 </td>
