@@ -81,8 +81,9 @@ EOD;
                                 </thead>
                                 <tbody id="table-overall">
                                     <?php
-                                        $reportArr=Teacher::overallReport($_POST['type'], $_POST['order']);
-                                                                                
+                                        $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==0 ? SORT_ASC : SORT_DESC);
+//var_dump(Teacher::overallReport('', 'fullname', SORT_DESC));
+//var_dump($_POST['order'], $_POST['direction']);
                                         foreach ($reportArr as $value)
                                         {
                                             $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
@@ -103,7 +104,7 @@ EOD;
                                     ?>
                                 </tbody>
                             </table>
-                            <input type="hidden" name="order" />
+                            <input type="hidden" name="order" value="fullname" /><input type="hidden" name="direction" value="<?php echo $_POST['direction'] ?>" />
                         </div>
                     </form>
                     <div id="teacher-detail">Loading ...</div>                    
@@ -180,7 +181,6 @@ EOD;
                             </table>
                         </div>               
                     </form>
-
                 </div>
             </div>            
         </div>        

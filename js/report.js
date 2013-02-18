@@ -54,6 +54,15 @@ $(document).ready(function(){
     // Sort overall report
     var formO=document.forms['report-overall'];
     $(".table-info .sort", formO).click(function(){
-        ;
+        formO['order'].value=this.getAttribute('search');
+        if (formO['direction'].value == 0)
+        {
+            formO['direction'].value=1;
+        }
+        else
+        {
+            formO['direction'].value=0;
+        }
+        $(formO).submit();
     });
 });

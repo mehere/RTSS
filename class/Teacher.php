@@ -932,7 +932,7 @@ class Teacher {
         return true;
     }
     
-    public static function overallReport($order = "fullname", $type = "", $direction = SORT_ASC)
+    public static function overallReport($type = "", $order = "fullname", $direction = SORT_ASC)
     {
         $result = Array();
         
