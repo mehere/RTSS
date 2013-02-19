@@ -49,6 +49,7 @@ class User
             {
                 $result['accname'] = $teacher_id;
                 $result['type'] = "teacher";
+                $result['fullname'] = $row['accfullname'];
                 return $result;
             }
         }
@@ -74,6 +75,7 @@ class User
             {
                 $result['accname'] = $teacher_id;
                 $result['type'] = "teacher";
+                $result['fullname'] = $row['accfullname'];
                 return $result;
             }
         } 
@@ -99,6 +101,7 @@ class User
             {
                 $result['accname'] = $teacher_id;
                 $result['type'] = "teacher";
+                $result['fullname'] = $row['accfullname'];
                 return $result;
             }
         } 
@@ -123,6 +126,7 @@ class User
         {
             $result['accname'] = $username;
             $result['type'] = "admin";
+            $result['fullname'] = 'admin';
             return $result;
         } 
         

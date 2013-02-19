@@ -31,7 +31,7 @@
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=array('60px', '130px', '40%', '60%');
+                                    $width=array('60px', '130px', '40%', '60%');                                                                        
                                                                         
                                     $tableHeaderList=array_values(NameMap::$SCHEDULE_RESULT['schedule']['display']);
                                     
@@ -56,12 +56,11 @@ EOD;
                     <input type="submit" value="Approve" class="button" />
                 </div>
                 <div class="link-control">
-                    <a href="timetable.php?tab=teacher" class="link">Preview Teacher Timetable</a>
-                    <a href="timetable.php" class="link">Preview Class Timetable</a>
+                    <a href="timetable.php?tab=teacher" class="link">Preview Timetable</a>
                 </div>                
                 <input type="hidden" name="num" value="1" />                
             </form>            
-        </div>        
+        </div>
     </div>
     <?php include '../../sidebar-frag.php'; ?>
 </div>
