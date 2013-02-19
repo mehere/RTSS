@@ -2,7 +2,7 @@
 
 ini_set("memory_limit", "512M");
 define("NUM_STATES_REQUIRED", 3);
-define("TIME_TO_WAIT", 20);
+define("TIME_TO_WAIT", 10);
 
 function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleStateHeapBest $successStates, ScheduleStateHeapBest $stoppedStates)
 {
@@ -244,7 +244,7 @@ $successStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
 $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
 
 $startState = new ScheduleState($arrGroup1, $lessonsNeedRelief);
-//$activeStates->insert($startState);
+$activeStates->insert($startState);
 $visitedStates[$startState->toString()] = NULL;
 
 unset($aCompactTeacher);
@@ -263,7 +263,7 @@ unset($methodGetTeachers);
 unset($numTeachers);
 unset($scheduler);
 unset($someLessonsNeedRelief);
-//unset($startState);
+unset($startState);
 unset($teacherFilter);
 unset($typesOfTeachers);
 unset($value);
@@ -273,9 +273,8 @@ unset($varArrExcludedTeachers);
 unset($varArrTeacherLeaves);
 unset($varArrTeachers);
 
-//scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
-$stoppedStates->insert($startState);
-
+scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
+//$stoppedStates->insert($startState);
 // round 2
 if ($successStates->numberStates == 0)
 {
@@ -315,31 +314,51 @@ if ($successStates->numberStates == 0)
 }
 
 
-$endTime = microtime(true);
+//$endTime = microtime(true);
 //echo "<br>visited:<br>";
 //print_r($visitedStates);
-echo "<br>Memory:";
-echo memory_get_peak_usage(), "\n";
-
-echo "<br>Time:";
-$timeSpent = $endTime - $startTime;
-echo $timeSpent;
-
-echo "<br>";
-echo "<br>active:<br>:";
+//echo "<br>Memory:";
+//echo memory_get_peak_usage(), "\n";
+//
+//echo "<br>Time:";
+//$timeSpent = $endTime - $startTime;
+//echo $timeSpent;
+//
+//echo "<br>";
+//echo "<br>active:<br>:";
 //print_r($activeStates);
-echo "<br>";
-echo "<br>:success<br>:";
-print_r($successStates);
-echo "<br>";
-echo "<br>stopped:<br>:";
+//echo "<br>";
+//echo "<br>:success<br>:";
+//print_r($successStates);
+//echo "<br>";
+//echo "<br>stopped:<br>:";
 //print_r($stoppedStates);
+
+/* @var $aState ScheduleState */
+
 
 if ($successStates->numberStates > 0)
 {
-    //
+    $successResults = array();
+    foreach ($successStates->heap as $aState)
+    {
+        $results = $aState->beautify();
+        $successResults[] = $results;
+    }
+
+    try
+    {
+        SchedulerDB::setScheduleResult($successResults);
+        $destination = "";
+        header($destination);
+    } catch (DBException $e)
+    {
+     // To-Do:
+     // Database Error
+    }
 } else
 {
-    // failure
+    ///To-Do:
+    // Failure Case
 }
 ?>

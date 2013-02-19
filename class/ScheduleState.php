@@ -208,6 +208,18 @@ class ScheduleState
         $this->expectedTotalCost = $this->actualIncurredCost + $this->estimatedFutureCost;
     }
 
+    public function beautify(){
+        /* @var $aLesson ReliefLesson*/
+        $results = array();
+        foreach ($this->lessonsAllocated as $aLesson){
+            $aNewLesson = clone $aLesson;
+            $aNewLesson->teacherOriginal = TeacherCompact::getAccName($aLesson->teacherOriginal);
+            $aNewLesson->teacherRelief = TeacherCompact::getAccName($aLesson->teacherRelief);
+            $results[] = $aNewLesson;
+        }
+        return $results;
+    }
+
 }
 
 ?>
