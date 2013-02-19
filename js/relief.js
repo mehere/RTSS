@@ -1,6 +1,7 @@
 $(document).ready(function(){
     var formSch=document.forms['schedule'];
     $(formSch['date-display']).datepicker({
+        beforeShowDay: $.datepicker.noWeekends,
         dateFormat: "dd/mm/yy",
         changeMonth: true,
         changeYear: true,

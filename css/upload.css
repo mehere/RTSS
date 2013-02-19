@@ -9,7 +9,7 @@
 .main .line .label {
 	float: left;
 	width: 100px;
-	margin-right: 20px;
+	margin-right: 10px;
 	text-align: right;
 }
 
@@ -43,10 +43,10 @@
 
 .row {
 	margin-top: 15px;
-	margin-left: 150px;
 }
 .row .label {
 	margin-right: 10px;
+	margin-left: 30px;
 }
 
 .subject {
@@ -73,6 +73,17 @@
 	right: 0;
 }
 .subject .subject-close .ui-button-text {
+	padding: 0;
+}
+.subject .subject-highlight {
+	width: 16px;
+	height: 16px;
+	
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.subject .subject-highlight .ui-button-text {
 	padding: 0;
 }
 

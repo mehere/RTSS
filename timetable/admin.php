@@ -31,22 +31,12 @@ $timeToArr=SchoolTime::getTimeArrSub(1, 0);
             	<h3>Upload Timetable</h3>
                 <div class="line"><span class="label">Year:</span>
                 	<select name="year">
-                        <?php
-                            $curYear=date('Y');
-                            for ($i=$curYear-PageConstant::NUM_OF_YEAR; $i<=$curYear+PageConstant::NUM_OF_YEAR; $i++)
-                            {
-                                $selected=$i==$curYear ? 'selected="selected"' : '';
-                                echo <<< EOD
-                                    <option value="$i" $selected >$i</option>
-EOD;
-                            }
-                        ?>
+                        <?php echo PageConstant::printYearRange(); ?>
                     </select>
                 </div>
                 <div class="line"><span class="label">Semester:</span>
                 	<select name="sem">
-                    	<option value="1">1</option>
-                    	<option value="2">2</option>
+                    	<?php echo PageConstant::printSemRange(); ?>
                     </select>
                 </div>
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
@@ -93,12 +83,12 @@ EOD;
                             </td>
                             <td class="label">Time:</td>
                             <td>
-                                <select name="time-from">
+                                <select name="time-from" style="width: 65px">
                                     <?php
                                         echo PageConstant::formatOptionInSelect($timeFromArr, '');
                                     ?>
                                 </select>
-                                <select name="time-to" style="margin-left: 10px">
+                                <select name="time-to" style="margin-left: 10px; width: 65px">
                                     <?php
                                         echo PageConstant::formatOptionInSelect($timeToArr, '');
                                     ?>
@@ -117,7 +107,7 @@ EOD;
                         </tr>
                     </table>
                 </form>
-                <form name="AED" style="position: relative">
+                <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
                     <table class="table-info">
                         <thead>
                             <th style="width: 90px"></th>
@@ -144,6 +134,14 @@ EOD;
                     </table>
                     <div class="row">
                     	<span class="label">AED Name:</span><input type="text" name="fullname" /><input type="hidden" name="accname" />
+                        <span class="label">Year:</span>
+                        <select name="year">
+                            <?php echo PageConstant::printYearRange(); ?>
+                        </select>
+                        <span class="label">Sem:</span>
+                        <select name="sem">
+                            <?php echo PageConstant::printSemRange(); ?>
+                        </select>
                         <input type="submit" class="button" value="Submit" style="margin-left: 30px" />
                     </div>
                 </form>

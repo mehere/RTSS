@@ -10,7 +10,7 @@ $(document).ready(function(){
 
     // Auto complete setup
     var nameList=[], nameAccMap=[];
-    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": 'normal'}, function(data){
+    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": 'all_normal'}, function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){
@@ -49,5 +49,20 @@ $(document).ready(function(){
         dataPost[dataKey[0]]=formR[dataKey[0]].value;
         $(ui.panel).load(ui.tab.href, dataPost);
         return false;
+    });
+
+    // Sort overall report
+    var formO=document.forms['report-overall'];
+    $(".table-info .sort", formO).click(function(){
+        formO['order'].value=this.getAttribute('search');
+        if (formO['direction'].value == 0)
+        {
+            formO['direction'].value=1;
+        }
+        else
+        {
+            formO['direction'].value=0;
+        }
+        $(formO).submit();
     });
 });

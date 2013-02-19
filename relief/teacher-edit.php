@@ -38,9 +38,9 @@ include_once '../head-frag.php';
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=$isTemp ? array('45px', '40px', '40%', '150px', '100px',  '235px', '60%') : 
+                                    $width=$isTemp ? array('45px', '40px', '40%', '150px', '100px',  '245px', '60%') : 
 //                                        array('45px', '40px', '40%', '170px', '235px', '60%', '70px');
-                                        array('45px', '40px', '40%', '170px', '235px', '60%');
+                                        array('45px', '40px', '40%', '170px', '245px', '60%');
                                         
                                     $teacherKey=$isTemp? 'tempTeacher' : 'teacherOnLeave';
                                     
@@ -108,8 +108,8 @@ EOD;
 <td>
     <div class="toggle-display"><span>{$teacher[$keyList[1]]}</span><br /><span>{$teacher[$keyList[2]]}</span></div>
     <div class="toggle-edit">
-        <div class="time-line"><input type="text" name="handphone-$i" value="{$teacher[$keyList[1]]}" /></div>
-        <div class="time-line"><input type="text" name="email-$i" value="{$teacher[$keyList[2]]}" /></div>
+        <div class="time-line"><input type="text" name="handphone-$i" /></div>
+        <div class="time-line"><input type="text" name="email-$i" /></div>
     </div>
 </td>
 <td>
@@ -154,6 +154,7 @@ EOD;
                 </div>
                 <div class="bt-control">
 <!--                	<input type="button" name="verify" value="Verify Selected" class="button" />-->
+                    <input type="button" name="goback" value="Go Back" class="button" />
                     <input type="button" name="delete" value="Delete Selected" class="button" />
                 </div>
                 <input type="hidden" name="num" value="<?php echo count($teacherList); ?>" />
