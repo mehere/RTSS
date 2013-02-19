@@ -4,6 +4,17 @@ ini_set("memory_limit", "512M");
 define("NUM_STATES_REQUIRED", 3);
 define("TIME_TO_WAIT", 10);
 
+include_once '../../constant.php';
+require_once '../../php-head.php';
+spl_autoload_register(
+        function ($class)
+        {
+            include '../../class/' . $class . '.php';
+        });
+header("Expires: 0");
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+
 function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleStateHeapBest $successStates, ScheduleStateHeapBest $stoppedStates)
 {
     /* @var $aState ScheduleState */
@@ -81,15 +92,8 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
     }
 }
 
-include_once '../../constant.php';
-// Start ----------------------------------------------------------------------
-spl_autoload_register(
-        function ($class)
-        {
-            include '../../class/' . $class . '.php';
-        });
 
-
+///-----------------------------------------------------------------------------
 $dateString = $_POST["date"];
 $typeSchedule = 0;
 if (isset($_POST["btnScheduleAll"]))
@@ -244,8 +248,8 @@ unset($accname);
 unset($arrExcludedTeachers);
 unset($arrGroup1);
 unset($arrLeaves);
-unset($dateScheduled);
-unset($dateString);
+//unset($dateScheduled);
+//unset($dateString);
 unset($group1Types);
 unset($leaveRecords);
 unset($lessonsNeedRelief);
@@ -336,6 +340,7 @@ if ($successStates->numberStates > 0)
         $successResults[] = $results;
     }
 
+//    print_r($successResults);
     try
     {
         SchedulerDB::setScheduleResult($successResults);
