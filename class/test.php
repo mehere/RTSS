@@ -16,38 +16,55 @@ require_once 'DBException.php';
 //Teacher::setExcludingList("2013/01/01", Array('123','2345'));
 //print_r(Teacher::getExcludingList("2013/01/02"));
 
-/*
-$lesson_1 = Array(
-    "subject" => "Math",
-    "venue" => "LT 2A",
-    "accname" => "1234567",
-    "time-from" => 1,
-    "time-to" => 4,
-    "day" => 1,
-    "isHighlighted" => true,
-    "class" => Array('1A', '2B', '3C')
-);
-$lesson_2 = Array(
-    "subject" => "Eco",
-    "venue" => null,
-    "accname" => "2323123",
-    "time-from" => 4,
-    "time-to" => 6,
-    "day" => 5,
-    "isHighlighted" => false,
-    "class" => Array('5A', '2B', '3C')
-);
-$input = Array($lesson_1, $lesson_2);
-echo TimetableDB::uploadAEDTimetable($input)?"okay":"no";
- * 
- */
+
+//$lesson_1 = Array(
+//    "subject" => "Math",
+//    "venue" => "LT 2A",
+//    "accname" => "1234567",
+//    "time-from" => 1,
+//    "time-to" => 4,
+//    "day" => 1,
+//    "isHighlighted" => true,
+//    "class" => Array('1A', '2B', '3C')
+//);
+//$lesson_2 = Array(
+//    "subject" => "Eco",
+//    "venue" => null,
+//    "accname" => "2323123",
+//    "time-from" => 4,
+//    "time-to" => 6,
+//    "day" => 5,
+//    "isHighlighted" => false,
+//    "class" => Array('5A', '2B', '3C')
+//);
+//$input = Array($lesson_1, $lesson_2);
+//
+//$input=array(array (
+//      'accname' => '0142380',
+//      'class' => 
+//      array (
+//        0 => 'c',
+//        1 => 'dfl',
+//        2 => 'd',
+//        3 => 'f',
+//      ),
+//      'day' => '1',
+//      'time-from' => '1',
+//      'time-to' => '4',
+//      'subject' => 'a',
+//      'venue' => 'a',
+//      'isHighlighted' => '0',
+//    ));
+
+//echo TimetableDB::uploadAEDTimetable($input)?"okay":"no";
+ 
 /*
 $test = new DBException("Test Error", __FILE__, __LINE__);
 echo $test;
  * 
  */
 //********xue : testing
-//$scheduling = new SchedulerDB(new DateTime("2013-02-06"));
+//$scheduling = new SchedulerDB(new DateTime("2013-01-01"));
 
 /*
 $result = $scheduling->getLeave();
@@ -151,15 +168,15 @@ foreach($result as $key=>$a_result)
         
        
         /*
-          $arrTeachersNew=Teacher::getTeachersAccnameAndFullname($arrTeachers);
-          foreach($arrTeachersNew as $a_teacher)
+          Teacher::getTeachersAccnameAndFullname($arrTeachers);
+          foreach($arrTeachers as $a_teacher)
           {
           echo $a_teacher->abbreviation."<br>";
           echo $a_teacher->name."<br>";
           echo $a_teacher->accname."<br><br>";
           }
+         * 
          */
-
         //Teacher::insertAbbrMatch(array('AF ADF'=>'2344244'));
         //Teacher::insertAbbrMatch(array('ADE'=>'122333121', 'ASDFASF'=>'434332333','AF ADF'=>'2344244','CDDE'=>'ASFEAF'));
         
@@ -255,23 +272,36 @@ foreach($result as $key=>$a_result)
          *
          */
         /*
-          $result = Teacher::getTeacherName('');
+          $result = Teacher::getTeacherName('non-executive');
          
           foreach($result as $key=>$one_teacher)
           {
                 echo $key."<br>";
                 echo $one_teacher['accname']."<br>";
+                echo $one_teacher['type']."<br>";
                 echo $one_teacher['fullname']."<br><br>";
           }
          * 
          */
+/*
+        $result = Teacher::getTeacherInfo('other_normal');
+         
+          foreach($result as $key=>$one_teacher)
+          {
+                echo $key."<br>";
+                echo $one_teacher['type']."<br>";
+                echo $one_teacher['fullname']."<br><br>";
+          }
+ * 
+ */
+
         /*
           $result = Teacher::getIndividualTeacherDetail("178984");
           print_r($result);
          *
          */
 /*
-$result = TimetableDB::getReliefTimetable("", "", "2013-01-14");
+$result = TimetableDB::getReliefTimetable("", "", "2013-02-06");
 foreach($result as $key=>$value)
 {
     echo 'start : '.$key.' :<br><br>';
@@ -293,13 +323,15 @@ foreach($result as $key=>$value)
  */
 
 //print_r(ListGenerator::getTeacherType());
-//print_r(ListGenerator::getClassName('2013-02-09'));
+//print_r(ListGenerator::getClassName('2013-02-06'));
+
+//$result = ListGenerator::getTeacherName('2013-02-06');
+//print_r($result);
 /*
-$result = ListGenerator::getTeacherName('2013-02-08');
-foreach($result as $value)
+foreach($result as $key => $value)
 {
-    echo $value['accname'].'<br>';
-    echo $value['fullname'].'<br>';
+    echo $key.'<br>';
+    echo $value.'<br>';
     echo '<br>';
 }
  * 
@@ -311,7 +343,27 @@ foreach($result as $value)
         //echo $result2;
         //
         //echo Teacher::delete(Array(2, 3,), 'leave');
-        //Teacher::edit(3, "leave", Array('reason'=>'He he', 'remark'=>'cdc','datetime-from'=>'2013-02-14 08:15', 'datetime-to'=>'2013-02-14 12:15'));
+        //Teacher::edit(1, "leave", Array('reason'=>'Ha ha', 'remark'=>'cdddc','datetime-from'=>'2013-02-11 11:15', 'datetime-to'=>'2013-02-11 14:15'));
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-01-14 08:15', 'datetime-to'=>'2013-01-14 12:15', 'email'=>'af@adf.com', 'handphone'=>'74787874', 'MT'=>'Chinese'));
         //********xue : testing end
+/*
+$result = Teacher::overallReport('net', '', SORT_DESC);
+foreach($result as $value)
+{
+    print_r($value);
+    echo "<br>";
+}
+ * 
+ */
+/*
+$value = Teacher::individualReport('8104329');
+
+    echo $value['numOfMC']."<br>";
+    echo $value['numOfRelief']."<br>";
+    print_r($value['mc']);
+    echo "<br>";
+    print_r($value['relief']);
+    echo "<br>";
+ * 
+ */
 ?>

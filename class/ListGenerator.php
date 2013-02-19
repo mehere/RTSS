@@ -13,26 +13,7 @@ class ListGenerator
     public static function getTeacherName($date)
     {
         $result = Array();
-        $teacher_dict = Teacher::getAllTeachers();
-        
-        //convert date to weekday
-        $weekday_string = date("D",  strtotime($date));
-        
-        $weekday_number = 1;
-        
-        switch ($weekday_string)
-        {
-            case "Mon":$weekday_number=1;break;
-            case "Tue":$weekday_number=2;break;
-            case "Wed":$weekday_number=3;break;
-            case "Thu":$weekday_number=4;break;
-            case "Fri":$weekday_number=5;break;
-            case "Sat":
-            case "Sun":
-            default:{
-                return $result;
-            }
-        }
+        $teacher_dict = Teacher::getAllTeachers();        
         
         //connect to db
         $db_con = Constant::connect_to_db('ntu');
@@ -42,7 +23,9 @@ class ListGenerator
             return $result;
         }
         
-        $sql_query_teacher = "select distinct ct_teacher_matching.teacher_id from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.weekday = ".$weekday_number.";";
+        //$sql_query_teacher = "select distinct ct_teacher_matching.teacher_id from rs_relief_info, ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = rs_relief_info.lesson_id and rs_relief_info.date = ".$date_str.";";
+        $sql_query_teacher = "select distinct leave_teacher from rs_relief_info where DATE(date) = '$date';";
+        
         $query_teacher_result = mysql_query($sql_query_teacher);
         if(!$query_teacher_result)
         {
@@ -51,17 +34,19 @@ class ListGenerator
         
         while($row = mysql_fetch_assoc($query_teacher_result))
         {
-            if(array_key_exists($row['teacher_id'], $teacher_dict))
+            if(array_key_exists($row['leave_teacher'], $teacher_dict))
             {
-                $fullname = $teacher_dict[$row['teacher_id']]['name'];
+                $fullname = $teacher_dict[$row['leave_teacher']]['name'];
             }
             else
             {
                 $fullname = "";
             }
             
-            $result[$row['teacher_id']] = $fullname;
+            $result[$row['leave_teacher']] = $fullname;
         }
+        
+        asort($result);
         
         return $result;
     }
@@ -78,26 +63,7 @@ class ListGenerator
             return $result;
         }
         
-        //convert date to weekday
-        $weekday_string = date("D",  strtotime($date));
-        
-        $weekday_number = 1;
-        
-        switch ($weekday_string)
-        {
-            case "Mon":$weekday_number=1;break;
-            case "Tue":$weekday_number=2;break;
-            case "Wed":$weekday_number=3;break;
-            case "Thu":$weekday_number=4;break;
-            case "Fri":$weekday_number=5;break;
-            case "Sat":
-            case "Sun":
-            default:{
-                return $result;
-            }
-        }
-        
-        $sql_query_class = "select distinct ct_class_matching.class_name from ct_lesson, ct_class_matching where ct_lesson.lesson_id = ct_class_matching.lesson_id and ct_lesson.weekday = ".$weekday_number.";";
+        $sql_query_class = "select distinct ct_class_matching.class_name from rs_relief_info, ct_class_matching where rs_relief_info.lesson_id = ct_class_matching.lesson_id and DATE(rs_relief_info.date) = '$date';";
         $query_class_result = mysql_query($sql_query_class);
         if(!$query_class_result)
         {

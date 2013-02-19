@@ -1,6 +1,7 @@
 <?php
 require_once 'util.php';
 require_once 'Teacher.php';
+require_once 'DBException.php';
 
 class TimetableDB
 {
@@ -15,26 +16,8 @@ class TimetableDB
      */
     public static function insertTimetable($lesson_list, $teacher_list, $year='13', $sem='1')
     {
-        //error information
-        $error_array = Array(
-            0 => NULL,
-            1 => NULL,
-            2 => NULL,
-            3 => NULL,
-            4 => NULL,
-            5 => NULL,
-            6 => NULL
-        );
-        
-        $empty_days = Array();
-        $empty_start_time = Array();
-        $empty_end_time = Array();
-        $empty_subject = Array();
-        $empty_class = Array();
-        $empty_teacher = Array();
-     
         //teacher list
-        //Teacher::getTeachersAccnameAndFullname($teacher_list);
+        Teacher::getTeachersAccnameAndFullname($teacher_list);
         
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time, end_time, subj_code, venue, type) values ";
@@ -59,23 +42,19 @@ class TimetableDB
             
             if(empty($subject))
             {
-                array_push($empty_subject, $key);
-                $subject  = Constant::default_var_value;
+                throw new DBException('Lesson '.$key." does not have subject", __FILE__, __LINE__);
             }
             if(empty($day_index) || !is_numeric($day_index) || $day_index < 1 || $day_index > Constant::num_of_week_day)
             {
-                array_push($empty_days, $key);
-                $day_index = Constant::default_num_value;
+                throw new DBException('Lesson '.$key."'s day index is not a number", __FILE__, __LINE__);
             }
             if(empty($start_time_index) || !is_numeric($start_time_index))
             {
-                array_push($empty_start_time, $key);
-                $start_time_index  = Constant::default_num_value;
+                throw new DBException('Lesson '.$key."'s start time index is not a number", __FILE__, __LINE__);
             }
             if(empty($end_time_index) || !is_numeric($end_time_index))
             {
-                array_push($empty_end_time, $key);
-                $end_time_index  = Constant::default_num_value;
+                throw new DBException('Lesson '.$key."'s end time index is not a number", __FILE__, __LINE__);
             }
             
             $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, empty($value->classes)?array():array_keys($value->classes), empty($value->teachers)?array():array_keys($value->teachers));
@@ -92,12 +71,7 @@ class TimetableDB
 
                     if(empty($class_name))
                     {
-                        if(!in_array($key, $empty_class))
-                        {
-                            array_push($empty_class, $key);
-                        }
-
-                        $class_name  = Constant::default_var_value;
+                        throw new DBException('Lesson '.$key." has empty class name", __FILE__, __LINE__);
                     }
 
                     $sql_insert_lesson_class .= "('".mysql_real_escape_string($lesson_id)."', '".mysql_real_escape_string($class_name)."'), ";
@@ -113,11 +87,7 @@ class TimetableDB
                 
                 if(empty($teacher_accname))
                 {
-                    if(!in_array($abbre_name, $empty_teacher))
-                    {
-                        array_push($empty_teacher, $abbre_name);
-                    }
-                    
+                    //throw new DBException($abbre_name." does not have accname", __FILE__, __LINE__);
                     continue;
                 }
                 
@@ -148,8 +118,7 @@ class TimetableDB
         
         if (!$db_con)
         {
-            $error_array[0] = "Could not connect to database";
-            return $error_array;
+            throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
         
         mysql_select_db($db_name, $db_con);
@@ -158,110 +127,26 @@ class TimetableDB
         $delete_sql_lesson = "delete from ct_lesson where type = 'N';";
         if (!mysql_query($delete_sql_lesson, $db_con))
         {
-            $error_array[0] = "Fail to clear database. Please contact system admin";
-            return $error_array;
+            throw new DBException("Fail to clear old data", __FILE__, __LINE__);
         }
         
         if(!mysql_query($sql_insert_lesson))
         {
-            $error_array[0] = "Error in ct_lesson table. Fail to insert timetable. Please try again later";
-            return $error_array;
+            throw new DBException("Fail to insert into ct_lesson", __FILE__, __LINE__);
         }
         if(!mysql_query($sql_insert_lesson_class))
         {
-            $error_array[0] = "Error in ct_class_matching table. Fail to insert timetable. Please try again later";
-            return $error_array;
+            throw new DBException("Fail to insert into ct_class_matching", __FILE__, __LINE__);
         }
         if($has_teacher)
         {
             if(!mysql_query($sql_insert_lesson_teacher))
             {
-                $error_array[0] = "Error in ct_teacher_matching table. Fail to insert timetable. Please try again later";
-                return $error_array;
+                throw new DBException("Fail to insert into ct_teacher_matching", __FILE__, __LINE__);
             }
         }
         
-        //print error info
-        if(count($empty_subject)>0)
-        {
-            $err_message = "The following lessons have empty subject : <br><br>";
-            foreach($empty_subject as $a_key)
-            {
-                $err_message .= " ".$a_key." ";
-            }
-            $err_message .= "<br><br>";
-            $err_message .= "An invalid value is used as a replacement in database. This may cause unpredictable problems in future. Please check the timetable and timetable analyzer. Simply reload the timetable after problems are fixed.";
-            $err_message .= "<br><br>";
-            
-            $error_array[1] = $err_message;
-        }
-        if(count($empty_days)>0)
-        {
-            $err_message = "The following lessons have empty day : <br><br>";
-            foreach($empty_days as $a_key)
-            {
-                $err_message .= " ".$a_key." ";
-            }
-            $err_message .= "<br><br>";
-            $err_message .= "An invalid value is used as a replacement in database. This may cause unpredictable problems in future. Please check the timetable and timetable analyzer. Simply reload the timetable after problems are fixed.";
-            $err_message .= "<br><br>";
-            
-            $error_array[2] = $err_message;
-        }
-        if(count($empty_start_time)>0)
-        {
-            $err_message = "The following lessons have empty start time : <br><br>";
-            foreach($empty_start_time as $a_key)
-            {
-                $err_message .= " ".$a_key." ";
-            }
-            $err_message .= "<br><br>";
-            $err_message .= "An invalid value is used as a replacement in database. This may cause unpredictable problems in future. Please check the timetable and timetable analyzer. Simply reload the timetable after problems are fixed.";
-            $err_message .= "<br><br>";
-            
-            $error_array[3] = $err_message;
-        }
-        if(count($empty_end_time)>0)
-        {
-            $err_message = "The following lessons have empty end time : <br><br>";
-            foreach($empty_end_time as $a_key)
-            {
-                $err_message .= " ".$a_key." ";
-            }
-            $err_message .= "<br><br>";
-            $err_message .= "An invalid value is used as a replacement in database. This may cause unpredictable problems in future. Please check the timetable and timetable analyzer. Simply reload the timetable after problems are fixed.";
-            $err_message .= "<br><br>";
-            
-            $error_array[4] = $err_message;
-        }
-        if(count($empty_class)>0)
-        {
-            $err_message = "The following lessons have empty class : <br>";
-            foreach($empty_class as $a_key)
-            {
-                $err_message .= " [ ".$a_key." ] ";
-            }
-            $err_message .= "<br>";
-            $err_message .= "An invalid value is used as a replacement in database. This may cause unpredictable problems in future. Please check the timetable and timetable analyzer. Simply reload the timetable after problems are fixed.";
-            $err_message .= "<br><br>";
-            
-            $error_array[5] = $err_message;
-        }
-        if(count($empty_teacher)>0)
-        {
-            $err_message = "The following abbreviation names do not exist in database : <br><br>";
-            foreach($empty_teacher as $a_key)
-            {
-                $err_message .= " [ ".$a_key." ] ";
-            }
-            $err_message .= "<br><br>";
-            $err_message .= "We could not store teaching information of these teachers in database. This may cause severe problems during scheduling. Please contact the system admin immediately. Simply reload the timetable after problems are fixed.";
-            $err_message .= "<br><br>";
-            
-            $error_array[6] = $err_message;
-        }
-        
-        return $error_array;
+        return true;
     }
     
     /**
@@ -285,19 +170,19 @@ class TimetableDB
         
         if(empty($accname) && empty($class))
         {
-            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."');";
+            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."');";
         }
         else if(empty($accname) && !empty($class))
         {
-            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
+            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
         }
         else if(!empty($accname) && empty($class))
         {
-            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
         }
         else
         {
-            $sql_query_relief = "select * from ct_lesson, rs_relief_info, ct_class_matching where ct_lesson.lesson_id = rs_relief_info.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id and rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
         }
         
         $query_relief_result = mysql_query($sql_query_relief);
@@ -336,9 +221,12 @@ class TimetableDB
                     
                     if(strcmp($result[$i][$j]['subject'], $subject)===0 && strcmp($result[$i][$j]['teacher-accname'], $leave_teacher_id)===0 && strcmp($result[$i][$j]['relief-teacher-accname'], $relief_teacher_id)===0 && strcmp($result[$i][$j]['venue'], $venue)===0)
                     {
-                        $existed = true;
-                        $result[$i][$j]['class'][] = $row['class_name'];
-                        break;
+                        if(!empty($row['class_name']))
+                        {
+                            $existed = true;
+                            $result[$i][$j]['class'][] = $row['class_name'];
+                            break;
+                        }
                     }
                 }
                 
@@ -373,8 +261,13 @@ class TimetableDB
                         'teacher-fullname' => $leave_name,
                         'relief-teacher-accname' => $relief_teacher_id,
                         'relief-teacher-fullname' => $relief_name,
-                        'class' => Array($row['class_name'])
+                        'class' => Array()
                     );
+                    
+                    if(!empty($row['class_name']))
+                    {
+                        $new_teaching['class'][] = $row['class_name'];
+                    }
                     
                     $result[$i][] = $new_teaching;
                 }
@@ -396,10 +289,10 @@ class TimetableDB
         
         foreach($timetable as $a_table)
         {
-            if(!is_int($a_table['day']) || !is_int($a_table['time-from']) || !is_int($a_table['time-to']))
-            {
-                return false;
-            }
+//            if(!is_int($a_table['day']) || !is_int($a_table['time-from']) || !is_int($a_table['time-to']))
+//            {
+//                return false;
+//            }
             
             $venue = empty($a_table["venue"])?"":mysql_real_escape_string(trim($a_table["venue"]));
             $highlighted = $a_table['isHighlighted']?"true":"false";

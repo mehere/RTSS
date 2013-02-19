@@ -45,10 +45,10 @@ include_once '../head-frag.php';
 
                 // Teacher verified
                 $teacherVerifiedList=$_SESSION['teacherVerified'];
-                $teacherScheduledList=$_SESSION['teacherScheduled'];
+                $teacherScheduledList=$_SESSION['teacherScheduled'];                
             ?>
             <form class="main" name="schedule" action="schedule/" method="post">
-            	Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 80px" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+            	Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                 <div class="section">
                 	Teacher on Leave: <a href="teacher-edit.php">Edit/Add</a>
                     <table class="table-info">
@@ -61,8 +61,9 @@ include_once '../head-frag.php';
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
                                     {
+                                        // class="sort"
                                         echo <<< EOD
-                                            <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                            <th style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                                     }
                                 ?>
@@ -114,8 +115,9 @@ EOD;
                                     
                                     for ($i=0; $i<count($tableHeaderList); $i++)
                                     {
+                                        // class="sort"
                                         echo <<< EOD
-                                            <th style="width: $width[$i]" class="sort">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                            <th style="width: $width[$i]" >$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                                     }
                                 ?>                               
@@ -151,28 +153,27 @@ EOD;
                 	Excluding List: <a href="exclude-list.php">Edit</a>
                     <table class="table-info">
                     	<?php
-                            $list=Teacher::getExcludingList();
+                            $accList=Teacher::getExcludingList($date);
+
+                            $execInfo=Teacher::getTeacherInfo('executive');
+                            $nonexecInfo=Teacher::getTeacherInfo('non-executive');
                             
                             $adminList=array();
-                            $normalList=array();                            
-                            
-                            foreach ($list as $value)
+                            $normalList=array();
+                            foreach ($accList as $value)
                             {
-                                if ($value['checked'])
+                                if ($execInfo[$value])
                                 {
-                                    if (strcasecmp($value['type'], 'HOD') === 0)
-                                    {
-                                        $adminList[]=$value['fullname'];
-                                    }
-                                    else
-                                    {
-                                        $normalList[]=$value['fullname'];
-                                    }
-                                }                                
+                                    $adminList[]=$execInfo[$value]['fullname'];
+                                }
+                                if ($nonexecInfo[$value])
+                                {
+                                    $normalList[]=$nonexecInfo[$value]['fullname'];
+                                }
                             }
                         ?>
-                        <tr><th style="width: 120px">HOD/ExCo</th><td><?php echo implode(', ', $adminList); ?></td></tr>
-                        <tr><th>Others</th><td><?php echo implode(', ', $normalList); ?></td></tr>
+                        <tr><th style="width: 120px"><?php echo NameMap::$RELIEF['excludingList']['display']['executive']; ?></th><td><?php echo implode(', ', $adminList); ?></td></tr>
+                        <tr><th><?php echo NameMap::$RELIEF['excludingList']['display']['non-executive']; ?></th><td><?php echo implode(', ', $normalList); ?></td></tr>
                     </table>
                 </div>
                 <div class="bt-control">
