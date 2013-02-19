@@ -1,158 +1,62 @@
 <?php
 
+ini_set("memory_limit", "512M");
+define("NUM_STATES_REQUIRED", 5);
+
 function isAvailable($aTeacher)
 {
     /* @var $aTeacher TeacherCompact */
     return $aTeacher->isAvailable();
 }
 
-function cmpTeachers($teacher1, $teacher2)
+function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleStateHeapBest $successStates, ScheduleStateHeapBest $stoppedStates)
 {
-    /* @var $teacher1 TeacherCompact */
-    /* @var $teacher2 TeacherCompact */
-    $type1 = $teacher1->getTypeNo();
-    $type2 = $teacher2->getTypeNo();
-    if ($type1 != $type2)
-    {
-        return ($type1 < $type2) ? -1 : 1;
-    }
-
-    // 1st sort: Teaching Periods
-    $noTeachingPeriod1 = $teacher1->noTeachingPeriod;
-    $noTeachingPeriod2 = $teacher2->noTeachingPeriod;
-    if ($noTeachingPeriod1 != $noTeachingPeriod2)
-    {
-        return ($noTeachingPeriod1 < $noTeachingPeriod2) ? -1 : 1;
-    }
-
-    // 2nd sort: Done Before
-    $hasDone1 = $teacher1->hasDone;
-    $hasDone2 = $teacher2->hasDone;
-    if ($hasDone1 != $hasDone2)
-    {
-        return ($hasDone1 === FALSE) ? -1 : 1;
-    }
-
-    // 3rd sort: Net Relief
-    $netRelived1 = $teacher1->netRelived;
-    $netRelived2 = $teacher2->netRelived;
-    if ($netRelived1 != $netRelived2)
-    {
-        return ($netRelived1 < $netRelived2) ? -1 : 1;
-    }
-
-    return 0;
-}
-
-function cmpStates($state1, $state2)
-{
-    /* @var $state1 ScheduleState */
-    /* @var $state2 ScheduleState */
-    $expectedTotalCost1 = $state1->expectedTotalCost;
-    $expectedTotalCost2 = $state2->expectedTotalCost;
-    if ($expectedTotalCost1 != $expectedTotalCost2)
-    {
-        return ($expectedTotalCost1 < $expectedTotalCost2) ? -1 : 1;
-    }
-
-    $factor1_fairnessCost1 = $state1->factor1_fairnessCost;
-    $factor1_fairnessCost2 = $state2->factor1_fairnessCost;
-    if ($factor1_fairnessCost1 != $factor1_fairnessCost2)
-    {
-        return ($factor1_fairnessCost1 < $factor1_fairnessCost2 ) ? -1 : 1;
-    }
-
-    $factor2_hassleCost1 = $state1->factor2_hassleCost;
-    $factor2_hassleCost2 = $state2->factor2_hassleCost;
-    if ($factor2_hassleCost1 != $factor2_hassleCost2)
-    {
-        return ($factor2_hassleCost1 > $factor2_hassleCost2) ? -1 : 1;
-    }
-
-    return 0;
-}
-
-function scheduling(&$visitedStates, &$activeStates, &$successStates, &$stoppedStates)
-{
-    /* @var $activeStates ScheduleStateHeap */
-    /* @var $successStates ScheduleStateHeap */
-    /* @var $stoppedStates ScheduleStateHeap */
-    $breakingScore = NULL;
+    /* @var $aState ScheduleState */
+    /* @var $firstTeacher TeacherCompact */
     while (!($activeStates->isEmpty()))
     {
+//        echo "<br>";
+//        echo $activeStates->count();
         $aState = $activeStates->extract();
-        /* @var $aState ScheduleState */
-        /* @var $firstTeacher TeacherCompact */
-        $lessonsNotAllocated = $aState->lessonsNotAllocated;
-        if (!empty($breakingScore))
+        if ($successStates->isRejected($aState))
         {
-            if ($breakingScore < $aState->expectedTotalCost)
-            {
-                break;
-            }
-        }
-        if (empty($lessonsNotAllocated))
-        {
-            $breakingScore = $aState->expectedTotalCost;
-            $successStates->insert($aState);
             continue;
         }
+        if (empty($aState->lessonsNotAllocated))
+        {
+            $successStates->insert($aState);
 
-        $firstTeacher = current($aState->teachersAlive);
+            continue;
+        }
+        $firstTeacher = $aState->teachersAlive->current();
         if (empty($firstTeacher))
         {
             $stoppedStates->insert($aState);
             continue;
         }
 
-        $newStates = array();
         $overallAvailability = ReliefLesson::AVAILABILITY_BUSY;
-        foreach ($lessonsNotAllocated as $key => $aLesson)
+        foreach ($aState->lessonsNotAllocated as $lessonKey => $aLesson)
         {
-            /* @var $aLesson ReliefLesson */
             $availability = $aLesson->canBeDoneBy($firstTeacher);
-            if ($availability == ReliefLesson::AVAILABILITY_FREE)
+            if ($availability < $overallAvailability)
             {
                 $overallAvailability = $availability;
+            }
+            if (($availability == ReliefLesson::AVAILABILITY_FREE) || ($availability == ReliefLesson::AVAILABILITY_SKIPPED))
+            {
                 $aNewState = clone $aState;
-                $aNewState->allocateLessonToFirstTeacher($key);
-                $newStates[$aNewState->toString()] = $aNewState;
-            } else if (($availability == ReliefLesson::AVAILABILITY_SKIPPED) && ($overallAvailability != ReliefLesson::AVAILABILITY_FREE))
-            {
-                $overallAvailability = $availability;
-            } else if (($availability == ReliefLesson::AVAILABILITY_PARTIAL) && ($overallAvailability == ReliefLesson::AVAILABILITY_BUSY))
-            {
-                $overallAvailability = $availability;
+                $aNewState->allocateLessonToFirstTeacher($lessonKey);
+                $aNewStateKey = $aNewState->toString();
+                if (!isset($visitedStates[$aNewStateKey]))
+                {
+                    $visitedStates[$aNewStateKey] = NULL;
+                    $activeStates->insert($aNewState);
+                }
             }
         }
-        if ($overallAvailability == ReliefLesson::AVAILABILITY_FREE)
-        {
-            foreach ($newStates as $key => $aNewState)
-            {
-                if (!isset($visitedStates[$key]))
-                {
-                    $visitedStates[$key] = TRUE;
-                    $performed = TRUE;
-                    $activeStates->insert($aNewState);
-                }
-            }
-        } else if ($overallAvailability == ReliefLesson::AVAILABILITY_SKIPPED)
-        {
-            // creating new states
-            foreach ($newStates as $key => $aNewState)
-            {
-                if (!isset($visitedStates[$key]))
-                {
-                    $visitedStates[$key] = TRUE;
-                    $performed = true;
-                    $activeStates->insert($aNewState);
-                }
-            }
 
-            // retain current state, but skip teacher
-            $aState->removeFirstTeacher();
-            $activeStates->insert($aState);
-        } else
+        if ($overallAvailability != ReliefLesson::AVAILABILITY_FREE)
         {
             if ($overallAvailability == ReliefLesson::AVAILABILITY_PARTIAL)
             {
@@ -226,7 +130,7 @@ try
     exit();
 }
 
-
+$startTime = microtime(true);
 // initialization
 ScheduleState::$arrTeachers = array();
 $lessonsNeedRelief = array();
@@ -251,13 +155,12 @@ foreach ($typesOfTeachers as $aType)
     $varArrCompactTeachers = "arr{$aType}CompactTeachers";
     $$varArrCompactTeachers = array();
 
-    ScheduleState::$arrTeachers = array_merge(ScheduleState::$arrTeachers, $$varArrTeachers);
+    ScheduleState::$arrTeachers = ScheduleState::$arrTeachers + $$varArrTeachers;
     foreach ($$varArrTeachers as $accname => $aTeacher)
     {
         $aCompactTeacher = new TeacherCompact($aTeacher, $aType);
         ${$varArrCompactTeachers}[$accname] = $aCompactTeacher;
     }
-
 
     // Applying Leave
     $varArrTeacherLeaves = "arr{$aType}TeachersLeaves";
@@ -265,25 +168,47 @@ foreach ($typesOfTeachers as $aType)
 
     // Printing for Debugging
     /*
-    echo "<br><br>Type: $aType";
-    echo "<br>Leaves<br>";
-    print_r($arrLeaves[$aType]);
-    echo "<br>Teachers: <br>";
-    foreach ($$varArrTeachers as $key => $aTeacher)
-    {
-        echo "Key: $key<br>";
-        print_r($aTeacher);
-        echo "<br>";
-    }
-//    print_r($$varArrTeachers);
-    echo "<br>Compact Teacher:<br>";
-    foreach ($$varArrCompactTeachers as $aTeacher)
-    {
-        print_r($aTeacher);
-        echo "<br>";
-    }
-//    print_r($$varArrCompactTeachers);
-*/
+      echo "<br><br>Type: $aType";
+      echo "<br>Leaves<br>";
+      print_r($arrLeaves[$aType]);
+      echo "<br>Teachers: <br>";
+      foreach ($$varArrTeachers as $key => $aTeacher)
+      {
+      echo "Key: $key<br>";
+      print_r($aTeacher);
+      echo "<br>";
+      }
+      //    print_r($$varArrTeachers);
+      echo "<br>Compact Teacher:<br>";
+      foreach ($$varArrCompactTeachers as $aTeacher)
+      {
+      print_r($aTeacher);
+      echo "<br>";
+      }
+      //    print_r($$varArrCompactTeachers);
+     */
+    // Printing for Debugging
+    /*
+      echo "<br><br>Type: $aType";
+      echo "<br>Leaves<br>";
+      print_r($arrLeaves[$aType]);
+      echo "<br>Teachers: <br>";
+      foreach ($$varArrTeachers as $key => $aTeacher)
+      {
+      echo "Key: $key<br>";
+      print_r($aTeacher);
+      echo "<br>";
+      }
+      //    print_r($$varArrTeachers);
+      echo "<br>Compact Teacher:<br>";
+      foreach ($$varArrCompactTeachers as $aTeacher)
+      {
+      print_r($aTeacher);
+      echo "<br>";
+      }
+      //    print_r($$varArrCompactTeachers);
+      //end of print
+     */
 
     foreach ($$varArrTeacherLeaves as $accname => $leaveRecords)
     {
@@ -294,7 +219,7 @@ foreach ($typesOfTeachers as $aType)
     }
     if (!empty($someLessonsNeedRelief))
     {
-        $lessonsNeedRelief = array_merge($lessonsNeedRelief, $someLessonsNeedRelief);
+        $lessonsNeedRelief = $lessonsNeedRelief + $someLessonsNeedRelief;
     }
 
     // Managing Exclusions
@@ -305,6 +230,7 @@ foreach ($typesOfTeachers as $aType)
     $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
     $$varArrAvailableTeachers = array_filter($$varArrCompactTeachers, $teacherFilter($$varArrExcludedTeachers));
 }
+
 
 // initialization of groups ----------------------------------------------------
 $group1Types = array(
@@ -324,10 +250,10 @@ $arrGroup1 = array();
 foreach ($group1Types as $aType)
 {
     $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
-    $arrGroup1 = array_merge($arrGroup1, $$varArrAvailableTeachers);
+    $arrGroup1 = $arrGroup1 + $$varArrAvailableTeachers;
 }
 
-uasort($arrGroup1, 'cmpTeachers');
+//uasort($arrGroup1, 'cmpTeachers');
 //echo "<br>Group 1<br>";
 //print_r($arrGroup1);
 //foreach ($lessonsNeedRelief as $aReliefLesson)
@@ -339,58 +265,81 @@ uasort($arrGroup1, 'cmpTeachers');
 
 $visitedStates = array();
 $activeStates = new ScheduleStateHeap();
-$successStates = new ScheduleStateHeap();
-$stoppedStates = new ScheduleStateHeap();
+$successStates = new ScheduleStateHeapBest(5);
+$stoppedStates = new ScheduleStateHeapBest(5);
 
 $startState = new ScheduleState($arrGroup1, $lessonsNeedRelief);
 $activeStates->insert($startState);
-$visitedStates[$startState->toString()] = TRUE;
+$visitedStates[$startState->toString()] = NULL;
 
-print_r($activeStates);
+unset($aCompactTeacher);
+unset($aTeacher);
+unset($aType);
+unset($accname);
+unset($arrExcludedTeachers);
+unset($arrGroup1);
+unset($arrLeaves);
+unset($dateScheduled);
+unset($dateString);
+unset($group1Types);
+unset($leaveRecords);
+unset($lessonsNeedRelief);
+unset($methodGetTeachers);
+unset($scheduler);
+unset($someLessonsNeedRelief);
+unset($startState);
+unset($teacherFilter);
+unset($typesOfTeachers);
+unset($varArrAvailableTeachers);
+unset($varArrCompactTeachers);
+unset($varArrExcludedTeachers);
+unset($varArrTeacherLeaves);
+unset($varArrTeachers);
 
 scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
+
+$endTime = microtime(true);
 //echo "<br>visited:<br>";
 //print_r($visitedStates);
+echo "<br>Memory:";
+echo memory_get_peak_usage(), "\n";
+
+echo "<br>Time:";
+$timeSpent = $endTime - $startTime;
+echo $timeSpent;
+
 echo "<br>";
 echo "<br>active:<br>:";
-print_r($activeStates);
+//print_r($activeStates);
 echo "<br>";
 echo "<br>:success<br>:";
 print_r($successStates);
-for ($i = 0; $i < 3; $i++){
-    print_r(current($successStates));
-    next($successStates);
-    echo "<br><br>";
-}
-
 echo "<br>";
 echo "<br>stopped:<br>:";
-print_r($stoppedStates);
-die;
+//print_r($stoppedStates);
 
-
-if (empty($successStates))
+if ($successStates->numberStates == 0)
 {
     $arrGroup2 = array();
     foreach ($group2Types as $aType)
     {
         $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
-        $arrGroup2 = array_merge($arrGroup2, $$varArrAvailableTeachers);
+        $arrGroup2 = $arrGroup2 + $$varArrAvailableTeachers;
     }
-    foreach ($stoppedStates as $aState)
+    foreach ($stoppedStates->heap as $aState)
     {
         $aState->splitLessons();
         $aState->resetAndAddTeachers($arrGroup2);
+        $activeStates->insert($aState);
     }
-    $activeStates = $stoppedStates;
-    $stoppedStates = array();
+    $stoppedStates = new ScheduleStateHeapBest(5);
     scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
-
-    if (empty($successStates))
-    {
-
-    }
-
-    die;
 }
+if ($successStates->numberStates > 0){
+    //
+}
+else {
+    // failure
+}
+
 ?>

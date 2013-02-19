@@ -1,22 +1,10 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of ReliefLesson
- *
- * @author Wee
- */
 class ReliefLesson
 {
-
-    const AVAILABILITY_FREE = "Free";
-    const AVAILABILITY_PARTIAL = "Partial";
-    const AVAILABILITY_BUSY = "Busy";
-    const AVAILABILITY_SKIPPED = "Skipped";
+    const AVAILABILITY_FREE = 1;
+    const AVAILABILITY_SKIPPED = 2;
+    const AVAILABILITY_PARTIAL = 3;
+    const AVAILABILITY_BUSY = 4;
 
 //put your code here
 
