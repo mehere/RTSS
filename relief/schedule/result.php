@@ -1,6 +1,6 @@
 <?php 
-    include_once '../../php-head.php';
-    include_once '../../head-frag.php';        
+include_once '../../php-head.php';
+include_once '../../head-frag.php';        
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
@@ -17,21 +17,20 @@
 <div id="container">  	
     <div id="content-wrapper">
     	<div id="content">
-            <div id="topbar">
-            	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
-                <ul class="breadcrumb">
-                    <li><a href="/RTSS/relief/">Scheduling</a></li>
-                    <li><a href="/RTSS/relief/schedule/">Result Preview</a></li>
-                    <li>Result Approval</li>
-                </ul>                
-            </div>
+            <?php
+                $TOPBAR_LIST=array(
+                    array('tabname' => 'Scheduling', 'url' => "/RTSS/relief/"),
+                    array('tabname' => 'Result Approval', 'url' => "")
+                );
+                include '../../topbar-frag.php';
+            ?>
             <form class="main" name="edit" action="" method="post">
                 <div class="section">
                     <table class="table-info">
                         <thead>
                             <tr>
                                 <?php                                 
-                                    $width=array('60px', '130px', '40%', '60%');                                                                        
+                                    $width=array('24%', '130px', '38%', '38%');                                                                        
                                                                         
                                     $tableHeaderList=array_values(NameMap::$SCHEDULE_RESULT['schedule']['display']);
                                     
@@ -45,24 +44,79 @@ EOD;
                             </tr>
                         </thead>
                         <tbody>
-                        	<tr><td>1A</td><td>1030 - 1330</td><td>Good Anota</td><td><span class="text-display">What Hash</span><input type="text" name="reliefTeacherName-0" value="What Hash" class="text-hidden" /></td></tr>
-                            <tr><td>1A</td><td>1030 - 1330</td><td>Good Anota</td><td>What Hash</td></tr>
-                            <tr><td>1A</td><td>1030 - 1330</td><td>Good Anota</td><td>What Hash</td></tr>
+                            <?php                            
+                                $scheduleList=array(0=>array(
+                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 3),
+                                    "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
+                                    "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
+                                    array('class'=>array('4F', '9A'), 'time'=>array(1, 3),
+                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
+                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%'),
+                                    array('class'=>array('4A', '9C'), 'time'=>array(6, 8),
+                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
+                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%')));
+                                
+                                foreach ($scheduleList[0] as $key => $value)
+                                {
+                                    $classStr=implode(', ', $value['class']);
+                                    $timeStart=SchoolTime::getTimeValue($value['time'][0]);
+                                    $timeEnd=SchoolTime::getTimeValue($value['time'][1]);
+                                    echo <<< EOD
+<tr><td>$classStr</td><td>$timeStart<span style="margin: 0 3px">-</span>$timeEnd</td><td>{$value['teacherOnLeave']}</td><td><span class="text-display">{$value['reliefTeacher']}</span><input type="text" name="reliefAccName-$key" value="{$value['reliefTeacher']}" class="text-hidden" /></td></tr>   
+EOD;
+                                }
+                            ?>
                         </tbody>
                     </table>
+                    <div class="page-control">                    	
+                        <?php                        
+                            $scheduleResultNum=$_SESSION['scheduleResultNum'];
+                            if (!scheduleResultNum) 
+                            {
+                                $scheduleResultNum=$_SESSION['scheduleResultNum']=6;  // change!                                
+                            }
+                            
+                            $curPage=$_GET['page'];
+                            if (!$curPage) $curPage=1;
+                            
+                            $prevPage=max(1, $curPage-1);
+                            echo <<< EOD
+<a href="?page=$prevPage" class="page-no page-turn">&lt;</a>   
+EOD;
+                            
+                            for ($i=1; $i<=$scheduleResultNum; $i++)
+                            {
+                                $selectedStr='';
+                                if ($curPage == $i) $selectedStr='page-selected';
+                                echo <<< EOD
+<a href="?page=$i" class="page-no $selectedStr">$i</a>
+EOD;
+                            }
+                            
+                            $nextPage=min($scheduleResultNum, $curPage+1);
+                            echo <<< EOD
+<a href="?page=$nextPage" class="page-no page-turn">&gt;</a>   
+EOD;
+                        ?>
+                    </div>
                 </div>
                 <div class="fltrt">                	
                 	<input type="button" name="override" value="Override" class="button" />
                     <input type="submit" value="Approve" class="button" />
                 </div>
                 <div class="link-control">
-                    <a href="timetable.php?tab=teacher" class="link">Preview Timetable</a>
+                    <a href="timetable.php" class="link">Preview Timetable</a>
                 </div>                
                 <input type="hidden" name="num" value="1" />                
             </form>            
         </div>
     </div>
-    <?php include '../../sidebar-frag.php'; ?>
+    <?php 
+        include '../../sidebar-frag.php'; 
+    
+        unset($_SESSION['timetableAnalyzer']);
+        unset($_SESSION['abbrNameList']);        
+    ?>
 </div>
     
 </body>

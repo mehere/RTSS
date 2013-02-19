@@ -2,6 +2,41 @@
 .section {
 	margin-top: 15px;
 }
+
+.section .page-control {
+	text-align: center;
+	margin-top: 20px;
+}
+.section .page-control .page-no {
+	padding: 5px 10px;
+	color: black;
+	border: 1px solid #282828;
+	
+	background-color: #a5a5a5;
+	background: -ms-linear-gradient(top, #aaaaaa 0%,#999999 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#aaaaaa), color-stop(100%,#999999));
+	background: linear-gradient(to bottom, #aaaaaa 0%,#999999 100%);
+}
+.section .page-control .page-no:hover {
+	text-decoration: none;
+	
+	background-color: #B2B2B2;
+	background: -ms-linear-gradient(top, #999999 0%,#B2B2B2 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#999999), color-stop(100%,#B2B2B2));
+	background: linear-gradient(to bottom, #999999 0%,#B2B2B2 100%);	
+}
+.section .page-control .page-selected, .section .page-control .page-selected:hover {
+	background: none;
+	background-color: #ededed;
+	
+	box-shadow: inset 0 0 5px 0 gray;
+}
+.section .page-control .page-turn {
+	color: white;
+	font-weight: bold;
+	margin: 0 10px;
+}
+
 .table-info input, .table-info select {
 	font-size: .85em;
 }
@@ -11,7 +46,6 @@
 }
 
 .link-control {
-	margin-top: 25px;
 	padding-bottom: 10px;
 }
 .link-control .link {
@@ -19,8 +53,7 @@
 	margin-top: 10px;
 	margin-left: 10px;
 }
-.fltrt .button {	
-	margin-top: 30px;
+.fltrt .button {
 	margin-right: 30px;
 }
 

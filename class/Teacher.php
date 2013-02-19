@@ -999,17 +999,14 @@ class Teacher {
         }
         
         //sort
-        if(strcmp($order, 'fullname') !== 0)
-        {
-            $sort_arr = Array();
-            
-            foreach($result as $key=>$value)
-            {
-                $sort_arr[$key] = $value[$order];
-            }
+        $sort_arr = Array();
 
-            array_multisort($sort_arr, $direction, $result);
+        foreach($result as $key=>$value)
+        {
+            $sort_arr[$key] = $value[$order];
         }
+
+        array_multisort($sort_arr, $direction, $result);        
         
         return $result;
     }

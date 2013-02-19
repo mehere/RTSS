@@ -16,6 +16,16 @@
     padding-bottom: 10px;
 }
 
+#content .bt-control {
+	text-align: center;
+	margin-top: 20px;
+}
+#content .bt-control .button:hover {
+	text-decoration: none;
+	text-shadow: none;
+	color: inherit;
+}
+
 .table-info {
 	border-collapse: collapse;
 	table-layout: fixed;
