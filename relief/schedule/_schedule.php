@@ -244,8 +244,8 @@ unset($accname);
 unset($arrExcludedTeachers);
 unset($arrGroup1);
 unset($arrLeaves);
-unset($dateScheduled);
-unset($dateString);
+//unset($dateScheduled);
+//unset($dateString);
 unset($group1Types);
 unset($leaveRecords);
 unset($lessonsNeedRelief);
@@ -336,6 +336,7 @@ if ($successStates->numberStates > 0)
         $successResults[] = $results;
     }
 
+//    print_r($successResults);
     try
     {
         SchedulerDB::setScheduleResult($successResults);
