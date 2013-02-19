@@ -90,26 +90,16 @@ spl_autoload_register(
         });
 
 
-//$dateScheduledString = $_POST["date"];
-//$typeSchedule;
-//if (array_key_exists("btnScheduleAll", $_POST))
-//{
-//    $typeSchedule = 1;
-//} else if (array_key_exists("btnScheduleAdhoc", $_POST))
-//{
-//    $typeSchedule = 2;
-//}
-//
-//echo "<br>type: $typeSchedule";
-//
-///// To-DO: format to be soft-coded
-//$format = "Y-m-d";
-//$dateScheduled = DateTime::createFromFormat($format, $dateScheduledString);
-/* @var $dateScheduled DateTime */
+$dateString = $_POST["date"];
+$typeSchedule = 0;
+if (isset($_POST["btnScheduleAll"]))
+{
+    $typeSchedule = 1;
+} else if (isset($_POST["btnScheduleAdhoc"]))
+{
+    $typeSchedule = 2;
+}
 
-//echo "<br>Day: $day";
-//junk
-$dateString = "2013/2/6";
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
 
 $typesOfTeachers = array(
