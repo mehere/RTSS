@@ -4,36 +4,57 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-//include './weeclass.php';
+spl_autoload_register(
+        function ($class)
+        {
+            include './' . $class . '.php';
+        });
 
-//$tester = new WEECLASS();
-//echo $tester->test();
-$arr = array('a','b','c','d');
-$cur = current($arr);
-echo $cur;
-unset($arr[key($arr)]);
-$cur = current($arr);
-echo $cur;
-unset($arr[key($arr)]);
-$cur = current($arr);
-echo $cur;
-unset($arr[key($arr)]);
-$cur = current($arr);
-echo $cur;
-unset($arr[key($arr)]);
-$cur = current($arr);
-echo $cur;
-unset($arr[key($arr)]);
+//$var1 = new SplMaxHeap();
+//for ($i = 10; $i < 110; $i = $i + 10){
+//    $var1->insert($i);
+//}
+//
+//for ($i = 10; $i < 110; $i = $i + 10){
+//    $current = $var1->current();
+//    echo "<br> $current";
+//}
+echo memory_get_usage()."\n"; // display 627760
+$array = array();
+$array[] = 1;
+$array[] = 2;
+echo memory_get_usage()."\n"; // 824744, so 196984 for $array
+unset( $array );
 
-////print_r($cur);
-//if (empty($cur)){echo "abc";}
-//$type = "Norm";
-//echo "construct{$type}Teacher";
+echo memory_get_usage()."\n"; // 627792
+$spl= new SplFixedArray(14);
+$spl[0] = 1;
+$spl[1] = 2;
+echo memory_get_usage()."\n"; //644944, so just 17151 for $spl !!!
 
-//$arr1 = array();
-//$arr2 = array("b1"=>1,"b2"=>2,"b3"=>3);
-//$arr3 = array_merge($arr1,$arr2);
-//print_r($arr3);
-//$noElements = count($arr1);
-//echo $noElements;
+//$var1 = new WEECLASS();
+//$var1->init();
+//$var2 = clone $var1;
+//
+//echo "<br>After Init: <br>";
+//echo "var 1:<br>";
+//print_r($var1);
+
+//echo "var 2:<br> ";
+//print_r($var2);
+//
+//$var1->mod();
+//echo "<br>After Mod: <br>";
+//echo "var 1:<br>";
+//print_r($var1);
+//echo "var 2:<br> ";
+//print_r($var2);
+//
+//$var1->mod2();
+//echo "<br>After Mod 2: <br>";
+//echo "var 1:<br>";
+//print_r($var1);
+//echo "var 2:<br> ";
+//print_r($var2);
+
 ?>
