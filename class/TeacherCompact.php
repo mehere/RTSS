@@ -258,6 +258,12 @@ class TeacherCompact
         self::$typeToNeedReliefMap = array("Temp" => FALSE, "Aed" => FALSE, "Untrained" => FALSE, "Normal" => TRUE, "Hod" => TRUE);
     }
 
+    static function getAccName($teacherId){
+        /* @var $aTeacher Teacher*/
+        $aTeacher = self::$arrTeachers[$teacherId];
+        return $aTeacher->accname;
+    }
+
 }
 
 TeacherCompact::init();
