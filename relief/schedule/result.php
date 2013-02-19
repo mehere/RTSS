@@ -71,10 +71,10 @@ EOD;
                     <div class="page-control">                    	
                         <?php                        
                             $scheduleResultNum=$_SESSION['scheduleResultNum'];
-                            if (!scheduleResultNum) 
+                            if (!$scheduleResultNum) 
                             {
                                 $scheduleResultNum=$_SESSION['scheduleResultNum']=6;  // change!                                
-                            }
+                            }                            
                             
                             $curPage=$_GET['page'];
                             if (!$curPage) $curPage=1;
