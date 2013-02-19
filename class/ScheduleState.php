@@ -159,7 +159,7 @@ class ScheduleState
         $this->lessonsNotAllocated = $newLessons;
     }
 
-    public function resetAndAddTeachers($newTeachers)
+    public function resetTeachers()
     {
         /* @var $aTeacher TeacherCompact */
         foreach ($this->teachersStuck as $aTeacher)
@@ -169,6 +169,12 @@ class ScheduleState
             $propertyName = "noGrp$typeNo";
             $this->$propertyName++;
         }
+
+        $this->teachersStuck = array();
+    }
+
+    public function addTeachers($newTeachers)
+    {
         foreach ($newTeachers as $aTeacher)
         {
             $this->teachersAlive->insert($aTeacher);
@@ -176,8 +182,6 @@ class ScheduleState
             $propertyName = "noGrp$typeNo";
             $this->$propertyName++;
         }
-
-        $this->teachersStuck = array();
     }
 
     public function removeFirstTeacher()
@@ -203,6 +207,7 @@ class ScheduleState
         $this->estimatedFutureCost = count($this->lessonsNotAllocated) * $baseCost;
         $this->expectedTotalCost = $this->actualIncurredCost + $this->estimatedFutureCost;
     }
+
 }
 
 ?>

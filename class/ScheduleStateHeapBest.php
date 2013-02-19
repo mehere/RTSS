@@ -10,6 +10,7 @@ class ScheduleStateHeapBest
 
     public function __construct($numberRequired)
     {
+        $this->heap = array();
         $this->numberRequired = $numberRequired;
         $this->numberStates = 0;
         $this->isEnough = FALSE;

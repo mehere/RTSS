@@ -1,8 +1,8 @@
 <?php
 
 ini_set("memory_limit", "512M");
-define("NUM_STATES_REQUIRED", 1);
-define("TIME_TO_WAIT", 30);
+define("NUM_STATES_REQUIRED", 3);
+define("TIME_TO_WAIT", 20);
 
 function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleStateHeapBest $successStates, ScheduleStateHeapBest $stoppedStates)
 {
@@ -14,7 +14,7 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
     while (!($activeStates->isEmpty()))
     {
         $nowTime = microtime(true);
-        if (($successStates->numberStates > 0) && (($nowTime - $startTime) > TIME_TO_WAIT))
+        if ((($successStates->numberStates > 0) || ($stoppedStates->numberStates > 0)) && (($nowTime - $startTime) > TIME_TO_WAIT))
         {
             break;
         }
@@ -188,6 +188,7 @@ foreach ($typesOfTeachers as $aType)
 
     $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
     $$varArrAvailableTeachers = $$varArrCompactTeachers;
+    unset($$varArrCompactTeachers);
 
     // Managing Exclusions
     $varArrExcludedTeachers = "arrExcluded{$aType}Teachers";
@@ -224,6 +225,7 @@ foreach ($group1Types as $aType)
 {
     $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
     $arrGroup1 = $arrGroup1 + $$varArrAvailableTeachers;
+    unset($$varArrAvailableTeachers);
 }
 
 //uasort($arrGroup1, 'cmpTeachers');
@@ -242,7 +244,7 @@ $successStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
 $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
 
 $startState = new ScheduleState($arrGroup1, $lessonsNeedRelief);
-$activeStates->insert($startState);
+//$activeStates->insert($startState);
 $visitedStates[$startState->toString()] = NULL;
 
 unset($aCompactTeacher);
@@ -274,6 +276,7 @@ unset($varArrTeachers);
 //scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 $stoppedStates->insert($startState);
 
+// round 2
 if ($successStates->numberStates == 0)
 {
     $arrGroup2 = array();
@@ -285,29 +288,32 @@ if ($successStates->numberStates == 0)
     foreach ($stoppedStates->heap as $aState)
     {
         $aState->splitLessons();
-        $aState->resetAndAddTeachers($arrGroup2);
+        $aState->resetTeachers();
+        $aState->addTeachers($arrGroup2);
         $activeStates->insert($aState);
     }
     $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
     scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
-
-    if ($successStates->numberStates == 0)
-    {
-        $arrGroup3 = array();
-        foreach ($group3Types as $aType)
-        {
-            $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
-            $arrGroup3 = $arrGroup3 + $$varArrAvailableTeachers;
-        }
-        foreach ($stoppedStates->heap as $aState)
-        {
-            $aState->resetAndAddTeachers($arrGroup3);
-            $activeStates->insert($aState);
-        }
-        $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
-        scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
-    }
 }
+
+// round 3
+if ($successStates->numberStates == 0)
+{
+    $arrGroup3 = array();
+    foreach ($group3Types as $aType)
+    {
+        $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
+        $arrGroup3 = $arrGroup3 + $$varArrAvailableTeachers;
+    }
+    foreach ($stoppedStates->heap as $aState)
+    {
+        $aState->addTeachers($arrGroup3);
+        $activeStates->insert($aState);
+    }
+    $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
+    scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
+}
+
 
 $endTime = microtime(true);
 //echo "<br>visited:<br>";
