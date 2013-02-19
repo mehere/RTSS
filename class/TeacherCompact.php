@@ -3,47 +3,57 @@
 class TeacherCompact
 {
 
-    const TYPE_LESSON = 'Lesson';
-    const TYPE_LEAVE = 'Leave';
-    const TYPE_NEED_RELIEF = 'Need Relief';
-    const TYPE_RELIEVING = 'Relieving';
-    const TYPE_OPTIONAL_REPLACED = "Optional Replaced with Relief";
-    const TYPE_OPTIONAL_CANCELLED = "Optional Cancelled";
-    const TYPE_AWAY = 'Away';
-    const TYPE_OPTIONAL = 'Optional';
+    public static $arrTeachers;
+    public static $arrLesson;
+    public static $typeToGroupMap;
+    public static $typeToNeedReliefMap;
+
+    const AVAILABILITY_FREE = 1;
+    const AVAILABILITY_SKIPPED = 2;
+    const AVAILABILITY_PARTIAL = 3;
+    const AVAILABILITY_BUSY = 4;
+    const TYPE_LEAVE = 0;
+    const TYPE_LESSON = 1;
+    const TYPE_OPTIONAL = 2;
+    const TYPE_OPTIONAL_REPLACED = 3;
+    const TYPE_OPTIONAL_CANCELLED = 4;
     const MAX_LESSONS = 14;
 
-    public static $typeMap;
     public static $recommendedNoOfLessons = self::MAX_LESSONS;
-    //put your code here
     public $timetable;
-    public $accname;
+    public $teacherId;
     public $noTeachingPeriod;
+    public $noMandatoryPeriods;
     public $netRelived;
-    public $specialitySubject;
-    public $type;
     public $hasDone;
 
-    public function __construct($aTeacher, $type)
+    public function __construct($teacherId, $type)
     {
-        /* @var $aTeacher Teacher */
-        $this->accname = $aTeacher->accname;
+        /* @var $fullTeacher Teacher */
+        $this->teacherId = $teacherId;
+        $fullTeacher = self::$arrTeachers[$teacherId];
+        $fullTeacher->type = $type;
+        $fullTeacher->typeGroup = self::$typeToGroupMap[$type];
         $this->timetable = array();
-        $this->type = $type;
         $this->noTeachingPeriod = 0;
+        $this->noMandatoryPeriods = 0;
         $this->hasDone = FALSE;
 
-        call_user_func(array($this, "construct{$type}Teacher"), $aTeacher);
+        if ($type == "Temp")
+        {
+            $this->constructTempTeacher($fullTeacher);
+        } else
+        {
+            $this->constructTeacher($fullTeacher);
+        }
     }
 
-    private function constructTempTeacher($aTeacher)
+    private function constructTempTeacher($fullTeacher)
     {
-        /* @var $aTeacher Teacher */
-//        echo 'OK1';
-
+        /* @var $fullTeacher Teacher */
         $this->netRelived
-                = $aTeacher->noLessonRelived;
-        $availability = $aTeacher->availability;
+                = $fullTeacher->noLessonRelived;
+        $availability = $fullTeacher->availability;
         $freeSlots = array();
         foreach ($availability as $availableSlot)
         {
@@ -51,140 +61,81 @@ class TeacherCompact
             $endIndex = $availableSlot[1];
             for ($i = $startIndex; $i < $endIndex; $i++)
             {
-                $freeSlots[$i] = true;
+                $freeSlots[$i] = NULL;
             }
         }
         for ($i = 1; $i <= self::MAX_LESSONS; $i++)
         {
             if (!isset($freeSlots))
             {
-                $this->timetable[$i] = TeacherCompact::TYPE_AWAY;
+                $this->timetable[$i] = TeacherCompact::TYPE_LEAVE;
             }
         }
     }
 
-    private function constructAedTeacher($aTeacher)
+    private function constructTeacher($fullTeacher)
     {
-        /* @var $aTeacher Teacher */
+        /* @var $fullTeacher Teacher */
+        /* @var $aLesson Lesson */
         $this->netRelived
-                = $aTeacher->noLessonRelived;
-        $hisTimetable = $aTeacher->timetable;
-        $this->specialitySubject = $aTeacher->speciality;
+                = $fullTeacher->noLessonRelived - $fullTeacher->noLessonMissed;
+        $hisTimetable = $fullTeacher->timetable;
 
         foreach ($hisTimetable as $timeIndex => $aLesson)
         {
-            /* @var $aLesson Lesson */
             if ($aLesson->isHighlighted)
             {
                 $this->timetable[$timeIndex] = self::TYPE_LESSON;
                 $this->noTeachingPeriod++;
+                $this->noMandatoryPeriods++;
             } else
             {
-                /// what to do what to do...
                 $this->timetable[$timeIndex] = self::TYPE_OPTIONAL;
                 $this->noTeachingPeriod++;
             }
         }
     }
 
-    private function constructUntrainedTeacher($aTeacher)
+    public function onLeave($leaveRecords)
     {
-        $this->netRelived
-                = $aTeacher->noLessonRelived - $aTeacher->noLessonMissed;
-
-        $hisTimetable = $aTeacher->timetable;
-
-        foreach ($hisTimetable as $timeIndex => $aLesson)
+        /* @var $fullTeacher Teacher */
+        /* @var $aLesson Lesson */
+        $fullTeacher = self::$arrTeachers[$this->teacherId];
+        if (self::$typeToNeedReliefMap[$fullTeacher->type])
         {
-            $this->timetable[$timeIndex] = self::TYPE_LESSON;
-        }
-
-        $this->noTeachingPeriod = count($hisTimetable);
-    }
-
-    private function constructNormalTeacher($aTeacher)
-    {
-        $this->netRelived
-                = $aTeacher->noLessonRelived - $aTeacher->noLessonMissed;
-
-        $hisTimetable = $aTeacher->timetable;
-
-        foreach ($hisTimetable as $timeIndex => $aLesson)
-        {
-            $this->timetable[$timeIndex] = self::TYPE_LESSON;
-        }
-
-        $this->noTeachingPeriod = count($hisTimetable);
-    }
-
-    private function constructHodTeacher($aTeacher)
-    {
-        $this->netRelived
-                = $aTeacher->noLessonRelived - $aTeacher->noLessonMissed;
-
-        $hisTimetable = $aTeacher->timetable;
-
-        foreach ($hisTimetable as $timeIndex => $aLesson)
-        {
-            $this->timetable[$timeIndex] = self::TYPE_LESSON;
-        }
-
-        $this->noTeachingPeriod = count($hisTimetable);
-    }
-
-    public function onLeave($aTeacher, $leaveRecords)
-    {
-
-        if (($this->type == "Normal") || ($this->type == "Hod"))
-        {
-
-            /* @var $aTeacher Teacher */
             $lessonsNeedRelief = array();
-            $accname = $aTeacher->accname;
-
             foreach ($leaveRecords as $aLeave)
             {
                 $startLeaveIndex = $aLeave["startLeave"];
                 $endLeaveIndex = $aLeave["endLeave"];
 
-//                echo "*** ENTERED **";
-//                echo "<br> Start Index: $startLeaveIndex";
-//                echo "<br> End Index: $endLeaveIndex";
-
                 $lastLesson = null;
                 $aReliefLesson = null;
-//                echo "<br><b>timetable:<br>";
-//                print_r($aTeacher);
-
-
                 for ($i = $startLeaveIndex; $i < $endLeaveIndex; $i++)
                 {
-                    if ((isset($aTeacher->timetable[$i])) &&
-                            (!empty($aTeacher->timetable[$i]->classes)))
+//                    $this->noBusyPeriods++;
+                    if ((isset($fullTeacher->timetable[$i])) &&
+                            (!empty($fullTeacher->timetable[$i]->classes)))
                     {
-//                        echo "Got Lesson";
-                        $aLesson = $aTeacher->timetable[$i];
-                        /* @var $aLesson Lesson */
+                        $aLesson = $fullTeacher->timetable[$i];
 
                         if ($aLesson !== $lastLesson)
                         {
-                            ScheduleState::$arrLesson[$aLesson->lessonId] = $aLesson;
-                            $aReliefLesson = new ReliefLesson($accname, $aLesson->lessonId, $i);
+                            self::$arrLesson[$aLesson->lessonId] = $aLesson;
+                            $aReliefLesson = new ReliefLesson($this->teacherId, $aLesson->lessonId, $i);
                             $lessonsNeedRelief[$aReliefLesson->toString()] = $aReliefLesson;
                         } else
                         {
                             $aReliefLesson->incrementEndTime();
                         }
-
-                        $this->timetable[$i] = TeacherCompact::TYPE_NEED_RELIEF;
                         $this->noTeachingPeriod--;
                     } else
                     {
                         $aLesson = null;
                         $aReliefLesson = null;
-                        $this->timetable[$i] = self::TYPE_LEAVE;
                     }
 
+                    $this->timetable[$i] = self::TYPE_LEAVE;
                     $lastLesson = $aLesson;
                 }
             }
@@ -196,40 +147,38 @@ class TeacherCompact
 
     public function isAvailable()
     {
-        $filteredTimetable = array_filter($this->timetable, array($this, "isOptional"));
-        $noBusyLesson = count($filteredTimetable);
-        if ($noBusyLesson < self::$recommendedNoOfLessons)
-        {
-            return true;
-        } else
-        {
-            return false;
-        }
+        return ($this->noMandatoryPeriods < self::$recommendedNoOfLessons);
     }
 
-    // return bool: hasToSkipLesson
+    /**
+     *
+     * @param type $timeIndex
+     * @return boolean: hasToSkipLesson
+     */
     public function setLesson($timeIndex)
     {
-        $hasToSkipLesson = FALSE;
+        $this->noMandatoryPeriods++;
         if (isset($this->timetable[$timeIndex]))
         {
             $aLesson = $this->timetable[$timeIndex];
-
             if ($aLesson == TeacherCompact::TYPE_OPTIONAL)
             {
-                $hasToSkipLesson = TRUE;
+                $this->timetable[$timeIndex] = TeacherCompact::TYPE_OPTIONAL_REPLACED;
+                return TRUE;
+            } else //if ($aLesson == TeacherCompact::TYPE_OPTIONAL_CANCELLED
+            {
+                $this->timetable[$timeIndex] = TeacherCompact::TYPE_OPTIONAL_REPLACED;
+                $this->netRelived++;
+                $this->noTeachingPeriod++;
+                return FALSE;
             }
-        }
-        if ($hasToSkipLesson)
-        {
-            $this->timetable[$timeIndex] = TeacherCompact::TYPE_OPTIONAL_REPLACED;
         } else
         {
-            $this->timetable[$timeIndex] = TeacherCompact::TYPE_RELIEVING;
+            $this->timetable[$timeIndex] = TeacherCompact::TYPE_LESSON;
             $this->noTeachingPeriod++;
             $this->netRelived++;
+            return FALSE;
         }
-        return $hasToSkipLesson;
     }
 
     public function cancelExcess()
@@ -259,19 +208,54 @@ class TeacherCompact
         }
     }
 
-    public function getTypeNo()
+    public function canTeach($aLesson)
     {
-        return self::$typeMap[$this->type];
+        /* @var $aLesson ReliefLesson */
+        $noMatch = 0;
+        $timetable = $this->timetable;
+        $hasOptional = FALSE;
+        $numberOfLessons = $aLesson->endTimeSlot - $aLesson->startTimeSlot;
+        $gotTime = (($this->noMandatoryPeriods + $numberOfLessons) <= self::$recommendedNoOfLessons);
+
+        for ($i = $aLesson->startTimeSlot; $i < $aLesson->endTimeSlot; $i++)
+        {
+            if (!isset($timetable[$i]))
+            {
+                $noMatch++;
+            } else if ($timetable[$i] == self::TYPE_OPTIONAL)
+            {
+                $noMatch++;
+                $hasOptional = TRUE;
+            }
+        }
+
+        if ($gotTime && ($numberOfLessons == $noMatch))
+        {
+            if ($hasOptional)
+            {
+
+                return self::AVAILABILITY_SKIPPED;
+            } else
+            {
+                return self::AVAILABILITY_FREE;
+            }
+        } else if ($noMatch > 0)
+        {
+            return self::AVAILABILITY_PARTIAL;
+        }
+        else
+            return self::AVAILABILITY_BUSY;
     }
 
-    private function isOptional($aLesson)
+    public function getTypeNo()
     {
-        return ($aLesson != self::TYPE_OPTIONAL) ? TRUE : FALSE;
+        return self::$arrTeachers[$this->teacherId]->typeGroup;
     }
 
     static function init()
     {
-        self::$typeMap = array("Temp" => 1, "Aed" => 1, "Untrained" => 1, "Normal" => 2, "Aed" => 3);
+        self::$typeToGroupMap = array("Temp" => 1, "Aed" => 1, "Untrained" => 1, "Normal" => 2, "Hod" => 3);
+        self::$typeToNeedReliefMap = array("Temp" => FALSE, "Aed" => FALSE, "Untrained" => FALSE, "Normal" => TRUE, "Hod" => TRUE);
     }
 
 }
