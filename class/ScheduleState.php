@@ -11,8 +11,6 @@ class ScheduleState
     const COST_SUBJECT_UNFAMILAR = 1;
     const COST_CLASS_UNFAMILAR = 1;
 
-    public static $arrTeachers;
-    public static $arrLesson;
     public $teachersAlive;
     public $teachersStuck;
     public $lessonsNotAllocated;
@@ -20,15 +18,15 @@ class ScheduleState
     public $expectedTotalCost;
     public $actualIncurredCost;
     public $estimatedFutureCost;
-//    public $factor1_fairnessCost;
-    public $factor2_hassleCost;
     public $noGrp1;
     public $noGrp2;
     public $noGrp3;
     public $baseCostIndex;
+    public $noLessons;
 
     public function __construct($teachersAlive, $lessonsNotAllocated)
     {
+        /* @var $aLesson ReliefLesson */
         $this->teachersAlive = new TeacherCompactHeap();
         $this->teachersStuck = array();
         $this->lessonsAllocated = array();
@@ -38,9 +36,12 @@ class ScheduleState
         {
             $this->teachersAlive->insert($aTeacher);
         }
-        foreach ($lessonsNotAllocated as $key => $value)
+
+        $this->noLessons = 0;
+        foreach ($lessonsNotAllocated as $key => $aLesson)
         {
-            $this->lessonsNotAllocated[$key] = $value;
+            $this->lessonsNotAllocated[$key] = $aLesson;
+            $this->noLessons += $aLesson->endTimeSlot - $aLesson->startTimeSlot;
         }
 
         $this->noGrp1 = count($teachersAlive);
@@ -69,19 +70,6 @@ class ScheduleState
     public function __clone()
     {
         $this->teachersAlive = clone $this->teachersAlive;
-        $this->teachersStuck = ScheduleState::cloneArray($this->teachersStuck);
-        $this->lessonsAllocated = ScheduleState::cloneArray($this->lessonsAllocated);
-        $this->lessonsNotAllocated = ScheduleState::cloneArray($this->lessonsNotAllocated);
-    }
-
-    public static function cloneArray($arr)
-    {
-        $newArr = array();
-        foreach ($arr as $key => $value)
-        {
-            $newArr[$key] = clone $value;
-        }
-        return $newArr;
     }
 
     public function allocateLessonToFirstTeacher($key)
@@ -92,14 +80,17 @@ class ScheduleState
         /* @var $fullLesson Lesson */
 
         // moving from unallocated to allocated
-        $aLesson = $this->lessonsNotAllocated[$key];
+        $aLesson = clone $this->lessonsNotAllocated[$key];
         unset($this->lessonsNotAllocated[$key]);
         $this->lessonsAllocated[$key] = $aLesson;
         ksort($this->lessonsAllocated);
 
+        $noLessonAllocated = $aLesson->endTimeSlot - $aLesson->startTimeSlot;
+        $this->noLessons -= $noLessonAllocated;
+
         // setting status of teacher
         $firstTeacher = clone ($this->teachersAlive->extract());
-        $fullTeacher = self::$arrTeachers[$firstTeacher->accname];
+        $fullTeacher = TeacherCompact::$arrTeachers[$firstTeacher->teacherId];
         $numberLessonSkipped = 0;
 
         $firstTeacher->hasDone = TRUE;
@@ -109,15 +100,12 @@ class ScheduleState
             if ($hasSkipped)
             {
                 $numberLessonSkipped++;
-            } else
-            {
-//                $this->factor1_fairnessCost += $firstTeacher->netRelived;
             }
         }
         $numberLessonSkipped += $firstTeacher->cancelExcess();
 
         // setting status of lesson
-        $aLesson->teacherRelief = $firstTeacher->accname;
+        $aLesson->teacherRelief = $firstTeacher->teacherId;
         $teacherType = $firstTeacher->getTypeNo();
 
         // caluculating costs --------------------------------------------------
@@ -128,7 +116,7 @@ class ScheduleState
 
         // subject cost
         $subjectCost = 0;
-        $fullLesson = self::$arrLesson[$aLesson->lessonId];
+        $fullLesson = TeacherCompact::$arrLesson[$aLesson->lessonId];
         if ($fullLesson->subject != $fullTeacher->speciality)
         {
             $subjectCost = ScheduleState::COST_SUBJECT_UNFAMILAR;
@@ -136,27 +124,21 @@ class ScheduleState
 
         // class cost
         $classCost = ScheduleState::COST_CLASS_UNFAMILAR;
-
         $aClass = key($fullLesson->classes);
         if (isset($fullTeacher->classes[$aClass]))
         {
             $classCost = 0;
         }
 
-        $this->actualIncurredCost += $typeCost;
-        $this->actualIncurredCost += $skippingCost;
-        $this->actualIncurredCost += $classCost;
+        $this->actualIncurredCost += $typeCost * $noLessonAllocated;
+        $this->actualIncurredCost += $skippingCost * $noLessonAllocated;
+        $this->actualIncurredCost += $classCost * $noLessonAllocated;
 
         $baseCost = constant("ScheduleState::COST_TYPE_$this->baseCostIndex");
-        $this->estimatedFutureCost = count($this->lessonsNotAllocated) * $baseCost;
+        $this->estimatedFutureCost = $this->noLessons * $baseCost;
         $this->expectedTotalCost = $this->actualIncurredCost + $this->estimatedFutureCost;
 
-        //To-Do: to check if available
-//        $this->teachersAlive->insert($firstTeacher);
-        if ($firstTeacher->isAvailable())
-        {
-            $this->teachersAlive->insert($firstTeacher);
-        }
+        $this->teachersAlive->insert($firstTeacher);
 //        echo "<br>Cost: $this->expectedTotalCost <br><br>";
     }
 
@@ -179,8 +161,23 @@ class ScheduleState
 
     public function resetAndAddTeachers($newTeachers)
     {
-        $newTeachers = clone $newTeachers;
-        $this->teachersAlive = array_merge($this->teachersStuck, $newTeachers);
+        /* @var $aTeacher TeacherCompact */
+        foreach ($this->teachersStuck as $aTeacher)
+        {
+            $this->teachersAlive->insert($aTeacher);
+            $typeNo = $aTeacher->getTypeNo();
+            $propertyName = "noGrp$typeNo";
+            $this->$propertyName++;
+        }
+        foreach ($newTeachers as $aTeacher)
+        {
+            $this->teachersAlive->insert($aTeacher);
+            $typeNo = $aTeacher->getTypeNo();
+            $propertyName = "noGrp$typeNo";
+            $this->$propertyName++;
+        }
+
+        $this->teachersStuck = array();
     }
 
     public function removeFirstTeacher()
@@ -206,7 +203,6 @@ class ScheduleState
         $this->estimatedFutureCost = count($this->lessonsNotAllocated) * $baseCost;
         $this->expectedTotalCost = $this->actualIncurredCost + $this->estimatedFutureCost;
     }
-
 }
 
 ?>

@@ -4,28 +4,23 @@ require_once 'util.php';
 require_once 'Teacher.php';
 require_once 'DBException.php';
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 class SchedulerDB
 {
     private $date;
     private $weekday;
     private $date_str;
-    
+
     private $leave_dict; //num of leave
     private $relief_dict; //num of relief
-    
+
     private $on_leave_info;  //leave info
     private $teacher_list;   //accname - name/type match
     private $temp_list;
-    
+
     private $lesson_list;
     private $teacher_lesson_list;
     private $teacher_class_list;
-    
+
     public function __construct($date)
     {
         $this->date = $date;
@@ -69,7 +64,7 @@ class SchedulerDB
 
         //create lesson dictionary
         $this->lesson_list = Array();
-        
+
         $sql_query_lessons = "select * from ct_lesson where weekday = ".$this->weekday.";";
         $lesson_query_result = mysql_query($sql_query_lessons);
 
@@ -88,17 +83,17 @@ class SchedulerDB
 
              $one_lesson->endTimeSlot = $row["end_time"];
              $one_lesson->lessonId = $row["lesson_id"];
-             
+
              if(strcmp($row['type'], 'A')===0)
              {
                  $one_lesson->isHighlighted = $row['highlighted'];
              }
-             
+
              $this->lesson_list[$lesson_id] = $one_lesson;
         }
-        
+
         //class of one lesson
-        $sql_query_class = "SELECT ct_class_matching.* FROM ct_class_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_class_matching.lesson_id 
+        $sql_query_class = "SELECT ct_class_matching.* FROM ct_class_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_class_matching.lesson_id
             AND ct_lesson.weekday = ".$this->weekday.";";
         $class_query_result = mysql_query($sql_query_class);
 
@@ -111,46 +106,46 @@ class SchedulerDB
         {
             $one_class = new Students($row['class_name']);
             $the_lesson =$this->lesson_list[$row['lesson_id']];
-            $the_lesson->classes[] = $one_class; 
+            $the_lesson->classes[] = $one_class;
         }
-        
+
         //teacher-lesson match list
         $this->teacher_lesson_list = Array();
-        
+
         $sql_query_teacher = "SELECT ct_teacher_matching.* FROM ct_teacher_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_teacher_matching.lesson_id AND ct_lesson.weekday = ".$this->weekday.";";
         $teacher_query_result = mysql_query($sql_query_teacher);
         if(!$teacher_query_result)
         {
             throw new DBException("Fail to query teacher from database", __FILE__, __LINE__);
         }
-        
+
         while($row =  mysql_fetch_array($teacher_query_result))
         {
             if(!array_key_exists($row['teacher_id'], $this->teacher_lesson_list))
             {
                 $this->teacher_lesson_list[$row['teacher_id']] = Array();
             }
-            
+
             $this->teacher_lesson_list[$row['teacher_id']][] = $row['lesson_id'];
         }
-        
+
         //teacher-class match list
         $this->teacher_class_list = Array();
-        
+
         $sql_query_teacher_class = "Select ct_teacher_matching.teacher_id as teacher, ct_class_matching.class_name as class from ct_lesson, ct_teacher_matching, ct_class_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id;";
         $query_teacher_class_result = mysql_query($sql_query_teacher_class);
         if(!$query_teacher_class_result)
         {
             throw new DBException("Fail to query teacher-class from database", __FILE__, __LINE__);
         }
-        
+
         while($row =  mysql_fetch_array($query_teacher_class_result))
         {
             if(!array_key_exists($row['teacher'], $this->teacher_class_list))
             {
                 $this->teacher_class_list[$row['teacher']] = Array();
             }
-            
+
             $this->teacher_class_list[$row['teacher']][$row['class']] = true;
         }
     }
@@ -202,7 +197,7 @@ class SchedulerDB
         $db_type = array_keys(Constant::$teacher_type);
 
         $all_excluded = Teacher::getExcludingList($this->date->format('Y/m/d'));
-        
+
         foreach($all_excluded as $teacher_id)
         {
             if(!empty($this->teacher_list[$teacher_id]))
@@ -242,20 +237,20 @@ class SchedulerDB
     public function getAedTeachers()
     {
         $result = $this->customizeTeacherList("AED");
-        
+
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
-            throw new DBException("Fail to connect to database", __FILE__, __LINE__); 
+            throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
-        
+
         $sql_query_speciality = "select * from ct_aed_speciality;";
         $query_speciality_result = mysql_query($sql_query_speciality);
         if(!$query_speciality_result)
         {
             throw new DBException("Fail to query aed speciality", __FILE__, __LINE__);
         }
-        
+
         while($row = mysql_fetch_assoc($query_speciality_result))
         {
             if(array_key_exists($row['teacher_id'], $result))
@@ -263,7 +258,7 @@ class SchedulerDB
                 $result[$row['teacher_id']]->speciality = $row['speciality'];
             }
         }
-        
+
         return $result;
     }
 
@@ -279,7 +274,7 @@ class SchedulerDB
             }
             else
             {
-                $the_teacher = new Teacher('dummy name');
+                $the_teacher = new Teacher();
 
                 $the_teacher->accname = $a_teacher['accname'];
                 $the_teacher->name = $a_teacher['fullname'];
@@ -301,7 +296,7 @@ class SchedulerDB
 
         return $result_list;
     }
-    
+
     private static function trimTimePeriod($start_date, $end_date, $start_time, $end_time, $query_date, $leave_id)
     {
         $start_date_obj = new DateTime($start_date);
@@ -336,7 +331,7 @@ class SchedulerDB
 
         foreach($result as $a_normal)
         {
-            $temp_normal = new Teacher("dummy name");
+            $temp_normal = new Teacher();
             //accname
             $temp_normal->accname = $a_normal["accname"];
             //name
@@ -369,13 +364,13 @@ class SchedulerDB
                     }
                 }
             }
-            
+
             //classes of teacher
             if(array_key_exists($a_normal["accname"], $this->teacher_class_list))
             {
                 $temp_normal->classes = $this->teacher_class_list[$a_normal["accname"]];
             }
-            
+
             $teacher_dict[$a_normal["accname"]] = $temp_normal;
         }
 

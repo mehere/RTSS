@@ -1,33 +1,29 @@
 <?php
-session_start();
 
 require_once 'util.php';
 
 class Teacher {
 
-    //put your code here
     public $abbreviation;
     public $name;
     public $accname;
+    public $type;
+    public $typeGroup;
     public $noLessonMissed;
     public $noLessonRelived;
-    public $leave;
     public $availability;
     public $timetable;
-    public $isHighlighted;
     public $speciality;
     public $classes;
 
-    public function __construct($abbreviation) {
+    public function __construct($abbreviation = NULL) {
         $this->abbreviation = $abbreviation;
+        $this->type = NULL;
         $this->name = NULL;
         $this->accname = NULL;
         $this->timetable = array();
         $this->noLessonMissed = 0;
         $this->noLessonRelived = 0;
-        $this->leave = array();
-        $this->availability = array();
-        $this->isHighlighted = true;
         $this->speciality = null;
         $this->classes = array();
     }
