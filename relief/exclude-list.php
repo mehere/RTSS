@@ -22,36 +22,12 @@ include_once '../head-frag.php';
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief.css" rel="stylesheet" type="text/css" />
 <link href="/RTSS/css/relief-edit.css" rel="stylesheet" type="text/css">
-<script src="/RTSS/js/excluding-list.js"></script>
 
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
-<style type="text/css">
-.table-info .label-content {
-    margin-right: 20px;
-    float: left;
-	width: 30%;
-	text-align: left;
-}
-.table-info tbody tr:hover {
-	background: none;
-	box-shadow: none;
-}
-.table-info tr td .select-control {
-	text-align: center;
-}
-.table-info tr td .select-control>a {
-	width: 20px;
-	height: 20px;
-	
-	margin: 5px 30px;
-}
-.table-info tr td .select-control>a .ui-button-text {
-	padding: 0;
-}
-</style>
-
+<link href="/RTSS/css/excluding-list.css" rel="stylesheet" type="text/css">
+<script src="/RTSS/js/excluding-list.js"></script>
 </head>
 <body>
 
