@@ -124,6 +124,33 @@ Class Constant
             return null;
         }
     }
+    
+    public static function sql_execute($db, $sql)
+    {
+        $db_con = Constant::connect_to_db($db);
+        if(!$db_con)
+        {
+            return null;
+        }
+        
+        $query_result = mysql_query($sql);
+        
+        if(!$query_result)
+        {
+            return null;
+        }
+        else
+        {
+            $result = Array();
+            
+            while($row = mysql_fetch_assoc($query_result))
+            {
+                $result[] = $row;
+            }
+            
+            return $result;
+        }
+    }
 }
 
 ?>

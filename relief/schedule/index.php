@@ -1,4 +1,5 @@
 <?php 
+    header("Location: result.php");
     include_once '../../php-head.php';
     include_once '../../head-frag.php';
 ?>

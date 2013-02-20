@@ -15,4 +15,31 @@ $(document).ready(function(){
         }
     });
 
+    // Select/Deselect All
+    $(".select-all").button({
+        icons: {
+            primary: "ui-icon-circle-check"
+        },
+        text: false,
+        label: 'Select All'
+    }).click(function(){
+        $(this).parents('tr').first().find('input[type="checkbox"]').each(function(){
+            this.checked=true;
+        });
+
+        return false;
+    });
+    $(".deselect-all").button({
+        icons: {
+            primary: "ui-icon-circle-close"
+        },
+        text: false,
+        label: 'Deselect All'
+    }).click(function(){
+        $(this).parents('tr').first().find('input[type="checkbox"]').each(function(){
+            this.checked=false;
+        });
+
+        return false;
+    });
 });

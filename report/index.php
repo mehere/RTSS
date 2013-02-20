@@ -136,12 +136,14 @@ EOD;
                                         }
                                         
                                         $headerArr=NameMap::$REPORT['individual']['display'];                                        
+										echo '<tr>';
                                         foreach (array('numOfMC', 'numOfRelief', 'net') as $headerKey) 
                                         {
                                             echo <<< EOD
-<tr><th>{$headerArr[$headerKey]}</th><td>{$teacher[$headerKey]}</td></tr>
+<th>{$headerArr[$headerKey]}</th><td>{$teacher[$headerKey]}</td>
 EOD;
                                         }
+										echo '</tr>';
                                     ?>
                                 </tbody>
                             </table>

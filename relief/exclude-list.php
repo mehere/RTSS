@@ -31,10 +31,24 @@ include_once '../head-frag.php';
 .table-info .label-content {
     margin-right: 20px;
     float: left;
+	width: 30%;
+	text-align: left;
 }
 .table-info tbody tr:hover {
 	background: none;
 	box-shadow: none;
+}
+.table-info tr td .select-control {
+	text-align: center;
+}
+.table-info tr td .select-control>a {
+	width: 20px;
+	height: 20px;
+	
+	margin: 5px 30px;
+}
+.table-info tr td .select-control>a .ui-button-text {
+	padding: 0;
 }
 </style>
 
@@ -81,6 +95,10 @@ EOD;
                                         $i++;
                                     }                                    
                                 ?>
+                                <div class="select-control">
+                                    <a href="" class="select-all"></a>
+                                    <a href="" class="deselect-all"></a>
+                                </div>
                             </td>
                         </tr>                        
                         <tr><th><?php echo NameMap::$RELIEF['excludingList']['display']['non-executive']; ?></th>
@@ -96,6 +114,10 @@ EOD;
                                         $i++;
                                     }
                                 ?>
+                                <div class="select-control">
+                                    <a href="" class="select-all"></a>
+                                    <a href="" class="deselect-all"></a>
+                                </div>
                             </td>
                         </tr>
                     </table>
