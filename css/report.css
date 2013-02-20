@@ -33,15 +33,6 @@
 	word-wrap: break-word;
 }
 
-#individual-summary {
-    margin-top: 0;
-    width: 30%;
-    margin-right: 5%;
-    float: left;
-}
-#individual-detail {
-    width: 65%;
-}
 #individual-summary tr th, #individual-detail tr th {
     width: 110px;
 }

@@ -8,7 +8,7 @@ class PageConstant
     const DATE_FORMAT_ISO='Y/m/d';    
     const DATE_FORMAT_SG='d/m/Y';
     
-    public static $DAY=array('Monday', 'Tuesday', 'Wedsday', 'Thursday', 'Friday');
+    public static $DAY=array('Monday', 'Tuesday', 'Wedsday', 'Thursday', 'Friday');       
     
     public static $ERROR_TEXT=array(
         'login' => array(
@@ -329,7 +329,16 @@ class NameMap
                 'teacher-fullname' => 'Teacher',  'relief-teacher-fullname' => 'Relief Teacher'
             ),
             'hidden' => array(
-                'teacher-accname', 'relief-teacher-aaccname'
+                'teacher-accname', 'relief-teacher-accname'
+            )
+        ),
+        
+        'individual' => array(
+            'display' => array(
+                'time' => 'Time',  'subject' => 'Subject',  'class' => 'Class', 'venue' => 'Venue'                
+            ),
+            'hidden' => array(
+                'teacher-accname', 'isRelief'
             )
         ),
         
