@@ -1,11 +1,5 @@
 <?php 
-include_once '../../php-head.php';
-    
-function tdWrap($ele, $style='')
-{
-    $ele=htmlentities($ele);
-    return "<td $style>$ele</td>";
-}
+include_once '../../php-head.php';   
 
 include_once '../../head-frag.php';
 ?>

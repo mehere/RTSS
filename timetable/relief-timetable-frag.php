@@ -41,14 +41,14 @@ EOD;
                 $style="";
                 if ($teaching['isRelief']) $style='style="color: red"';
                                                 
-                $otherTdStr=implode('', array_map("tdWrap", $timetableEntry));
+                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
                 echo <<< EOD
 <tr $style><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
             }
             else
             {
-                $otherTdStr=implode('', array_map("tdWrap", array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
+                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
                 echo <<< EOD
 <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
@@ -109,12 +109,12 @@ EOD;
 <td class="time-col" rowspan="$rowspan">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>
 EOD;
                     }
-                    echo implode('', array_map("tdWrap", $timetableEntry)) . "</tr>";
+                    echo implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry)) . "</tr>";
                 }
             }
             else
             {
-                $otherTdStr=implode('', array_map("tdWrap", array_fill(0, count(NameMap::$TIMETABLE['layout']['display']), '')));
+                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['layout']['display']), '')));
                 echo <<< EOD
 <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;

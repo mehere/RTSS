@@ -85,6 +85,18 @@ EOD;
     }
     
     /**
+     * Wrap an element inside <td> tag
+     * @param string $ele the element
+     * @param string $style 'style' attribute i.e. style="color: red"
+     * @return string HTML representation
+     */
+    public static function tdWrap($ele, $style='')
+    {
+        $ele=htmlentities($ele);
+        return "<td $style>$ele</td>";
+    }
+    
+    /**
      * Output mark/sign based on input state
      * @param int $state 0, 1
      * @return string 0: No; 1: Yes 
@@ -224,7 +236,7 @@ class NameMap
 //                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason', 
 //                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
                 'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'handphone' => 'Handphone', 'reason' => 'Reason', 
-                'teacherScheduled' => 'Scheduled'
+                'teacherScheduled' => '&#x267B;'
             ),
             'hidden' => array(
                 'accname', 'leaveID'

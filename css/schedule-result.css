@@ -5,7 +5,7 @@
 
 .section .page-control {
 	text-align: center;
-	margin-top: 20px;
+	margin: 20px 0 10px;
 }
 .section .page-control .page-no {
 	padding: 5px 10px;

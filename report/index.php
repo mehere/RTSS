@@ -1,11 +1,6 @@
 <?php 
 include_once '../php-head.php';
 
-function tdWrap($ele)
-{
-    return "<td>$ele</td>";
-}
-
 require_once '../class/Teacher.php';
 
 include_once '../head-frag.php';
@@ -82,8 +77,7 @@ EOD;
                                 <tbody id="table-overall">
                                     <?php
                                         $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==0 ? SORT_ASC : SORT_DESC);
-//var_dump(Teacher::overallReport('', 'fullname', SORT_DESC));
-//var_dump($_POST['order'], $_POST['direction']);
+
                                         foreach ($reportArr as $value)
                                         {
                                             $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
@@ -94,12 +88,8 @@ EOD;
                                         
                                         if (empty($reportArr))
                                         {
-                                            echo '<tr>';
-                                            foreach ($tableHeaderArr as $value)
-                                            {
-                                                echo tdWrap('--');
-                                            }
-                                            echo '</tr>';
+                                            $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count($tableHeaderArr), '--')));                                            
+                                            echo "<tr>$otherTdStr</tr>";
                                         }
                                     ?>
                                 </tbody>

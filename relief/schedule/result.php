@@ -44,7 +44,9 @@ EOD;
                             </tr>
                         </thead>
                         <tbody>
-                            <?php                            
+                            <?php
+                                require_once '../../class/SchedulerDB.php';
+                                
                                 $scheduleList=array(0=>array(
                                     array('class'=>array('1F', '2A'), 'time'=>array(1, 3),
                                     "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
@@ -65,17 +67,24 @@ EOD;
 <tr><td>$classStr</td><td>$timeStart<span style="margin: 0 3px">-</span>$timeEnd</td><td>{$value['teacherOnLeave']}</td><td><span class="text-display">{$value['reliefTeacher']}</span><input type="text" name="reliefAccName-$key" value="{$value['reliefTeacher']}" class="text-hidden" /></td></tr>   
 EOD;
                                 }
+                                
+                                $scheduleResultNum=$_SESSION['scheduleResultNum'];
+                                if (!$scheduleResultNum) 
+                                {
+                                    $scheduleResultNum=$_SESSION['scheduleResultNum']=SchedulerDB::scheduleResultNum();
+                                }
+                                if ($scheduleResultNum == 0) 
+                                {
+                                    $scheduleResultNum=1;
+                                    
+                                    $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count($tableHeaderList), '--')));                                            
+                                    echo "<tr>$otherTdStr</tr>";
+                                }
                             ?>
                         </tbody>
                     </table>
                     <div class="page-control">                    	
-                        <?php                        
-                            $scheduleResultNum=$_SESSION['scheduleResultNum'];
-                            if (!$scheduleResultNum) 
-                            {
-                                $scheduleResultNum=$_SESSION['scheduleResultNum']=6;  // change!                                
-                            }                            
-                            
+                        <?php
                             $curPage=$_GET['page'];
                             if (!$curPage) $curPage=1;
                             
