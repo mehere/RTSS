@@ -15,6 +15,7 @@ class ScheduleState
     public $teachersStuck;
     public $lessonsNotAllocated;
     public $lessonsAllocated;
+    public $lessonsSkipped;
     public $expectedTotalCost;
     public $actualIncurredCost;
     public $estimatedFutureCost;
@@ -31,6 +32,7 @@ class ScheduleState
         $this->teachersStuck = array();
         $this->lessonsAllocated = array();
         $this->lessonsNotAllocated = array();
+        $this->lessonsSkipped = array();
 
         foreach ($teachersAlive as $aTeacher)
         {
@@ -99,10 +101,11 @@ class ScheduleState
             $hasSkipped = $firstTeacher->setLesson($i);
             if ($hasSkipped)
             {
+                $this->lessonsSkipped[] = new SkippedLesson($firstTeacher->teacherId, $i);
                 $numberLessonSkipped++;
             }
         }
-        $numberLessonSkipped += $firstTeacher->cancelExcess();
+        $numberLessonSkipped += $firstTeacher->cancelExcess($this->lessonsSkipped);
 
         // setting status of lesson
         $aLesson->teacherRelief = $firstTeacher->teacherId;

@@ -83,7 +83,7 @@ class TeacherCompact
 
         foreach ($hisTimetable as $timeIndex => $aLesson)
         {
-            if ($aLesson->isHighlighted)
+            if ($aLesson->isMandatory)
             {
                 $this->timetable[$timeIndex] = self::TYPE_LESSON;
                 $this->noTeachingPeriod++;
@@ -96,31 +96,42 @@ class TeacherCompact
         }
     }
 
-    public function onLeave($leaveRecords)
+    public function onLeave($leaveRecords, &$excludingTeachers)
     {
         /* @var $fullTeacher Teacher */
         /* @var $aLesson Lesson */
         $fullTeacher = self::$arrTeachers[$this->teacherId];
-        if (self::$typeToNeedReliefMap[$fullTeacher->type])
-        {
-            $lessonsNeedRelief = array();
-            foreach ($leaveRecords as $aLeave)
-            {
-                $startLeaveIndex = $aLeave["startLeave"];
-                $endLeaveIndex = $aLeave["endLeave"];
 
-                $lastLesson = null;
-                $aReliefLesson = null;
-                for ($i = $startLeaveIndex; $i < $endLeaveIndex; $i++)
+        $lessonsNeedRelief = array();
+
+
+        $needRelief = self::$typeToNeedReliefMap[$fullTeacher->type];
+        echo("<br> AccName: $fullTeacher->accname");
+        echo("<br> Type: $fullTeacher->type");
+        echo("<br>Need Relief: $needRelief");
+
+        foreach ($leaveRecords as $aLeave)
+        {
+            $startLeaveIndex = $aLeave["startLeave"];
+            $endLeaveIndex = $aLeave["endLeave"];
+
+            $lastLesson = null;
+            $aReliefLesson = null;
+            echo "<br>Timetable";
+            print_r($fullTeacher->timetable);
+            for ($i = $startLeaveIndex; $i < $endLeaveIndex; $i++)
+            {
+                if ((isset($fullTeacher->timetable[$i])) &&
+                        (!empty($fullTeacher->timetable[$i]->classes)))
                 {
-//                    $this->noBusyPeriods++;
-                    if ((isset($fullTeacher->timetable[$i])) &&
-                            (!empty($fullTeacher->timetable[$i]->classes)))
+
+                    $aLesson = $fullTeacher->timetable[$i];
+                    if ($needRelief)
                     {
-                        $aLesson = $fullTeacher->timetable[$i];
 
                         if ($aLesson !== $lastLesson)
                         {
+
                             self::$arrLesson[$aLesson->lessonId] = $aLesson;
                             $aReliefLesson = new ReliefLesson($this->teacherId, $aLesson->lessonId, $i);
                             $lessonsNeedRelief[$aReliefLesson->toString()] = $aReliefLesson;
@@ -128,21 +139,49 @@ class TeacherCompact
                         {
                             $aReliefLesson->incrementEndTime();
                         }
-                        $this->noTeachingPeriod--;
-                    } else
-                    {
-                        $aLesson = null;
-                        $aReliefLesson = null;
                     }
 
-                    $this->timetable[$i] = self::TYPE_LEAVE;
-                    $lastLesson = $aLesson;
+                    if ($aLesson->isMandatory)
+                    {
+                        $this->noTeachingPeriod--;
+                        $this->noMandatoryPeriods--;
+                    } else
+                    {
+                        $this->noTeachingPeriod--;
+                    }
+                } else
+                {
+                    $aLesson = null;
+                    $aReliefLesson = null;
                 }
+                $lastLesson = $aLesson;
+                $this->timetable[$i] = self::TYPE_LEAVE;
             }
-
-
-            return $lessonsNeedRelief;
         }
+
+
+        // check if should be excluded
+        $shouldExclude = TRUE;
+        for ($i = 1; $i <= TeacherCompact::MAX_LESSONS; $i++)
+        {
+            if (!isset($this->timetable[$i]))
+            {
+                $shouldExclude = FALSE;
+                break;
+            } else if ($this->timetable[$i] == self::TYPE_OPTIONAL)
+            {
+                $shouldExclude = FALSE;
+                break;
+            }
+        }
+        if ($shouldExclude)
+        {
+//            print_r($excludingTeachers);
+//            echo "<br>";
+            $excludingTeachers[self::getAccName($this->teacherId)] = TRUE;
+        }
+
+        return $lessonsNeedRelief;
     }
 
     public function isAvailable()
@@ -181,19 +220,20 @@ class TeacherCompact
         }
     }
 
-    public function cancelExcess()
+    public function cancelExcess(&$lessonsSkipped)
     {
         if ($this->noTeachingPeriod > self::$recommendedNoOfLessons)
         {
             $noCancelled = 0;
-            foreach ($this->timetable as $key => $aLesson)
+            foreach ($this->timetable as $timeIndex => $aLesson)
             {
                 if ($aLesson == self::TYPE_OPTIONAL)
                 {
-                    $this->timetable[$key] = self::TYPE_OPTIONAL_CANCELLED;
+                    $this->timetable[$timeIndex] = self::TYPE_OPTIONAL_CANCELLED;
                     $this->noTeachingPeriod--;
                     $this->netRelived--;
                     $noCancelled++;
+                    $lessonsSkipped[] = new SkippedLesson($this->teacherId, $timeIndex);
 
                     if ($this->noTeachingPeriod == self::$recommendedNoOfLessons)
                     {
@@ -258,8 +298,9 @@ class TeacherCompact
         self::$typeToNeedReliefMap = array("Temp" => FALSE, "Aed" => FALSE, "Untrained" => FALSE, "Normal" => TRUE, "Hod" => TRUE);
     }
 
-    static function getAccName($teacherId){
-        /* @var $aTeacher Teacher*/
+    static function getAccName($teacherId)
+    {
+        /* @var $aTeacher Teacher */
         $aTeacher = self::$arrTeachers[$teacherId];
         return $aTeacher->accname;
     }
