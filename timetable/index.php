@@ -54,7 +54,7 @@ include_once '../head-frag.php';
                             <?php echo PageConstant::formatOptionInSelect(ListGenerator::getClassName($date), $class, true); ?>
                         </select>-->
                         <span style="margin-left: 30px;">Teacher: </span>
-                        <select name="teacher">
+                        <select name="accname">
                             <option value="">----</option>
                             <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $teacher); ?>
                         </select>
@@ -67,6 +67,7 @@ include_once '../head-frag.php';
                     $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
                         3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
                     
+                    $NO_PREIVEW=true;
                     include 'relief-timetable-frag.php'; 
                 ?>
             </div>

@@ -51,8 +51,9 @@ $(document).ready(function(){
     $('input[name^="relief-teacher-"]', formEdit).autocomplete({
         source: nameList,
         delay: 0,
-        autoFocus: true
-    }).blur(function(){
+        autoFocus: true,
+        minLength: 0
+    }).focusout(function(){
         var curText= $.trim(this.value), isMatch=false;
         var selfObj=$(this), reliefAccName='', time=[];
         $.each(nameList, function(index, value){
@@ -85,10 +86,12 @@ $(document).ready(function(){
                 {
                     $("#dialog-alert").html(CONFLICT_ALERT_TEXT[data['hasConflict']+""]
                         + "<br /><strong>" + selfObj.val() + "</strong>").dialog('open');
-                    this.value='';
+                    selfObj.val('');
                 }
 
             });
         }
-    });
+    }).focusin(function(){
+        $(this).autocomplete("search", "");
+    });;
 });

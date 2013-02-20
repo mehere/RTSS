@@ -1,4 +1,8 @@
-<div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.</div>
+<div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.
+    <?php if ($NO_PREIVEW) { ?>
+        <a href="print-individual.php" target="_blank" id="print-individual" class="button" style="float:right; margin-right: 30%; margin-top: -20px">Print</a>
+    <?php } ?>
+</div>
 <table class="table-info" style="width: 70%">
     <thead>
         <tr>
@@ -58,7 +62,10 @@ EOD;
     </tbody>
 </table>
 <hr style="margin: 30px 10px 20px" />
-<div style="padding-bottom: 10px; font-size: 1.2em">Relief Timetable:</div>
+<div style="padding-bottom: 15px; font-size: 1.2em">Relief Timetable:
+    <?php if ($NO_PREIVEW) { ?>
+        <a href="print.php" target="_blank" id="print-relief" class="button" style="float:right; margin-right: 10%; margin-top: -5px">Print</a></div>
+    <?php } ?>
 <table class="table-info">
     <thead>
         <tr>

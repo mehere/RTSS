@@ -26,7 +26,8 @@ $(document).ready(function(){
     $(formR['fullname']).autocomplete({
         source: nameList,
         delay: 0,
-        autoFocus: true
+        autoFocus: true,
+        minLength: 0
     }).focusout(function(){
         var curText= $.trim(this.value), isMatch=false;
         $.each(nameList, function(index, value){
@@ -42,6 +43,8 @@ $(document).ready(function(){
         {
             this.value="";
         }
+    }).focusin(function(){
+        $(this).autocomplete("search", "");
     });
 
     // Submit
@@ -56,14 +59,22 @@ $(document).ready(function(){
     var formO=document.forms['report-overall'];
     $(".table-info .sort", formO).click(function(){
         formO['order'].value=this.getAttribute('search');
-        if (formO['direction'].value == 0)
+        if (formO['direction'].value != 1)
         {
             formO['direction'].value=1;
         }
         else
         {
-            formO['direction'].value=0;
+            formO['direction'].value=2;
         }
+
         $(formO).submit();
+    });
+
+    // Print
+    $("#print").click(function(){
+        this.href += "?" + $(formO).serialize();
+
+        return true;
     });
 });
