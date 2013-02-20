@@ -4,8 +4,9 @@
 }
 
 .section .page-control {
+	width: 95%;
 	text-align: center;
-	margin: 20px 0 10px;
+	margin: 20px 0 5px;
 }
 .section .page-control .page-no {
 	padding: 5px 10px;
