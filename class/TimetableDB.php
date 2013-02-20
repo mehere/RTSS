@@ -350,6 +350,30 @@ class TimetableDB
         return true;
     }
     
+    /**
+     * 
+     * @param string $date yyyy-mm-dd ignored if $isPreview = true
+     * @param type $accname
+     * @param int $$scheduleIndex necessary if $isPreview = true
+     * @param type $isPreview
+     * @return array for teacher-accname, I'll always return the teacher teaching it. ie, if isRelief = true, give relief accname, if false, give original teacher name
+     */
+    public static function getIndividualTimetable($date, $accname,$scheduleIndex, $isPreview = false)
+    {
+        if($isPreview)
+        {
+            //uncorfirmed
+        }
+        else
+        {
+            //confirmed
+            $date_obj = new DateTime($date);
+            $weekday = $date_obj->format('N');
+            
+            $sql_query_timetable = "SELECT * FROM (((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) LEFT JOIN ct_teacher_matching ON ct_lesson.lesson_id = ct_teacher_matching.lesson_id) WHERE ct_lesson.weekday = ".$weekday." AND ct_teacher_matching.teacher_id = '".mysql_real_escape_string(trim($accname))."' AND rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."');";
+        }
+    }
+    
     private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_list, $teacher_list)
     {
         if(count($class_list) === 0)

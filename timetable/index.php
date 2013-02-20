@@ -55,12 +55,13 @@ include_once '../head-frag.php';
                     ?>
                     <div class="line">Date: <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                         <?php if ($isAdmin) { ?>
-                        <select name="class" style="margin-left: 30px">
+<!--                        <select name="class" style="margin-left: 30px">
                             <option value="">-- Any --</option>
                             <?php echo PageConstant::formatOptionInSelect(ListGenerator::getClassName($date), $class, true); ?>
-                        </select>
+                        </select>-->
+                        <span style="margin-left: 30px;">Teacher: </span>
                         <select name="teacher">
-                            <option value="">-- Any --</option>
+                            <option value="">----</option>
                             <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $teacher); ?>
                         </select>
                         <?php } ?>
@@ -68,6 +69,9 @@ include_once '../head-frag.php';
                 </form>
                 <?php
                     $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);
+                    
+                    $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
+                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
                     
                     include 'relief-timetable-frag.php'; 
                 ?>

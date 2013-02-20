@@ -1,10 +1,10 @@
 <?php 
 include_once '../../php-head.php';
     
-function tdWrap($ele)
+function tdWrap($ele, $style='')
 {
     $ele=htmlentities($ele);
-    return "<td>$ele</td>";
+    return "<td $style>$ele</td>";
 }
 
 include_once '../../head-frag.php';
@@ -23,21 +23,27 @@ include_once '../../head-frag.php';
     <div id="content-wrapper">
     	<div id="content">
             <?php
-            $TOPBAR_LIST=array(
-                array('tabname' => 'Scheduling', 'url' => "/RTSS/relief/"),
-                array('tabname' => 'Result Preview', 'url' => "/RTSS/relief/schedule/"),
-                array('tabname' => 'Result Approval', 'url' => "/RTSS/relief/schedule/result.php"),
-                array('tabname' => 'Timetable Preview', 'url' => "")
-            );
-            include '../../topbar-frag.php';
-            ?>            
+                $TOPBAR_LIST=array(
+                    array('tabname' => 'Scheduling', 'url' => "/RTSS/relief/"),
+                    array('tabname' => 'Result Approval', 'url' => "/RTSS/relief/schedule/result.php"),
+                    array('tabname' => 'Result Preview', 'url' => "")                    
+                );
+                include '../../topbar-frag.php';
+            ?>
             <div class="main">                
                 <?php 
                     require_once '../../class/TimetableDB.php';
                     
                     $timetable=array(); // <-- to be changed
+                    
+                    $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
+                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
+                    
                     include '../../timetable/relief-timetable-frag.php'; 
                 ?>
+            </div>
+            <div class="bt-control">
+                <a href="result.php" class="button">Go Back</a>
             </div>
         </div>        
     </div>

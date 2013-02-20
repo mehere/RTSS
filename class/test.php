@@ -64,7 +64,7 @@ echo $test;
  * 
  */
 //********xue : testing
-//$scheduling = new SchedulerDB(new DateTime("2013-01-01"));
+//$scheduling = new SchedulerDB(new DateTime("2013-02-06"));
 
 /*
 $result = $scheduling->getLeave();
@@ -78,7 +78,7 @@ foreach($result as $key=>$value)
  */
 //print_r($scheduling->getExcludedTeachers());
 /*
-$result = $scheduling->getNormalTeachers();
+$result = $scheduling->getAedTeachers();
 foreach($result as $key=>$value)
 {
     echo "S**************************<br>";
@@ -90,7 +90,7 @@ foreach($result as $key=>$value)
     echo "noLessonRelived : ".$value->noLessonRelived."<br>";
     print_r($value->classes);
     echo "<br>";
-    //echo "speciality : ".$value->speciality."<br>";
+    echo "speciality : ".$value->speciality."<br>";
     echo "<br>";
     foreach($value->timetable as $t=>$one)
     {
@@ -366,4 +366,6 @@ $value = Teacher::individualReport('8104329');
     echo "<br>";
  * 
  */
+
+//echo SchedulerDB::scheduleResultNum();
 ?>
