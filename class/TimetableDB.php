@@ -154,50 +154,73 @@ class TimetableDB
      * @param type $accname - accname of leave teacher or ""
      * @param type $class - standard class name or ""
      * @param string $date "yyyy-mm-dd"
+     * @param $scheduleIndex -1 : return confirmed; >=0, alternatives, $date is ignored
      * @return Complex data structure if succeed. null if fail.
      */
-    public static function getReliefTimetable($accname, $class, $date)
+    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex)
     {
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
-        
+
         $db_con = Constant::connect_to_db('ntu');
-        
+
         if(empty($db_con))
         {
-            return null;
+            throw new DBException('Fail to query relief timetable', __FILE__, __LINE__);
         }
         
-        if(empty($accname) && empty($class))
+        if($scheduleIndex === -1)
         {
-            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."');";
-        }
-        else if(empty($accname) && !empty($class))
-        {
-            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
-        }
-        else if(!empty($accname) && empty($class))
-        {
-            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            if(empty($accname) && empty($class))
+            {
+                $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."');";
+            }
+            else if(empty($accname) && !empty($class))
+            {
+                $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
+            }
+            else if(!empty($accname) && empty($class))
+            {
+                $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            }
+            else
+            {
+                $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            }
         }
         else
         {
-            $sql_query_relief = "SELECT * FROM ((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            if(empty($accname) && empty($class))
+            {
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time as start_time_index, temp_each_alternative.end_time as end_time_index FROM ((ct_lesson LEFT JOIN temp_each_alternative ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex.";";
+            }
+            else if(empty($accname) && !empty($class))
+            {
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time as start_time_index, temp_each_alternative.end_time as end_time_index FROM ((ct_lesson LEFT JOIN temp_each_alternative ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
+            }
+            else if(!empty($accname) && empty($class))
+            {
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time as start_time_index, temp_each_alternative.end_time as end_time_index FROM ((ct_lesson LEFT JOIN temp_each_alternative ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and temp_each_alternative.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            }
+            else
+            {
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time as start_time_index, temp_each_alternative.end_time as end_time_index FROM ((ct_lesson LEFT JOIN temp_each_alternative ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and temp_each_alternative.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+            }
         }
         
         $query_relief_result = mysql_query($sql_query_relief);
         if(!$query_relief_result)
         {
-            return null;
+            throw new DBException('Fail to query relief timetable', __FILE__, __LINE__);
         }
         
         $result = Array();
-        
+
         while($row = mysql_fetch_assoc($query_relief_result))
         {
             $start_time_index = $row['start_time_index']-1;
             $end_time_index = $row['end_time_index']-1;
-            
+
             for($i = $start_time_index; $i<$end_time_index; $i++)
             {
                 if(empty($result[$i]))
@@ -209,16 +232,16 @@ class TimetableDB
                 $relief_teacher_id = $row['relief_teacher'];
                 $subject = $row['subj_code'];
                 $venue = empty($row['venue'])?"":$row['venue'];
-                
+
                 $existed = false;
-                
+
                 for($j=0; $j<count($result[$i]);$j++)
                 {
                     if(empty($result[$i][$j]))
                     {
                         continue;
                     }
-                    
+
                     if(strcmp($result[$i][$j]['subject'], $subject)===0 && strcmp($result[$i][$j]['teacher-accname'], $leave_teacher_id)===0 && strcmp($result[$i][$j]['relief-teacher-accname'], $relief_teacher_id)===0 && strcmp($result[$i][$j]['venue'], $venue)===0)
                     {
                         if(!empty($row['class_name']))
@@ -229,7 +252,7 @@ class TimetableDB
                         }
                     }
                 }
-                
+
                 if(!$existed)
                 {
                     if(array_key_exists($leave_teacher_id, $normal_dict))
@@ -263,17 +286,17 @@ class TimetableDB
                         'relief-teacher-fullname' => $relief_name,
                         'class' => Array()
                     );
-                    
+
                     if(!empty($row['class_name']))
                     {
                         $new_teaching['class'][] = $row['class_name'];
                     }
-                    
+
                     $result[$i][] = $new_teaching;
                 }
             }
         }
-        
+
         return $result;
     }
     
@@ -352,26 +375,190 @@ class TimetableDB
     
     /**
      * 
-     * @param string $date yyyy-mm-dd ignored if $isPreview = true
+     * @param string $date yyyy-mm-dd ignored if $scheduleIndex = -1
      * @param type $accname
-     * @param int $$scheduleIndex necessary if $isPreview = true
+     * @param int $$scheduleIndex 
      * @param type $isPreview
-     * @return array for teacher-accname, I'll always return the teacher teaching it. ie, if isRelief = true, give relief accname, if false, give original teacher name
+     * @return 
      */
-    public static function getIndividualTimetable($date, $accname,$scheduleIndex, $isPreview = false)
+    public static function getIndividualTimetable($date, $accname,$scheduleIndex)
     {
-        if($isPreview)
+        $result = Array();
+        
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
         {
-            //uncorfirmed
+            throw new DBException('Fail to get individual timetable', __FILE__, __LINE__);
+        }
+        
+        //from timetable
+        $date_obj = new DateTime($date);
+        $weekday = $date_obj->format('N');
+
+        $sql_query_timetable = "SELECT * FROM ((ct_lesson LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) LEFT JOIN ct_teacher_matching ON ct_lesson.lesson_id = ct_teacher_matching.lesson_id) WHERE ct_lesson.weekday = ".$weekday." AND ct_teacher_matching.teacher_id = '".mysql_real_escape_string(trim($accname))."';";
+        $query_timetable_result = Constant::sql_execute($db_con, $sql_query_timetable);
+        if(is_null($query_timetable_result))
+        {
+            throw new DBException('Fail to get individual timetable', __FILE__, __LINE__);
+        }
+
+        foreach($query_timetable_result as $row)
+        {
+            $start_time = $row['start_time'] - 1;
+            $end_time = $row['end_time'] - 1;
+
+            for($i = $start_time; $i<$end_time; $i++)
+            {
+                if(array_key_exists($i, $result))
+                {
+                    if(strcmp($result[$i]['id'], $row['id']) === 0)
+                    {
+                        if(!empty($row['class_name']))
+                        {
+                            $result[$i]['class'][] = $row['class_name'];
+                        }
+                    }
+                    else
+                    {
+                        throw new DBException('Overlap lesson at the same time for teacher '.$accname, __FILE__, __LINE__);
+                    }
+                }
+                else
+                {
+                    $venue = empty($row['venue'])?"":$row['venue'];
+
+                    $a_lesson = Array(
+                        "id" => $row['lesson_id'],
+                        "subject" => $row['subj_code'],
+                        "venue" => $venue,
+                        "isRelief" => false,
+                        "class" => Array()
+                    );
+                    
+                    if(!empty($row['class_name']))
+                    {
+                        $a_lesson['class'][] = $row['class_name'];
+                    }
+
+                    $result[$i] = $a_lesson;
+                }
+            }
+        }
+        
+        //from relief timetable
+        if($scheduleIndex === -1)
+        {
+            //confirmed
+            $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.date = DATE('".$date."') AND rs_relief_info.relief_teacher = '".$accname."';";
+            $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+            if(is_null($query_relief_result))
+            {
+                throw new DBException('Fail to query relief timetable for teacher '.$accname, __FILE__, __LINE__);
+            }
+            
+            foreach($query_relief_result as $row)
+            {
+                $start_time = $row['start_time_index'] - 1;
+                $end_time = $row['end_time_index'] - 1;
+
+                for($i = $start_time; $i<$end_time; $i++)
+                {
+                    if(array_key_exists($i, $result))
+                    {
+                        if(strcmp($result[$i]['id'], $row['id']) === 0)
+                        {
+                            if(!empty($row['class_name']))
+                            {
+                                $result[$i]['class'][] = $row['class_name'];
+                            }
+                        }
+                        else
+                        {
+                            throw new DBException('Overlap lesson at the same time for teacher '.$accname, __FILE__, __LINE__);
+                        }
+                    }
+                    else
+                    {
+                        $venue = empty($row['venue'])?"":$row['venue'];
+
+                        $a_lesson = Array(
+                            "id" => $row['lesson_id'],
+                            "subject" => $row['subj_code'],
+                            "venue" => $venue,
+                            "isRelief" => true,
+                            "class" => Array()
+                        );
+
+                        if(!empty($row['class_name']))
+                        {
+                            $a_lesson['class'][] = $row['class_name'];
+                        }
+
+                        $result[$i] = $a_lesson;
+                    }
+                }
+            }
         }
         else
         {
-            //confirmed
-            $date_obj = new DateTime($date);
-            $weekday = $date_obj->format('N');
+            //not confirmed
+            $sql_query_relief = "select *, temp_each_alternative.start_time as start_time_index, temp_each_alternative.end_time as end_time_index from ((temp_each_alternative left join ct_lesson on ct_lesson.lesson_id = temp_each_alternative.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$scheduleIndex." AND temp_each_alternative.relief_teacher = '".$accname."';";
+            $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+            if(is_null($query_relief_result))
+            {
+                throw new DBException('Fail to query relief timetable for teacher '.$accname, __FILE__, __LINE__);
+            }
             
-            $sql_query_timetable = "SELECT * FROM (((ct_lesson LEFT JOIN rs_relief_info ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) LEFT JOIN ct_teacher_matching ON ct_lesson.lesson_id = ct_teacher_matching.lesson_id) WHERE ct_lesson.weekday = ".$weekday." AND ct_teacher_matching.teacher_id = '".mysql_real_escape_string(trim($accname))."' AND rs_relief_info.date = DATE('".mysql_real_escape_string(trim($date))."');";
+            foreach($query_relief_result as $row)
+            {
+                $start_time = $row['start_time_index'] - 1;
+                $end_time = $row['end_time_index'] - 1;
+
+                for($i = $start_time; $i<$end_time; $i++)
+                {
+                    if(array_key_exists($i, $result))
+                    {
+                        if(strcmp($result[$i]['id'], $row['id']) === 0)
+                        {
+                            if(!empty($row['class_name']))
+                            {
+                                $result[$i]['class'][] = $row['class_name'];
+                            }
+                        }
+                        else
+                        {
+                            throw new DBException('Overlap lesson at the same time for teacher '.$accname, __FILE__, __LINE__);
+                        }
+                    }
+                    else
+                    {
+                        $venue = empty($row['venue'])?"":$row['venue'];
+
+                        $a_lesson = Array(
+                            "id" => $row['lesson_id'],
+                            "subject" => $row['subj_code'],
+                            "venue" => $venue,
+                            "isRelief" => true,
+                            "class" => Array()
+                        );
+
+                        if(!empty($row['class_name']))
+                        {
+                            $a_lesson['class'][] = $row['class_name'];
+                        }
+
+                        $result[$i] = $a_lesson;
+                    }
+                }
+            }
         }
+        
+        return $result;
+    }
+    
+    public static function checkTimetableConflict($scheduleIndex, $timeRange, $accname)
+    {
+        
     }
     
     private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_list, $teacher_list)
