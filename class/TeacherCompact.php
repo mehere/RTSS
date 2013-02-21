@@ -107,9 +107,9 @@ class TeacherCompact
 
 
         $needRelief = self::$typeToNeedReliefMap[$fullTeacher->type];
-        echo("<br> AccName: $fullTeacher->accname");
-        echo("<br> Type: $fullTeacher->type");
-        echo("<br>Need Relief: $needRelief");
+//        echo("<br> AccName: $fullTeacher->accname");
+//        echo("<br> Type: $fullTeacher->type");
+//        echo("<br>Need Relief: $needRelief");
 
         foreach ($leaveRecords as $aLeave)
         {
@@ -118,8 +118,8 @@ class TeacherCompact
 
             $lastLesson = null;
             $aReliefLesson = null;
-            echo "<br>Timetable";
-            print_r($fullTeacher->timetable);
+//            echo "<br>Timetable";
+//            print_r($fullTeacher->timetable);
             for ($i = $startLeaveIndex; $i < $endLeaveIndex; $i++)
             {
                 if ((isset($fullTeacher->timetable[$i])) &&
@@ -234,7 +234,8 @@ class TeacherCompact
                     $this->noTeachingPeriod--;
                     $this->netRelived--;
                     $noCancelled++;
-                    $lessonsSkipped[] = new SkippedLesson($this->teacherId, $timeIndex);
+                    $skipLesson = new SkippedLesson($this->teacherId, $timeIndex);
+                    $lessonsSkipped[$skipLesson->toString()] = $skipLesson;
 
                     if ($this->noTeachingPeriod == self::$recommendedNoOfLessons)
                     {
@@ -297,6 +298,12 @@ class TeacherCompact
     {
         self::$typeToGroupMap = array("Temp" => 1, "Aed" => 1, "Untrained" => 1, "Normal" => 2, "Hod" => 3);
         self::$typeToNeedReliefMap = array("Temp" => FALSE, "Aed" => FALSE, "Untrained" => TRUE, "Normal" => TRUE, "Hod" => TRUE);
+    }
+
+    public function accountName()
+    {
+        $aTeacher = self::$arrTeachers[$this->teacherId];
+        return $aTeacher->accname;
     }
 
     static function getAccName($teacherId)

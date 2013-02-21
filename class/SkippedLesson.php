@@ -10,6 +10,13 @@ class SkippedLesson
         $this->teacherId = $teacherId;
         $this->startTimeIndex = $startTimeIndex;
     }
+
+    public function toString()
+    {
+        $startTime = sprintf("%02d", $this->startTimeIndex);
+        $results = "$this->teacherId($startTime)";
+        return $results;
+    }
 }
 
 ?>
