@@ -25,7 +25,7 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
         $nowTime = microtime(true);
         if ((($successStates->numberStates > 0) || ($stoppedStates->numberStates > 0)) && (($nowTime - $startTime) > TIME_TO_WAIT))
         {
-            echo "broken due to time";
+//            echo "broken due to time";
             break;
         }
 //        error_log($activeStates->count());
@@ -190,7 +190,7 @@ foreach ($typesOfTeachers as $aType)
 
 
     // Printing for Debugging
-
+/*
     echo "<br><br>Type: $aType";
     echo "<br>Leaves<br>";
     print_r($arrLeaves[$aType]);
@@ -208,10 +208,9 @@ foreach ($typesOfTeachers as $aType)
         print_r($aTeacher);
         echo "<br>";
     }
-//    print_r($$varArrCompactTeachers);
-//    // Getting list of teachers who are not excluded, not exceeding time slots
-//    $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
-//    $$varArrAvailableTeachers = array_filter($$varArrCompactTeachers, "isAvailable");
+ *
+ *
+ */
 }
 
 
@@ -239,16 +238,21 @@ foreach ($group1Types as $aType)
     unset($$varArrAvailableTeachers);
 }
 
+foreach ($arrGroup1 as $aCompactTeacher){
+    $accName = TeacherCompact::getAccName($aCompactTeacher->teacherId);
+//    echo "<br>$accName";
+}
+
 //uasort($arrGroup1, 'cmpTeachers');
 //echo "<br>Group 1<br>";
 //print_r($arrGroup1);
-echo "<br> Relief Lessons!!!!";
-foreach ($lessonsNeedRelief as $aReliefLesson)
-{
-    /* @var $aReliefLesson ReliefLesson */
-    $str = $aReliefLesson->toString();
-    echo "<br>$str";
-}
+//echo "<br> Relief Lessons!!!!";
+//foreach ($lessonsNeedRelief as $aReliefLesson)
+//{
+//    /* @var $aReliefLesson ReliefLesson */
+//    $str = $aReliefLesson->toString();
+//    echo "<br>$str";
+//}
 
 $visitedStates = array();
 $activeStates = new ScheduleStateHeap();
@@ -327,24 +331,22 @@ if ($successStates->numberStates == 0)
 
 
 $endTime = microtime(true);
-//echo "<br>visited:<br>";
-//print_r($visitedStates);
-echo "<br>Memory:";
-echo memory_get_peak_usage(), "\n";
-
-echo "<br>Time:";
-$timeSpent = $endTime - $startTime;
-echo $timeSpent;
+//echo "<br>Memory:";
+//echo memory_get_peak_usage(), "\n";
 //
-echo "<br>";
-echo "<br>active:<br>:";
-print_r($activeStates);
-echo "<br>";
-echo "<br>:success<br>:";
-print_r($successStates);
-echo "<br>";
-echo "<br>stopped:<br>:";
-print_r($stoppedStates);
+//echo "<br>Time:";
+//$timeSpent = $endTime - $startTime;
+//echo $timeSpent;
+////
+//echo "<br>";
+//echo "<br>active:<br>:";
+//print_r($activeStates);
+//echo "<br>";
+//echo "<br>:success<br>:";
+//print_r($successStates);
+//echo "<br>";
+//echo "<br>stopped:<br>:";
+//print_r($stoppedStates);
 
 /* @var $aState ScheduleState */
 
