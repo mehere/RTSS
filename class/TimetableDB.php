@@ -157,7 +157,7 @@ class TimetableDB
      * @param $scheduleIndex -1 : return confirmed; >=0, alternatives, $date is ignored
      * @return Complex data structure if succeed. null if fail.
      */
-    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex)
+    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex = -1)
     {
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
