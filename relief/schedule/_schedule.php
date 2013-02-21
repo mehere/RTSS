@@ -29,8 +29,8 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
             break;
         }
 //        error_log($activeStates->count());
-        echo "<br>";
-        echo $activeStates->count();
+//        echo "<br>";
+//        echo $activeStates->count();
         $aState = $activeStates->extract();
         if ($successStates->isRejected($aState))
         {
@@ -172,16 +172,16 @@ foreach ($typesOfTeachers as $aType)
 //        echo '<br> accname:'.$accname;
         $aCompactTeacher = ${$varArrCompactTeachers}[$accname];
         $someLessonsNeedRelief = $aCompactTeacher->onLeave($leaveRecords, $$varArrExcludedTeachers);
+        if (!empty($someLessonsNeedRelief))
+        {
+            $lessonsNeedRelief = $lessonsNeedRelief + $someLessonsNeedRelief;
+        }
     }
-    if (!empty($someLessonsNeedRelief))
-    {
-        $lessonsNeedRelief = $lessonsNeedRelief + $someLessonsNeedRelief;
-    }
+
 
     $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
     $$varArrAvailableTeachers = $$varArrCompactTeachers;
 //    unset($$varArrCompactTeachers);
-
     // Managing Exclusions
     foreach ($$varArrExcludedTeachers as $accname => $value)
     {
@@ -189,7 +189,7 @@ foreach ($typesOfTeachers as $aType)
     }
 
 
-  // Printing for Debugging
+    // Printing for Debugging
 
     echo "<br><br>Type: $aType";
     echo "<br>Leaves<br>";
@@ -209,8 +209,6 @@ foreach ($typesOfTeachers as $aType)
         echo "<br>";
     }
 //    print_r($$varArrCompactTeachers);
-
-
 //    // Getting list of teachers who are not excluded, not exceeding time slots
 //    $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
 //    $$varArrAvailableTeachers = array_filter($$varArrCompactTeachers, "isAvailable");

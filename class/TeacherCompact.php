@@ -59,14 +59,15 @@ class TeacherCompact
         {
             $startIndex = $availableSlot[0];
             $endIndex = $availableSlot[1];
+
             for ($i = $startIndex; $i < $endIndex; $i++)
             {
-                $freeSlots[$i] = NULL;
+                $freeSlots[$i] = TRUE;
             }
         }
         for ($i = 1; $i <= self::MAX_LESSONS; $i++)
         {
-            if (!isset($freeSlots))
+            if (!isset($freeSlots[$i]))
             {
                 $this->timetable[$i] = TeacherCompact::TYPE_LEAVE;
             }
@@ -295,7 +296,7 @@ class TeacherCompact
     static function init()
     {
         self::$typeToGroupMap = array("Temp" => 1, "Aed" => 1, "Untrained" => 1, "Normal" => 2, "Hod" => 3);
-        self::$typeToNeedReliefMap = array("Temp" => FALSE, "Aed" => FALSE, "Untrained" => FALSE, "Normal" => TRUE, "Hod" => TRUE);
+        self::$typeToNeedReliefMap = array("Temp" => FALSE, "Aed" => FALSE, "Untrained" => TRUE, "Normal" => TRUE, "Hod" => TRUE);
     }
 
     static function getAccName($teacherId)
