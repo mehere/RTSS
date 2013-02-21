@@ -556,9 +556,52 @@ class TimetableDB
         return $result;
     }
     
-    public static function checkTimetableConflict($scheduleIndex, $timeRange, $accname)
+    public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date)
     {
+        $date_obj = new DateTime($schedule_date);
+        $weekday = $date_obj->format('N');
         
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            return -1;
+        }
+        
+        $sql_normal = "select * from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id = '".mysql_real_escape_string(trim($accname))."' and ct_lesson.weekday = ".$weekday." and ((ct_lesson.start_time < ".$time_range[1].") and (ct_lesson.end_time > ".$time_range[0]."));";
+        $normal_result = Constant::sql_execute($db_con, $sql_normal);
+        if(is_null($normal_result))
+        {
+            return -1;
+        }
+        else if(count($normal_result) > 0)
+        {
+            return 1;
+        }
+        
+        $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
+        $relief_result = Constant::sql_execute($db_con, $sql_relief);
+        if(is_null($relief_result))
+        {
+            return -1;
+        }
+        else if(count($relief_result) > 0)
+        {
+            return 1;
+        }
+        
+        $sql_temp = "select * from temp_each_alternative where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and schedule_id =".$schedule_index." and ((start_time < ".$time_range[1].") and (end_time > ".$time_range[0]."));";
+        $temp_result = Constant::sql_execute($db_con, $sql_temp);
+        
+        if(is_null($temp_result))
+        {
+            return -1;
+        }
+        else if(count($temp_result) > 0)
+        {
+            return 1;
+        }
+        
+        return 0;
     }
     
     private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_list, $teacher_list)

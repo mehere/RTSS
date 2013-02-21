@@ -318,8 +318,7 @@ class SchedulerDB
             $temp_normal->accname = $a_normal["accname"];
             //name
             $temp_normal->name = $a_normal["fullname"];
-            ;
-
+            
             //noLessonMissed
             if (array_key_exists($a_normal["accname"], $this->leave_dict))
             {

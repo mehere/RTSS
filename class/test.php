@@ -381,4 +381,6 @@ foreach($result as $key=>$value)
 }
  * 
  */
+
+//echo TimetableDB::checkTimetableConflict(1, Array(11, 12), "TMP1111111", "2013-02-06");
 ?>
