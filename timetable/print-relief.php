@@ -29,9 +29,9 @@ include_once '../head-frag.php';
             <thead>
                 <tr>
                     <?php
-                    $width=array('110px', '30%', '40%', '30%');
+                    $width=array('110px', '15%', '20%', '15%', '25%', '25%');
 
-                    $headerKeyList=NameMap::$TIMETABLE['individual']['display'];
+                    $headerKeyList=NameMap::$TIMETABLE['layout']['display'];
                     $tableHeaderList=array_values($headerKeyList);
 
                     for ($i=0; $i < count($tableHeaderList); $i++)
@@ -45,37 +45,41 @@ EOD;
             </thead>
             <tbody>
                 <?php
-                $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
-                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));        
+                $timetable=TimetableDB::getReliefTimetable('', '', $_GET['date']);                
 
                 $timeArr=SchoolTime::getTimeArrSub(0, 0);
                 for ($i=0; $i < count($timeArr) - 1; $i++)
                 {
-                    $teaching=$timetableIndividual[$i];
+                    $teachingList=$timetable[$i];
 
-                    if ($teaching)
+                    if ($teachingList)
                     {
-                        PageConstant::escapeHTMLEntity($teaching);
-                        $timetableEntry=array();
-                        foreach (array_slice($headerKeyList, 1) as $key => $value)
+                        foreach ($teachingList as $tInd => $teaching)
                         {
-                            $timetableEntry[]=$teaching[$key];
-                        }
+                            PageConstant::escapeHTMLEntity($teaching);
+                            $timetableEntry=array();
+                            foreach (array_slice($headerKeyList, 1) as $key => $value)
+                            {
+                                $timetableEntry[]=$teaching[$key];
+                            }
 
-                        // Class name display
-                        $timetableEntry[1]=implode(", ", $timetableEntry[1]);
+                            // Class name display
+                            $timetableEntry[1]=implode(", ", $timetableEntry[1]);
 
-                        $style="";
-                        if ($teaching['isRelief']) $style='style="color: red"';
-
-                        $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
-                        echo <<< EOD
-<tr $style><th class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</th>$otherTdStr</tr>
+                            echo "<tr>";
+                            if ($tInd == 0)
+                            {
+                                $rowspan=count($teachingList);
+                                echo <<< EOD
+<th class="time-col" rowspan="$rowspan">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</th>
 EOD;
+                            }
+                            echo implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry)) . "</tr>";
+                        }
                     }
                     else
                     {
-                        $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
+                        $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['layout']['display']), '')));
                         echo <<< EOD
 <tr><th class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</th>$otherTdStr</tr>
 EOD;

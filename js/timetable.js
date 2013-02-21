@@ -29,4 +29,11 @@ $(document).ready(function(){
 
         return true;
     });
+
+    $("#print-relief").click(function(){
+        var dataGet={"date": formS['date'].value};
+        this.href += "?" + $.param(dataGet);
+
+        return true;
+    });
 });
