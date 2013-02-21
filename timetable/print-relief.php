@@ -21,7 +21,7 @@ include_once '../head-frag.php';
 <body>
 	<div id="container">
         <h2>
-            Timetable on <?php echo date('D ' . PageConstant::DATE_FORMAT_SG); ?>
+            Timetable on <em><?php echo date('D ' . PageConstant::DATE_FORMAT_SG); ?></em>
             <div style="font-size: 16px"><?php echo "Sem " . PageConstant::printSemRange(true) . ", " . PageConstant::printYearRange(true); ?></div>
         </h2>        
         <div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.</div>

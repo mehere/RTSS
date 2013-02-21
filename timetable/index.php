@@ -61,9 +61,9 @@ include_once '../head-frag.php';
                 <?php
                     $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);
                     
-                    $timetableIndividual=//TimetableDB::getIndividualTimetable($date, $_POST['accname']);
-                    array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
-                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
+                    $timetableIndividual=TimetableDB::getIndividualTimetable($date, $_POST['accname']);
+//                    array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
+//                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
                     
                     $NO_PREIVEW=true;
                     include 'relief-timetable-frag.php'; 
