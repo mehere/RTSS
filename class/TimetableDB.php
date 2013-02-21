@@ -381,7 +381,7 @@ class TimetableDB
      * @param type $isPreview
      * @return 
      */
-    public static function getIndividualTimetable($date, $accname,$scheduleIndex)
+    public static function getIndividualTimetable($date, $accname,$scheduleIndex = -1)
     {
         $result = Array();
         

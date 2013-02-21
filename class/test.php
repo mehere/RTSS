@@ -300,7 +300,7 @@ foreach($result as $key=>$a_result)
           print_r($result);
          *
          */
-
+/*
 $result = TimetableDB::getReliefTimetable("", "", "2013-02-06");
 foreach($result as $key=>$value)
 {
@@ -319,7 +319,8 @@ foreach($result as $key=>$value)
         echo '<br>';
     }
 }
- 
+ * 
+ */
 
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
