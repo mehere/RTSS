@@ -301,7 +301,7 @@ foreach($result as $key=>$a_result)
          *
          */
 /*
-$result = TimetableDB::getReliefTimetable("8937105", "1J", "2013-02-06", 1);
+$result = TimetableDB::getReliefTimetable("", "", "2013-02-06", -1);
 foreach($result as $key=>$value)
 {
     echo 'start : '.$key.' :<br><br>';
