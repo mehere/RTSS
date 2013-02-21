@@ -18,10 +18,10 @@ $analyzer = $_SESSION["timetableAnalyzer"];
 $arrTeachers = $analyzer->arrTeachers;
 
 $newMatches = array();
-for ($i = 1; $i < $numOfUnknown; $i++)
+for ($i = 0; $i < $numOfUnknown; $i++)
 {
-    if (array_key_exists("abbrv-$i", $_POST) &&
-            array_key_exists("accname-$i", $_POST))
+    if (!empty($_POST["abbrv-$i"]) &&
+            !empty($_POST["accname-$i"]))
     {
         $abbreviation = $_POST["abbrv-$i"];
         $accountName = $_POST["accname-$i"];

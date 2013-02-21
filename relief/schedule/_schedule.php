@@ -19,14 +19,13 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
 {
     /* @var $aState ScheduleState */
     /* @var $firstTeacher TeacherCompact */
-    $numSuccess = 0;
-    $numRejected = 0;
     global $startTime;
     while (!($activeStates->isEmpty()))
     {
         $nowTime = microtime(true);
         if ((($successStates->numberStates > 0) || ($stoppedStates->numberStates > 0)) && (($nowTime - $startTime) > TIME_TO_WAIT))
         {
+//            echo "broken due to time";
             break;
         }
 //        error_log($activeStates->count());
@@ -35,21 +34,17 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
         $aState = $activeStates->extract();
         if ($successStates->isRejected($aState))
         {
-            $numRejected++;
-            error_log($numRejected);
             continue;
         }
         if (empty($aState->lessonsNotAllocated))
         {
             $successStates->insert($aState);
-            $numSuccess++;
             continue;
         }
         $firstTeacher = $aState->teachersAlive->current();
         if (empty($firstTeacher))
         {
             $stoppedStates->insert($aState);
-            error_log("Stopped");
             continue;
         }
 
@@ -91,7 +86,6 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
         }
     }
 }
-
 
 ///-----------------------------------------------------------------------------
 $dateString = $_POST["date"];
@@ -169,32 +163,54 @@ foreach ($typesOfTeachers as $aType)
     $varArrTeacherLeaves = "arr{$aType}TeachersLeaves";
     $$varArrTeacherLeaves = $arrLeaves[$aType];
 
+    // Current Exclustions
+    $varArrExcludedTeachers = "arrExcluded{$aType}Teachers";
+    $$varArrExcludedTeachers = $arrExcludedTeachers[$aType];
+
     foreach ($$varArrTeacherLeaves as $accname => $leaveRecords)
     {
 //        echo '<br> accname:'.$accname;
         $aCompactTeacher = ${$varArrCompactTeachers}[$accname];
-        $someLessonsNeedRelief = $aCompactTeacher->onLeave($leaveRecords);
+        $someLessonsNeedRelief = $aCompactTeacher->onLeave($leaveRecords, $$varArrExcludedTeachers);
+        if (!empty($someLessonsNeedRelief))
+        {
+            $lessonsNeedRelief = $lessonsNeedRelief + $someLessonsNeedRelief;
+        }
     }
-    if (!empty($someLessonsNeedRelief))
-    {
-        $lessonsNeedRelief = $lessonsNeedRelief + $someLessonsNeedRelief;
-    }
+
 
     $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
     $$varArrAvailableTeachers = $$varArrCompactTeachers;
-    unset($$varArrCompactTeachers);
-
+//    unset($$varArrCompactTeachers);
     // Managing Exclusions
-    $varArrExcludedTeachers = "arrExcluded{$aType}Teachers";
-    $$varArrExcludedTeachers = $arrExcludedTeachers[$aType];
     foreach ($$varArrExcludedTeachers as $accname => $value)
     {
         unset(${$varArrAvailableTeachers}[$accname]);
     }
 
-//    // Getting list of teachers who are not excluded, not exceeding time slots
-//    $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
-//    $$varArrAvailableTeachers = array_filter($$varArrCompactTeachers, "isAvailable");
+
+    // Printing for Debugging
+/*
+    echo "<br><br>Type: $aType";
+    echo "<br>Leaves<br>";
+    print_r($arrLeaves[$aType]);
+    echo "<br>Teachers: <br>";
+    foreach ($$varArrTeachers as $key => $aTeacher)
+    {
+        echo "Key: $key<br>";
+        print_r($aTeacher);
+        echo "<br>";
+    }
+//    print_r($$varArrTeachers);
+    echo "<br>Compact Teacher:<br>";
+    foreach ($$varArrCompactTeachers as $aTeacher)
+    {
+        print_r($aTeacher);
+        echo "<br>";
+    }
+ *
+ *
+ */
 }
 
 
@@ -222,9 +238,15 @@ foreach ($group1Types as $aType)
     unset($$varArrAvailableTeachers);
 }
 
+foreach ($arrGroup1 as $aCompactTeacher){
+    $accName = TeacherCompact::getAccName($aCompactTeacher->teacherId);
+//    echo "<br>$accName";
+}
+
 //uasort($arrGroup1, 'cmpTeachers');
 //echo "<br>Group 1<br>";
 //print_r($arrGroup1);
+//echo "<br> Relief Lessons!!!!";
 //foreach ($lessonsNeedRelief as $aReliefLesson)
 //{
 //    /* @var $aReliefLesson ReliefLesson */
@@ -308,16 +330,14 @@ if ($successStates->numberStates == 0)
 }
 
 
-//$endTime = microtime(true);
-//echo "<br>visited:<br>";
-//print_r($visitedStates);
+$endTime = microtime(true);
 //echo "<br>Memory:";
 //echo memory_get_peak_usage(), "\n";
 //
 //echo "<br>Time:";
 //$timeSpent = $endTime - $startTime;
 //echo $timeSpent;
-//
+////
 //echo "<br>";
 //echo "<br>active:<br>:";
 //print_r($activeStates);
@@ -348,8 +368,8 @@ if ($successStates->numberStates > 0)
         header($destination);
     } catch (DBException $e)
     {
-     // To-Do:
-     // Database Error
+        // To-Do:
+        // Database Error
     }
 } else
 {
