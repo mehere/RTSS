@@ -418,6 +418,7 @@ $(document).ready(function(){
         if (data['error']) return;
 
         $.each(data, function(key, value){
+            value['fullname']= $.trim(value['fullname']);
             nameList.push(value['fullname']);
             nameAccMap[value['fullname']]=value['accname'];
         });

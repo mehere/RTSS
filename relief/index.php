@@ -12,7 +12,7 @@ include_once '../head-frag.php';
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
 <style type="text/css">
-#align-teacher tr td:nth-child(1), #align-teacher tr td:nth-child(4) {
+#align-teacher tr td:nth-child(1) {
 	text-align: left;
 	word-wrap: break-word;
 }
@@ -56,7 +56,7 @@ include_once '../head-frag.php';
                             <tr class="teacher-thead">
                                 <?php
                                     // $width=array('30%', '80px', '170px', '70%', '80px', '100px');
-                                    $width=array('100%', '80px', '170px', '100px', '170px', '90px');
+                                    $width=array('100%', '80px', '140px', '100px', '170px', '40px');
                                     $tableHeaderList=array_values(NameMap::$RELIEF['teacherOnLeave']['display']);
 
                                     for ($i=0; $i<count($tableHeaderList); $i++)

@@ -124,17 +124,11 @@ Class Constant
             return null;
         }
     }
-
-    public static function sql_execute($db, $sql)
+    
+    public static function sql_execute($db_con, $sql)
     {
-        $db_con = Constant::connect_to_db($db);
-        if(!$db_con)
-        {
-            return null;
-        }
-
-        $query_result = mysql_query($sql);
-
+        $query_result = mysql_query($sql, $db_con);
+        
         if(!$query_result)
         {
             return null;
