@@ -24,6 +24,8 @@ class Lesson {
         $this->day = $dayTime->dayIndex;
         $this->startTimeSlot = $dayTime->timeIndex;
         $this->endTimeSlot = $this->startTimeSlot + 1;
+
+        $this->isMandatory = TRUE;
     }
 
     function addClass(Students $aClass){

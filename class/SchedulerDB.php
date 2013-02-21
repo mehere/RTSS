@@ -1,10 +1,6 @@
 <?php
 
-session_start();
-
 require_once 'util.php';
-require_once 'Teacher.php';
-require_once 'DBException.php';
 
 class SchedulerDB
 {
@@ -49,11 +45,13 @@ class SchedulerDB
         $query_num_of_relief_result = Constant::sql_execute("ntu", $sql_query_num_of_relief);
         if (empty($query_num_of_relief_result))
         {
-            throw new DBException("Fail to query number of relief information", __FILE__, __LINE__);
+
+            throw new DBException("Fail to query number of relief information:".mysql_error(), __FILE__, __LINE__);
         }
         foreach($query_num_of_relief_result as $row)
         {
-            $this->relief_dict[$row['teacher_id']] = $row['num_of_relief'];
+
+            $this->relief_dict[$row['relief_teacher']] = $row['num_of_relief'];
         }
 
         //create lesson dictionary
@@ -355,7 +353,7 @@ class SchedulerDB
 
             $teacher_dict[$a_normal["accname"]] = $temp_normal;
         }
-        
+
         return $teacher_dict;
     }
 
@@ -376,12 +374,12 @@ class SchedulerDB
     {
         $sql_query_num = "select count(*) as num from temp_all_results;";
         $result = Constant::sql_execute('ntu', $sql_query_num);
-        
+
         if(empty($result) || count($result) === 0)
         {
             return 0;
         }
-        
+
         return $result[0]['num'];
     }
 }

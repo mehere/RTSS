@@ -162,11 +162,11 @@ EOD;
                             $normalList=array();
                             foreach ($accList as $value)
                             {
-                                if ($execInfo[$value])
+                                if (isset($execInfo[$value]))
                                 {
                                     $adminList[]=$execInfo[$value]['fullname'];
                                 }
-                                if ($nonexecInfo[$value])
+                                if (isset($nonexecInfo[$value]))
                                 {
                                     $normalList[]=$nonexecInfo[$value]['fullname'];
                                 }
