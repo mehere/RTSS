@@ -80,7 +80,7 @@ class SchedulerDB
 
             if (strcmp($row['type'], 'A') === 0)
             {
-                $one_lesson->isHighlighted = $row['highlighted'];
+                $one_lesson->isMandatory = $row['highlighted'];
             }
 
             $this->lesson_list[$lesson_id] = $one_lesson;

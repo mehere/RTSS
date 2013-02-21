@@ -1,23 +1,8 @@
 <?php
 
 require_once 'util.php';
-require_once 'DayTime.php';
-require_once 'Students.php';
-require_once 'Teacher.php';
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of Lesson
- *
- * @author Wee
- */
 class Lesson {
-
-    //put your code here
 
     public $lessonId;
     public $teachers;
@@ -27,7 +12,7 @@ class Lesson {
     public $day;
     public $startTimeSlot;
     public $endTimeSlot;
-    public $isHighlighted;
+    public $isMandatory;
 
     function __construct(DayTime $dayTime, $subject, $venue) {
 
@@ -40,8 +25,6 @@ class Lesson {
         $this->startTimeSlot = $dayTime->timeIndex;
         $this->endTimeSlot = $this->startTimeSlot + 1;
     }
-
-
 
     function addClass(Students $aClass){
         $this->classes[$aClass->name] = $aClass;

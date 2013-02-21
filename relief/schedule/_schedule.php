@@ -19,37 +19,32 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
 {
     /* @var $aState ScheduleState */
     /* @var $firstTeacher TeacherCompact */
-    $numSuccess = 0;
-    $numRejected = 0;
     global $startTime;
     while (!($activeStates->isEmpty()))
     {
         $nowTime = microtime(true);
         if ((($successStates->numberStates > 0) || ($stoppedStates->numberStates > 0)) && (($nowTime - $startTime) > TIME_TO_WAIT))
         {
+            echo "broken due to time";
             break;
         }
 //        error_log($activeStates->count());
-//        echo "<br>";
-//        echo $activeStates->count();
+        echo "<br>";
+        echo $activeStates->count();
         $aState = $activeStates->extract();
         if ($successStates->isRejected($aState))
         {
-            $numRejected++;
-            error_log($numRejected);
             continue;
         }
         if (empty($aState->lessonsNotAllocated))
         {
             $successStates->insert($aState);
-            $numSuccess++;
             continue;
         }
         $firstTeacher = $aState->teachersAlive->current();
         if (empty($firstTeacher))
         {
             $stoppedStates->insert($aState);
-            error_log("Stopped");
             continue;
         }
 
@@ -91,7 +86,6 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
         }
     }
 }
-
 
 ///-----------------------------------------------------------------------------
 $dateString = $_POST["date"];
@@ -169,11 +163,15 @@ foreach ($typesOfTeachers as $aType)
     $varArrTeacherLeaves = "arr{$aType}TeachersLeaves";
     $$varArrTeacherLeaves = $arrLeaves[$aType];
 
+    // Current Exclustions
+    $varArrExcludedTeachers = "arrExcluded{$aType}Teachers";
+    $$varArrExcludedTeachers = $arrExcludedTeachers[$aType];
+
     foreach ($$varArrTeacherLeaves as $accname => $leaveRecords)
     {
 //        echo '<br> accname:'.$accname;
         $aCompactTeacher = ${$varArrCompactTeachers}[$accname];
-        $someLessonsNeedRelief = $aCompactTeacher->onLeave($leaveRecords);
+        $someLessonsNeedRelief = $aCompactTeacher->onLeave($leaveRecords, $$varArrExcludedTeachers);
     }
     if (!empty($someLessonsNeedRelief))
     {
@@ -182,15 +180,36 @@ foreach ($typesOfTeachers as $aType)
 
     $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
     $$varArrAvailableTeachers = $$varArrCompactTeachers;
-    unset($$varArrCompactTeachers);
+//    unset($$varArrCompactTeachers);
 
     // Managing Exclusions
-    $varArrExcludedTeachers = "arrExcluded{$aType}Teachers";
-    $$varArrExcludedTeachers = $arrExcludedTeachers[$aType];
     foreach ($$varArrExcludedTeachers as $accname => $value)
     {
         unset(${$varArrAvailableTeachers}[$accname]);
     }
+
+
+  // Printing for Debugging
+
+    echo "<br><br>Type: $aType";
+    echo "<br>Leaves<br>";
+    print_r($arrLeaves[$aType]);
+    echo "<br>Teachers: <br>";
+    foreach ($$varArrTeachers as $key => $aTeacher)
+    {
+        echo "Key: $key<br>";
+        print_r($aTeacher);
+        echo "<br>";
+    }
+//    print_r($$varArrTeachers);
+    echo "<br>Compact Teacher:<br>";
+    foreach ($$varArrCompactTeachers as $aTeacher)
+    {
+        print_r($aTeacher);
+        echo "<br>";
+    }
+//    print_r($$varArrCompactTeachers);
+
 
 //    // Getting list of teachers who are not excluded, not exceeding time slots
 //    $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
@@ -225,12 +244,13 @@ foreach ($group1Types as $aType)
 //uasort($arrGroup1, 'cmpTeachers');
 //echo "<br>Group 1<br>";
 //print_r($arrGroup1);
-//foreach ($lessonsNeedRelief as $aReliefLesson)
-//{
-//    /* @var $aReliefLesson ReliefLesson */
-//    $str = $aReliefLesson->toString();
-//    echo "<br>$str";
-//}
+echo "<br> Relief Lessons!!!!";
+foreach ($lessonsNeedRelief as $aReliefLesson)
+{
+    /* @var $aReliefLesson ReliefLesson */
+    $str = $aReliefLesson->toString();
+    echo "<br>$str";
+}
 
 $visitedStates = array();
 $activeStates = new ScheduleStateHeap();
@@ -308,25 +328,25 @@ if ($successStates->numberStates == 0)
 }
 
 
-//$endTime = microtime(true);
+$endTime = microtime(true);
 //echo "<br>visited:<br>";
 //print_r($visitedStates);
-//echo "<br>Memory:";
-//echo memory_get_peak_usage(), "\n";
+echo "<br>Memory:";
+echo memory_get_peak_usage(), "\n";
+
+echo "<br>Time:";
+$timeSpent = $endTime - $startTime;
+echo $timeSpent;
 //
-//echo "<br>Time:";
-//$timeSpent = $endTime - $startTime;
-//echo $timeSpent;
-//
-//echo "<br>";
-//echo "<br>active:<br>:";
-//print_r($activeStates);
-//echo "<br>";
-//echo "<br>:success<br>:";
-//print_r($successStates);
-//echo "<br>";
-//echo "<br>stopped:<br>:";
-//print_r($stoppedStates);
+echo "<br>";
+echo "<br>active:<br>:";
+print_r($activeStates);
+echo "<br>";
+echo "<br>:success<br>:";
+print_r($successStates);
+echo "<br>";
+echo "<br>stopped:<br>:";
+print_r($stoppedStates);
 
 /* @var $aState ScheduleState */
 
@@ -348,8 +368,8 @@ if ($successStates->numberStates > 0)
         header($destination);
     } catch (DBException $e)
     {
-     // To-Do:
-     // Database Error
+        // To-Do:
+        // Database Error
     }
 } else
 {
