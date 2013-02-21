@@ -411,7 +411,7 @@ class TimetableDB
             {
                 if(array_key_exists($i, $result))
                 {
-                    if(strcmp($result[$i]['id'], $row['id']) === 0)
+                    if(strcmp($result[$i]['id'], $row['lesson_id']) === 0)
                     {
                         if(!empty($row['class_name']))
                         {
@@ -465,7 +465,7 @@ class TimetableDB
                 {
                     if(array_key_exists($i, $result))
                     {
-                        if(strcmp($result[$i]['id'], $row['id']) === 0)
+                        if(strcmp($result[$i]['id'], $row['lesson_id']) === 0)
                         {
                             if(!empty($row['class_name']))
                             {
@@ -518,7 +518,7 @@ class TimetableDB
                 {
                     if(array_key_exists($i, $result))
                     {
-                        if(strcmp($result[$i]['id'], $row['id']) === 0)
+                        if(strcmp($result[$i]['id'], $row['lesson_id']) === 0)
                         {
                             if(!empty($row['class_name']))
                             {
