@@ -20,11 +20,13 @@ $(document).ready(function(){
         }
     });
 
-    $(formS['class']).change(function(){
+    $(formS['accname']).change(function(){
         this.form.submit();
     });
 
-    $(formS['teacher']).change(function(){
-        this.form.submit();
+    $("#print-individual").click(function(){
+        this.href += "?" + $(formS).serialize();
+
+        return true;
     });
 });

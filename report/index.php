@@ -1,11 +1,6 @@
 <?php 
 include_once '../php-head.php';
 
-function tdWrap($ele)
-{
-    return "<td>$ele</td>";
-}
-
 require_once '../class/Teacher.php';
 
 include_once '../head-frag.php';
@@ -56,9 +51,10 @@ include_once '../head-frag.php';
                         <fieldset>
                             <legend>Filter</legend>
                             <div class="line">
+                            	<a href="print.php" target="_blank" id="print" class="button" style="float:right; margin-right: 15px">Print</a>
                                 Type: <select name="type"><option value="">Any</option><?php echo PageConstant::formatOptionInSelect(NameMap::$REPORT['teacherType']['display'], $_POST['type']) ?></select>
                                 <input type="submit" value="Go" class="button" style="margin-left: 30px" />
-                            </div>        
+                            </div>                            
                         </fieldset>
                         <div class="section">
                             <table class="table-info">
@@ -81,9 +77,8 @@ EOD;
                                 </thead>
                                 <tbody id="table-overall">
                                     <?php
-                                        $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==0 ? SORT_ASC : SORT_DESC);
-//var_dump(Teacher::overallReport('', 'fullname', SORT_DESC));
-//var_dump($_POST['order'], $_POST['direction']);
+                                        $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==2 ? SORT_DESC : SORT_ASC);
+
                                         foreach ($reportArr as $value)
                                         {
                                             $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
@@ -94,17 +89,13 @@ EOD;
                                         
                                         if (empty($reportArr))
                                         {
-                                            echo '<tr>';
-                                            foreach ($tableHeaderArr as $value)
-                                            {
-                                                echo tdWrap('--');
-                                            }
-                                            echo '</tr>';
+                                            $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count($tableHeaderArr), '--')));                                            
+                                            echo "<tr>$otherTdStr</tr>";
                                         }
                                     ?>
                                 </tbody>
                             </table>
-                            <input type="hidden" name="order" value="fullname" /><input type="hidden" name="direction" value="<?php echo $_POST['direction'] ?>" />
+                            <input type="hidden" name="order" value="<?php echo $_POST['order']; ?>" /><input type="hidden" name="direction" value="<?php echo $_POST['direction'] ?>" />
                         </div>
                     </form>
                     <div id="teacher-detail">Loading ...</div>                    
