@@ -101,7 +101,8 @@ class ScheduleState
             $hasSkipped = $firstTeacher->setLesson($i);
             if ($hasSkipped)
             {
-                $this->lessonsSkipped[] = new SkippedLesson($firstTeacher->teacherId, $i);
+                $skipLesson = new SkippedLesson($firstTeacher->teacherId, $i);
+                $this->lessonsSkipped[$skipLesson->toString()] = $skipLesson;
                 $numberLessonSkipped++;
             }
         }
@@ -213,14 +214,41 @@ class ScheduleState
 
     public function beautify(){
         /* @var $aLesson ReliefLesson*/
-        $results = array();
+        $resultsRelief = array();
         foreach ($this->lessonsAllocated as $aLesson){
             $aNewLesson = clone $aLesson;
             $aNewLesson->teacherOriginal = TeacherCompact::getAccName($aLesson->teacherOriginal);
             $aNewLesson->teacherRelief = TeacherCompact::getAccName($aLesson->teacherRelief);
-            $results[] = $aNewLesson;
+            $resultsRelief[] = $aNewLesson;
         }
-        return $results;
+
+        $resultsSkipped = array();
+        ksort($this->lessonsSkipped);
+        $lastLesson = NULL;
+        $lastTeacher = NULL;
+        $lastIndex = -1;
+        foreach ($this->lessonsSkipped as $aSkippedLesson){
+            /* @var $aSkippedLesson SkippedLesson*/
+            /*@var $fullTeacher Teacher */
+            $teacherId = $aSkippedLesson->teacherId;
+            $fullTeacher = TeacherCompact::$arrTeachers[$teacherId];
+            $aLesson = $fullTeacher->timetable[$aSkippedLesson->startTimeIndex];
+            $timeIndex = $aSkippedLesson->startTimeIndex;
+            if (($fullTeacher === $lastTeacher) && ($aLesson == $lastLesson) && (($timeIndex - $lastIndex) == 1)){
+                $aNewLesson->incrementEndTime();
+                $lastIndex = $timeIndex;
+            }
+            else {
+                $aNewLesson = new ReliefLesson($fullTeacher->accname, $aLesson->lessonId, $aSkippedLesson->startTimeIndex);
+                $resultsSkipped[] = $aNewLesson;
+                $lastLesson = $aLesson;
+                $lastTeacher = $fullTeacher;
+                $lastIndex = $timeIndex;
+            }
+        }
+
+        $totalResults = array("relievedLessons" => $resultsRelief, "skippedLessons" => $resultsSkipped);
+        return $totalResults;
     }
 
 }

@@ -30,7 +30,9 @@ class SchedulerDB
 
         //query num_of_leave slot
         $sql_query_num_of_leave = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info group by teacher_id";
-        $query_num_of_leave_result = Constant::sql_execute("ntu", $sql_query_num_of_leave);
+        $db_con = Constant::connect_to_db('ntu');
+
+        $query_num_of_leave_result = Constant::sql_execute($db_con, $sql_query_num_of_leave);
         if (empty($query_num_of_leave_result))
         {
             throw new DBException("Fail to query number of leave information", __FILE__, __LINE__);
@@ -42,7 +44,7 @@ class SchedulerDB
 
         //query num_of_relief slot
         $sql_query_num_of_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from rs_relief_info group by relief_teacher";
-        $query_num_of_relief_result = Constant::sql_execute("ntu", $sql_query_num_of_relief);
+        $query_num_of_relief_result = Constant::sql_execute($db_con, $sql_query_num_of_relief);
         if (empty($query_num_of_relief_result))
         {
 
@@ -58,7 +60,7 @@ class SchedulerDB
         $this->lesson_list = Array();
 
         $sql_query_lessons = "select * from ct_lesson where weekday = " . $this->weekday . ";";
-        $lesson_query_result = Constant::sql_execute("ntu", $sql_query_lessons);
+        $lesson_query_result = Constant::sql_execute($db_con, $sql_query_lessons);
 
         if (empty($lesson_query_result))
         {
@@ -87,7 +89,7 @@ class SchedulerDB
         //class of one lesson
         $sql_query_class = "SELECT ct_class_matching.* FROM ct_class_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_class_matching.lesson_id
             AND ct_lesson.weekday = " . $this->weekday . ";";
-        $class_query_result = Constant::sql_execute("ntu", $sql_query_class);
+        $class_query_result = Constant::sql_execute($db_con, $sql_query_class);
 
         if (empty($class_query_result))
         {
@@ -105,7 +107,7 @@ class SchedulerDB
         $this->teacher_lesson_list = Array();
 
         $sql_query_teacher = "SELECT ct_teacher_matching.* FROM ct_teacher_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_teacher_matching.lesson_id AND ct_lesson.weekday = " . $this->weekday . ";";
-        $teacher_query_result = Constant::sql_execute("ntu", $sql_query_teacher);
+        $teacher_query_result = Constant::sql_execute($db_con, $sql_query_teacher);
         if (empty($teacher_query_result))
         {
             throw new DBException("Fail to query teacher from database", __FILE__, __LINE__);
@@ -125,7 +127,7 @@ class SchedulerDB
         $this->teacher_class_list = Array();
 
         $sql_query_teacher_class = "Select ct_teacher_matching.teacher_id as teacher, ct_class_matching.class_name as class from ct_lesson, ct_teacher_matching, ct_class_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id;";
-        $query_teacher_class_result = Constant::sql_execute("ntu", $sql_query_teacher_class);
+        $query_teacher_class_result = Constant::sql_execute($db_con, $sql_query_teacher_class);
         if (empty($query_teacher_class_result))
         {
             throw new DBException("Fail to query teacher-class from database", __FILE__, __LINE__);
@@ -228,7 +230,8 @@ class SchedulerDB
         $result = $this->customizeTeacherList("AED");
 
         $sql_query_speciality = "select * from ct_aed_speciality;";
-        $query_speciality_result = Constant::sql_execute("ntu", $sql_query_speciality);
+        $db_con = Constant::connect_to_db('ntu');
+        $query_speciality_result = Constant::sql_execute($db_con, $sql_query_speciality);
         if (empty($query_speciality_result))
         {
             throw new DBException("Fail to query aed speciality", __FILE__, __LINE__);
@@ -373,7 +376,7 @@ class SchedulerDB
     public static function scheduleResultNum()
     {
         $sql_query_num = "select count(*) as num from temp_all_results;";
-        $result = Constant::sql_execute('ntu', $sql_query_num);
+        $result = Constant::sql_execute($db_con, $sql_query_num);
 
         if(empty($result) || count($result) === 0)
         {
