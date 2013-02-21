@@ -7,19 +7,19 @@ Class Constant
     const db_username = "root";
     const db_password = "";
     const db_name = "ntu";
-    
+
     const ifins_db_url = "localhost";
     const ifins_db_username = "root";
     const ifins_db_password = "";
     const ifins_db_name = "ifins";
-    
+
     //time slot
     const num_of_time_slot = 15;
     const num_of_week_day = 5;
-    
+
     public static $time_conversion = array(
         0 => '0000',
-        1 => '0715',
+        1 => '0725',
         2 => '0745',
         3 => '0815',
         4 => '0845',
@@ -35,9 +35,9 @@ Class Constant
         14 => '1345',
         15 => '1415'
     );
-    
+
     public static $inverse_time_conversion = array(
-        '0715' => 1,
+        '0725' => 1,
         '0745' => 2,
         '0815' => 3,
         '0845' => 4,
@@ -53,10 +53,10 @@ Class Constant
         '1345' => 14,
         '1415' => 15
     );
-    
+
     public static $mother_tongue = array("Chinese", "Tamil", "Malay");
     public static $teacher_type = array("Teacher"=>"Normal", "AED"=>"Aed", "Temp"=>"Temp", "HOD"=>"Hod", "untrained"=>"Untrained", "ExCo"=>"ExCo");   //key: types in database; value: types in websystem. Due to some reasons, we maintain the two list
-    
+
     //replacement of search token when matching abbre name and full name
     //in Teacher::abbreToFullnameSingleSetup()
     public static $abbre_token_replace = array(
@@ -80,7 +80,7 @@ Class Constant
         'WEESHEON' => 'yuin',
         'WONGBER' => 'WONG'
     );
-    
+
     public static function connect_to_db($db_name)
     {
         if(strcmp($db_name, "ntu")===0)
@@ -116,7 +116,7 @@ Class Constant
             }
 
             mysql_select_db($ifins_db_name, $ifins_db_con);
-            
+
             return $ifins_db_con;
         }
         else
@@ -136,12 +136,12 @@ Class Constant
         else
         {
             $result = Array();
-            
+
             while($row = mysql_fetch_assoc($query_result))
             {
                 $result[] = $row;
             }
-            
+
             return $result;
         }
     }
