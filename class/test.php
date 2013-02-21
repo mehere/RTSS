@@ -301,7 +301,7 @@ foreach($result as $key=>$a_result)
          *
          */
 /*
-$result = TimetableDB::getReliefTimetable("", "", "2013-02-06");
+$result = TimetableDB::getReliefTimetable("8937105", "1J", "2013-02-06", 1);
 foreach($result as $key=>$value)
 {
     echo 'start : '.$key.' :<br><br>';
@@ -368,4 +368,17 @@ $value = Teacher::individualReport('8104329');
  */
 
 //echo SchedulerDB::scheduleResultNum();
+/*
+$result = TimetableDB::getIndividualTimetable('2013-02-06', "2644123", -1);
+foreach($result as $key=>$value)
+{
+    echo $key."<br>";
+    echo $value['subject']."<br>";
+    echo ($value['isRelief']?'YES':'NO')."<br>";
+    echo $value['venue']." hehe<br>";
+    print_r($value['class']);
+    echo "<br><br>";
+}
+ * 
+ */
 ?>

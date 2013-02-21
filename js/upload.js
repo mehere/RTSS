@@ -203,6 +203,8 @@ $(document).ready(function(){
         dataPost['num']=num;
 
         $.post(this.action, dataPost, function(data){
+            console.log(data);
+
             if (data['error'])
             {
                 $("#dialog-alert").html(ALERT_TEXT[3]).dialog("open");
@@ -227,10 +229,12 @@ $(document).ready(function(){
             nameAccMap[value['fullname']]=value['accname'];
         });
     });
+
     $(formAED['fullname']).autocomplete({
         source: nameList,
         delay: 0,
         autoFocus: true,
+        minLength: 0,
         position: { my: "left bottom", at: "left top", collision: "none" }
     }).focusout(function(){
         var curText= $.trim(this.value), isMatch=false;
@@ -247,5 +251,7 @@ $(document).ready(function(){
         {
             this.value="";
         }
+    }).focusin(function(){
+        $(this).autocomplete("search", "");
     });
 });

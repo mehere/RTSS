@@ -1,4 +1,8 @@
-<div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.</div>
+<div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.
+    <?php if ($NO_PREIVEW) { ?>
+        <a href="print-individual.php" target="_blank" id="print-individual" class="button" style="float:right; margin-right: 30%; margin-top: -20px">Print</a>
+    <?php } ?>
+</div>
 <table class="table-info" style="width: 70%">
     <thead>
         <tr>
@@ -41,14 +45,14 @@ EOD;
                 $style="";
                 if ($teaching['isRelief']) $style='style="color: red"';
                                                 
-                $otherTdStr=implode('', array_map("tdWrap", $timetableEntry));
+                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
                 echo <<< EOD
 <tr $style><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
             }
             else
             {
-                $otherTdStr=implode('', array_map("tdWrap", array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
+                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
                 echo <<< EOD
 <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
@@ -58,7 +62,10 @@ EOD;
     </tbody>
 </table>
 <hr style="margin: 30px 10px 20px" />
-<div style="padding-bottom: 10px; font-size: 1.2em">Relief Timetable:</div>
+<div style="padding-bottom: 15px; font-size: 1.2em">Relief Timetable:
+    <?php if ($NO_PREIVEW) { ?>
+        <a href="print.php" target="_blank" id="print-relief" class="button" style="float:right; margin-right: 10%; margin-top: -5px">Print</a></div>
+    <?php } ?>
 <table class="table-info">
     <thead>
         <tr>
@@ -109,12 +116,12 @@ EOD;
 <td class="time-col" rowspan="$rowspan">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>
 EOD;
                     }
-                    echo implode('', array_map("tdWrap", $timetableEntry)) . "</tr>";
+                    echo implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry)) . "</tr>";
                 }
             }
             else
             {
-                $otherTdStr=implode('', array_map("tdWrap", array_fill(0, count(NameMap::$TIMETABLE['layout']['display']), '')));
+                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['layout']['display']), '')));
                 echo <<< EOD
 <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
