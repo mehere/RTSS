@@ -203,8 +203,6 @@ $(document).ready(function(){
         dataPost['num']=num;
 
         $.post(this.action, dataPost, function(data){
-            console.log(data);
-
             if (data['error'])
             {
                 $("#dialog-alert").html(ALERT_TEXT[3]).dialog("open");
