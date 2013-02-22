@@ -61,6 +61,7 @@ EOD;
         ?>
     </tbody>
 </table>
+<?php if ($_SESSION['type'] == 'admin') { ?>
 <hr style="margin: 30px 10px 20px" />
 <div style="padding-bottom: 15px; font-size: 1.2em">Relief Timetable:
     <?php if ($NO_PREIVEW) { ?>
@@ -131,3 +132,4 @@ EOD;
         ?>
     </tbody>
 </table>
+<?php } ?>
