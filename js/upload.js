@@ -47,7 +47,7 @@ $(document).ready(function(){
 
     $(formAdd).submit(function(){
         var failToSubmit=false;
-        $('[type=text]', this).each(function(){
+        $('[type="text"][name!="venue"]', this).each(function(){
             if (!$.trim(this.value))
             {
                 $("#dialog-alert").html(ALERT_TEXT[0]).dialog( "option", "title", "Add AED Timetable" ).dialog("open");

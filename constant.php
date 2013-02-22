@@ -8,7 +8,7 @@ class PageConstant
     const DATE_FORMAT_ISO='Y/m/d';    
     const DATE_FORMAT_SG='d/m/Y';
     
-    public static $DAY=array('Monday', 'Tuesday', 'Wedsday', 'Thursday', 'Friday');       
+    public static $DAY=array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');       
     
     public static $ERROR_TEXT=array(
         'login' => array(

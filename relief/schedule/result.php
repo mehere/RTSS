@@ -1,5 +1,8 @@
 <?php 
 include_once '../../php-head.php';
+
+require_once '../../class/SchedulerDB.php';
+
 include_once '../../head-frag.php';        
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
@@ -45,8 +48,6 @@ EOD;
                         </thead>
                         <tbody>
                             <?php
-                                require_once '../../class/SchedulerDB.php';
-                                
                                 $scheduleList=array(0=>array(
                                     array('class'=>array('1F', '2A'), 'time'=>array(1, 3),
                                     "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
@@ -75,7 +76,7 @@ EOD;
         <input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" />
         <input type="hidden" name="relief-accname-$key" value="{$value['reliefAccName']}" />
     </td>
-</tr>   
+</tr>
 EOD;
                                 }
                                 
