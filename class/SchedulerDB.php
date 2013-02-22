@@ -364,16 +364,162 @@ class SchedulerDB
         return 10;
     }
 
-    static function setScheduleResult($scheduleResults)
+    static function setScheduleResult($scheduleResults, $date)
     {
-
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException("Fail to insert schedule result", __FILE__, __LINE__);
+        }
+        
+        $sql_insert = "insert into temp_each_alternative values ";
+        
+        foreach($scheduleResults as $id => $a_result)
+        {
+            $relief = $a_result['relievedLessons'];
+            
+            foreach($relief as $a_relief)
+            {
+                $diff = $a_relief->endTimeSlot - $a_relief->startTimeIndex;
+                $sql_insert .= "(".$id.",'".$a_relief->lessonId."','".$date."',".$a_relief->startTimeIndex.",".$a_relief->endTimeSlot.",'".$a_relief->teacherOriginal."','".$a_relief->teacherRelief."',NULL,".$diff."),";
+            }
+        }
+        
+        $sql_insert = substr($sql_insert, 0, -1).';';
+        
+        $execute = Constant::sql_execute($db_con, $sql_insert);
+        if(is_null($execute))
+        {
+            throw new DBException("Fail to insert scheduling result", __FILE__, __LINE__);
+        }
     }
 
+    /**
+     * time index 1-based
+     * @param int $schedule_index [-1, max index - 1]; -1 -> return all results; >=0 -> return the specific table
+     */
+    public static function getScheduleResult($schedule_index = -1)
+    {
+        $result = Array();
+        
+        if($schedule_index < -1)
+        {
+            throw new DBException('Schedule_index shall not be less than -1', __FILE__, __LINE__);
+        }
+        
+        $normal_dict = Teacher::getAllTeachers();
+        $temp_dict = Teacher::getTempTeacher("");
+
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            return $result;
+        }
+        
+        if($schedule_index === -1)
+        {
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id);";
+        }
+        else
+        {
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$schedule_index.";";
+        }
+        
+        $schedule_result = Constant::sql_execute($db_con, $sql_schedule);
+        if(is_null($schedule_result))
+        {
+            return $result;
+        }
+
+        foreach($schedule_result as $row)
+        {
+            $schedule_id = $row['schedule_id'];
+
+            if(!array_key_exists($schedule_id, $result))
+            {
+                $result[$schedule_id] = Array();
+            }
+
+            $relief_alr_created = false;
+            for($i = 0; $i < count($result[$schedule_id]); $i++)
+            {
+                if(empty($result[$schedule_id][$i]))
+                {
+                    continue;
+                }
+
+                if(strcmp($result[$schedule_id][$i]['id'], $row['lesson_id']) === 0)
+                {
+                    $relief_alr_created = true;
+                    if(!empty($row['class_name']))
+                    {
+                        $result[$schedule_id][$i]['class'][] = $row['class_name'];
+                    }
+                    break;
+                }
+            }
+
+            if(!$relief_alr_created)
+            {
+                $leave_acc = $row['leave_teacher'];
+                $relief_acc =$row['relief_teacher'];
+
+                if(array_key_exists($leave_acc, $normal_dict))
+                {
+                    $leave_full = $normal_dict[$leave_acc]['name'];
+                }
+                else
+                {
+                    $leave_full = "";
+                }
+
+                if(array_key_exists($relief_acc, $normal_dict))
+                {
+                    $relief_full = $normal_dict[$relief_acc]['name'];
+                }
+                else if(array_key_exists($relief_acc, $temp_dict))
+                {
+                    $relief_full = $temp_dict[$relief_acc]['fullname'];
+                }
+                else
+                {
+                    $relief_full = "";
+                }
+
+                $temp = Array(
+                    "class" => Array(),
+                    "id" => $row['lesson_id'],
+                    "time" => Array($row['start_time'] - 0, $row['end_time'] - 0),
+                    "teacherAccName" => $leave_acc,
+                    "reliefAccName" => $relief_acc,
+                    "teacherOnLeave" => $leave_full,
+                    "reliefTeacher" =>$relief_full
+                );
+
+                if(!empty($row['class_name']))
+                {
+                    $temp["class"][] = $row['class_name'];
+                }
+
+                $result[$schedule_id][] = $temp;
+            }
+        }
+        
+        return $result;
+    }
+    
     /**
      * @return int
      */
     public static function scheduleResultNum()
     {
+        /*
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to query number of schedule', __FILE__, __LINE__);
+        }
+        
         $sql_query_num = "select count(*) as num from temp_all_results;";
         $result = Constant::sql_execute($db_con, $sql_query_num);
 
@@ -383,6 +529,8 @@ class SchedulerDB
         }
 
         return $result[0]['num'];
+         * 
+         */
     }
 }
 

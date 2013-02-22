@@ -150,7 +150,7 @@ class TimetableDB
     }
     
     /**
-     * 
+     * time index is 0-based
      * @param type $accname - accname of leave teacher or ""
      * @param type $class - standard class name or ""
      * @param string $date "yyyy-mm-dd"
@@ -284,7 +284,8 @@ class TimetableDB
                         'teacher-fullname' => $leave_name,
                         'relief-teacher-accname' => $relief_teacher_id,
                         'relief-teacher-fullname' => $relief_name,
-                        'class' => Array()
+                        'class' => Array(),
+                        'id' => $row['lesson_id']
                     );
 
                     if(!empty($row['class_name']))
