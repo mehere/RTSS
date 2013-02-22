@@ -28,12 +28,55 @@ class SMSDB
         return $max_result[0]['max'] - 0;
     }
     
-    public static function storeSMSout($msgs)
+    public static function storeSMSout($msg)
     {
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
-            throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
+            throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
+        }
+        
+        $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied) values ";
+        
+        $phone = mysql_real_escape_string(trim($msg['phoneNum']));
+        $message = mysql_real_escape_string(trim($msg['message']));
+        $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
+        $accname = mysql_real_escape_string(trim($msg['accName']));
+        
+        $sql_insert .= "('".$phone."','".$message."','".$time_created."','".$accname."',false);";
+        
+        $insert_result = Constant::sql_execute($db_con, $sql_insert);
+        if(empty($insert_result))
+        {
+            throw new DBException('Fail to insert out messages', __FILE__, __LINE__);
+        }
+        
+        return mysql_insert_id($db_con);
+    }
+    
+    public static function updateSend($smsId, $status, $time_sent)
+    {
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
+        }
+        
+        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = '".$time_sent."' where sms_id = ".$smsId.";";
+        
+        $update_result = Constant::sql_execute($db_con, $sql_update);
+        if(empty($update_result))
+        {
+            throw new DBException('Fail to update out messages', __FILE__, __LINE__);
+        }
+    }
+    
+    public static function storeSMSout_v2($msgs)
+    {
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
         $sql_insert = "insert into cm_sms_record(sms_id, phone_num, message, time_created, time_sent, status, accname, is_replied) values ";
@@ -48,7 +91,7 @@ class SMSDB
             $accname = mysql_real_escape_string(trim($msg['accName']));
             $date = mysql_real_escape_string(trim($msg['date']));
             
-            $sql_insert .= "(".$sms_id.",".$phone.",".$message.",".$time_created.",".$time_sent.",".$status.",".$accname.",".$date."),";
+            $sql_insert .= "(".$sms_id.",".$phone.",".$message.",".$time_created.",".$time_sent.",".$status.",".$accname.",false),";
         }
         
         $sql_insert = substr($sql_insert, 0, -1).';';
