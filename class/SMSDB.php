@@ -1,4 +1,5 @@
 <?php
+require_once 'Teacher.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -42,7 +43,7 @@ class SMSDB
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
         
-        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false);";
+        $sql_insert .= "('".$phone."',".$time_created.",'".$accname."',false);";
         
         $insert_result = Constant::sql_execute($db_con, $sql_insert);
         if(empty($insert_result))
@@ -66,7 +67,7 @@ class SMSDB
         $time_sent = mysql_real_escape_string(trim($msg['timeSent']));
         $smsId = mysql_real_escape_string($msg['smsId']);
         
-        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = '".$time_sent."', message = '".$message."' where sms_id = ".$smsId.";";
+        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = ".$time_sent.", message = '".$message."' where sms_id = ".$smsId.";";
         
         $update_result = Constant::sql_execute($db_con, $sql_update);
         if(empty($update_result))
@@ -220,9 +221,80 @@ class SMSDB
         
         foreach($replied as $reply)
         {
-            $sql_update = "update cm_sms_record set is_replied = true, time_replied = '".mysql_real_escape_string(trim($reply['timeReceived']))."', response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
+            $sql_update = "update cm_sms_record set is_replied = true, time_replied = ".mysql_real_escape_string(trim($reply['timeReceived'])).", response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
             Constant::sql_execute($db_con, $sql_update);
         }
+    }
+    
+    public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC)
+    {
+        $normal_dict = Teacher::getAllTeachers();
+        $temp_dict = Teacher::getTempTeacher("");
+        
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to query SMS reply status', __FILE__, __LINE__);
+        }
+        
+        $direction_db = Array(
+            SORT_ASC => 'ASC',
+            SORT_DESC => 'DESC'
+        );
+        $order_db = Array(
+            'sentTime' => 'time_sent',
+            'phone' => 'phone_num',
+            'status' => 'status',
+            'repliedTime' => 'time_replied',
+            'repliedMsg' => 'response'
+        );
+        
+        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record";
+        
+        if(array_key_exists($order, $order_db))
+        {
+            $sql_query_sms .= " order by ".$order_db[$order]." ".$direction_db[$direction].";";
+        }
+        else
+        {
+            $sql_query_sms .= ";";
+        }
+        
+        $query_result = Constant::sql_execute($db_con, $sql_query_sms);
+        if(is_null($query_result))
+        {
+            throw new DBException('Fail to query SMS reply status', __FILE__, __LINE__);
+        }
+        
+        $result = Array();
+        foreach($query_result as $row)
+        {
+            if(array_key_exists($row['accname'], $temp_dict))
+            {
+                $name = $temp_dict[$row['accname']]['fullname'];
+            }
+            else if(array_key_exists($row['accname'], $normal_dict))
+            {
+                $name = $normal_dict[$row['accname']]['name'];
+            }
+            else
+            {
+                $name = "";
+            }
+            
+            $a_sms = Array(
+                "sentTime" => $row['sent_time'],
+                "fullname" => $name,
+                "phone" => $row['phone_num'],
+                "status" => $row['status'],
+                "repliedTime" => $row['replied_time'],
+                "repliedMsg" => $row['response']
+            );
+            
+            $result[] = $a_sms;
+        }
+        
+        return $result;
     }
 }
 

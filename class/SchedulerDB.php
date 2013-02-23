@@ -1,6 +1,8 @@
 <?php
 
 require_once 'util.php';
+require_once 'Students.php';
+require_once '../constant.php';
 
 class SchedulerDB
 {
@@ -47,7 +49,6 @@ class SchedulerDB
         $query_num_of_relief_result = Constant::sql_execute($db_con, $sql_query_num_of_relief);
         if (empty($query_num_of_relief_result))
         {
-
             throw new DBException("Fail to query number of relief information:".mysql_error(), __FILE__, __LINE__);
         }
         foreach($query_num_of_relief_result as $row)
@@ -291,18 +292,36 @@ class SchedulerDB
         $start_diff = $start_date_obj->diff($query_date_obj);
         $end_diff = $end_date_obj->diff($query_date_obj);
 
+        $start_time_index = SchoolTime::getTimeIndex($start_time);
+        $end_time_index = SchoolTime::getTimeIndex($end_time);
+        
         if ($start_diff->d !== 0 && $end_diff->d !== 0)
         {
             return array(1, 15, $leave_id);
         } else if ($start_diff->d === 0 && $end_diff->d !== 0)
         {
-            return array(Constant::$inverse_time_conversion[str_replace(":", "", $start_time)], 15, $leave_id);
+            if($start_time_index === -1)
+            {
+                throw new DBException("Error in time format", __FILE__, __LINE__);
+            }
+            
+            return array($start_time_index, 15, $leave_id);
         } else if ($start_diff->d !== 0 && $end_diff->d === 0)
         {
-            return array(1, Constant::$inverse_time_conversion[str_replace(":", "", $end_time)], $leave_id);
+            if($end_time_index === -1)
+            {
+                throw new DBException("Error in time format", __FILE__, __LINE__);
+            }
+            
+            return array(1, $end_time_index, $leave_id);
         } else
         {
-            return array(Constant::$inverse_time_conversion[str_replace(":", "", $start_time)], Constant::$inverse_time_conversion[str_replace(":", "", $end_time)], $leave_id);
+            if($start_time_index === -1 || $end_time_index === -1)
+            {
+                throw new DBException("Error in time format", __FILE__, __LINE__);
+            }
+            
+            return array($start_time_index, $end_time_index, $leave_id);
         }
     }
 
@@ -372,6 +391,15 @@ class SchedulerDB
             throw new DBException("Fail to insert schedule result", __FILE__, __LINE__);
         }
         
+        //delete if there is any
+        $sql_delete = "delete from temp_each_alternative;";
+        $delete_result = Constant::sql_execute($db_con, $sql_delete);
+        if(is_null($delete_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
+        }
+        
+        //insert
         $sql_insert = "insert into temp_each_alternative values ";
         
         foreach($scheduleResults as $id => $a_result)
@@ -508,12 +536,92 @@ class SchedulerDB
         return $result;
     }
     
-    /**
-     * @return int
-     */
+    public static function override($schedule_index, $lesson_id, $accname_old, $accname_new)
+    {
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            return false;
+        }
+        
+        $lesson_id = mysql_real_escape_string(trim($lesson_id));
+        $accname_old = mysql_real_escape_string(trim($accname_old));
+        $accname_new = mysql_real_escape_string(trim($accname_new));
+        
+        $sql_update = "update temp_each_alternative set relief_teacher = '".$accname_new."' where schedule_id = ".$schedule_index." and lesson_id = '".$lesson_id."' and relief_teacher = '".$accname_old."';";
+        $update_result = Constant::sql_execute($db_con, $sql_update);
+        if(is_null($update_result))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public static function approve($schedule_index, $date)
+    {
+        //1. move from temp to relief_info and delete temp
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__);
+        }
+        
+        //override for the particular day
+        $sql_clear = "delete from rs_relief_info where date = DATE('".$date."');";
+        $clear_result = Constant::sql_execute($db_con, $sql_clear);
+        if(is_null($clear_result))
+        {
+            throw new DBException('Fail to clear exist relief record', __FILE__, __LINE__);
+        }
+        
+        //copy selected one
+        $sql_insert_select = "insert into rs_relief_info (select lesson_id, start_time, end_time, date, leave_teacher, relief_teacher, leave_id_ref, num_of_slot from temp_each_alternative where schedule_id = ".$schedule_index.");";
+        $insert_result = Constant::sql_execute($db_con, $sql_insert_select);
+        if(is_null($insert_result))
+        {
+            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__);
+        }
+        
+        //delete temp
+        $sql_delete = "delete from temp_each_alternative;";
+        $delete_result = Constant::sql_execute($db_con, $sql_delete);
+        if(is_null($delete_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
+        }
+        
+        //2. inform all teachers (Teacher::getTeacherContact)
+    }
+    
+    public static function allSchduleIndex()
+    {
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to query schedule index', __FILE__, __LINE__);
+        }
+        
+        $sql_index = "select distinct schedule_id from temp_each_alternative;";
+        $index_result = Constant::sql_execute($db_con, $sql_index);
+        if(is_null($index_result))
+        {
+            throw new DBException('Fail to query schedule index', __FILE__, __LINE__);
+        }
+        
+        $result = Array();
+        foreach($index_result as $row)
+        {
+            $result[] = $row['schedule_id'] - 0;
+        }
+        
+        return $result;
+    }
+    
+    /*
     public static function scheduleResultNum()
     {
-        /*
+        
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
@@ -529,9 +637,10 @@ class SchedulerDB
         }
 
         return $result[0]['num'];
-         * 
-         */
+         
     }
+     * 
+     */
 }
 
 ?>
