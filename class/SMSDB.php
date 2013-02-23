@@ -39,11 +39,10 @@ class SMSDB
         $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied) values ";
         
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
-        $message = mysql_real_escape_string(trim($msg['message']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
         
-        $sql_insert .= "('".$phone."','".$message."','".$time_created."','".$accname."',false);";
+        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false);";
         
         $insert_result = Constant::sql_execute($db_con, $sql_insert);
         if(empty($insert_result))
@@ -54,7 +53,7 @@ class SMSDB
         return mysql_insert_id($db_con);
     }
     
-    public static function updateSend($smsId, $status, $time_sent)
+    public static function updateSMSout($msg)
     {
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
@@ -62,7 +61,12 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
-        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = '".$time_sent."' where sms_id = ".$smsId.";";
+        $status = mysql_real_escape_string(trim($msg['status']));
+        $message = mysql_real_escape_string(trim($msg['message']));
+        $time_sent = mysql_real_escape_string(trim($msg['timeSent']));
+        $smsId = mysql_real_escape_string($msg['smsId']);
+        
+        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = '".$time_sent."', message = '".$message."' where sms_id = ".$smsId.";";
         
         $update_result = Constant::sql_execute($db_con, $sql_update);
         if(empty($update_result))
@@ -89,7 +93,6 @@ class SMSDB
             $time_sent = mysql_real_escape_string(trim($msg['timeSent']));
             $status = mysql_real_escape_string(trim($msg['status']));
             $accname = mysql_real_escape_string(trim($msg['accName']));
-            $date = mysql_real_escape_string(trim($msg['date']));
             
             $sql_insert .= "(".$sms_id.",".$phone.",".$message.",".$time_created.",".$time_sent.",".$status.",".$accname.",false),";
         }
