@@ -1,5 +1,6 @@
 <?php
 require_once 'Teacher.php';
+include ('DBException.php');
 
 /*
  * To change this template, choose Tools | Templates
@@ -18,7 +19,7 @@ class SMSDB
         $sql_max = "select max(sms_id) as max from cm_sms_record;";
         $max_result = Constant::sql_execute($db_con, $sql_max);
         if(empty($max_result))
-        {
+        {            
             throw new DBException('Fail to query max ID', __FILE__, __LINE__);
         }
         if(is_null($max_result[0]['max']))
