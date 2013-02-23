@@ -89,6 +89,8 @@ $(document).ready(function(){
                     selfObj.val('');
                 }
 
+                console.log(data['error']);
+
             });
         }
     }).focusin(function(){

@@ -5,9 +5,12 @@ header("Pragma: no-cache");
 
 require_once '../../controller-head.php';
 
-$output=array('hasConflict'=>-1);
+require_once '../../class/TimetableDB.php';
 
-$output['error']=var_export($_GET, TRUE);
+$output=array('hasConflict'=>TimetableDB::checkTimetableConflict($_GET['scheduleIndex'], 
+        array($_GET['timeStart'], $_GET['timeEnd']), $_GET['reliefAccName'], $_SESSION['scheduleDate']));
+
+$output['error']=var_export($_GET, true);
 
 header('Content-type: application/json');
 echo json_encode($output);

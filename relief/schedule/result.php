@@ -32,7 +32,7 @@ include_once '../../head-frag.php';
                     <table class="table-info">
                         <thead>
                             <tr>
-                                <?php                                 
+                                <?php
                                     $width=array('24%', '130px', '38%', '38%');                                                                        
                                                                         
                                     $tableHeaderList=array_values(NameMap::$SCHEDULE_RESULT['schedule']['display']);
@@ -49,7 +49,7 @@ EOD;
                         <tbody>
                             <?php
                                 $scheduleList=array(0=>array(
-                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 3),
+                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 5),
                                     "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
                                     "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
                                     array('class'=>array('4F', '9A'), 'time'=>array(1, 3),
@@ -129,7 +129,7 @@ EOD;
                     <a href="timetable.php?schedule=<?php echo $curPage; ?>" class="link">Preview Timetable</a>
                 </div>
                 <input type="hidden" name="num" value="<?php echo count($scheduleList); ?>" />
-                <input type="hidden" name="schedule-index" value="<?php echo $curPage; ?>" />
+                <input type="hidden" name="schedule-index" value="<?php echo 1; ?>" />
             </form>
             <div id="dialog-alert"></div>
         </div>
