@@ -438,5 +438,14 @@ foreach($result as $key => $row)
  * 
  */
 
-//SchedulerDB::approve(2, '2013-02-06');
+$result = SchedulerDB::approve(0, '2013-02-06');
+foreach($result as $row)
+{
+    echo $row['accName']."<br>";
+    echo $row['name']."<br>";
+    echo $row['phoneNum']."<br>";
+    echo $row['message']."<br>";
+    echo "<br>";
+}
+
 ?>
