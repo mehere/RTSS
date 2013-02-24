@@ -8,6 +8,9 @@ if ($_SESSION['type'] == 'admin')
     $isAdmin=true;
 }
 
+require_once '../class/ListGenerator.php';
+require_once '../class/TimetableDB.php';
+
 include_once '../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
@@ -35,9 +38,6 @@ include_once '../head-frag.php';
             <div class="main">
                 <form name="switch" class="control" action="" method="post">
                     <?php
-                        require_once '../class/ListGenerator.php';
-                        require_once '../class/TimetableDB.php';
-                        
                         $class=$_POST['class'];
                         $accname=$isAdmin?$_POST['accname']:$_SESSION['accname'];
 

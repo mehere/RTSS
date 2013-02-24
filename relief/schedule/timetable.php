@@ -2,6 +2,7 @@
 include_once '../../php-head.php';
 
 require_once '../../class/TimetableDB.php';
+require_once '../../class/ListGenerator.php';
 
 include_once '../../head-frag.php';
 ?>
@@ -26,7 +27,15 @@ include_once '../../head-frag.php';
                 );
                 include '../../topbar-frag.php';
             ?>
-            <div class="main">                
+            <div class="main">
+<!--                <form name="switch" class="control" action="" method="post">
+                    <div class="line">                        
+                        <select name="accname">
+                            <option value="">-- Select a Teacher --</option>
+                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $_POST['accname']); ?>
+                        </select>                        
+                    </div>
+                </form>-->
                 <?php
                     $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['date'], $_GET['schedule']);
 //array(); // <-- to be changed
@@ -37,7 +46,7 @@ include_once '../../head-frag.php';
 //                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
                     PageConstant::escapeHTMLEntity($timetableIndividual);
                     
-                    include '../../timetable/relief-timetable-frag.php'; 
+                    include '../../timetable/relief-timetable-frag.php';
                 ?>
             </div>
             <div class="bt-control">
