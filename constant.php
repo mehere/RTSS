@@ -93,7 +93,7 @@ EOD;
     }
     
     /**
-     * Wrap an element inside <td> tag
+     * Wrap an element inside 'td' tag
      * @param string $ele the element
      * @param string $style 'style' attribute i.e. style="color: red"
      * @return string HTML representation
@@ -337,6 +337,19 @@ class NameMap
             ),
             'hidden' => array(
                 'scheduleIndex'
+            )
+        )
+    );
+    
+    // For /RTSS/relief/timetable/
+    public static $SMS=array(
+        'layout' => array(
+            'display' => array(
+                'sentTime' => 'Sent',  'fullname' => 'Name',  'phone' => 'Phone', 'status' => 'Status', 
+                'repliedTime' => 'Replied',  'repliedMsg' => 'Message Replied'
+            ),
+            'hidden' => array(
+                'smsID'
             )
         )
     );

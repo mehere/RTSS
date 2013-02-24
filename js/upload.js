@@ -192,7 +192,7 @@ $(document).ready(function(){
                     dataPost["time-to-"+num]=time-0+1+classObj['period'];
                     dataPost["class-"+num]=classObj['class'].join(';');
                     dataPost["subject-"+num]=classObj['subject'];
-                    dataPost["venue-"+num]=classObj['subject'];
+                    dataPost["venue-"+num]=classObj['venue'];
                     dataPost["isHighlighted-"+num]=classObj['isHighlighted']-0;
 
                     num++;

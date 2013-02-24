@@ -29,9 +29,11 @@ include_once '../../head-frag.php';
                     require_once '../../class/TimetableDB.php';
                     
                     $timetable=array(); // <-- to be changed
-                    
+                    PageConstant::escapeHTMLEntity($timetable);
+                                        
                     $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
                         3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
+                    PageConstant::escapeHTMLEntity($timetableIndividual);
                     
                     include '../../timetable/relief-timetable-frag.php'; 
                 ?>
