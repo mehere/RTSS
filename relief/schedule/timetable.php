@@ -1,5 +1,7 @@
 <?php 
-include_once '../../php-head.php';   
+include_once '../../php-head.php';
+
+require_once '../../class/TimetableDB.php';
 
 include_once '../../head-frag.php';
 ?>
@@ -25,14 +27,14 @@ include_once '../../head-frag.php';
                 include '../../topbar-frag.php';
             ?>
             <div class="main">                
-                <?php 
-                    require_once '../../class/TimetableDB.php';
-                    
-                    $timetable=array(); // <-- to be changed
+                <?php
+                    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['date'], $_GET['schedule']);
+//array(); // <-- to be changed
                     PageConstant::escapeHTMLEntity($timetable);
                                         
-                    $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
-                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
+                    $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['date'], '', $_GET['schedule']);
+//                    array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
+//                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
                     PageConstant::escapeHTMLEntity($timetableIndividual);
                     
                     include '../../timetable/relief-timetable-frag.php'; 

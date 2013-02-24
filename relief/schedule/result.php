@@ -49,30 +49,31 @@ EOD;
                         </thead>
                         <tbody>
                             <?php
-                                $curPage=$_GET['page'];
-                                if (!$curPage) $curPage=1;
-                                
                                 $scheduleIndexArr=$_SESSION['scheduleIndex'];
                                 if (!$scheduleIndexArr) 
                                 {
                                     $scheduleIndexArr=$_SESSION['scheduleIndex']=SchedulerDB::allSchduleIndex();
                                 }
                                 $scheduleResultNum=count($scheduleIndexArr);
-                            
-                                $scheduleList=
-//                                SchedulerDB::getScheduleResult($scheduleIndexArr[$curPage-1]);
-                            array(0=>array(
-                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 5), 'id'=>'l123',
-                                    "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
-                                    "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
-                                    array('class'=>array('4F', '9A'), 'time'=>array(1, 3), 'id'=>'l6123',
-                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%'),
-                                    array('class'=>array('4A', '9C'), 'time'=>array(6, 8), 'id'=>'l0123',
-                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%')));
                                 
-                                foreach ($scheduleList[0] as $key => $value)
+                                $curPage=$_GET['result'];
+                                if (!$curPage) $curPage=1;
+                                
+                                $curScheduleIndex=$scheduleIndexArr[$curPage-1];
+//var_dump(SchedulerDB::getScheduleResult(-1));                            
+                                $scheduleList=SchedulerDB::getScheduleResult($curScheduleIndex);
+//                            array(0=>array(
+//                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 5), 'id'=>'l123',
+//                                    "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
+//                                    "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
+//                                    array('class'=>array('4F', '9A'), 'time'=>array(1, 3), 'id'=>'l6123',
+//                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
+//                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%'),
+//                                    array('class'=>array('4A', '9C'), 'time'=>array(6, 8), 'id'=>'l0123',
+//                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
+//                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%')));
+                                
+                                foreach ($scheduleList[$curScheduleIndex] as $key => $value)
                                 {
                                     $classStr=implode(', ', $value['class']);
                                     $timeStart=SchoolTime::getTimeValue($value['time'][0]);
@@ -103,11 +104,12 @@ EOD;
                             ?>
                         </tbody>
                     </table>
+                    <div class="page-control">Schedule Result Choice</div>
                     <div class="page-control">                    	
                         <?php
                             $prevPage=max(1, $curPage-1);
                             echo <<< EOD
-<a href="?page=$prevPage" class="page-no page-turn">&lt;</a>   
+<a href="?result=$prevPage" class="page-no page-turn">&lt;</a>   
 EOD;
                             
                             for ($i=1; $i<=$scheduleResultNum; $i++)
@@ -115,13 +117,13 @@ EOD;
                                 $selectedStr='';
                                 if ($curPage == $i) $selectedStr='page-selected';
                                 echo <<< EOD
-<a href="?page=$i" class="page-no $selectedStr">$i</a>
+<a href="?result=$i" class="page-no $selectedStr">$i</a>
 EOD;
                             }
                             
                             $nextPage=min($scheduleResultNum, $curPage+1);
                             echo <<< EOD
-<a href="?page=$nextPage" class="page-no page-turn">&gt;</a>   
+<a href="?result=$nextPage" class="page-no page-turn">&gt;</a>   
 EOD;
                         ?>
                     </div>
@@ -133,8 +135,8 @@ EOD;
                 <div class="link-control">
                     <a href="timetable.php?schedule=<?php echo $curPage; ?>" class="link">Preview Timetable</a>
                 </div>
-                <input type="hidden" name="num" value="<?php echo count($scheduleList[0]); ?>" />
-                <input type="hidden" name="schedule-index" value="<?php echo $scheduleIndexArr[$curPage-1]; ?>" />
+                <input type="hidden" name="num" value="<?php echo $scheduleResultNum; ?>" />
+                <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />
             </form>
             <div id="dialog-alert"></div>
         </div>

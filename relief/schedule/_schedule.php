@@ -4,6 +4,7 @@ ini_set("memory_limit", "512M");
 define("NUM_STATES_REQUIRED", 3);
 define("TIME_TO_WAIT", 10);
 
+include_once '../../constant.php';
 require_once '../../php-head.php';
 
 spl_autoload_register(
@@ -364,8 +365,7 @@ if ($successStates->numberStates > 0)
 //    print_r($successResults);
     try
     {
-        SchedulerDB::setScheduleResult($successResults);
-        
+        SchedulerDB::setScheduleResult($successResults, $dateString);        
     } catch (DBException $e)
     {
         // To-Do:
