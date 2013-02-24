@@ -2,6 +2,7 @@
 
 require_once 'util.php';
 require_once 'Students.php';
+require_once 'Teacher.php';
 //require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
 
 class SchedulerDB
@@ -450,11 +451,11 @@ class SchedulerDB
         
         if($schedule_index === -1)
         {
-            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id);";
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) order by start_time, end_time ASC;";
         }
         else
         {
-            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$schedule_index.";";
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$schedule_index." order by start_time, end_time ASC;;";
         }
         
         $schedule_result = Constant::sql_execute($db_con, $sql_schedule);
@@ -552,7 +553,7 @@ class SchedulerDB
         $accname_old = mysql_real_escape_string(trim($accname_old));
         $accname_new = mysql_real_escape_string(trim($accname_new));
         
-        $sql_update = "update temp_each_alternative set relief_teacher = '".$accname_new."' where schedule_id = ".$schedule_index." and lesson_id = '".$lesson_id."' and relief_teacher = '".$accname_old."';";
+        $sql_update = "update temp_each_alternative set relief_teacher = '".$accname_new."' where schedule_id = ".$schedule_index." and lesson_id = '".$lesson_id."' and leave_teacher = '".$accname_old."';";
         $update_result = Constant::sql_execute($db_con, $sql_update);
         if(is_null($update_result))
         {

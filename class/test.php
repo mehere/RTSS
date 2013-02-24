@@ -384,7 +384,7 @@ foreach($result as $key=>$value)
 
 //echo TimetableDB::checkTimetableConflict(1, Array(1, 5), 178938, "2013/2/22");
 /*
-$result = SchedulerDB::getScheduleResult(2);
+$result = SchedulerDB::getScheduleResult(0);
 
 foreach($result as $a => $b)
 {
@@ -426,7 +426,7 @@ foreach($result as $key=>$row)
  * 
  */
 
-//echo SchedulerDB::override(2, "N1311891JGOH", "8989789", "8104329")?"YES":"NO";
+//echo SchedulerDB::override(0, "N131310111JC10", "6644942", "TMP1111111")?"YES":"NO";
 /*
 $result = Teacher::getTeacherContact();
 foreach($result as $key => $row)
