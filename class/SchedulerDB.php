@@ -3,6 +3,7 @@
 require_once 'util.php';
 require_once 'Students.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/send_sms.php';
 
 class SchedulerDB
 {
@@ -691,7 +692,7 @@ class SchedulerDB
             $sms_input[] = $one_teacher;
         }
         
-        return $sms_input;
+        sendSMS($sms_input, $date);
     }
     
     public static function allSchduleIndex()

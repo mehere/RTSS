@@ -1,6 +1,7 @@
 <?php
 require_once 'Teacher.php';
 require_once 'DBException.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/read_sms.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -229,6 +230,8 @@ class SMSDB
     
     public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC)
     {
+        readSMS($date);
+        
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
         
