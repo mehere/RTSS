@@ -109,7 +109,7 @@ foreach($result as $key=>$value)
     echo "<br><br><br>";
 }
  * 
- */
+ */ 
 /*
 $result = $scheduling->getTempTeachers();
 foreach($result as $key=>$value)
@@ -324,7 +324,7 @@ foreach($result as $key=>$value)
 
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
-
+/*
 $result = ListGenerator::getTeacherName('2013-02-06');
 //print_r($result);
 
@@ -334,7 +334,8 @@ foreach($result as $key => $value)
     echo $value.'<br>';
     echo '<br>';
 }
- 
+ * 
+ */
 
         //$result1 = Teacher::add('', 'temp', Array('fullname' => 'Robot Haphati Fckek', 'remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00',  'email' => '111@adb.com', 'MT' => 'tamil'));
         //$result2 = Teacher::add('TMP1232312', 'temp', Array('remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'handphone' =>  '11111111'));

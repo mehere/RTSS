@@ -1,7 +1,7 @@
 <?php
 
 require_once 'util.php';
-require_once '../constant.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
 
 class Teacher {
 
