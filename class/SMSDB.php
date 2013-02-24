@@ -124,7 +124,7 @@ class SMSDB
         
         //$sql_sms = "select sms_id as smsId, phone_num as phoneNum, message, DATE_FORMAT(time_created, '%Y/%m/%d %M:%i') as timeCreated, DATE_FORMAT(time_sent, '%Y/%m/%d %M:%i') as timeSent, status, accname as accName, is_replied as replied, DATE_FORMAT(time_replied, '%Y/%m/%d %M:%i') as timeReplied schedule_date as scheduleDate from cm_sms_record where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
         $sql_sms = "select sms_id as smsId, phone_num as phoneNum from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK' order by smsId;";
-        print($sql_sms);
+        
         $sms_result = Constant::sql_execute($db_con, $sql_sms);        
         if(is_null($sms_result))
         {
@@ -146,7 +146,7 @@ class SMSDB
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
         }
         
-        $sql_sms = "select phone_num, sms_id from where cm_sms_record scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
+        $sql_sms = "select phone_num, sms_id from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK';";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
@@ -155,12 +155,15 @@ class SMSDB
         
         $sms_id_set = Array();
         $sql_set = "(";
+       
         foreach($sms_result as $row)
         {
             $sql_set .= "'".$row['phone_num']."',";
             $sms_id_set[] = $row['sms_id'];
+            
         }
-        $sql_set .= substr($sql_set, 0, -1).");";
+        
+        $sql_set = substr($sql_set, 0, -1).");";
         
         //query reply
         $db_con_ifins = Constant::connect_to_db("ifins");
@@ -169,7 +172,8 @@ class SMSDB
             throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
         }
         
-        $sql_reply = "select *, DATE_FORMAT(date, '%Y/%m/%d %M:%i') time_received from fs_msgs where num in ".$sql_set.";";
+        $sql_reply = "select *, DATE_FORMAT(date, '%Y/%m/%d %H:%i') as time_received from fs_msgs where num in ".$sql_set.";";
+        //echo $sql_reply;
         $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
         if(is_null($reply_result))
         {
@@ -204,19 +208,18 @@ class SMSDB
             }
             
             $a_sms = Array(
-                "phoneNum" => $row['num'],
-                "timeReceived" => $row['time_received'],
-                "message" => $row['msg']
+                "phoneNum" => $a_reply['num'],
+                "timeReceived" => $a_reply['time_received'],
+                "message" => $a_reply['msg']
             );
             
             $result[] = $a_sms;
-        }
-        
+        }        
         return $result;
     }
     
     public static function markReplied($replied)
-    {
+    {                
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
@@ -225,7 +228,8 @@ class SMSDB
         
         foreach($replied as $reply)
         {
-            $sql_update = "update cm_sms_record set is_replied = true, time_replied = ".mysql_real_escape_string(trim($reply['timeReceived'])).", response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
+            $sql_update = "update cm_sms_record set is_replied = true, time_replied = '".mysql_real_escape_string(trim($reply['timeReceived']))."', response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
+            //echo $sql_update."<br>";
             Constant::sql_execute($db_con, $sql_update);
         }
     }

@@ -1,8 +1,10 @@
 <?php
+echo returnOne();
 
-$haha = "  ";
-if(trim($haha))
-    print("yes");
-else
-    print("no");
+function returnOne(){
+    $a = 0;
+    $b = 1;
+    return $a + $b;
+}
+
 ?>
