@@ -135,7 +135,7 @@ foreach($result as $key=>$a_teacher)
 }
  * 
  */
-//echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 0915", "2013-01-08 1315");
+//echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 09:15", "2013-01-08 13:15");
 //$result = Teacher::getLessonSlotsOfTeacher("8104329");
 /*
 foreach($result as $key=>$a_result)
@@ -325,17 +325,16 @@ foreach($result as $key=>$value)
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
 
-//$result = ListGenerator::getTeacherName('2013-02-06');
+$result = ListGenerator::getTeacherName('2013-02-06');
 //print_r($result);
-/*
+
 foreach($result as $key => $value)
 {
     echo $key.'<br>';
     echo $value.'<br>';
     echo '<br>';
 }
- * 
- */
+ 
 
         //$result1 = Teacher::add('', 'temp', Array('fullname' => 'Robot Haphati Fckek', 'remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00',  'email' => '111@adb.com', 'MT' => 'tamil'));
         //$result2 = Teacher::add('TMP1232312', 'temp', Array('remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'handphone' =>  '11111111'));
@@ -382,7 +381,7 @@ foreach($result as $key=>$value)
  * 
  */
 
-echo TimetableDB::checkTimetableConflict(1, Array(1, 5), 1789384, "2013/2/22");
+//echo TimetableDB::checkTimetableConflict(1, Array(1, 5), 178938, "2013/2/22");
 /*
 $result = SchedulerDB::getScheduleResult(2);
 
@@ -404,4 +403,39 @@ foreach($result as $a => $b)
 }
  * 
  */
+
+//echo print_r(SchedulerDB::allSchduleIndex());
+
+/*
+$result = TimetableDB::timetableForSem("8104329");
+foreach($result as $key=>$row)
+{
+    echo "weekday : ".$key."<br>";
+    echo "-------------<br>";
+    foreach($row as $time=>$value)
+    {
+        echo "start : ".$time."<br>";
+        echo "subject : ".$value['subject']."<br>";
+        echo "venue : ".$value['venue']."<br>";
+        echo "period : ".$value['period']."<br>";
+        print_r($value['class']);
+        echo "<br><br>";
+    }
+}
+ * 
+ */
+
+//echo SchedulerDB::override(2, "N1311891JGOH", "8989789", "8104329")?"YES":"NO";
+/*
+$result = Teacher::getTeacherContact();
+foreach($result as $key => $row)
+{
+    echo $key." : ";
+    print_r($row);
+    echo "<br>";
+}
+ * 
+ */
+
+//SchedulerDB::approve(2, '2013-02-06');
 ?>

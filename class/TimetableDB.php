@@ -605,6 +605,66 @@ class TimetableDB
         return 0;
     }
     
+    //0-based
+    public static function timetableForSem($accname)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to query timetable for accname '.$accname, __FILE__, __LINE__);
+        }
+        
+        $accname = mysql_real_escape_string(trim($accname));
+        $sql_table = "select * from ((ct_lesson left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) left join ct_teacher_matching on ct_lesson.lesson_id = ct_teacher_matching.lesson_id) where ct_teacher_matching.teacher_id ='".$accname."';";
+        $table_result = Constant::sql_execute($db_con, $sql_table);
+        if(is_null($table_result))
+        {
+            throw new DBException('Fail to query timetable for accname '.$accname, __FILE__, __LINE__);
+        }
+        
+        $result = Array();
+        
+        foreach($table_result as $row)
+        {
+            $day_index = $row['weekday'] - 1;
+            
+            if(!array_key_exists($day_index, $result))
+            {
+                $result[$day_index] = Array();
+            }
+            
+            $start_time = $row['start_time'] - 1;
+            
+            if(!is_null($result[$day_index][$start_time]))
+            {
+                if(!empty($row['class_name']))
+                {
+                    $result[$day_index][$start_time]['class'][] = $row['class_name'];
+                }
+            }
+            else
+            {
+                $period = $row['end_time'] - $row['start_time'];
+                $subject = empty($row['subj_code'])?"":$row['subj_code'];
+                $venue = empty($row['venue'])?"":$row['venue'];
+                
+                $result[$day_index][$start_time] = Array(
+                    "class" => Array(),
+                    "subject" => $subject,
+                    "venue" => $venue,
+                    "period" => $period
+                );
+                
+                if(!empty($row['class_name']))
+                {
+                    $result[$day_index][$start_time]['class'][] = $row['class_name'];
+                }
+            }
+        }
+        
+        return $result;
+    }
+    
     private static function generateLessonPK($type, $year, $sem, $weekday, $start_time, $end_time, $class_list, $teacher_list)
     {
         if(count($class_list) === 0)
@@ -689,5 +749,7 @@ class TimetableDB
         
         return $type.$year.$sem.$weekday.$start_time.$end_time.$class_short.$teacher_short;
     }
+    
+    
 }
 ?>
