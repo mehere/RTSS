@@ -364,16 +364,19 @@ if ($successStates->numberStates > 0)
     try
     {
         SchedulerDB::setScheduleResult($successResults);
-        $destination = "";
-        header($destination);
+        
     } catch (DBException $e)
     {
         // To-Do:
         // Database Error
+        $_SESSION['scheduleError']="Database error.";
     }
 } else
 {
     ///To-Do:
     // Failure Case
+    $_SESSION['scheduleError']="Failed to find a scheduling result.";
 }
+
+header("Location: result.php");
 ?>

@@ -81,9 +81,10 @@ EOD;
                             </thead>
                             <tbody>
                                 <?php
-                                    $smsList=array(array('sentTime'=>'12:00', 'fullname'=>'Armstrong Daniel',
-                                        'phone'=>'98765432', 'status'=>'Invalid serial no', 'repliedTime'=>'23:00',
-                                        'repliedMsg'=>'OK'));
+//                                    $smsList=SMSDB::a
+//                                array(array('sentTime'=>'12:00', 'fullname'=>'Armstrong Daniel',
+//                                        'phone'=>'98765432', 'status'=>'Invalid serial no', 'repliedTime'=>'23:00',
+//                                        'repliedMsg'=>'OK'));
                                     
                                     foreach ($smsList as $smsObj)
                                     {

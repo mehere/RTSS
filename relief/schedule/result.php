@@ -29,6 +29,7 @@ include_once '../../head-frag.php';
             ?>
             <form class="main" name="edit" action="" method="post">
                 <div class="section">
+                    <p class="error-msg" style="padding-top: 0"><?php echo $_SESSION['scheduleError']; ?></p>
                     <table class="table-info">
                         <thead>
                             <tr>
@@ -48,16 +49,27 @@ EOD;
                         </thead>
                         <tbody>
                             <?php
-                                $scheduleList=array(0=>array(
-                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 5),
-                                    "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
-                                    "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
-                                    array('class'=>array('4F', '9A'), 'time'=>array(1, 3),
-                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%'),
-                                    array('class'=>array('4A', '9C'), 'time'=>array(6, 8),
-                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%')));
+                                $curPage=$_GET['page'];
+                                if (!$curPage) $curPage=1;
+                                
+                                $scheduleIndexArr=$_SESSION['scheduleIndex'];
+                                if (!$scheduleIndexArr) 
+                                {
+                                    $scheduleIndexArr=$_SESSION['scheduleIndex']=SchedulerDB::allScheduleIndex();
+                                }
+                                $scheduleResultNum=count($scheduleIndexArr);
+                            
+                                $scheduleList=SchedulerDB::getScheduleResult($scheduleIndexArr[$curPage-1]);
+//                            array(0=>array(
+//                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 5),
+//                                    "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
+//                                    "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
+//                                    array('class'=>array('4F', '9A'), 'time'=>array(1, 3),
+//                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
+//                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%'),
+//                                    array('class'=>array('4A', '9C'), 'time'=>array(6, 8),
+//                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
+//                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%')));
                                 
                                 foreach ($scheduleList[0] as $key => $value)
                                 {
@@ -79,12 +91,7 @@ EOD;
 </tr>
 EOD;
                                 }
-                                
-                                $scheduleResultNum=$_SESSION['scheduleResultNum'];
-                                if (!$scheduleResultNum) 
-                                {
-                                    $scheduleResultNum=$_SESSION['scheduleResultNum']=SchedulerDB::scheduleResultNum();
-                                }
+                                                                
                                 if ($scheduleResultNum == 0)
                                 {
                                     $scheduleResultNum=1;
@@ -97,9 +104,6 @@ EOD;
                     </table>
                     <div class="page-control">                    	
                         <?php
-                            $curPage=$_GET['page'];
-                            if (!$curPage) $curPage=1;
-                            
                             $prevPage=max(1, $curPage-1);
                             echo <<< EOD
 <a href="?page=$prevPage" class="page-no page-turn">&lt;</a>   
@@ -138,7 +142,8 @@ EOD;
         include '../../sidebar-frag.php'; 
     
         unset($_SESSION['timetableAnalyzer']);
-        unset($_SESSION['abbrNameList']);        
+        unset($_SESSION['abbrNameList']);
+        unset($_SESSION['scheduleError']);
     ?>
 </div>
     
