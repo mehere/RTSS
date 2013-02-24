@@ -1,5 +1,6 @@
 <?php
 require_once 'Teacher.php';
+require_once 'DBException.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -29,7 +30,7 @@ class SMSDB
         return $max_result[0]['max'] - 0;
     }
     
-    public static function storeSMSout($msg)
+    public static function storeSMSout($msg, $date)
     {
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
@@ -37,13 +38,13 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
-        $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied) values ";
+        $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied, schedule_date) values ";
         
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
         
-        $sql_insert .= "('".$phone."',".$time_created.",'".$accname."',false);";
+        $sql_insert .= "('".$phone."',".$time_created.",'".$accname."',false, $date);";
         
         $insert_result = Constant::sql_execute($db_con, $sql_insert);
         if(empty($insert_result))

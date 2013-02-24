@@ -127,7 +127,8 @@ try
 } catch (DBException $e)
 {
     echo "DB Error";
-    echo $e->getMessage();
+    //echo $e->getMessage();
+    echo $e;
     exit();
 }
 
@@ -363,7 +364,7 @@ if ($successStates->numberStates > 0)
 //    print_r($successResults);
     try
     {
-        SchedulerDB::setScheduleResult($successResults);
+        SchedulerDB::setScheduleResult($successResults, $dateString);
         $destination = "";
         header($destination);
     } catch (DBException $e)
