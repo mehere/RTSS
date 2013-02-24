@@ -20,7 +20,7 @@ class TimetableDB
         Teacher::getTeachersAccnameAndFullname($teacher_list);
         
         //sql statement construction
-        $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time, end_time, subj_code, venue, type) values ";
+        $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time, end_time, subj_code, venue, type, highlighted) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
         
@@ -59,7 +59,7 @@ class TimetableDB
             
             $lesson_id = TimetableDB::generateLessonPK('N', $year, $sem, $day_index, $start_time_index, $end_time_index, empty($value->classes)?array():array_keys($value->classes), empty($value->teachers)?array():array_keys($value->teachers));
             
-            $sql_insert_lesson .= "('".mysql_real_escape_string($lesson_id)."', ".$day_index.", ".$start_time_index.", ".$end_time_index.", '".mysql_real_escape_string($subject)."', '".mysql_real_escape_string($venue)."', 'N'), ";
+            $sql_insert_lesson .= "('".mysql_real_escape_string($lesson_id)."', ".$day_index.", ".$start_time_index.", ".$end_time_index.", '".mysql_real_escape_string($subject)."', '".mysql_real_escape_string($venue)."', 'N', true), ";
             
             //insert into ct_class_matching
             $classes = $value->classes;
@@ -557,7 +557,7 @@ class TimetableDB
         return $result;
     }
     
-    public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date)
+    public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date, $lesson_id)
     {
         $date_obj = new DateTime($schedule_date);
         $weekday = $date_obj->format('N');
@@ -568,7 +568,7 @@ class TimetableDB
             return -1;
         }
         
-        $sql_normal = "select * from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id = '".mysql_real_escape_string(trim($accname))."' and ct_lesson.weekday = ".$weekday." and ((ct_lesson.start_time < ".$time_range[1].") and (ct_lesson.end_time > ".$time_range[0]."));";
+        $sql_normal = "select * from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id = '".mysql_real_escape_string(trim($accname))."' and ct_lesson.weekday = ".$weekday." and highlighted and ((ct_lesson.start_time < ".$time_range[1].") and (ct_lesson.end_time > ".$time_range[0]."));";
         $normal_result = Constant::sql_execute($db_con, $sql_normal);
         if(is_null($normal_result))
         {
@@ -590,7 +590,7 @@ class TimetableDB
             return 1;
         }
         
-        $sql_temp = "select * from temp_each_alternative where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and schedule_id =".$schedule_index." and ((start_time < ".$time_range[1].") and (end_time > ".$time_range[0]."));";
+        $sql_temp = "select * from temp_each_alternative where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and schedule_id =".$schedule_index." and ((start_time < ".$time_range[1].") and (end_time > ".$time_range[0].")) and lesson_id != '$lesson_id';";
         $temp_result = Constant::sql_execute($db_con, $sql_temp);
         
         if(is_null($temp_result))
