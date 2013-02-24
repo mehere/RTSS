@@ -123,7 +123,7 @@ EOD;
                             
                             $nextPage=min($scheduleResultNum, $curPage+1);
                             echo <<< EOD
-<a href="?result=$nextPage" class="page-no page-turn">&gt;</a>   
+<a href="?result=$nextPage" class="page-no page-turn">&gt;</a>
 EOD;
                         ?>
                     </div>
@@ -133,7 +133,7 @@ EOD;
                     <input type="submit" value="Approve" class="button" />
                 </div>
                 <div class="link-control">
-                    <a href="timetable.php?schedule=<?php echo $curPage; ?>" class="link">Preview Timetable</a>
+                    <a href="timetable.php?schedule=<?php echo $curPage; ?>" target="_blank" class="link">Preview Timetable</a>
                 </div>
                 <input type="hidden" name="num" value="<?php echo $scheduleResultNum; ?>" />
                 <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />
