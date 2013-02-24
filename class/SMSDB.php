@@ -38,7 +38,7 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
-        $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied, schedule_date) values ";
+        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date) values ";
         
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
@@ -46,7 +46,10 @@ class SMSDB
         
         $sql_insert .= "('".$phone."',".$time_created.",'".$accname."',false, $date);";
         
-        $insert_result = Constant::sql_execute($db_con, $sql_insert);
+        print($sql_insert);
+        
+        $insert_result = Constant::sql_execute($db_con, $sql_insert);                
+        
         if(empty($insert_result))
         {
             throw new DBException('Fail to insert out messages', __FILE__, __LINE__);

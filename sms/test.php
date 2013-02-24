@@ -9,15 +9,14 @@ session_start();
 include('send_sms.php');
 
 for($i = 0; $i < 5; $i++){
-    $receiverList = array( "name" => "Virgil",
+    $receiverList[$i] = array( "name" => "Virgil",
                        "phoneNum" => "+6597394731",
                        "message" => "integration test $i",
+                       "accname" => "ryujicai",
                     );
 }
 
-$scheduleDate = "13/02/25";
-
-$_SESSION['accname'] = "ryujicai";
+$scheduleDate = "2013/02/25";
 
 sendSMS($receiverList, $scheduleDate)
 

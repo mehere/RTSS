@@ -16,25 +16,34 @@ function sendSMS($receiverList, $scheduleDate) {
     $attempt = 1;        
     while($index < sizeof($receiverList)){  	              
         $phoneNum = $receiverList[$index]["phoneNum"];                
+        if (strlen(trim($phoneNum)) == 8){
+            $phoneNum = "+65".$phoneNum;
+        }        
         $name = $receiverList[$index]["name"];        
         $message = "<iScheduler> Dear $name, " . $receiverList[$index]["message"];     
         $timeCreated = date('Y-m-d H:i:s');
-        $msgRecord = array("phoneNum" => $phoneNum, "name" => $name, "timeCreated" => $timeCreated, "accName" => $_SESSION['accname'], "scheduleDate" => $scheduleDate);
-        $smsId = SMSDB::storeSMSout($msgRecord);
+        $accname = $receiverList[$index]["accname"];        
+        $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname);        
+        $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
         $message = $message . "Please reply in the following format: '$smsId-Yes' for acceptance or '$smsId-no' for decline. Your response shall always start with the number given, which is your SMS conversation ID.";
         chdir('C:\xampp\htdocs\fscan\sms');
-        $command = 'java -jar vigsyssmscom4.jar "1" "' . $phoneNum .'" "' . $message .'"';        
-        $apiOutput = shell_exec($command."\n");           
-        $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);  
+        if (trim($phoneNum)){
+            $command = 'java -jar vigsyssmscom4.jar "1" "' . $phoneNum .'" "' . $message .'"';        
+            $apiOutput = shell_exec($command."\n");           
+            $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);  
+        }else {
+            $outputCode = 104;
+            $attemp = 3;
+        }                             
         $status = mapCode($outputCode);
         $sendingResult[$failCount] = array( "phoneNum" => $phoneNum, "name" => $name, "message" => $message, "result" => $status);
         if ($outputCode == "100"){ 
-            $updateComponent = array("message" => $message, "timeSent" => $timeCreated, "status" => $status);
+            $updateComponent = array("smsId" => $smsId, "message" => $message, "timeSent" => $timeCreated, "status" => $status);
             SMSDB::updateSMSout($updateComponent);
             $index++;
             $attempt = 1;                        
         }else if ($attempt >= 3){            
-            $updateComponent = array("message" => $message, "timeSent" => "", "status" => $status);
+            $updateComponent = array("smsId" => $smsId, "message" => $message, "timeSent" => "", "status" => $status);
             SMSDB::updateSMSout($updateComponent);                        
             $index++;
             $attempt = 1;
