@@ -324,10 +324,10 @@ foreach($result as $key=>$value)
 
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
-/*
-$result = ListGenerator::getTeacherName('2013-02-06');
-//print_r($result);
 
+//$result = ListGenerator::getTeacherName('2013-02-06', 0);
+//print_r($result);
+/*
 foreach($result as $key => $value)
 {
     echo $key.'<br>';
@@ -382,7 +382,7 @@ foreach($result as $key=>$value)
  * 
  */
 
-//echo TimetableDB::checkTimetableConflict(1, Array(1, 5), 178938, "2013/2/22");
+//echo TimetableDB::checkTimetableConflict(0, Array(10, 11), "TMP5555555", "2013/2/06", "N111310111JC10");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 

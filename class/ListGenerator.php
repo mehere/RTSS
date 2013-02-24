@@ -10,7 +10,7 @@ require_once 'Teacher.php';
 
 class ListGenerator
 {
-    public static function getTeacherName($date)
+    public static function getTeacherName($date, $scheduleIndex)
     {
         $result = Array();
         $teacher_dict = Teacher::getAllTeachers();  
@@ -57,7 +57,15 @@ class ListGenerator
         }
         
         //relief teachers
-        $sql_query_teacher = "select distinct relief_teacher from rs_relief_info where DATE(date) = '$date';";
+        if($scheduleIndex === -1)
+        {
+            $sql_query_teacher = "select distinct relief_teacher from rs_relief_info where DATE(date) = '$date';";
+        }
+        else
+        {
+            $sql_query_teacher = "select distinct relief_teacher from temp_each_alternative where schedule_id = ".$scheduleIndex.";";
+        }
+        
         $query_teacher_result = Constant::sql_execute($db_con, $sql_query_teacher);
         if(is_null($query_teacher_result))
         {
