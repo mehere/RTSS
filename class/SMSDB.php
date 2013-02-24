@@ -1,6 +1,7 @@
 <?php
 require_once 'Teacher.php';
 require_once 'DBException.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/read_sms.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -19,7 +20,7 @@ class SMSDB
         $sql_max = "select max(sms_id) as max from cm_sms_record;";
         $max_result = Constant::sql_execute($db_con, $sql_max);
         if(empty($max_result))
-        {
+        {            
             throw new DBException('Fail to query max ID', __FILE__, __LINE__);
         }
         if(is_null($max_result[0]['max']))
@@ -229,6 +230,8 @@ class SMSDB
     
     public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC)
     {
+        readSMS($date);
+        
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
         
