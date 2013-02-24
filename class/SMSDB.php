@@ -146,7 +146,7 @@ class SMSDB
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
         }
         
-        $sql_sms = "select phone_num, sms_id where scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
+        $sql_sms = "select phone_num, sms_id from where fs_msgs scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
