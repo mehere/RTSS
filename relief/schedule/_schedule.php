@@ -127,7 +127,8 @@ try
 } catch (DBException $e)
 {
     echo "DB Error";
-    echo $e->getMessage();
+    //echo $e->getMessage();
+    echo $e;
     exit();
 }
 

@@ -34,7 +34,7 @@ class SchedulerDB
         $db_con = Constant::connect_to_db('ntu');
 
         $query_num_of_leave_result = Constant::sql_execute($db_con, $sql_query_num_of_leave);
-        if (empty($query_num_of_leave_result))
+        if (is_null($query_num_of_leave_result))
         {
             throw new DBException("Fail to query number of leave information", __FILE__, __LINE__);
         }
@@ -46,7 +46,7 @@ class SchedulerDB
         //query num_of_relief slot
         $sql_query_num_of_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from rs_relief_info group by relief_teacher";
         $query_num_of_relief_result = Constant::sql_execute($db_con, $sql_query_num_of_relief);
-        if (empty($query_num_of_relief_result))
+        if (is_null($query_num_of_relief_result))
         {
             throw new DBException("Fail to query number of relief information:".mysql_error(), __FILE__, __LINE__);
         }
@@ -59,10 +59,10 @@ class SchedulerDB
         //create lesson dictionary
         $this->lesson_list = Array();
 
-        $sql_query_lessons = "select * from ct_lesson where weekday = " . $this->weekday . ";";
+        $sql_query_lessons = "select * from ct_lesson where weekday = ".$this->weekday.";";
         $lesson_query_result = Constant::sql_execute($db_con, $sql_query_lessons);
 
-        if (empty($lesson_query_result))
+        if (is_null($lesson_query_result))
         {
             throw new DBException("Fail to query lesson from database", __FILE__, __LINE__);
         }
@@ -91,7 +91,7 @@ class SchedulerDB
             AND ct_lesson.weekday = " . $this->weekday . ";";
         $class_query_result = Constant::sql_execute($db_con, $sql_query_class);
 
-        if (empty($class_query_result))
+        if (is_null($class_query_result))
         {
             throw new DBException("Fail to query class from database", __FILE__, __LINE__);
         }
@@ -108,7 +108,7 @@ class SchedulerDB
 
         $sql_query_teacher = "SELECT ct_teacher_matching.* FROM ct_teacher_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_teacher_matching.lesson_id AND ct_lesson.weekday = " . $this->weekday . ";";
         $teacher_query_result = Constant::sql_execute($db_con, $sql_query_teacher);
-        if (empty($teacher_query_result))
+        if (is_null($teacher_query_result))
         {
             throw new DBException("Fail to query teacher from database", __FILE__, __LINE__);
         }
@@ -128,7 +128,7 @@ class SchedulerDB
 
         $sql_query_teacher_class = "Select ct_teacher_matching.teacher_id as teacher, ct_class_matching.class_name as class from ct_lesson, ct_teacher_matching, ct_class_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = ct_class_matching.lesson_id;";
         $query_teacher_class_result = Constant::sql_execute($db_con, $sql_query_teacher_class);
-        if (empty($query_teacher_class_result))
+        if (is_null($query_teacher_class_result))
         {
             throw new DBException("Fail to query teacher-class from database", __FILE__, __LINE__);
         }
@@ -232,7 +232,7 @@ class SchedulerDB
         $sql_query_speciality = "select * from ct_aed_speciality;";
         $db_con = Constant::connect_to_db('ntu');
         $query_speciality_result = Constant::sql_execute($db_con, $sql_query_speciality);
-        if (empty($query_speciality_result))
+        if (is_null($query_speciality_result))
         {
             throw new DBException("Fail to query aed speciality", __FILE__, __LINE__);
         }
@@ -400,24 +400,28 @@ class SchedulerDB
         
         //insert
         $sql_insert = "insert into temp_each_alternative values ";
-        
+        $has_value = false;
         foreach($scheduleResults as $id => $a_result)
         {
             $relief = $a_result['relievedLessons'];
             
             foreach($relief as $a_relief)
             {
-                $diff = $a_relief->endTimeSlot - $a_relief->startTimeIndex;
-                $sql_insert .= "(".$id.",'".$a_relief->lessonId."','".$date."',".$a_relief->startTimeIndex.",".$a_relief->endTimeSlot.",'".$a_relief->teacherOriginal."','".$a_relief->teacherRelief."',NULL,".$diff."),";
+                $has_value = true;
+                $diff = $a_relief->endTimeSlot - $a_relief->startTimeSlot;
+                $sql_insert .= "(".$id.",'".$a_relief->lessonId."','".$date."',".$a_relief->startTimeSlot.",".$a_relief->endTimeSlot.",'".$a_relief->teacherOriginal."','".$a_relief->teacherRelief."',NULL,".$diff."),";
             }
         }
         
-        $sql_insert = substr($sql_insert, 0, -1).';';
-        
-        $execute = Constant::sql_execute($db_con, $sql_insert);
-        if(is_null($execute))
+        if($has_value)
         {
-            throw new DBException("Fail to insert scheduling result", __FILE__, __LINE__);
+            $sql_insert = substr($sql_insert, 0, -1).';';
+        
+            $execute = Constant::sql_execute($db_con, $sql_insert);
+            if(is_null($execute))
+            {
+                throw new DBException("Fail to insert scheduling result", __FILE__, __LINE__);
+            }
         }
     }
 
