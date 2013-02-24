@@ -1,7 +1,7 @@
 <?php
 require_once 'Teacher.php';
 require_once 'DBException.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/read_sms.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/read_sms.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -140,13 +140,13 @@ class SMSDB
      */
     public static function getIfinsSMSin($schedule_date)
     {
-        $db_con = Constant::connect_to_db("ifins");
+        $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
         }
         
-        $sql_sms = "select phone_num, sms_id from where fs_msgs scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
+        $sql_sms = "select phone_num, sms_id from where cm_sms_record scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
@@ -181,8 +181,8 @@ class SMSDB
         {
             $reply_msg = $a_reply['msg'];
             
-            //reply format : 1232,YES, or 43,NO, or 34, in this case, assume the teacher accept the arrangement
-            $break_reply = explode(",", $reply_msg);
+            //reply format : 1232-YES, or 43-NO, or 34, in this case, assume the teacher accept the arrangement
+            $break_reply = explode("-", $reply_msg);
             if(count($break_reply) === 0)
             {
                 continue;
