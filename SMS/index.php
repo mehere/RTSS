@@ -19,6 +19,8 @@ function serializeTd($colKey, $input)
     return $output;
 }
 
+require_once '../class/SMSDB.php';
+
 include_once '../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
@@ -81,7 +83,7 @@ EOD;
                             </thead>
                             <tbody>
                                 <?php
-//                                    $smsList=SMSDB::a
+                                    $smsList=SMSDB::allSMSStatus($date);
 //                                array(array('sentTime'=>'12:00', 'fullname'=>'Armstrong Daniel',
 //                                        'phone'=>'98765432', 'status'=>'Invalid serial no', 'repliedTime'=>'23:00',
 //                                        'repliedMsg'=>'OK'));

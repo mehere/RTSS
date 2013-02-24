@@ -61,7 +61,7 @@ include_once '../head-frag.php';
                 <?php
                     if ($isAdmin) 
                     {
-                        $timetable=TimetableDB::getReliefTimetable($accname, $class, $date);
+                        $timetable=TimetableDB::getReliefTimetable('', '', $date);
                         PageConstant::escapeHTMLEntity($timetable);
                     }
                     

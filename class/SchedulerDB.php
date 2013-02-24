@@ -2,7 +2,6 @@
 
 require_once 'util.php';
 require_once 'Students.php';
-require_once '../constant.php';
 
 class SchedulerDB
 {
