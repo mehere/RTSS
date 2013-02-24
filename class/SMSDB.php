@@ -39,16 +39,17 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
-        $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied, schedule_date) values ";
+        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date) values ";
         
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
         
-        $sql_insert .= "('".$phone."',".$time_created.",'".$accname."',false, $date);";
+        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '".$date."');";
         
-        $insert_result = Constant::sql_execute($db_con, $sql_insert);
-        if(empty($insert_result))
+        $insert_result = Constant::sql_execute($db_con, $sql_insert);                
+
+        if(is_null($insert_result))
         {
             throw new DBException('Fail to insert out messages', __FILE__, __LINE__);
         }
@@ -69,10 +70,10 @@ class SMSDB
         $time_sent = mysql_real_escape_string(trim($msg['timeSent']));
         $smsId = mysql_real_escape_string($msg['smsId']);
         
-        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = ".$time_sent.", message = '".$message."' where sms_id = ".$smsId.";";
+        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = '".$time_sent."', message = '".$message."' where sms_id = ".$smsId.";";
         
         $update_result = Constant::sql_execute($db_con, $sql_update);
-        if(empty($update_result))
+        if(is_null($update_result))
         {
             throw new DBException('Fail to update out messages', __FILE__, __LINE__);
         }
@@ -122,8 +123,9 @@ class SMSDB
         }
         
         //$sql_sms = "select sms_id as smsId, phone_num as phoneNum, message, DATE_FORMAT(time_created, '%Y/%m/%d %M:%i') as timeCreated, DATE_FORMAT(time_sent, '%Y/%m/%d %M:%i') as timeSent, status, accname as accName, is_replied as replied, DATE_FORMAT(time_replied, '%Y/%m/%d %M:%i') as timeReplied schedule_date as scheduleDate from cm_sms_record where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
-        $sql_sms = "select sms_id as smsId, phone_num as phoneNum where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
-        $sms_result = Constant::sql_execute($db_con, $sql_sms);
+        $sql_sms = "select sms_id as smsId, phone_num as phoneNum from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK' order by smsId;";
+        print($sql_sms);
+        $sms_result = Constant::sql_execute($db_con, $sql_sms);        
         if(is_null($sms_result))
         {
             throw new DBException("Fail to query sms sent", __FILE__, __LINE__);
@@ -138,7 +140,7 @@ class SMSDB
      */
     public static function getIfinsSMSin($schedule_date)
     {
-        $db_con = Constant::connect_to_db("ntu");
+        $db_con = Constant::connect_to_db("ifins");
         if(empty($db_con))
         {
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
