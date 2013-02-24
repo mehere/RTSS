@@ -15,30 +15,13 @@ $receiverList[0] = array("name" => "Virgil",
     "message" => "integration test 1",
     "accname" => "ryujicai",
 );
-$receiverList[1] = array("name" => "Virgil",
-    "phoneNum" => "+659999999",
-    "message" => "integration test 2",
-    "accname" => "ryujicai",
-);
-$receiverList[2] = array("name" => "Virgil",
-    "phoneNum" => "97394731",
-    "message" => "integration test 2",
-    "accname" => "ryujicai",
-);
-$receiverList[3] = array("name" => "Virgil",
-    "phoneNum" => "   ",
-    "message" => "integration test 3",
-    "accname" => "ryujicai",
-);
-$receiverList[4] = array("name" => "Virgil",
-    "phoneNum" => "",
-    "message" => "integration test 4",
-    "accname" => "ryujicai",
+$receiverList[1] = array("name" => "Xu Jie",
+    "phoneNum" => "+6592365504",
+    "message" => "integration test 1",
+    "accname" => "xujie0086",
 );
 
-
-
-$scheduleDate = "2013/02/25";
+$scheduleDate = "2013/02/26";
 
 sendSMS($receiverList, $scheduleDate)
 ?>

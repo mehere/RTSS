@@ -9,42 +9,10 @@ session_start();
 
 include('../class/SMSDB.php');
 
-/*
-  chdir('C:\xampp\htdocs\fscan\sms');
-  $command = 'java -jar vigsyssmscom4.jar "2"';
-  $output = shell_exec($command);
-  echo $output;
- */
-
-/*
-  date_default_timezone_set('Asia/Singapore');
-  $now = date("Y-m-d H:i:s");
-  $oneDayEarlier = date_sub(date_create(date("Y-m-d H:i:s")), date_interval_create_from_date_string('1 day'))->format("Y-m-d H:i:s");
-  print ("select * from fs_msgs where date >= '$oneDayEarlier' and date <= '$now';");
- */
-/*
-  chdir('C:\xampp\htdocs\fscan\sms');
-  $command = 'java -jar vigsyssmscom4.jar "2"';
-  $str_output = shell_exec($command);
-  echo $str_output;
- */
-/*
-  $pos =  strpos($str_output,'VigSysSms v1.0-100:')+strlen('VigSysSms v1.0-100:');
-  if($pos >20) $str_output = substr($str_output,$pos);
-  echo $str_output;
- */
-
 function readSMS($scheduleDate) {
-    //guyu's part
-    //for $msgSent, it each element is an associative array, with "smsId" "phoneNum" and "timeSent" (in 'y-m-d H:i:s' format)
-    //give me only those messages that are sent (identified by its status ===> "OK") for the day (messages that are sent within 24 hrs from now)    
     set_time_limit(1200);
-    $msgSent = SMSDB::getSMSsent($scheduleDate);
-    $responseCount = 0;
+    $msgSent = SMSDB::getSMSsent($scheduleDate);    
 
-    //date_default_timezone_set('Asia/Singapore');
-    //$now = date("Y-m-d H:i:s");
-    //$oneDayEarlier = date_sub(date_create(date("Y-m-d H:i:s")), date_interval_create_from_date_string('1 day'))->format("Y-m-d H:i:s");
     chdir('C:\xampp\htdocs\fscan\sms');
     $command = 'java -jar vigsyssmscom4.jar "2"';
     $output = shell_exec($command);
@@ -55,35 +23,35 @@ function readSMS($scheduleDate) {
         for ($i = 0; $i < sizeof($parts) - 3; $i += 4) {
             $phoneNum = $parts[$i + 1];
             $timeReceived = $parts[$i + 2];
-            list($smsId, $message) = explode("-", $parts[$i + 3]);
-            $message = trim($message, " '");
+            $response = $parts[$i + 3];
+            $response = trim($response, " '");
+            list($smsId, $message) = explode("-", $response);                                                
+            list($time, $date) = explode(" ", $timeReceived);
+            list($day, $month, $year) = explode("-", $date);
+            $year = "20".$year;
+            $date = "$year-$month-$day";
+            $timeReceived = "$date $time";            
             if (examineMsg($smsId, $phoneNum, $msgSent) != -1) {
-                $replied[$responseCount] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);
-                $responseCount++;
+                $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);                
             }
         }
     }
 
-    //Guyu's part, give me all messages received later than the given time
-    //three elements, "phoneNum", "timeReceived", "message"
     $ifinsMsg = SMSDB::getIfinsSMSin($scheduleDate);
     
     for ($f = 0; $f < sizeof($ifinsMsg); $f++) {
         $phoneNum = $ifinsMsg[$f]["phoneNum"];
         $timeReceived = $ifinsMsg[$f]["timeReceived"];
-        list($smsId, $message) = explode("-", $ifinsMsg[$f]["message"]);
-        $message = trim($message, " '");                             
+        list($smsId, $message) = explode("-", $ifinsMsg[$f]["message"]);        
+        $message = trim($message, " '");                         
         if (examineMsg($smsId, $phoneNum, $msgSent) != -1) {
-            $replied[$responseCount] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);
-            $responseCount++;
+            $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);            
         }
-    }
-        
-    //print_r($replied);
-    //print_r($replied);
-    //Guyu's part, give you a smsId, check this piece of sms replied
-    //and store their response
-    SMSDB::markReplied($replied);   
+    }        
+
+    if(sizeof($replied) > 0){
+        SMSDB::markReplied($replied);   
+    }    
 }
 
 function examineMsg($smsId, $phoneNum, $msgSent) {        
@@ -102,14 +70,14 @@ function searchMsgSent($smsId, $phoneNum, $msgSent, $start, $end) {
             return searchMsgSent($smsId, $phoneNum, $msgSent, $start, $mid - 1);
         } else {
             $interval = 0;
-            while ($mid < sizeof($msgSent) - $interval || $mid >= $interval) {                
+            while ($mid < sizeof($msgSent) - $interval || $mid >= $interval) {                                
                 if($mid < sizeof($msgSent) - $interval){
-                    if ($msgSent[$mid + $interval]["phoneNum"] == $phoneNum) {
-                        return $mid + $interval;                        
-                    }
+                    if($smsId == $msgSent[$mid + $interval]["smsId"] && $msgSent[$mid + $interval]["phoneNum"] == $phoneNum){                        
+                        return $mid + $interval;                                                
+                    }                    
                 }                
                 if ($mid >= $interval) {
-                    if ($msgSent[$mid - $interval]["phoneNum"] == $phoneNum) {                                                
+                    if ($smsId == $msgSent[$mid - $interval]["smsId"] && $msgSent[$mid - $interval]["phoneNum"] == $phoneNum) {                                                
                         return $mid - $interval;
                     }                    
                 }                
