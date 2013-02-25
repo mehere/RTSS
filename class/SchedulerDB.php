@@ -3,9 +3,8 @@
 require_once 'util.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
-//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
-//require_once '../constant.php';
-//require_once '../sms/send_sms.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/send_sms.php';
 
 class SchedulerDB
 {
@@ -402,13 +401,6 @@ class SchedulerDB
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
         }
         
-        $sql_delete_exist = "delete from rs_relief_info where date = DATE('$date');";
-        $delete_exist_result = Constant::sql_execute($db_con, $sql_delete_exist);
-        if(is_null($delete_exist_result))
-        {
-            throw new DBException('Fail to clear existing schedules', __FILE__, __LINE__);
-        }
-        //error_log($sql_delete_exist, 2, "/Users/martainflash/desktop/abc.log");
         //insert
         $sql_insert = "insert into temp_each_alternative values ";
         $has_value = false;
@@ -701,8 +693,7 @@ class SchedulerDB
             $sms_input[] = $one_teacher;
         }
         
-        //sendSMS($sms_input, $date);
-        return array();
+        sendSMS($sms_input, $date);
     }
     
     public static function allSchduleIndex()
