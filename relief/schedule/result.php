@@ -27,12 +27,13 @@ include_once '../../head-frag.php';
                 );
                 include '../../topbar-frag.php';
             ?>
-            <form class="main" name="edit" action="" method="post">
+            <form class="main" name="edit" action="_approve.php" method="post">
                 <div class="section">
+                    <p class="error-msg" style="padding-top: 0"><?php echo $_SESSION['scheduleError']; ?></p>
                     <table class="table-info">
                         <thead>
                             <tr>
-                                <?php                                 
+                                <?php
                                     $width=array('24%', '130px', '38%', '38%');                                                                        
                                                                         
                                     $tableHeaderList=array_values(NameMap::$SCHEDULE_RESULT['schedule']['display']);
@@ -48,29 +49,31 @@ EOD;
                         </thead>
                         <tbody>
                             <?php
-                                $scheduleList=array(0=>array(
-                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 3),
-                                    "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
-                                    "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
-                                    array('class'=>array('4F', '9A'), 'time'=>array(1, 3),
-                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%'),
-                                    array('class'=>array('4A', '9C'), 'time'=>array(6, 8),
-                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%')));
+                                $scheduleIndexArr=$_SESSION['scheduleIndex'];
+                                if (!$scheduleIndexArr) 
+                                {
+                                    $scheduleIndexArr=$_SESSION['scheduleIndex']=SchedulerDB::allSchduleIndex();
+                                }
+                                $scheduleResultNum=count($scheduleIndexArr);
                                 
-                                foreach ($scheduleList[0] as $key => $value)
+                                $curPage=$_GET['result'];
+                                if (!$curPage) $curPage=1;
+                                
+                                $curScheduleIndex=$scheduleIndexArr[$curPage-1];                            
+                                $scheduleList=SchedulerDB::getScheduleResult($curScheduleIndex);
+
+                                foreach ($scheduleList[$curScheduleIndex] as $key => $value)
                                 {
                                     $classStr=implode(', ', $value['class']);
                                     $timeStart=SchoolTime::getTimeValue($value['time'][0]);
                                     $timeEnd=SchoolTime::getTimeValue($value['time'][1]);
                                     echo <<< EOD
-<tr><td>$classStr</td>
-    <td>
-        $timeStart<span style="margin: 0 3px">-</span>$timeEnd</td><td>{$value['teacherOnLeave']}
+<tr><td>$classStr<input type="hidden" name="lessonID-$key" value="{$value['id']}" /></td>
+    <td>$timeStart<span style="margin: 0 3px">-</span>$timeEnd</td>        
         <input type="hidden" name="time-start-$key" value="{$value['time'][0]}" />
         <input type="hidden" name="time-end-$key" value="{$value['time'][1]}" />
     </td>
+    <td>{$value['teacherOnLeave']}<input type="hidden" name="teacher-accname-$key" value="{$value['teacherAccName']}" /></td>
     <td>
         <span class="text-display">{$value['reliefTeacher']}</span>
         <input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" />
@@ -79,12 +82,7 @@ EOD;
 </tr>
 EOD;
                                 }
-                                
-                                $scheduleResultNum=$_SESSION['scheduleResultNum'];
-                                if (!$scheduleResultNum) 
-                                {
-                                    $scheduleResultNum=$_SESSION['scheduleResultNum']=SchedulerDB::scheduleResultNum();
-                                }
+                                                                
                                 if ($scheduleResultNum == 0)
                                 {
                                     $scheduleResultNum=1;
@@ -95,14 +93,12 @@ EOD;
                             ?>
                         </tbody>
                     </table>
+                    <div class="page-control">Schedule Result Choice</div>
                     <div class="page-control">                    	
                         <?php
-                            $curPage=$_GET['page'];
-                            if (!$curPage) $curPage=1;
-                            
                             $prevPage=max(1, $curPage-1);
                             echo <<< EOD
-<a href="?page=$prevPage" class="page-no page-turn">&lt;</a>   
+<a href="?result=$prevPage" class="page-no page-turn">&lt;</a>   
 EOD;
                             
                             for ($i=1; $i<=$scheduleResultNum; $i++)
@@ -110,13 +106,13 @@ EOD;
                                 $selectedStr='';
                                 if ($curPage == $i) $selectedStr='page-selected';
                                 echo <<< EOD
-<a href="?page=$i" class="page-no $selectedStr">$i</a>
+<a href="?result=$i" class="page-no $selectedStr">$i</a>
 EOD;
                             }
                             
                             $nextPage=min($scheduleResultNum, $curPage+1);
                             echo <<< EOD
-<a href="?page=$nextPage" class="page-no page-turn">&gt;</a>   
+<a href="?result=$nextPage" class="page-no page-turn">&gt;</a>
 EOD;
                         ?>
                     </div>
@@ -128,8 +124,8 @@ EOD;
                 <div class="link-control">
                     <a href="timetable.php?schedule=<?php echo $curPage; ?>" class="link">Preview Timetable</a>
                 </div>
-                <input type="hidden" name="num" value="<?php echo count($scheduleList); ?>" />
-                <input type="hidden" name="schedule-index" value="<?php echo $curPage; ?>" />
+                <input type="hidden" name="num" value="<?php echo $scheduleResultNum; ?>" />
+                <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />
             </form>
             <div id="dialog-alert"></div>
         </div>
@@ -138,7 +134,8 @@ EOD;
         include '../../sidebar-frag.php'; 
     
         unset($_SESSION['timetableAnalyzer']);
-        unset($_SESSION['abbrNameList']);        
+        unset($_SESSION['abbrNameList']);
+        unset($_SESSION['scheduleError']);
     ?>
 </div>
     

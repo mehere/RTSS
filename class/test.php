@@ -426,7 +426,7 @@ foreach($result as $key=>$row)
  * 
  */
 
-//echo SchedulerDB::override(0, "N131310111JC10", "6644942", "TMP1111111")?"YES":"NO";
+//var_dump(SchedulerDB::override(0, "N131310111JC10", "6644942", "TMP1111111"));
 /*
 $result = Teacher::getTeacherContact();
 foreach($result as $key => $row)

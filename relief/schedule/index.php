@@ -1,7 +1,7 @@
 <?php 
-    header("Location: result.php");
-    include_once '../../php-head.php';
-    include_once '../../head-frag.php';
+header("Location: result.php");
+include_once '../../php-head.php';
+include_once '../../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
 <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />

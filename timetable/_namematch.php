@@ -12,6 +12,8 @@ header("Pragma: no-cache");
 
 require_once '../php-head.php';
 
+$output=array('error' => 0);
+
 $numOfUnknown = $_POST["num"];
 $analyzer = $_SESSION["timetableAnalyzer"];
 /* @var $analyzer TimeTableAnalyzer */
@@ -41,14 +43,13 @@ $semester = $analyzer->semester;
 try
 {
     Teacher::insertAbbrMatch($newMatches);
-    TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
-    $destination = "/RTSS/timetable/admin.php";
+    TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);    
 } catch (DBException $e)
 {
     // To-Do: Handle Exception Handling
-    echo "An error has occured";
-    $destination = "/RTSS/timetable/namematch.php";
+    $output['error']="An error has occured when updating the database.";
 }
 
-header("Location: $destination");
+header('Content-type: application/json');
+echo json_encode($output);
 ?>

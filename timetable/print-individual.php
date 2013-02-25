@@ -1,12 +1,18 @@
 <?php 
+$BYPASS_ADMIN=true;
 include_once '../php-head.php';
 
 require_once '../class/TimetableDB.php';
 require_once '../class/ListGenerator.php';
 
+if ($_SESSION['type'] != 'admin')
+{
+    $_GET['accname']=$_SESSION['accname'];
+}
+
 include_once '../head-frag.php';
 ?>
-<title>Report - Print</title>
+<title>Timetable - Print</title>
 <link href="/RTSS/css/print.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 .table-info {
