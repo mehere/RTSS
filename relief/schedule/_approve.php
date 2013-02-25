@@ -7,7 +7,7 @@ require_once '../../php-head.php';
 
 require_once '../../class/SchedulerDB.php';
 
-$result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['date']);
+$result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['scheduleDate']);
 $trStr='';
 foreach ($result as $key => $value)
 {
@@ -30,6 +30,9 @@ $output['display']= <<< EOD
     </tbody>
 </table>
 EOD;
+
+unset($_SESSION['scheduleIndex']);
+unset($_SESSION['excluded']);
 
 header('Content-type: application/json');
 echo json_encode($output);

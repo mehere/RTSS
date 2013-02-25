@@ -4,6 +4,8 @@ require_once 'util.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
 
+require_once 'DBException.php';
+
 class SchedulerDB
 {
 

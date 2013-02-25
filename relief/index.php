@@ -20,6 +20,10 @@ include_once '../head-frag.php';
 	text-align: left;
 	word-wrap: break-word;
 }
+
+.ui-dialog .ui-dialog-titlebar-close {
+  visibility: hidden;
+}
 </style>
 </head>
 <body>
@@ -182,6 +186,7 @@ EOD;
                 </div>
             </form>
             <div id="teacher-detail">Loading ...</div>
+            <div id="dialog-alert"></div>
         </div>
     </div>
     <?php include '../sidebar-frag.php'; ?>

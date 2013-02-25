@@ -131,6 +131,8 @@ $(document).ready(function(){
                     "timeEnd": time[1],
                     "lessonID": lessonID
                 }, function(data){
+                    console.log(data);
+
                     if (data['hasConflict'] != 0)
                     {
                         $("#dialog-alert").html(CONFLICT_ALERT_TEXT[data['hasConflict']+""]
