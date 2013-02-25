@@ -3,8 +3,8 @@
 require_once 'util.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/send_sms.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/send_sms.php';
 
 class SchedulerDB
 {
@@ -397,6 +397,13 @@ class SchedulerDB
         $sql_delete = "delete from temp_each_alternative;";
         $delete_result = Constant::sql_execute($db_con, $sql_delete);
         if(is_null($delete_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
+        }
+        
+        $sql_delete_exist = "delete from rs_relief_info where date = DATE('$date');";
+        $delete_exist_result = Constant::sql_execute($db_con, $sql_delete_exist);
+        if(is_null($delete_exist_result))
         {
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
         }

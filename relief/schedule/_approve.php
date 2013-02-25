@@ -6,6 +6,7 @@ header("Pragma: no-cache");
 require_once '../../php-head.php';
 
 require_once '../../class/SchedulerDB.php';
+require_once '../../class/SMSDB.php';
 
 $result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['date']);
 $trStr='';

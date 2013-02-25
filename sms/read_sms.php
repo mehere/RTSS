@@ -7,7 +7,7 @@ header("Pragma: no-cache");
 //initialize session
 session_start();
 
-include('../class/SMSDB.php');
+//include('../class/SMSDB.php');
 
 /*
   chdir('C:\xampp\htdocs\fscan\sms');
