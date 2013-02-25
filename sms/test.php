@@ -21,7 +21,7 @@ $receiverList[1] = array("name" => "Xu Jie",
     "accname" => "xujie0086",
 );
 
-$scheduleDate = "2013/02/26";
+$scheduleDate = "2013/02/24";
 
 sendSMS($receiverList, $scheduleDate)
 ?>

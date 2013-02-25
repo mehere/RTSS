@@ -30,10 +30,12 @@ function readSMS($scheduleDate) {
             list($day, $month, $year) = explode("-", $date);
             $year = "20".$year;
             $date = "$year-$month-$day";
-            $timeReceived = "$date $time";            
-            if (examineMsg($smsId, $phoneNum, $msgSent) != -1) {
-                $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);                
-            }
+            $timeReceived = "$date $time"; 
+            if(checkResponseRelevance($timeReceived, $scheduleDate)){
+                if (examineMsg($smsId, $phoneNum, $msgSent) != -1) {
+                    $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);                
+                }
+            }            
         }
     }
 
@@ -43,9 +45,11 @@ function readSMS($scheduleDate) {
         $phoneNum = $ifinsMsg[$f]["phoneNum"];
         $timeReceived = $ifinsMsg[$f]["timeReceived"];
         list($smsId, $message) = explode("-", $ifinsMsg[$f]["message"]);        
-        $message = trim($message, " '");                         
-        if (examineMsg($smsId, $phoneNum, $msgSent) != -1) {
-            $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);            
+        $message = trim($message, " '");
+        if (checkResponseRelevance($timeReceived, $scheduleDate)) {
+            if (examineMsg($smsId, $phoneNum, $msgSent) != -1) {
+                $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);
+            }
         }
     }        
 
@@ -70,21 +74,44 @@ function searchMsgSent($smsId, $phoneNum, $msgSent, $start, $end) {
             return searchMsgSent($smsId, $phoneNum, $msgSent, $start, $mid - 1);
         } else {
             $interval = 0;
-            while ($mid < sizeof($msgSent) - $interval || $mid >= $interval) {                                
+            while ($mid < sizeof($msgSent) - $interval || $mid >= $interval) {  
+                $leftBoundOut = false;
+                $rightBoundOut = false;
                 if($mid < sizeof($msgSent) - $interval){
                     if($smsId == $msgSent[$mid + $interval]["smsId"] && $msgSent[$mid + $interval]["phoneNum"] == $phoneNum){                        
                         return $mid + $interval;                                                
-                    }                    
+                    } 
+                    if($smsId != $msgSent[$mid + $interval]["smsId"]){
+                        $rightBoundOut = true;
+                    }                        
                 }                
                 if ($mid >= $interval) {
                     if ($smsId == $msgSent[$mid - $interval]["smsId"] && $msgSent[$mid - $interval]["phoneNum"] == $phoneNum) {                                                
                         return $mid - $interval;
                     }                    
+                    if($smsId != $msgSent[$mid - $interval]["smsId"]){
+                        $leftBoundOut = true;
+                    }                        
                 }                
+                if ($rightBoundOut && $leftBoundOut){
+                    return -1;
+                }
                 $interval++;                
             }            
             return -1;
         }
+    }
+}
+
+function checkResponseRelevance($timeReplied, $scheduleDate){
+    $timeRepliedObj = date_create($timeReplied);    
+    $scheduleDateObj = date_create($scheduleDate." 00:00:00"); 
+    $timeDiff = date_diff($timeRepliedObj, $scheduleDateObj)->format("%R %d %h");
+    list($sign, $dayDiff, $hourDiff) = explode(" ", $timeDiff);    
+    if($sign == "-" && ($hourDiff >= 18 || $dayDiff >= 1)){        
+        return false;
+    }else{        
+        return true;
     }
 }
 
