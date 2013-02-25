@@ -10,7 +10,7 @@ require_once 'Teacher.php';
 
 class ListGenerator
 {
-    public static function getTeacherName($date, $scheduleIndex)
+    public static function getTeacherName($date, $scheduleIndex=-1)
     {
         $result = Array();
         $teacher_dict = Teacher::getAllTeachers();  

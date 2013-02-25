@@ -9,6 +9,9 @@ $(document).ready(function(){
         buttons: {
             OK: function(){
                 $(this).dialog("close");
+
+                var func=$(this).data('func');
+                if (func) func();
             }
         }
     });
@@ -24,6 +27,15 @@ $(document).ready(function(){
             $(".text-hidden").hide();
             $(".text-display").fadeIn();
             this.value=OVERRIDE_TEXT[0];
+
+            $('input[name^="relief-teacher-"]').val(function(index, value){
+                if (!value)
+                {
+                    return $(this).parents('tr').first().find(".text-display").text();
+                }
+
+                return value;
+            });
         }
         else
         {
@@ -49,6 +61,13 @@ $(document).ready(function(){
             return false;
         }
 
+        $.post(this.action, $(formEdit).serializeArray(), function(data){
+            $("#dialog-alert").html(data['display']).data('func', function(){
+                window.location="/RTSS/relief/";
+            }).dialog('open');
+        }, 'json');
+
+        return false;
     });
 
     // Auto complete setup
@@ -77,13 +96,17 @@ $(document).ready(function(){
         }).focusout(function(){
             var curText= $.trim(this.value), isMatch=false;
             var selfObj=$(this), reliefAccName='', teacherAccName='', lessonID='', time=[];
+
+            var trObj=selfObj.parents('tr').first();
+            var reliefTeacher=trObj.find('input[name^="relief-teacher-"]'),
+                reliefTeacherDisplay=trObj.find(".text-display").text();
+
             $.each(nameList, function(index, value){
                 if (curText.toLowerCase() == value.toLowerCase())
                 {
                     isMatch=true;
                     reliefAccName=nameAccMap[value];
 
-                    var trObj=selfObj.parents('tr').first();
                     trObj.find('input[name^="relief-accname-"]').val(reliefAccName);
 
                     teacherAccName=trObj.find('input[name^="teacher-accname-"]').val();
@@ -96,7 +119,7 @@ $(document).ready(function(){
             });
             if (!isMatch)
             {
-                this.value="";
+                this.value='';
             }
             else
             {
@@ -111,22 +134,24 @@ $(document).ready(function(){
                     if (data['hasConflict'] != 0)
                     {
                         $("#dialog-alert").html(CONFLICT_ALERT_TEXT[data['hasConflict']+""]
-                            + "<br /><strong>" + selfObj.val() + "</strong>").dialog('open');
-                        selfObj.val('');
+                            + "<br /><strong>" + selfObj.val() + "</strong>").data('func', function(){
+                            selfObj.val(reliefTeacherDisplay);
+                        }).dialog('open');
                     }
-
-                    if (data['overridenFail'] != 0)
+                    else if (data['overridenFail'] != 0)
                     {
-                        $("#dialog-alert").html(ALERT_MSG[1]).dialog('open');
-                        selfObj.val('');
+                        $("#dialog-alert").html(ALERT_MSG[1]).data('func', function(){
+                            selfObj.val(reliefTeacherDisplay);
+                        }).dialog('open');
                     }
-
-                    console.log(data['error']);
-
+                    else
+                    {
+                        trObj.find(".text-display").text(reliefTeacher.val());
+                    }
                 });
             }
         }).focusin(function(){
-            $(this).autocomplete("search", "");
+            $(this).autocomplete("search");
         });;
     });
 });

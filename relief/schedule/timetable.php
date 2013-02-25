@@ -4,6 +4,9 @@ include_once '../../php-head.php';
 require_once '../../class/TimetableDB.php';
 require_once '../../class/ListGenerator.php';
 
+$scheduleIndexArr=$_SESSION['scheduleIndex'];
+$curScheduleIndex=$scheduleIndexArr[$_GET['schedule']-1];
+
 include_once '../../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
@@ -13,6 +16,15 @@ include_once '../../head-frag.php';
 <link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
 <script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
 
+<script type="text/javascript">
+$(document).ready(function(){
+    var formS=document.forms['switch'];
+    
+    $(formS['accname']).change(function(){
+        this.form.submit();
+    });
+});
+</script>
 </head>
 <body>
 
@@ -22,35 +34,33 @@ include_once '../../head-frag.php';
             <?php
                 $TOPBAR_LIST=array(
                     array('tabname' => 'Scheduling', 'url' => "/RTSS/relief/"),
-                    array('tabname' => 'Result Approval', 'url' => "/RTSS/relief/schedule/result.php"),
+                    array('tabname' => 'Result Approval', 'url' => "/RTSS/relief/schedule/result.php?result={$_GET['schedule']}"),
                     array('tabname' => 'Result Preview', 'url' => "")                    
                 );
                 include '../../topbar-frag.php';
             ?>
             <div class="main">
-<!--                <form name="switch" class="control" action="" method="post">
+                <div style="text-align: center; font-size: 1.2em">Schedule Result Choice <?php echo $_GET['schedule']; ?></div>
+                <form name="switch" class="control" action="" method="post">
                     <div class="line">                        
                         <select name="accname">
                             <option value="">-- Select a Teacher --</option>
-                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $_POST['accname']); ?>
+                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName(null, $curScheduleIndex), $_POST['accname']); ?>
                         </select>                        
                     </div>
-                </form>-->
+                </form>
                 <?php
-                    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['date'], $_GET['schedule']);
-//array(); // <-- to be changed
+                    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['date'], $curScheduleIndex);
                     PageConstant::escapeHTMLEntity($timetable);
-                                        
-                    $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['date'], '', $_GET['schedule']);
-//                    array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
-//                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
+
+                    $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['date'], $_POST['accname'], $curScheduleIndex);
                     PageConstant::escapeHTMLEntity($timetableIndividual);
                     
                     include '../../timetable/relief-timetable-frag.php';
                 ?>
             </div>
             <div class="bt-control">
-                <a href="result.php" class="button">Go Back</a>
+                <a href="result.php?result=<?php echo $_GET['schedule']; ?>" class="button">Go Back</a>
             </div>
         </div>        
     </div>

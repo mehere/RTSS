@@ -596,6 +596,8 @@ class SchedulerDB
         }
         
         //2. inform all teachers (Teacher::getTeacherContact)
+        return array('123'=>array('smsSent'=>false, 'emailSent'=> false, 'fullname'=>'Haha'), 
+            '321'=>array('smsSent'=>true, 'emailSent'=> true, 'fullname'=>'Gogo'));
     }
     
     public static function allSchduleIndex()

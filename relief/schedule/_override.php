@@ -10,7 +10,7 @@ require_once '../../class/TimetableDB.php';
 require_once '../../class/SchedulerDB.php';
 
 $output=array('hasConflict'=>TimetableDB::checkTimetableConflict($_GET['scheduleIndex'], 
-        array($_GET['timeStart'], $_GET['timeEnd']), $_GET['reliefAccName'], $_SESSION['scheduleDate']));
+        array($_GET['timeStart'], $_GET['timeEnd']), $_GET['reliefAccName'], $_SESSION['scheduleDate'], $_GET['lessonID']));
 $output['overridenFail']=0;
 
 if ($output['hasConflict'] == 0)
@@ -20,8 +20,6 @@ if ($output['hasConflict'] == 0)
         $output['overridenFail']=1;
     }
 }
-
-$output['error']=var_export($_GET, true);
 
 header('Content-type: application/json');
 echo json_encode($output);

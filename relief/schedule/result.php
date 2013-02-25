@@ -59,20 +59,9 @@ EOD;
                                 $curPage=$_GET['result'];
                                 if (!$curPage) $curPage=1;
                                 
-                                $curScheduleIndex=$scheduleIndexArr[$curPage-1];
-//var_dump(SchedulerDB::getScheduleResult(-1));                            
+                                $curScheduleIndex=$scheduleIndexArr[$curPage-1];                            
                                 $scheduleList=SchedulerDB::getScheduleResult($curScheduleIndex);
-//                            array(0=>array(
-//                                    array('class'=>array('1F', '2A'), 'time'=>array(1, 5), 'id'=>'l123',
-//                                    "teacherOnLeave"=>'Ann', 'reliefTeacher'=>'Bob', 
-//                                    "teacherAccName" =>'S12345', "reliefAccName" => 'T!@#$%'),
-//                                    array('class'=>array('4F', '9A'), 'time'=>array(1, 3), 'id'=>'l6123',
-//                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-//                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%'),
-//                                    array('class'=>array('4A', '9C'), 'time'=>array(6, 8), 'id'=>'l0123',
-//                                    "teacherOnLeave"=>'Tom', 'reliefTeacher'=>'Jerry', 
-//                                    "teacherAccName" =>'S0012345', "reliefAccName" => 'TXX!@#$%')));
-                                
+
                                 foreach ($scheduleList[$curScheduleIndex] as $key => $value)
                                 {
                                     $classStr=implode(', ', $value['class']);
@@ -133,7 +122,7 @@ EOD;
                     <input type="submit" value="Approve" class="button" />
                 </div>
                 <div class="link-control">
-                    <a href="timetable.php?schedule=<?php echo $curPage; ?>" target="_blank" class="link">Preview Timetable</a>
+                    <a href="timetable.php?schedule=<?php echo $curPage; ?>" class="link">Preview Timetable</a>
                 </div>
                 <input type="hidden" name="num" value="<?php echo $scheduleResultNum; ?>" />
                 <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />
