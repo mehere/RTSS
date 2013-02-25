@@ -3,6 +3,8 @@
 require_once 'util.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/send_sms.php';
 
 require_once 'DBException.php';
 
@@ -401,6 +403,13 @@ class SchedulerDB
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
         }
         
+        $sql_delete_exist = "delete from rs_relief_info where date = DATE('$date');";
+        $delete_exist_result = Constant::sql_execute($db_con, $sql_delete_exist);
+        if(is_null($delete_exist_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
+        }
+        
         //insert
         $sql_insert = "insert into temp_each_alternative values ";
         $has_value = false;
@@ -597,9 +606,103 @@ class SchedulerDB
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
         }
         
-        //2. inform all teachers (Teacher::getTeacherContact)
-        return array('123'=>array('smsSent'=>false, 'emailSent'=> false, 'fullname'=>'Haha'), 
-            '321'=>array('smsSent'=>true, 'emailSent'=> true, 'fullname'=>'Gogo'));
+        //2. construct content
+        $sql_selected = "select rs_relief_info.lesson_id, start_time_index, end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.date = DATE('".$date."');";
+        $selected_result = Constant::sql_execute($db_con, $sql_selected);
+        if(is_null($selected_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__);
+        }
+        
+        //a list of relief teacher, with their relief duties
+        //{accname => {unique_relief_key=>{...}, ...}, ...}
+        $list = Array();
+        foreach($selected_result as $row)
+        {
+            $accname = $row['relief_teacher'];
+            
+            if(!array_key_exists($accname, $list))
+            {
+                $list[$accname] = Array();
+            }
+            
+            $unique_relief_key = $row['lesson_id'].$row['start_time_index'].$row['end_time_index'];
+            if(array_key_exists($unique_relief_key, $list[$accname]))
+            {
+                if(!empty($row['class_name']))
+                {
+                    $list[$accname][$unique_relief_key]['class'][] = $row['class_name'];
+                }
+            }
+            else
+            {
+                $venue = empty($row['venue'])?"":$row['venue'];
+                $subject = empty($row['subj_code'])?"":$row['subj_code'];
+                
+                $one_relief = Array(
+                    "start_time" => $row['start_time_index'] - 0,
+                    "end_time" => $row['end_time_index'] - 0,
+                    "subject" => $subject,
+                    "venue" => $venue,
+                    "class" => Array()
+                );
+                
+                if(!empty($row['class_name']))
+                {
+                    $one_relief['class'][] = $row['class_name'];
+                }
+                
+                $list[$accname][$unique_relief_key] = $one_relief;
+            }
+        }
+        
+        //3. inform all teachers (Teacher::getTeacherContact)
+        $teacher_list = Teacher::getTeacherContact();
+        
+        $sms_input = Array();
+        foreach($list as $key=>$one)
+        {
+            $accname = $key;
+            
+            $phone = "";
+            $email = "";
+            $name = "";
+            
+            if(array_key_exists($accname, $teacher_list))
+            {
+                $phone = $teacher_list[$accname]['phone'];
+                $email = $teacher_list[$accname]['email'];
+                $name = $teacher_list[$accname]['name'];
+            }
+            
+            $message = "";
+            
+            $index = 1;
+            foreach($one as $a_relief)
+            {
+                $start_time = SchoolTime::getTimeValue($a_relief['start_time']);
+                $end_time = SchoolTime::getTimeValue($a_relief['end_time']);
+                
+                $classes = implode(",", $a_relief['class']);
+                $subject = $a_relief['subject'];
+                $venue = empty($a_relief['venue'])?"in classroom":$a_relief['venue'];
+                
+                $message .= "|    $index : On $date $start_time-$end_time take relief for $classes subject-$subject venue-$venue  |";
+                
+                $index++;
+            }
+            
+            $one_teacher = Array(
+                "phoneNum" => $phone,
+                "name" => $name,
+                "accName" => $accname,
+                "message" => $message
+            );
+            
+            $sms_input[] = $one_teacher;
+        }
+        
+        sendSMS($sms_input, $date);
     }
     
     public static function allSchduleIndex()

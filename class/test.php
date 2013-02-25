@@ -382,7 +382,7 @@ foreach($result as $key=>$value)
  * 
  */
 
-//echo TimetableDB::checkTimetableConflict(0, Array(10, 11), "TMP5555555", "2013/2/06", "N111310111JC10");
+//echo TimetableDB::checkTimetableConflict(0, Array(10, 11), "TMP2222222", "2013/2/06", "N111310111JC10");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
@@ -437,6 +437,17 @@ foreach($result as $key => $row)
 }
  * 
  */
+/*
+$result = SchedulerDB::approve(0, '2013-02-06');
+foreach($result as $row)
+{
+    echo $row['accName']."<br>";
+    echo $row['name']."<br>";
+    echo $row['phoneNum']."<br>";
+    echo $row['message']."<br>";
+    echo "<br>";
+}
+ * 
+ */
 
-//SchedulerDB::approve(2, '2013-02-06');
 ?>

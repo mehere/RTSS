@@ -1077,7 +1077,7 @@ class Teacher {
             throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
         }
         
-        $sql_ifins_contact = "select user_id, user_mobile, user_email from student_details where user_position = 'Teacher';";
+        $sql_ifins_contact = "select user_id, user_name, user_mobile, user_email from student_details where user_position = 'Teacher';";
         $ifins_result = Constant::sql_execute($db_con_ifins, $sql_ifins_contact);
         if(is_null($ifins_result))
         {
@@ -1088,10 +1088,12 @@ class Teacher {
         {
             $phone = empty($row['user_mobile'])?"":$row['user_mobile'];
             $email = empty($row['user_email'])?"":$row['user_email'];
+            $name = empty($row['user_name'])?"":$row['user_name'];
             
             $result[$row['user_id']] = Array(
                 "phone" => $phone,
-                "email" => $email
+                "email" => $email,
+                "name" => $name
             );
         }
         
@@ -1102,7 +1104,7 @@ class Teacher {
             throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
         }
         
-        $sql_ntu_contact = "select teacher_id, mobile, email from rs_temp_relief_teacher;";
+        $sql_ntu_contact = "select teacher_id, name, mobile, email from rs_temp_relief_teacher;";
         $ntu_result = Constant::sql_execute($db_con, $sql_ntu_contact);
         if(is_null($ntu_result))
         {
@@ -1113,10 +1115,12 @@ class Teacher {
         {
             $phone = empty($row['mobile'])?"":$row['mobile'];
             $email = empty($row['email'])?"":$row['email'];
+            $name = empty($row['name'])?"":$row['name'];
             
             $result[$row['teacher_id']] = Array(
                 "phone" => $phone,
-                "email" => $email
+                "email" => $email,
+                "name" => $name
             );
         }
         
