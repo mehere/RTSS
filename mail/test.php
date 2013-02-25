@@ -66,7 +66,7 @@ for ($i = 3; $i < 4; $i++) {
     $to[$i] = array("name" => "Virgil Cai", "email" => "ryujicai@hotmail.com", "subject" => "FYP Email Testing", "message" => $message, "attachment" => "hahahahahah");    
 }
 
-$from = array("name" => "Cai Haolan", "email" => "ryujicai@gmail.com", "password" => "lanjie1314", "smtp" => "smtp.gmail.com", "port" => 465, "encryption" => "ssl");
+$from = array("name" => "Cai Haolan", "email" => "ryujicai@gmail.com", "password" => "haha", "smtp" => "smtp.gmail.com", "port" => 465, "encryption" => "ssl");
 
 sendMail($from, $to);
 ?>
