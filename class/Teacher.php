@@ -1,6 +1,7 @@
 <?php
 
 require_once 'util.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
 
 class Teacher {
 
@@ -161,7 +162,7 @@ class Teacher {
              *
              */
 
-            $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['name'];
+            $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"":$teacher_dict[$row['teacher_id']]['name'];
             if(strcmp(substr($each_record['accname'], 0, 3), "TMP") === 0)
             {
                 $each_record['type'] = Constant::$teacher_type[2];
@@ -1053,7 +1054,7 @@ class Teacher {
         {
             $result['numOfRelief'] += $row['num_of_slot'] - 0;
 
-            $one_relief = Array(Array($row['date'], Constant::$time_conversion[$row['start_time_index']]), Array($row['date'], Constant::$time_conversion[$row['end_time_index']]));
+            $one_relief = Array(Array($row['date'], SchoolTime::getTimeValue($row['start_time_index'])), Array($row['date'], SchoolTime::getTimeValue($row['end_time_index'])));
 
             $result['relief'][] = $one_relief;
         }
@@ -1061,7 +1062,71 @@ class Teacher {
         return $result;
     }
 
-
+    /**
+     * return all teacher's contact
+     * @return array {"acc1" => {"phone"=>xxx, "email"=>xxx}}
+     */
+    public static function getTeacherContact()
+    {
+        $result = Array();
+        
+        //normal teacher
+        $db_con_ifins = Constant::connect_to_db("ifins");
+        if(empty($db_con_ifins))
+        {
+            throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
+        }
+        
+        $sql_ifins_contact = "select user_id, user_name, user_mobile, user_email from student_details where user_position = 'Teacher';";
+        $ifins_result = Constant::sql_execute($db_con_ifins, $sql_ifins_contact);
+        if(is_null($ifins_result))
+        {
+            throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
+        }
+        
+        foreach($ifins_result as $row)
+        {
+            $phone = empty($row['user_mobile'])?"":$row['user_mobile'];
+            $email = empty($row['user_email'])?"":$row['user_email'];
+            $name = empty($row['user_name'])?"":$row['user_name'];
+            
+            $result[$row['user_id']] = Array(
+                "phone" => $phone,
+                "email" => $email,
+                "name" => $name
+            );
+        }
+        
+        //temp teacher
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
+        }
+        
+        $sql_ntu_contact = "select teacher_id, name, mobile, email from rs_temp_relief_teacher;";
+        $ntu_result = Constant::sql_execute($db_con, $sql_ntu_contact);
+        if(is_null($ntu_result))
+        {
+            throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
+        }
+        
+        foreach($ntu_result as $row)
+        {
+            $phone = empty($row['mobile'])?"":$row['mobile'];
+            $email = empty($row['email'])?"":$row['email'];
+            $name = empty($row['name'])?"":$row['name'];
+            
+            $result[$row['teacher_id']] = Array(
+                "phone" => $phone,
+                "email" => $email,
+                "name" => $name
+            );
+        }
+        
+        return $result;
+    }
+    
     private static function getAbbreMatch()
     {
         $result = Array();
@@ -1095,7 +1160,7 @@ class Teacher {
      * @param string $datetime_to
      * @return int number of time slot in between, excludig holidays; -1 if error
      */
-    private static function calculateLeaveSlot($teacher_id, $datetime_from, $datetime_to)
+    public static function calculateLeaveSlot($teacher_id, $datetime_from, $datetime_to)
     {
         $datetime_from_arr = explode(" ", trim($datetime_from));
         $datetime_to_arr = explode(" ", trim($datetime_to));
@@ -1103,30 +1168,23 @@ class Teacher {
         $start_date = new DateTime($datetime_from_arr[0]);
         $end_date = new DateTime($datetime_to_arr[0]);
 
-        //to change
-        $readable_time_from = str_replace(":", "", $datetime_from_arr[1]);
-        $readable_time_to = str_replace(":", "", $datetime_to_arr[1]);
+        $readable_time_from = $datetime_from_arr[1];
+        $readable_time_to = $datetime_to_arr[1];
         $first_index = 1;
         $last_index = 15;
 
-        if(!array_key_exists($readable_time_from, Constant::$inverse_time_conversion))
+        $start_time_index = SchoolTime::getTimeIndex($readable_time_from);
+        $end_time_index = SchoolTime::getTimeIndex($readable_time_to);
+        
+        if($start_time_index === -1)
         {
             $start_time_index = $first_index;
         }
-        else
-        {
-            $start_time_index = Constant::$inverse_time_conversion[$readable_time_from];
-        }
-        if(!array_key_exists($readable_time_to, Constant::$inverse_time_conversion))
+        if($end_time_index === -1)
         {
             $end_time_index = $last_index;
         }
-        else
-        {
-            $end_time_index = Constant::$inverse_time_conversion[$readable_time_to];
-        }
-        //end
-
+        
         $interval = $end_date->diff($start_date);
 
         $num_of_slot = 0;

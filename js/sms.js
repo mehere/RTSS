@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var formS=document.forms['switch'];
+    var formS=document.forms['console'];
     $(formS['date-display']).datepicker({
         beforeShowDay: $.datepicker.noWeekends,
         dateFormat: "dd/mm/yy",
@@ -20,20 +20,5 @@ $(document).ready(function(){
         }
     });
 
-    $(formS['accname']).change(function(){
-        this.form.submit();
-    });
 
-    $("#print-individual").click(function(){
-        this.href += "?" + $(formS).serialize();
-
-        return true;
-    });
-
-    $("#print-relief").click(function(){
-        var dataGet={"date": formS['date'].value};
-        this.href += "?" + $.param(dataGet);
-
-        return true;
-    });
 });

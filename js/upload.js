@@ -47,7 +47,7 @@ $(document).ready(function(){
 
     $(formAdd).submit(function(){
         var failToSubmit=false;
-        $('[type=text]', this).each(function(){
+        $('[type="text"][name!="venue"]', this).each(function(){
             if (!$.trim(this.value))
             {
                 $("#dialog-alert").html(ALERT_TEXT[0]).dialog( "option", "title", "Add AED Timetable" ).dialog("open");
@@ -192,7 +192,7 @@ $(document).ready(function(){
                     dataPost["time-to-"+num]=time-0+1+classObj['period'];
                     dataPost["class-"+num]=classObj['class'].join(';');
                     dataPost["subject-"+num]=classObj['subject'];
-                    dataPost["venue-"+num]=classObj['subject'];
+                    dataPost["venue-"+num]=classObj['venue'];
                     dataPost["isHighlighted-"+num]=classObj['isHighlighted']-0;
 
                     num++;
@@ -203,8 +203,6 @@ $(document).ready(function(){
         dataPost['num']=num;
 
         $.post(this.action, dataPost, function(data){
-            console.log(data);
-
             if (data['error'])
             {
                 $("#dialog-alert").html(ALERT_TEXT[3]).dialog("open");
@@ -219,7 +217,7 @@ $(document).ready(function(){
     });
 
     // AED name auto complete
-    var nameList=[], nameAccMap=[];
+    var nameList=[], nameAccMap={};
     $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "AED"}, function(data){
         if (data['error']) return;
 
