@@ -750,6 +750,47 @@ class TimetableDB
         return $type.$year.$sem.$weekday.$start_time.$end_time.$class_short.$teacher_short;
     }
     
-    
+    /**
+     * given a date/year sem, this function returns the timetable ID
+     * @param $mode : 0: by date; 1: by year and sem
+     * @param array $para if mode=0, 'date'; if mode = 1, 'year'/'sem'
+     * @return int >=0 : timetable index; -1, time out of range
+     */
+    public static function checkTimetableExistence($mode, $para)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            return -1;
+        }
+        
+        if($mode === 0)
+        {
+            $date = $para['date'];
+            $sql_timetable_id = "select sem_id from ct_semester_info where DATE($date) between start_date and end_date;";
+        }
+        else if($mode === 1)
+        {
+            $year = $para['year'];
+            $sem = $para['sem'];
+            $sql_timetable_id = "select sem_id from ct_semester_info where year = '$year' and sem = $sem;";
+        }
+        else
+        {
+            return -1;
+        }
+        
+        $query_result = Constant::sql_execute($db_con, $sql_timetable_id);
+        if(is_null($query_result))
+        {
+            return -1;
+        }
+        if(count($query_result) === 0)
+        {
+            return -1;
+        }
+        
+        return $query_result[0]['sem_id'] - 0;
+    }
 }
 ?>
