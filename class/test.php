@@ -109,7 +109,7 @@ foreach($result as $key=>$value)
     echo "<br><br><br>";
 }
  * 
- */
+ */ 
 /*
 $result = $scheduling->getTempTeachers();
 foreach($result as $key=>$value)
@@ -135,7 +135,7 @@ foreach($result as $key=>$a_teacher)
 }
  * 
  */
-//echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 0915", "2013-01-08 1315");
+//echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 09:15", "2013-01-08 13:15");
 //$result = Teacher::getLessonSlotsOfTeacher("8104329");
 /*
 foreach($result as $key=>$a_result)
@@ -301,7 +301,7 @@ foreach($result as $key=>$a_result)
          *
          */
 /*
-$result = TimetableDB::getReliefTimetable("8937105", "1J", "2013-02-06", 1);
+$result = TimetableDB::getReliefTimetable("", "", "2013-02-06");
 foreach($result as $key=>$value)
 {
     echo 'start : '.$key.' :<br><br>';
@@ -325,7 +325,7 @@ foreach($result as $key=>$value)
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
 
-//$result = ListGenerator::getTeacherName('2013-02-06');
+//$result = ListGenerator::getTeacherName('2013-02-06', 0);
 //print_r($result);
 /*
 foreach($result as $key => $value)
@@ -369,7 +369,7 @@ $value = Teacher::individualReport('8104329');
 
 //echo SchedulerDB::scheduleResultNum();
 /*
-$result = TimetableDB::getIndividualTimetable('2013-02-06', "2644123", -1);
+$result = TimetableDB::getIndividualTimetable('2013-02-06', "7524281", -1);
 foreach($result as $key=>$value)
 {
     echo $key."<br>";
@@ -381,4 +381,73 @@ foreach($result as $key=>$value)
 }
  * 
  */
+
+//echo TimetableDB::checkTimetableConflict(0, Array(10, 11), "TMP2222222", "2013/2/06", "N111310111JC10");
+/*
+$result = SchedulerDB::getScheduleResult(0);
+
+foreach($result as $a => $b)
+{
+    echo $a." : <br>";
+    echo "-----------<br>";
+    foreach($b as $c)
+    {
+        echo $c['teacherOnLeave']."<br>";
+        echo $c['teacherAccName']."<br>";
+        echo $c['reliefTeacher']."<br>";
+        echo $c['reliefAccName']."<br>";
+        print_r($c['time']);
+        echo "<br>";
+        print_r($c['class']);
+        echo "<br><br>";
+    }
+}
+ * 
+ */
+
+//echo print_r(SchedulerDB::allSchduleIndex());
+
+/*
+$result = TimetableDB::timetableForSem("8104329");
+foreach($result as $key=>$row)
+{
+    echo "weekday : ".$key."<br>";
+    echo "-------------<br>";
+    foreach($row as $time=>$value)
+    {
+        echo "start : ".$time."<br>";
+        echo "subject : ".$value['subject']."<br>";
+        echo "venue : ".$value['venue']."<br>";
+        echo "period : ".$value['period']."<br>";
+        print_r($value['class']);
+        echo "<br><br>";
+    }
+}
+ * 
+ */
+
+//var_dump(SchedulerDB::override(0, "N131310111JC10", "6644942", "TMP1111111"));
+/*
+$result = Teacher::getTeacherContact();
+foreach($result as $key => $row)
+{
+    echo $key." : ";
+    print_r($row);
+    echo "<br>";
+}
+ * 
+ */
+/*
+$result = SchedulerDB::approve(0, '2013-02-06');
+foreach($result as $row)
+{
+    echo $row['accName']."<br>";
+    echo $row['name']."<br>";
+    echo $row['phoneNum']."<br>";
+    echo $row['message']."<br>";
+    echo "<br>";
+}
+ * 
+ */
+
 ?>

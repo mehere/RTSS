@@ -1,11 +1,18 @@
 <?php 
+$BYPASS_ADMIN=true;
 include_once '../php-head.php';
 
-require_once '../class/Teacher.php';
+require_once '../class/TimetableDB.php';
+require_once '../class/ListGenerator.php';
+
+if ($_SESSION['type'] != 'admin')
+{
+    $_GET['accname']=$_SESSION['accname'];
+}
 
 include_once '../head-frag.php';
 ?>
-<title>Report - Print</title>
+<title>Timetable - Print</title>
 <link href="/RTSS/css/print.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 .table-info {
@@ -21,10 +28,18 @@ include_once '../head-frag.php';
 <body>
 	<div id="container">
         <h2>
-            Timetable on <?php echo date('D ' . PageConstant::DATE_FORMAT_SG); ?>
+            Timetable on <em><?php echo date('D ' . PageConstant::DATE_FORMAT_SG); ?></em>
             <div style="font-size: 16px"><?php echo "Sem " . PageConstant::printSemRange(true) . ", " . PageConstant::printYearRange(true); ?></div>
-        </h2>        
-        <div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.</div>
+        </h2>
+        <div style="padding-bottom: 5px; margin-top: -10px">
+            <strong style="font-size: 1.1em;">
+                <?php 
+                    $teacherList=ListGenerator::getTeacherName($_GET['date']); 
+                    echo $teacherList[$_GET['accname']]; 
+                ?>
+            </strong>
+            <span style="color: red">(Relief classes are highlighted in red.)</span>
+        </div>        
         <table class="table-info">
             <thead>
                 <tr>
@@ -45,8 +60,7 @@ EOD;
             </thead>
             <tbody>
                 <?php
-                $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
-                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));        
+                $timetableIndividual=TimetableDB::getIndividualTimetable($_GET['date'], $_GET['accname']);
 
                 $timeArr=SchoolTime::getTimeArrSub(0, 0);
                 for ($i=0; $i < count($timeArr) - 1; $i++)

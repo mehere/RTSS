@@ -12,12 +12,15 @@ $(document).ready(function(){
         buttons: {
             OK: function(){
                 $(this).dialog("close");
+
+                var func=$(this).data('func');
+                if (func) func();
             }
         }
     });
 
     // AED name auto complete
-    var nameList=[], nameAccMap=[];
+    var nameList=[], nameAccMap={};
     $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "all_normal"}, function(data){
         if (data['error']) return;
 
@@ -65,5 +68,18 @@ $(document).ready(function(){
             $("#dialog-alert").html(ALERT_TEXT[0]).dialog("open");
             return false;
         }
+
+        $.post(this.action, $(formM).serializeArray(), function(data){
+            if (data['error'])
+            {
+                $("#dialog-alert").html(data['error']).dialog('open');
+            }
+            else
+            {
+                $("#dialog-alert").html("Upload timetable successfully.").dialog('open').data('func', function(){ window.location='admin.php'; });
+            }
+        }, 'json');
+
+        return false;
     });
 });
