@@ -17,7 +17,7 @@ class DBException extends Exception
     }
     
     public function __toString() {
-        return "Error Code : ".$this->code." <br>".$this->message."<br>Error at file <b>".$this->file_localtion."</b> line <b>".$this->line_location."</b><br>";
+        return "Error Code : ".$this->code.". ".$this->message.". Error at file ".$this->file_localtion." line ".$this->line_location."";
     }
 }
 ?>

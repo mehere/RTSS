@@ -3,9 +3,10 @@
     <h1><?php echo PageConstant::PRODUCT_NAME; ?></h1>
     <ul class="nav">
         <?php if ($_SESSION['type'] == 'admin') { ?>
-        <li><a href="/RTSS/relief/">Scheduling</a></li>
-        <li><a href="/RTSS/report/">Report</a></li>
-        <li><a href="/RTSS/timetable/admin.php">Timetable - Admin</a></li>
+            <li><a href="/RTSS/relief/">Scheduling</a></li>
+            <li><a href="/RTSS/SMS/">SMS Console</a></li>
+            <li><a href="/RTSS/report/">Report</a></li>
+            <li><a href="/RTSS/timetable/admin.php">Timetable - Admin</a></li>
         <?php } ?>
         <li><a href="/RTSS/timetable/">View Timetable</a></li>
     </ul>

@@ -8,6 +8,9 @@ if ($_SESSION['type'] == 'admin')
     $isAdmin=true;
 }
 
+require_once '../class/ListGenerator.php';
+require_once '../class/TimetableDB.php';
+
 include_once '../head-frag.php';
 ?>
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
@@ -35,11 +38,8 @@ include_once '../head-frag.php';
             <div class="main">
                 <form name="switch" class="control" action="" method="post">
                     <?php
-                        require_once '../class/ListGenerator.php';
-                        require_once '../class/TimetableDB.php';
-                        
                         $class=$_POST['class'];
-                        $teacher=$isAdmin?$_POST['teacher']:$_SESSION['accname'];
+                        $accname=$isAdmin?$_POST['accname']:$_SESSION['accname'];
 
                         $date=$_POST['date'];
                         if (!$date)
@@ -47,25 +47,28 @@ include_once '../head-frag.php';
                             $date=$_SESSION['scheduleDate'];
                         }
                     ?>
-                    <div class="line">Date: <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
-                        <?php if ($isAdmin) { ?>
-<!--                        <select name="class" style="margin-left: 30px">
-                            <option value="">-- Any --</option>
-                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getClassName($date), $class, true); ?>
-                        </select>-->
-                        <span style="margin-left: 30px;">Teacher: </span>
-                        <select name="accname">
-                            <option value="">----</option>
-                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $teacher); ?>
-                        </select>
-                        <?php } ?>
+                    <div class="line"><span>Date:</span> <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                     </div>
+                    <?php if ($isAdmin) { ?>
+                        <div class="line">                        
+                            <select name="accname">
+                                <option value="">-- Select a Teacher --</option>
+                                <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $_POST['accname']); ?>
+                            </select>                        
+                        </div>
+                    <?php } ?>
                 </form>
                 <?php
-                    $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);
+                    if ($isAdmin) 
+                    {
+                        $timetable=TimetableDB::getReliefTimetable('', '', $date);
+                        PageConstant::escapeHTMLEntity($timetable);
+                    }
                     
-                    $timetableIndividual=array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
-                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
+                    $timetableIndividual=TimetableDB::getIndividualTimetable($date, $accname);
+                    PageConstant::escapeHTMLEntity($timetableIndividual);
+//                    array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
+//                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
                     
                     $NO_PREIVEW=true;
                     include 'relief-timetable-frag.php'; 

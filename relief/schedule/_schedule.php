@@ -4,8 +4,8 @@ ini_set("memory_limit", "512M");
 define("NUM_STATES_REQUIRED", 3);
 define("TIME_TO_WAIT", 10);
 
-include_once '../../constant.php';
 require_once '../../php-head.php';
+
 spl_autoload_register(
         function ($class)
         {
@@ -127,7 +127,8 @@ try
 } catch (DBException $e)
 {
     echo "DB Error";
-    echo $e->getMessage();
+    //echo $e->getMessage();
+    echo $e;
     exit();
 }
 
@@ -363,17 +364,19 @@ if ($successStates->numberStates > 0)
 //    print_r($successResults);
     try
     {
-        SchedulerDB::setScheduleResult($successResults);
-        $destination = "";
-        header($destination);
+        SchedulerDB::setScheduleResult($successResults, $dateString);        
     } catch (DBException $e)
     {
         // To-Do:
         // Database Error
+        $_SESSION['scheduleError']="Database error.";
     }
 } else
 {
     ///To-Do:
     // Failure Case
+    $_SESSION['scheduleError']="Failed to find a scheduling result.";
 }
+
+header("Location: result.php");
 ?>
