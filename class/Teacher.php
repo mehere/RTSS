@@ -40,29 +40,22 @@ class Teacher {
     public static function getTeachersAccnameAndFullname(&$teacher_list)
     {
         //get abbre-accname list
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
+        $db_con = Constant::connect_to_db('ntu');
 
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-        if (!$db_con)
+        if (empty($db_con))
         {
             throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
 
-        mysql_select_db($db_name, $db_con);
-
         $sql_query = "select * from ct_name_abbre_matching;";
-        $result = mysql_query($sql_query);
-        if(!$result)
+        $result = Constant::sql_execute($db_con, $sql_query);
+        if(is_null($result))
         {
-            throw new DBException("Fail to query abbre accname match", __FILE__, __LINE__);
+            throw new DBException("Fail to query abbre accname match", __FILE__, __LINE__, 2);
         }
 
         $abbre_dict = Array();
-        while($row = mysql_fetch_array($result))
+        foreach($result as $row)
         {
             $abbre_dict[str_replace(" ", "_", $row['abbre_name'])] = $row['teacher_id'];
         }
@@ -95,19 +88,12 @@ class Teacher {
         //query teacher dict
         $teacher_dict = Teacher::getAllTeachers();
 
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
+        $db_con = Constant::connect_to_db('ntu');
 
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-        if (!$db_con)
+        if (empty($db_con))
         {
-            return $result;
+            throw new DBException('Fail to query teacher on leave', __FILE__, __LINE__);
         }
-
-        mysql_select_db($db_name);
 
         //start
         //query relief info to check whether scheduled
@@ -135,16 +121,16 @@ class Teacher {
 
         //query leave
         $sql_query_leave = "select *, DATE_FORMAT(rs_leave_info.start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_leave_info.end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info
-            where '".mysql_real_escape_string($query_date)."' between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
+            where DATE('mysql_real_escape_string(trim($query_date))') between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
 
-        $query_leave_result = mysql_query($sql_query_leave);
+        $query_leave_result =  Constant::sql_execute($db_con, $sql_query_leave);
 
-        if(!$query_leave_result)
+        if(is_null($query_leave_result))
         {
-            return $result;
+            throw new DBException('Fail to query teacher on leave', __FILE__, __LINE__, 2);
         }
 
-        while($row = mysql_fetch_assoc($query_leave_result))
+        foreach($query_leave_result as $row)
         {
             $each_record = Array();
             $each_record['accname'] = $row['teacher_id'];
@@ -173,7 +159,7 @@ class Teacher {
             }
             $each_record['handphone'] = empty($teacher_dict[$row['teacher_id']])?"Teacher not found":$teacher_dict[$row['teacher_id']]['mobile'];
 
-            array_push($result, $each_record);
+            $result[] = $each_record;
         }
         //end
 
@@ -191,7 +177,7 @@ class Teacher {
 
         if (empty($db_con))
         {
-            return $result;
+            throw new DBException("Fail to query temporary teachers", __FILE__, __LINE__);
         }
 
         if(!empty($query_date))
@@ -204,14 +190,14 @@ class Teacher {
             $sql_query_temp_teacher = "select * from rs_temp_relief_teacher;";
         }
 
-        $query_temp_teacher = mysql_query($sql_query_temp_teacher);
+        $query_temp_teacher = Constant::sql_execute($db_con, $sql_query_temp_teacher);
 
-        if(!$query_temp_teacher)
+        if(is_null($query_temp_teacher))
         {
-            return $result;
+            throw new DBException("Fail to query temporary teachers", __FILE__, __LINE__, 2);
         }
 
-        while($row = mysql_fetch_assoc($query_temp_teacher))
+        foreach($query_temp_teacher as $row)
         {
             $one_teacher['accname'] = $row['teacher_id'];
             $one_teacher['fullname'] = $row['name'];
@@ -252,9 +238,9 @@ class Teacher {
         {
             $ifins_db_con = Constant::connect_to_db("ifins");
 
-            if (!$ifins_db_con)
+            if (empty($ifins_db_con))
             {
-                return Array();
+                throw new DBException("Fail to query teachers", __FILE__, __LINE__);
             }
 
             if(empty($type) || strcmp($type, "all_normal")===0)
@@ -293,18 +279,20 @@ class Teacher {
                 }
             }
 
-            $query_normal_result = mysql_query($sql_query_normal);
+            $query_normal_result = Constant::sql_execute($db_con, $sql_query_normal);
 
-            if($query_normal_result)
+            if(is_null($query_normal_result))
             {
-                while($row = mysql_fetch_assoc($query_normal_result))
-                {
-                    $normal_list[] = Array(
-                        'fullname' => $row['user_name'],
-                        'accname' => $row['user_id'],
-                        'type' => $row['dept_name']
-                    );
-                }
+                throw new DBException("Fail to query teachers", __FILE__, __LINE__, 2);
+            }
+            
+            foreach($query_normal_result as $row)
+            {
+                $normal_list[] = Array(
+                    'fullname' => $row['user_name'],
+                    'accname' => $row['user_id'],
+                    'type' => $row['dept_name']
+                );
             }
         }
         if(empty($type) || strcmp($type, "temp")===0)
@@ -313,22 +301,24 @@ class Teacher {
 
             if (!$db_con)
             {
-                return Array();
+                throw new DBException("Fail to query teachers", __FILE__, __LINE__);
             }
 
             $sql_query_temp = "select teacher_id, name from rs_temp_relief_teacher order by name;";
-            $query_temp_result = mysql_query($sql_query_temp);
+            $query_temp_result = Constant::sql_execute($db_con, $sql_query_temp);
 
-            if($query_temp_result)
+            if(is_null($query_temp_result))
             {
-                while($row = mysql_fetch_assoc($query_temp_result))
-                {
-                    $temp_list[] = Array(
-                        'fullname' => $row['name'],
-                        'accname' => $row['teacher_id'],
-                        'type' => 'Temp'
-                    );
-                }
+                throw new DBException("Fail to query teachers", __FILE__, __LINE__, 2);
+            }
+            
+            while($row = mysql_fetch_assoc($query_temp_result))
+            {
+                $temp_list[] = Array(
+                    'fullname' => $row['name'],
+                    'accname' => $row['teacher_id'],
+                    'type' => 'Temp'
+                );
             }
         }
 
@@ -379,30 +369,23 @@ class Teacher {
 
         if(substr($accname, 0, 3) === 'TMP')
         {
-            $db_url = Constant::db_url;
-            $db_username = Constant::db_username;
-            $db_password = Constant::db_password;
-            $db_name = Constant::db_name;
+            $db_con = Constant::connect_to_db('ntu');
 
-            $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-            if (!$db_con)
+            if (empty($db_con))
             {
                 return $result;
             }
-
-            mysql_select_db($db_name);
 
             //with full name, query information from ifins_2012.actatek_user
-            $sql_query_detail = "select * from rs_temp_relief_teacher where teacher_id = '".mysql_real_escape_string($accname)."';";
-            $query_result = mysql_query($sql_query_detail);
+            $sql_query_detail = "select * from rs_temp_relief_teacher where teacher_id = '".mysql_real_escape_string(trim($accname))."';";
+            $query_result = Constant::sql_execute($db_con, $sql_query_detail);
 
-            if(!$query_result)
+            if(empty($query_result))
             {
                 return $result;
             }
 
-            $row = mysql_fetch_array($query_result);
+            $row = $query_result[0];
             if(!$row)
             {
                 return $result;
@@ -418,30 +401,23 @@ class Teacher {
         }
         else
         {
-            $ifins_db_url = Constant::ifins_db_url;
-            $ifins_db_username = Constant::ifins_db_username;
-            $ifins_db_password = Constant::ifins_db_password;
-            $ifins_db_name = Constant::ifins_db_name;
-
-            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
-
-            if (!$ifins_db_con)
+            $ifins_db_con = Constant::connect_to_db('ifins');
+            
+            if (empty($ifins_db_con))
             {
                 return $result;
             }
-
-            mysql_select_db($ifins_db_name);
 
             //with full name, query information from ifins_2012.actatek_user
-            $sql_query_detail = "select * from actatek_user where user_id = '".mysql_real_escape_string($accname)."' and user_position = 'Teacher';";
-            $ifins_query_result = mysql_query($sql_query_detail);
+            $sql_query_detail = "select * from actatek_user where user_id = '".mysql_real_escape_string(trim($accname))."' and user_position = 'Teacher';";
+            $ifins_query_result = Constant::sql_execute($db_con, $sql_query_detail);
 
-            if(!$ifins_query_result)
+            if(empty($ifins_query_result))
             {
                 return $result;
             }
 
-            $ifins_row = mysql_fetch_array($ifins_query_result);
+            $ifins_row = $ifins_query_result[0];
             if(!$ifins_row)
             {
                 return $result;
@@ -481,18 +457,18 @@ class Teacher {
             $db_con = Constant::connect_to_db("ntu");
             if(empty($db_con))
             {
-                return Array();
+                throw new DBException("Fail to get exclude list", __FILE__, __LINE__);
             }
             $sql_query_exclude = "select * from rs_exclude_list;";
-            $query_exclude_result = mysql_query($sql_query_exclude);
-            if(!$query_exclude_result)
+            $query_exclude_result = Constant::sql_execute($db_con, $sql_query_exclude);
+            if(is_null($query_exclude_result))
             {
-                return Array();
+                throw new DBException("Fail to get exclude list", __FILE__, __LINE__, 2);
             }
 
             $result = Array();
 
-            while($row = mysql_fetch_assoc($query_exclude_result))
+            foreach($query_exclude_result as $row)
             {
                 $result[] = $row['teacher_id'];
             }
@@ -514,19 +490,12 @@ class Teacher {
      */
     public static function add($accname, $prop, $entry)
     {
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
+        $db_con = Constant::connect_to_db('ntu');
 
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-        if (!$db_con)
+        if (empty($db_con))
         {
             return -2;
         }
-
-        mysql_select_db($db_name);
 
         if(strcmp($prop, "leave")===0)
         {
@@ -544,7 +513,7 @@ class Teacher {
                 ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
                     '".mysql_real_escape_string(trim($entry['datetime-from']))."', '".mysql_real_escape_string(trim($entry['datetime-to']))."', 'NO', ".$num_of_slot.");";
 
-            $insert_leave_result = mysql_query($sql_insert_leave);
+            $insert_leave_result = Constant::sql_execute($db_con, $sql_insert_leave);
 
             if(!$insert_leave_result)
             {
@@ -605,7 +574,7 @@ class Teacher {
                     ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($fullname))."', '".mysql_real_escape_string(trim($handphone))."',
                         '".mysql_real_escape_string(trim($email))."', '".mysql_real_escape_string(trim($MT))."');";
 
-                $insert_temp_result = mysql_query($sql_insert_temp_teacher);
+                $insert_temp_result = Constant::sql_execute($db_con, $sql_insert_temp_teacher);
 
                 if(!$insert_temp_result)
                 {
@@ -618,7 +587,7 @@ class Teacher {
                 ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($entry['datetime-from']))."',
                     '".mysql_real_escape_string(trim($entry['datetime-to']))."', '".mysql_real_escape_string(trim($temp_remark))."');";
 
-            $insert_temp_time_result = mysql_query($sql_insert_temp_time);
+            $insert_temp_time_result = Constant::sql_execute($db_con, $sql_insert_temp_time);
 
             if(!$insert_temp_time_result)
             {
@@ -635,25 +604,18 @@ class Teacher {
 
     public static function delete($leaveIDList, $prop)
     {
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
+        $db_con = Constant::connect_to_db('ntu');
 
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-        if (!$db_con)
+        if (empty($db_con))
         {
             return false;
         }
-
-        mysql_select_db($db_name);
 
         if(strcmp($prop, "leave") === 0)
         {
             $sql_delete_leave = "delete from rs_leave_info where leave_id in (".  implode(', ', $leaveIDList).");";
 
-            $delete_leave_result = mysql_query($sql_delete_leave);
+            $delete_leave_result = Constant::sql_execute($db_con, $sql_delete_leave);
 
             if(!$delete_leave_result)
             {
@@ -666,7 +628,7 @@ class Teacher {
         {
             $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";
 
-            $delete_temp_result = mysql_query($sql_delete_temp);
+            $delete_temp_result = Constant::sql_execute($db_con, $sql_delete_temp);
 
             if(!$delete_temp_result)
             {
@@ -691,19 +653,12 @@ class Teacher {
      */
     public static function edit($leaveID, $prop, $change)
     {
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
+        $db_con = Constant::connect_to_db('ntu');
 
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-        if (!$db_con)
+        if(empty($db_con))
         {
             return false;
         }
-
-        mysql_select_db($db_name);
 
         if(empty($change) || count($change)===0)
         {
@@ -733,13 +688,13 @@ class Teacher {
             if(array_key_exists("datetime-from", $change) || array_key_exists("datetime-to", $change))
             {
                 $sql_query_leave = "select teacher_id, DATE_FORMAT(start_time, '%Y-%m-%d %H:%i') as start, DATE_FORMAT(end_time, '%Y-%m-%d %H:%i') as end from rs_leave_info where leave_id = ".$leaveID.";";
-                $query_leave_result = mysql_query($sql_query_leave);
-                if(!$query_leave_result)
+                $query_leave_result = Constant::sql_execute($db_con, $sql_query_leave);
+                if(is_null($query_leave_result))
                 {
                     return false;
                 }
 
-                $row = mysql_fetch_assoc($query_leave_result);
+                $row = $query_leave_result[0];
                 if(!$row)
                 {
                     return false;
@@ -764,7 +719,7 @@ class Teacher {
             $sql_update_leave = substr($sql_update_leave, 0 ,-1)." ";
             $sql_update_leave .= "where leave_id = ".$leaveID.";";
 
-            $update_leave_result = mysql_query($sql_update_leave);
+            $update_leave_result = Constant::sql_execute($db_con, $sql_update_leave);
 
             if(!$update_leave_result)
             {
@@ -785,7 +740,6 @@ class Teacher {
                 'datetime-from' => 'start_datetime',
                 'datetime-to' => 'end_datetime'
             );
-
 
             $sql_update_teacher = "update rs_temp_relief_teacher set ";
             $sql_update_temp = "update rs_temp_relief_teacher_availability set ";
@@ -813,12 +767,12 @@ class Teacher {
             if($teacher_change)
             {
                 $sql_get_teacher_id = "select teacher_id from rs_temp_relief_teacher_availability where temp_availability_id = ".mysql_real_escape_string(trim($leaveID)).";";
-                $get_teacher_id_result = mysql_query($sql_get_teacher_id);
-                if(!$get_teacher_id_result)
+                $get_teacher_id_result = Constant::sql_execute($db_con, $sql_get_teacher_id);
+                if(is_null($get_teacher_id_result))
                 {
                     return false;
                 }
-                $row = mysql_fetch_assoc($get_teacher_id_result);
+                $row = $get_teacher_id_result[0];
                 if(!$row)
                 {
                     return false;
@@ -831,7 +785,7 @@ class Teacher {
                 $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
                 $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
 
-                $update_teacher_result = mysql_query($sql_update_teacher);
+                $update_teacher_result = Constant::sql_execute($db_con, $sql_update_teacher);
 
                 if(!$update_teacher_result)
                 {
@@ -840,7 +794,7 @@ class Teacher {
             }
             if($temp_change)
             {
-                $update_temp_result = mysql_query($sql_update_temp);
+                $update_temp_result = Constant::sql_execute($db_con, $sql_update_temp);
 
                 if(!$update_temp_result)
                 {
@@ -868,13 +822,13 @@ class Teacher {
         }
 
         $sql_query_teacher = "select user_id, user_name, dept_name, user_mobile from student_details where user_position = 'Teacher';";
-        $result_teacher = mysql_query($sql_query_teacher);
-        if(!$result_teacher)
+        $result_teacher = Constant::sql_execute($ifins_db_con, $sql_query_teacher);
+        if(is_null($result_teacher))
         {
-            throw new DBException("Fail to query teacher from database", __FILE__, __LINE__);
+            throw new DBException("Fail to query teacher from database", __FILE__, __LINE__, 2);
         }
 
-        while($row = mysql_fetch_array($result_teacher))
+        foreach($result_teacher as $row)
         {
             $teacher_dict[$row['user_id']] = Array(
                 'name' => $row['user_name'],
@@ -915,7 +869,8 @@ class Teacher {
         if($have_exist)
         {
             $sql_delete_exist = substr($sql_delete_exist, 0, -1).');';
-            if(!mysql_query($sql_delete_exist))
+            $delete_exist_result = Constant::sql_execute($db_con, $sql_delete_exist);
+            if(is_null($delete_exist_result))
             {
                 return false;
             }
@@ -923,7 +878,8 @@ class Teacher {
 
         $sql_insert_match = substr($sql_insert_match, 0, -1).';';
 
-        if(!mysql_query($sql_insert_match))
+        $insert_result = Constant::sql_execute($db_con, $sql_insert_match);
+        if(is_null($insert_result))
         {
             return false;
         }
@@ -938,29 +894,29 @@ class Teacher {
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
-            return $result;
+            throw new DBException('Fail to query report', __FILE__, __LINE__);
         }
 
         $mc_dic = Array();
         $sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info group by teacher_id";
-        $query_mc_result = mysql_query($sql_query_mc);
-        if(!$query_mc_result)
+        $query_mc_result = Constant::sql_execute($db_con, $sql_query_mc);
+        if(is_null($query_mc_result))
         {
-            return $result;
+            throw new DBException('Fail to query report', __FILE__, __LINE__, 2);
         }
-        while($row = mysql_fetch_assoc($query_mc_result))
+        foreach($query_mc_result as $row)
         {
             $mc_dic[$row["teacher_id"]] = $row["num_of_leave"];
         }
 
         $relief_dic = Array();
         $sql_query_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from rs_relief_info group by relief_teacher";
-        $query_relief_result = mysql_query($sql_query_relief);
-        if(!$query_relief_result)
+        $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+        if(is_null($query_relief_result))
         {
-            return $result;
+            throw new DBException('Fail to query report', __FILE__, __LINE__, 2);
         }
-        while($row = mysql_fetch_assoc($query_relief_result))
+        foreach($query_relief_result as $row)
         {
             $relief_dic[$row["relief_teacher"]] = $row["num_of_relief"];
         }
@@ -1022,18 +978,18 @@ class Teacher {
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
-            return $result;
+            throw new DBException('Fail to query individual report', __FILE__, __LINE__);
         }
 
         //leave
         $sql_query_leave = "select *, DATE_FORMAT(start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(start_time, '%H:%i') as start_time_point, TIME_FORMAT(end_time, '%H:%i') as end_time_point from rs_leave_info where teacher_id = '".mysql_real_escape_string(trim($accname))."';";
-        $query_leave_result = mysql_query($sql_query_leave);
-        if(!$query_leave_result)
+        $query_leave_result = Constant::sql_execute($db_con, $sql_query_leave);
+        if(is_null($query_leave_result))
         {
-            return $result;
+            throw new DBException('Fail to query individual report', __FILE__, __LINE__, 2);
         }
 
-        while($row = mysql_fetch_assoc($query_leave_result))
+        foreach($query_leave_result as $row)
         {
             $result['numOfMC'] += $row['num_of_slot'] - 0;
 
@@ -1043,14 +999,14 @@ class Teacher {
         }
 
         //relief
-        $sql_query_relief = "select *, DATE_FORMAT(date, '%Y/%m/%d') as date from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."';";
-        $query_relief_result = mysql_query($sql_query_relief);
-        if(!$query_relief_result)
+        $sql_query_relief = "select *, DATE_FORMAT(schedule_date, '%Y/%m/%d') as date from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."';";
+        $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+        if(is_null($query_relief_result))
         {
-            return $result;
+            throw new DBException('Fail to query individual report', __FILE__, __LINE__, 2);
         }
 
-        while($row = mysql_fetch_assoc($query_relief_result))
+        foreach($query_relief_result as $row)
         {
             $result['numOfRelief'] += $row['num_of_slot'] - 0;
 
@@ -1135,18 +1091,18 @@ class Teacher {
 
         if(empty($db_con))
         {
-            return $result;
+            throw new DBException('Fail to query name abbre match', __FILE__, __LINE__);
         }
 
         $sql_query_match = "select * from ct_name_abbre_matching;";
 
-        $query_match_result = mysql_query($sql_query_match);
-        if(!$query_match_result)
+        $query_match_result = Constant::sql_execute($db_con, $sql_query_match);
+        if(is_null($query_match_result))
         {
-            return $result;
+            throw new DBException('Fail to query name abbre match', __FILE__, __LINE__, 2);
         }
 
-        while($row = mysql_fetch_assoc($query_match_result))
+        foreach($query_match_result as $row)
         {
             $result[$row['teacher_id']] = $row['abbre_name'];
         }
@@ -1316,28 +1272,21 @@ class Teacher {
             5 => Array()
         );
 
-        $db_url = Constant::db_url;
-        $db_username = Constant::db_username;
-        $db_password = Constant::db_password;
-        $db_name = Constant::db_name;
-
-        $db_con = mysql_connect($db_url, $db_username, $db_password);
-
-        if (!$db_con)
+        $db_con = Constant::connect_to_db('ntu');
+        
+        if (empty($db_con))
         {
-            return $result;
+            throw new DBException('Fail to query lesson slot for teacher', __FILE__, __LINE__);
         }
 
-        mysql_select_db($db_name);
-
-        $sql_query_time_slot = "select distinct weekday, start_time, end_time from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id='".  mysql_real_escape_string($teacher_id)."';";
-        $query_time_slot_result = mysql_query($sql_query_time_slot);
-        if(!$query_time_slot_result)
+        $sql_query_time_slot = "select distinct weekday, start_time_index, end_time_index from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id='".mysql_real_escape_string($teacher_id)."';";
+        $query_time_slot_result = Constant::sql_execute($db_con, $sql_query_time_slot);
+        if(is_null($query_time_slot_result))
         {
-            return $result;
+            throw new DBException('Fail to query lesson slot for teacher', __FILE__, __LINE__, 2);
         }
 
-        while($row = mysql_fetch_array($query_time_slot_result))
+        foreach($query_time_slot_result as $row)
         {
             $result[$row['weekday']][] = Array($row['start_time'], $row['end_time']);
         }

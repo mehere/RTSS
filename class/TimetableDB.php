@@ -14,9 +14,13 @@ class TimetableDB
      * @param type $sem   '1' or '2'
      * @return Array : array of error message strings. Each of output[0] - output[6] represents a type of error. if, e.g. empty(output[1]), then there is no error type 1. echo output[0]~output[6] to see the error details. pay special attention of output[6], which represents abbre name not found error.
      */
-    public static function insertTimetable($lesson_list, $teacher_list, $year='13', $sem='1')
+    public static function insertTimetable($lesson_list, $teacher_list, $year='2013', $sem=1)
     {
+        //insert semester info
+        //$sql_insert_sem = "insert into ";
+        
         //teacher list
+        //temp - will delete later
         Teacher::getTeachersAccnameAndFullname($teacher_list);
         
         //sql statement construction
