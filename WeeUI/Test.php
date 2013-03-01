@@ -3,7 +3,7 @@
 spl_autoload_register(
         function ($class)
         {
-            include "./".$class . '.php';
+            include "./" . $class . '.php';
         });
 Template::printHeaderAndDoValidation(TRUE, "Hellooo", array("templatePage.js"), 1);
 ?>
@@ -111,7 +111,15 @@ Template::printHeaderAndDoValidation(TRUE, "Hellooo", array("templatePage.js"), 
 
         <tfoot></tfoot>
     </table>
+</div>
+<div style='clear:both;'></div>
+<div class='buttons'>
+    <button class='command red'><div class='icon'><img src='/RTSS/resources/images/redo.png'/></div><div class='words'><span>Re-Schedule All<br><small>The previous relief plan will be cancelled</small></span></div></button>
+    <button class='command blue'><div class='icon'><img src='/RTSS/resources/images/triangle.png'/></div><div class='words-single'><span>Schedule the remaining</span></div></button>
 
-    <?php
-    Template::printFooter();
-    ?>
+</div>
+<div style='clear:both;'></div>
+<?php
+
+Template::printFooter();
+?>
