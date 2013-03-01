@@ -15,9 +15,11 @@ class Template
 
     public static function printHeaderAndDoValidation($allowsAll, $title, $scripts, $mainIndex)
     {
+
         // To-Do: To check what kind of credentials is required
+        session_start();
         if (!$allowsAll){
-            
+
         }
 
 
@@ -198,6 +200,4 @@ class Template
     }
 
 }
-
-//put your code here
 ?>
