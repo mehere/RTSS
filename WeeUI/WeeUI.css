@@ -57,10 +57,15 @@ html, body{
 }
 
 body{
-    font: 14px/20px "Droid Sans Regular",Arial,Helvetica,sans-serif;
-    color: rgb(68, 68, 68);
+    font: 14px 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif;
+/*    color: rgb(68, 68, 68);*/
     min-width: 1000px;
 }
+
+p{
+   font: 14px/20px "Segoe UI",Arial,Helvetica,sans-serif;
+}
+
 
 div.container{
     min-height: 100%;
@@ -419,7 +424,7 @@ th.hovered.right{
 
 
 
-td{
+table.hovered tbody td{
     font-family: 'Open Sans',Verdana,Arial,Helvetica,sans-serif;
     font-weight: 300;
     font-size: 11pt;
@@ -492,6 +497,10 @@ div.colorbox span{
     background-color: rgb(255, 196, 13);
 }
 
+.red{
+    background-color:rgb(255, 23, 105);
+}
+
 button.right{
     float: right;
 }
@@ -514,14 +523,14 @@ div.accordion{
     display:inline-block;
     width: 100%;
 }
-
+/*
 button{
     font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif;
     font-weight: 400;
     font-size: 11pt;
     min-width: 90px;
     min-height: 32px;
-    height: 32px;
+        height: 32px;
     background-color: rgb(204, 204, 204);
     border: 1px solid transparent;
     color: rgb(53, 53, 53);
@@ -537,40 +546,102 @@ button{
     position: relative;
     letter-spacing: 0.02em;
 
+}*/
+
+
+div.buttons{
+    float: right;
+    margin-top: 50px;
+    vertical-align: middle;
+    display: inline;
+    white-space:nowrap;
+    overflow: no-content;
 }
 
 button.command{
-    height: 50px;
-    width: 140px;
-    text-align: center;
-    vertical-align: middle;
-/*    padding: 10px 20px;*/
-/*    height: auto;*/
-    color: #FFF;
-    font-family: 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
-    font-weight: 300;
-    font-size: 11pt;
-/*    letter-spacing: 0.02em;
-    line-height: 20px;*/
-
-}
-
-button:hover{
-    border: 2px solid black;
-}
-
-div.buttons{
-    margin-top: 50px;
-    text-align: center;
-}
-
-
-span.pic{
-    font-family: 'Segoe UI';
+    height: auto;
+    width: auto;
     color: white;
-    font-size: 14px;
+    border: 2px solid white;
+
+    text-align: left;
+    padding: 10px 20px;
+    font-family: 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+
+    font-smooth: always;
+
+    margin-right: 10px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
 }
 
-img.buttons-img{
-    height:14px
+button.command.red:hover{
+    background-color:rgb(155, 23, 90);
+}
+
+button.blue:hover{
+    background-color: rgb(36, 69, 154);;
+}
+
+button.command:active{
+    top:2px;
+    left:2px;
+}
+
+small:hover{
+    color: whitesmoke;
+}
+
+
+small{
+    color: whitesmoke;
+    display:inline-block;
+    font-family: 'Open Sans',Verdana,Arial,Helvetica,sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 20px;
+    font-size: 10pt;
+}
+
+button div.icon{
+    line-height: 45px;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    float:left;
+}
+
+button div.words, button div.words-single{
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    float: left;
+    width: auto;
+}
+
+div.words span{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+div.words-single span{
+    display: inline-block;
+    line-height: 45px;
+}
+
+button.command img{
+    height: 17px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+
+.ui-datepicker table{
+    font-size: 10px;
 }

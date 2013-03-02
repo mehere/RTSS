@@ -44,7 +44,7 @@ $(document).ready(function(){
             this.value="";
         }
     }).focusin(function(){
-        $(this).autocomplete("search", "");
+        $(this).autocomplete("search", '');
     });;
 
     // Submit

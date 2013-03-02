@@ -5,7 +5,7 @@ $(document).ready(function(){
             "Failed to delete this teacher."],
         FADE_DUR=400;
 
-    var DATE_WARN_TEXT=["Date should not be empty.", "To-Date should be no smaller than From-Date."];
+    var DATE_WARN_TEXT=["Date should not be empty.", "Date-To should be no smaller than Date-From."];
     function setDatePicker(target1, target2, altTarget1, altTarget2)
     {
         var curDate1=altTarget1.value?new Date(altTarget1.value):new Date(),

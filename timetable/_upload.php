@@ -42,9 +42,11 @@ try
         $arrLesson = $analyzer->arrLessons;
         TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
         $destination = "/RTSS/timetable/admin.php";
+        
+        $_SESSION['uploadSuccess']="Upload timetable successfully.";
     } else
     {
-        $_SESSION["abbrNameList"] = $unknownTeachers;
+        $_SESSION["abbrNameList"] = $unknownTeachers;        
         $destination = "/RTSS/timetable/namematch.php";
     }
 } catch (Exception $e)
