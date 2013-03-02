@@ -22,7 +22,7 @@ include_once '../head-frag.php';
 }
 
 .ui-dialog .ui-dialog-titlebar-close {
-  visibility: hidden;
+    visibility: hidden;
 }
 </style>
 </head>
