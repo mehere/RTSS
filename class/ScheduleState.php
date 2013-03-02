@@ -250,7 +250,6 @@ class ScheduleState
         $totalResults = array("relievedLessons" => $resultsRelief, "skippedLessons" => $resultsSkipped);
         return $totalResults;
     }
-
 }
 
 ?>

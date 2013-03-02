@@ -5,7 +5,7 @@ require_once '../class/TimetableDB.php';
 
 include_once '../head-frag.php';
 ?>
-<title>Report - Print</title>
+<title>Timetable - Print</title>
 <link href="/RTSS/css/print.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 .table-info {

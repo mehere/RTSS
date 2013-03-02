@@ -2,6 +2,7 @@
 
 require_once 'util.php';
 require_once 'Teacher.php';
+require_once 'TimetableDB.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -10,7 +11,14 @@ require_once 'Teacher.php';
 
 class ListGenerator
 {
-    public static function getTeacherName($date)
+
+    /**
+     * This function returns all teachers who has teaching duty on the date, including both normal and relief duty, regardless whether the teacher is on leave or not
+     * @param string $date 'yyyy-mm-dd'
+     * @param int $scheduleIndex can be -1 (after approve) or >=0 (preview before approve)
+     * @return array teachers' names. in case the teacher fullname cannot be found, accname is returned
+     */
+    public static function getTeacherName($date, $scheduleIndex)
     {
         $result = Array();
         $teacher_dict = Teacher::getAllTeachers();  
@@ -21,19 +29,27 @@ class ListGenerator
         
         if(empty($db_con))
         {
-            return $result;
+            throw new DBException('Fail to query teachers with duty on '.$date, __FILE__, __LINE__);
         }
         
+        //check timetable existence
+        $timetable_id = TimetableDB::checkTimetableExistence(0, array('date'=>$date));
+        if($timetable_id === -1)
+        {
+            throw new DBException('Database does not have timetable data on '.$date, __FILE__, __LINE__, 1);
+        }
+        
+        //query normal teacher
         $date_obj = new DateTime($date);
         $weekday = $date_obj->format('N');
         
-        //$sql_query_teacher = "select distinct ct_teacher_matching.teacher_id from rs_relief_info, ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = rs_relief_info.lesson_id and rs_relief_info.date = ".$date_str.";";
-        $sql_query_normal = "select distinct ct_teacher_matching.teacher_id from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.weekday = ".$weekday.";";
+        //**$sql_query_teacher = "select distinct ct_teacher_matching.teacher_id from rs_relief_info, ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.lesson_id = rs_relief_info.lesson_id and rs_relief_info.date = ".$date_str.";";
+        $sql_query_normal = "select distinct ct_teacher_matching.teacher_id from (ct_teacher_matching left join ct_lesson on ct_lesson.lesson_id = ct_teacher_matching.lesson_id) where ct_lesson.weekday = $weekday and ct_lesson.sem_id = $timetable_id;";
         
         $query_normal_result = Constant::sql_execute($db_con, $sql_query_normal);
         if(is_null($query_normal_result))
         {
-            return $result;
+            throw new DBException('Fail to query teachers with duty on '.$date, __FILE__, __LINE__);
         }
         
         foreach($query_normal_result as $row)
@@ -57,11 +73,19 @@ class ListGenerator
         }
         
         //relief teachers
-        $sql_query_teacher = "select distinct relief_teacher from rs_relief_info where DATE(date) = '$date';";
+        if($scheduleIndex === -1)
+        {
+            $sql_query_teacher = "select distinct relief_teacher from rs_relief_info where DATE(schedule_date) = DATE('$date');";
+        }
+        else
+        {
+            $sql_query_teacher = "select distinct relief_teacher from temp_each_alternative where schedule_id = $scheduleIndex;";
+        }
+        
         $query_teacher_result = Constant::sql_execute($db_con, $sql_query_teacher);
         if(is_null($query_teacher_result))
         {
-            return $result;
+            throw new DBException('Fail to query teachers with duty on '.$date, __FILE__, __LINE__);
         }
         
         foreach($query_teacher_result as $row)

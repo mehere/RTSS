@@ -43,7 +43,7 @@ $timeToArr=SchoolTime::getTimeArrSub(1, 0);
                 <?php
                 if (isset($_SESSION['uploadError'])){
                     $msg = $_SESSION['uploadError'];
-                    echo "<div class=\"error-msg\"> $msg</div>";
+                    echo "<div class=\"error-msg\">$msg</div>";
                 }
                 ?>
                 <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em" class="button" /></div>

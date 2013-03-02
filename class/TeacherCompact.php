@@ -84,15 +84,17 @@ class TeacherCompact
 
         foreach ($hisTimetable as $timeIndex => $aLesson)
         {
+            if (!empty($aLesson->classes))
+            {
+                $this->noTeachingPeriod++;
+            }
             if ($aLesson->isMandatory)
             {
                 $this->timetable[$timeIndex] = self::TYPE_LESSON;
-                $this->noTeachingPeriod++;
                 $this->noMandatoryPeriods++;
             } else
             {
                 $this->timetable[$timeIndex] = self::TYPE_OPTIONAL;
-                $this->noTeachingPeriod++;
             }
         }
     }
