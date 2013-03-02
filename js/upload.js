@@ -21,8 +21,68 @@ $(document).ready(function(){
         }
     });
 
+    if ($.trim($("#dialog-alert").html()))
+    {
+        $("#dialog-alert").dialog('open');
+    }
+
+    // Upload module
+    /*var DATE_WARN_TEXT=["Date of semester should not be empty.", "Date-To should be no smaller than Date-From."];
+    function setDatePicker(target1, target2, altTarget1, altTarget2)
+    {
+        var curDate1=altTarget1.value?new Date(altTarget1.value):'',
+            curDate2=altTarget2.value?new Date(altTarget2.value):'';
+        target1.datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            altField: altTarget1,
+            altFormat: "yy/mm/dd",
+            onSelect: function(dateText){
+                target2.datepicker( "option", "minDate", dateText );
+            },
+            onClose: function(dateText){
+                if (!dateText)
+                {
+                    var self=$(this);
+                    $("#dialog-alert").html(DATE_WARN_TEXT[0]).data('func', function(){
+                        self.datepicker('setDate', curDate1);
+                    }).dialog('open');
+                }
+            }
+        }).datepicker('setDate', curDate1);
+
+        target2.datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: curDate1,
+            altField: altTarget2,
+            altFormat: "yy/mm/dd",
+            onClose: function(dateText){
+                var self=$(this);
+                if (self.datepicker('getDate') < target1.datepicker('getDate'))
+                {
+                    $("#dialog-alert").html(DATE_WARN_TEXT[1]).data('func', function(){
+                        self.datepicker('setDate', target1.datepicker('getDate'));
+                    }).dialog('open');
+                }
+            }
+        }).datepicker('setDate', curDate2);
+    }
+
+    setDatePicker($(formT['date-from-display']), $(formT['date-to-display']), formT['date-from'], formT['date-to']);
+
+    $(formT).submit(function(){
+        if (!formT['date-from'].value || !formT['date-to'].value)
+        {
+            $("#dialog-alert").html(DATE_WARN_TEXT[0]).dialog('open');
+            return false;
+        }
+    });*/
+
     // Add AED
-    var formAdd=document.forms['add-class'], formAED=document.forms['AED'],
+    var formAdd=document.forms['add-class'], formAED=document.forms['AED'], formG=document.forms['AED-get'],
         matrixTime=[]; // [day][time]={subject, class[], venue, period, boxObj, isHighlighted};
 
     function constrainTimeSelect(selectFromObj, selectToObj)
@@ -47,7 +107,7 @@ $(document).ready(function(){
 
     $(formAdd).submit(function(){
         var failToSubmit=false;
-        $('[type="text"][name!="venue"]', this).each(function(){
+        $([this['subject']]).each(function(){
             if (!$.trim(this.value))
             {
                 $("#dialog-alert").html(ALERT_TEXT[0]).dialog( "option", "title", "Add AED Timetable" ).dialog("open");
@@ -58,7 +118,8 @@ $(document).ready(function(){
         if (failToSubmit) return false;
 
         var day=this['day'].value-0, time=this['time-from'].value-0,
-            period=Math.max(0, this['time-to'].value-this['time-from'].value) + 1;
+            period=this['period'].value ? this['period'].value-0 :
+                Math.max(0, this['time-to'].value-this['time-from'].value) + 1;
         for (var i=0; i<period; i++)
         {
             if (matrixTime[day] && matrixTime[day][time+i])
@@ -172,11 +233,6 @@ $(document).ready(function(){
             $("#dialog-alert").html("Please add at least one class to the timetable above.").dialog("open");
             return false;
         }
-        if (!this['accname'].value)
-        {
-            $("#dialog-alert").html("Please fill in all blanks.").dialog("open");
-            return false;
-        }
 
         var dataPost={"year": this['year'].value, "sem": this['sem'].value}, num=0;
         for (var day in matrixTime)
@@ -216,6 +272,48 @@ $(document).ready(function(){
         return false;
     });
 
+    // Retrieve AED timetable
+    $(formG).submit(function(){
+        if (!this['accname'].value)
+        {
+            $("#dialog-alert").html("Please fill in all blanks.").dialog("open");
+            return false;
+        }
+
+        $.getJSON(this.action, $(this).serializeArray(), function(data){
+            $.each(['accname', 'year', 'sem'], function(index, value){
+                formAED[value].value=formG[value].value;
+            });
+
+            matrixTime=[];
+            $('.subject', formAED).remove();
+
+            // Add new table
+            var timetable=data['timetable'];
+            for (var day in timetable)
+            {
+                for (var timeFrom in timetable[day])
+                {
+                    var lesson=timetable[day][timeFrom];
+
+                    formAdd['day'].value=day;
+                    formAdd['time-from'].value=timeFrom;
+                    formAdd['period'].value=lesson['period'];
+                    formAdd['subject'].value=lesson['subject'];
+                    formAdd['venue'].value=lesson['venue'];
+                    formAdd['class'].value=lesson['class'].join(',');
+
+                    $(formAdd).submit();
+                }
+
+            }
+
+            formAdd.reset();
+        });
+
+        return false;
+    });
+
     // AED name auto complete
     var nameList=[], nameAccMap={};
     $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "AED"}, function(data){
@@ -228,28 +326,27 @@ $(document).ready(function(){
         });
     });
 
-    $(formAED['fullname']).autocomplete({
+    $(formG['fullname']).autocomplete({
         source: nameList,
         delay: 0,
         autoFocus: true,
-        minLength: 0,
-        position: { my: "left bottom", at: "left top", collision: "none" }
+        minLength: 0
     }).focusout(function(){
-        var curText= $.trim(this.value), isMatch=false;
-        $.each(nameList, function(index, value){
-            if (curText.toLowerCase() == value.toLowerCase())
-            {
-                isMatch=true;
-                formAED["accname"].value=nameAccMap[value];
+            var curText= $.trim(this.value), isMatch=false;
+            $.each(nameList, function(index, value){
+                if (curText.toLowerCase() == value.toLowerCase())
+                {
+                    isMatch=true;
+                    formG["accname"].value=nameAccMap[value];
 
-                return false;
+                    return false;
+                }
+            });
+            if (!isMatch)
+            {
+                this.value="";
             }
+        }).focusin(function(){
+            $(this).autocomplete("search", '');
         });
-        if (!isMatch)
-        {
-            this.value="";
-        }
-    }).focusin(function(){
-        $(this).autocomplete("search", "");
-    });
 });

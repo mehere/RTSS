@@ -38,6 +38,10 @@ $timeToArr=SchoolTime::getTimeArrSub(1, 0);
                 	<select name="sem">
                     	<?php echo PageConstant::printSemRange(); ?>
                     </select>
+<!--                    <span style="margin-left: 20px">
+                        From:<input type="text" name="date-from-display" maxlength="10" class="date-field" /><input type="hidden" name="date-from" value="" />
+                        To:<input type="text" name="date-to-display" maxlength="10" class="date-field" /><input type="hidden" name="date-to" value="" />
+                    </span>-->
                 </div>
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
                 <?php
@@ -51,6 +55,20 @@ $timeToArr=SchoolTime::getTimeArrSub(1, 0);
             <hr style="margin: 0 30px" />
             <div class="main">
             	<h3 style="margin-bottom: 0; margin-top: 10px">Add AED Timetable</h3>
+                <form name="AED-get" method="get" action="_AED_timetable.php">
+                    <div class="row">
+                    	<span class="label">AED Name:</span><input type="text" name="fullname" /><input type="hidden" name="accname" />
+                        <span class="label">Year:</span>
+                        <select name="year">
+                            <?php echo PageConstant::printYearRange(); ?>
+                        </select>
+                        <span class="label">Sem:</span>
+                        <select name="sem">
+                            <?php echo PageConstant::printSemRange(); ?>
+                        </select>
+                        <input type="submit" class="button" value="Retrieve" style="margin-left: 30px" />
+                    </div>
+                </form>
                 <form name="add-class">
                     <table class="form-table">
                     	<thead>
@@ -93,6 +111,7 @@ EOD;
                                         echo PageConstant::formatOptionInSelect($timeToArr, '');
                                     ?>
                                 </select>
+                                <input type="hidden" name="period" />
                             </td>
                             <td class="label">Subject:</td>
                             <td><input type="text" name="subject" style="width: 90%" /></td>
@@ -106,7 +125,7 @@ EOD;
                             <td><input type="submit" class="button" value="Add" style="font-size: 14px" /></td>
                         </tr>
                     </table>
-                </form>
+                </form>                
                 <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
                     <table class="table-info">
                         <thead>
@@ -132,26 +151,20 @@ EOD;
                             ?>
                         </tbody>
                     </table>
+                    <input type="hidden" name="accname" /><input type="hidden" name="year" /><input type="hidden" name="sem" />
                     <div class="row">
-                    	<span class="label">AED Name:</span><input type="text" name="fullname" /><input type="hidden" name="accname" />
-                        <span class="label">Year:</span>
-                        <select name="year">
-                            <?php echo PageConstant::printYearRange(); ?>
-                        </select>
-                        <span class="label">Sem:</span>
-                        <select name="sem">
-                            <?php echo PageConstant::printSemRange(); ?>
-                        </select>
                         <input type="submit" class="button" value="Submit" style="margin-left: 30px" />
                     </div>
                 </form>
             </div>
-            <div id="dialog-alert"></div>
+            <div id="dialog-alert"><?php echo $_SESSION['uploadSuccess']; ?></div>
         </div>
     </div>
     <?php
         include '../sidebar-frag.php';
+        
         unset($_SESSION['uploadError']);
+        unset($_SESSION['uploadSuccess']);
     ?>
 </div>
 

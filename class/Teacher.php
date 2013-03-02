@@ -121,7 +121,7 @@ class Teacher {
 
         //query leave
         $sql_query_leave = "select *, DATE_FORMAT(rs_leave_info.start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_leave_info.end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info
-            where DATE('mysql_real_escape_string(trim($query_date))') between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
+            where DATE('".mysql_real_escape_string(trim($query_date))."') between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
 
         $query_leave_result =  Constant::sql_execute($db_con, $sql_query_leave);
 
@@ -279,7 +279,7 @@ class Teacher {
                 }
             }
 
-            $query_normal_result = Constant::sql_execute($db_con, $sql_query_normal);
+            $query_normal_result = Constant::sql_execute($ifins_db_con, $sql_query_normal);
 
             if(is_null($query_normal_result))
             {
@@ -312,7 +312,7 @@ class Teacher {
                 throw new DBException("Fail to query teachers", __FILE__, __LINE__, 2);
             }
             
-            while($row = mysql_fetch_assoc($query_temp_result))
+            foreach($query_temp_result as $row)
             {
                 $temp_list[] = Array(
                     'fullname' => $row['name'],
@@ -410,7 +410,7 @@ class Teacher {
 
             //with full name, query information from ifins_2012.actatek_user
             $sql_query_detail = "select * from actatek_user where user_id = '".mysql_real_escape_string(trim($accname))."' and user_position = 'Teacher';";
-            $ifins_query_result = Constant::sql_execute($db_con, $sql_query_detail);
+            $ifins_query_result = Constant::sql_execute($ifins_db_con, $sql_query_detail);
 
             if(empty($ifins_query_result))
             {
@@ -843,7 +843,7 @@ class Teacher {
     public static function insertAbbrMatch($all_matches)
     {
         $abbre_dict = Teacher::getAbbreMatch();
-
+        
         $db_con = Constant::connect_to_db("ntu");
 
         if(empty($db_con))
@@ -860,7 +860,7 @@ class Teacher {
             if(array_key_exists($accname, $abbre_dict))
             {
                 $have_exist = true;
-                $sql_delete_exist .= $accname.",";
+                $sql_delete_exist .= "'".$accname."',";
             }
 
             $sql_insert_match .= "('".$accname."', '".$abbre."'),";
@@ -869,6 +869,7 @@ class Teacher {
         if($have_exist)
         {
             $sql_delete_exist = substr($sql_delete_exist, 0, -1).');';
+            
             $delete_exist_result = Constant::sql_execute($db_con, $sql_delete_exist);
             if(is_null($delete_exist_result))
             {
@@ -1145,6 +1146,7 @@ class Teacher {
 
         $num_of_slot = 0;
         $slot_dict = Teacher::getLessonSlotsOfTeacher($teacher_id);
+        
         $start_end = Array();
 
         //put start and end time of each day into $start_end
@@ -1264,6 +1266,7 @@ class Teacher {
 
     private static function getLessonSlotsOfTeacher($teacher_id)
     {
+        //each weekday has one array
         $result = Array(
             1 => Array(),
             2 => Array(),
@@ -1288,7 +1291,7 @@ class Teacher {
 
         foreach($query_time_slot_result as $row)
         {
-            $result[$row['weekday']][] = Array($row['start_time'], $row['end_time']);
+            $result[$row['weekday']][] = Array($row['start_time_index'], $row['end_time_index']);
         }
 
         return $result;
