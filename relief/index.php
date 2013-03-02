@@ -182,14 +182,18 @@ EOD;
                 </div>
                 <div class="bt-control">
                     <input type="submit" name="btnScheduleAll" value="Schedule All" class="button" />
-                    <input type="submit" name="btnScheduleAdhoc" value="Adhoc Schedule" class="button" />
+                    <input type="button" name="btnScheduleAdhoc" value="Adhoc Schedule" class="button" />
                 </div>
             </form>
             <div id="teacher-detail">Loading ...</div>
             <div id="dialog-alert"></div>
         </div>
     </div>
-    <?php include '../sidebar-frag.php'; ?>
+    <?php 
+        include '../sidebar-frag.php'; 
+        
+        unset($_SESSION['scheduleIndex']);
+    ?>
 </div>
 
 </body>

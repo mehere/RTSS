@@ -702,7 +702,8 @@ class SchedulerDB
             $sms_input[] = $one_teacher;
         }
         
-        sendSMS($sms_input, $date);
+//        sendSMS($sms_input, $date);
+        return array();
     }
     
     public static function allSchduleIndex()

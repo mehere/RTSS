@@ -42,4 +42,8 @@ $(document).ready(function(){
     $(formSch).submit(function(){
         $("#dialog-alert").html(ALERT_MSG[0]).dialog('option', 'buttons', null).dialog('open');
     });
+
+    $(formSch['btnScheduleAdhoc']).click(function(){
+        window.location="adhoc-setting.php";
+    });
 });

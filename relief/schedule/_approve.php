@@ -32,7 +32,6 @@ $output['display']= <<< EOD
 </table>
 EOD;
 
-unset($_SESSION['scheduleIndex']);
 unset($_SESSION['excluded']);
 
 header('Content-type: application/json');

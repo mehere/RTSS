@@ -21,6 +21,66 @@ $(document).ready(function(){
         }
     });
 
+    if ($.trim($("#dialog-alert").html()))
+    {
+        $("#dialog-alert").dialog('open');
+    }
+
+    // Upload module
+    /*var DATE_WARN_TEXT=["Date of semester should not be empty.", "Date-To should be no smaller than Date-From."];
+    function setDatePicker(target1, target2, altTarget1, altTarget2)
+    {
+        var curDate1=altTarget1.value?new Date(altTarget1.value):'',
+            curDate2=altTarget2.value?new Date(altTarget2.value):'';
+        target1.datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            altField: altTarget1,
+            altFormat: "yy/mm/dd",
+            onSelect: function(dateText){
+                target2.datepicker( "option", "minDate", dateText );
+            },
+            onClose: function(dateText){
+                if (!dateText)
+                {
+                    var self=$(this);
+                    $("#dialog-alert").html(DATE_WARN_TEXT[0]).data('func', function(){
+                        self.datepicker('setDate', curDate1);
+                    }).dialog('open');
+                }
+            }
+        }).datepicker('setDate', curDate1);
+
+        target2.datepicker({
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: curDate1,
+            altField: altTarget2,
+            altFormat: "yy/mm/dd",
+            onClose: function(dateText){
+                var self=$(this);
+                if (self.datepicker('getDate') < target1.datepicker('getDate'))
+                {
+                    $("#dialog-alert").html(DATE_WARN_TEXT[1]).data('func', function(){
+                        self.datepicker('setDate', target1.datepicker('getDate'));
+                    }).dialog('open');
+                }
+            }
+        }).datepicker('setDate', curDate2);
+    }
+
+    setDatePicker($(formT['date-from-display']), $(formT['date-to-display']), formT['date-from'], formT['date-to']);
+
+    $(formT).submit(function(){
+        if (!formT['date-from'].value || !formT['date-to'].value)
+        {
+            $("#dialog-alert").html(DATE_WARN_TEXT[0]).dialog('open');
+            return false;
+        }
+    });*/
+
     // Add AED
     var formAdd=document.forms['add-class'], formAED=document.forms['AED'],
         matrixTime=[]; // [day][time]={subject, class[], venue, period, boxObj, isHighlighted};

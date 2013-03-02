@@ -38,6 +38,10 @@ $timeToArr=SchoolTime::getTimeArrSub(1, 0);
                 	<select name="sem">
                     	<?php echo PageConstant::printSemRange(); ?>
                     </select>
+<!--                    <span style="margin-left: 20px">
+                        From:<input type="text" name="date-from-display" maxlength="10" class="date-field" /><input type="hidden" name="date-from" value="" />
+                        To:<input type="text" name="date-to-display" maxlength="10" class="date-field" /><input type="hidden" name="date-to" value="" />
+                    </span>-->
                 </div>
                 <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
                 <?php
@@ -146,12 +150,14 @@ EOD;
                     </div>
                 </form>
             </div>
-            <div id="dialog-alert"></div>
+            <div id="dialog-alert"><?php echo $_SESSION['uploadSuccess']; ?></div>
         </div>
     </div>
     <?php
         include '../sidebar-frag.php';
+        
         unset($_SESSION['uploadError']);
+        unset($_SESSION['uploadSuccess']);
     ?>
 </div>
 
