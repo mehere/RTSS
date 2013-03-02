@@ -4,32 +4,36 @@
         <?php
         session_start();
         ?>
-        <script src="/RTSS/resources/lib/jquery-1.9.1.min.js"></script>
-<!--        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>-->
-        <script type="text/javascript">
-            jQuery(document).ready(function(){
-                //                alert("1");
-                $('.accordion').click(function() {
-                    $(this).next().toggle('normal');
-                    //                    var status = $(this).children('.status');
-                    //                    status.children('.active').toggle();
-                    //                    status.children('.inactive').toggle();
-                    //                    return false
-                });
-
-                $("p").click(function() {alert("a");})
-
-                $("table").click(function() {alert("b");})
-
-            });
-        </script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <!--        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />-->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
         <title></title>
         <link rel="stylesheet" type="text/css" href="weeUi.css"/>
+        <link rel="stylesheet" type="text/css" href="/RTSS/resources/lib/jquery/css/flat/jquery-ui-1.10.1.custom.css" rel="Stylesheet" />
+        <script src="/RTSS/resources/lib/jquery/js/jquery-1.9.1.js"></script>
+        <script src="/RTSS/resources/lib/jquery/js/jquery-ui-1.10.1.custom.js"></script>
+        <script>
 
+            jQuery(document).ready(function(){
+                // accordion code
+                $('.accordion').click(function() {
+                    $(this).next().toggle('normal');
+                    var status = $(this).children('.status');
+                    status.children('.active').toggle();
+                    status.children('.inactive').toggle();
+                    return false
+                });
+
+                // date picker
+                $( "#datepicker" ).datepicker({
+                    showOn: "button",
+                    buttonImage: "/RTSS/resources/images/calendar.gif",
+                    buttonImageOnly: true
+                });
+
+            });
+        </script>
     </head>
     <body>
         <div class="container">
@@ -125,6 +129,9 @@
             </div>
             <div style="clear:both;"></div>
             <div class="content">
+
+                <p>Date: <input type="text" id="datepicker" /></p>
+
                 <div class="accordion colorbox blue">
                     <div class="status">
                         <img class="inactive" src="/RTSS/resources/images/plus-white.png"/>
@@ -230,8 +237,8 @@
 
                 <div style="clear:both;"></div>
                 <div class="buttons">
-                    <button class="command blue"><img class="buttons-img" src="all.png">Schedule All</button>
-                    <button class="command yellow">Schedule the remaining</button>
+                    <button class="command red"><div class="icon"><img src="/RTSS/resources/images/redo.png"/></div><div class="words"><span>Re-Schedule All<br><small>The previous relief plan will be cancelled</small></span></div></button>
+                    <button class="command blue"><div class="icon"><img src="/RTSS/resources/images/triangle.png"/></div><div class="words-single"><span>Schedule the remaining</span></div></button>
 
                 </div>
                 <div style="clear:both;"></div>

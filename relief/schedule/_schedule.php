@@ -96,6 +96,9 @@ if (isset($_POST["btnScheduleAll"]))
 } else if (isset($_POST["btnScheduleAdhoc"]))
 {
     $typeSchedule = 2;
+} else
+{
+    // To-Do: error
 }
 
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
@@ -126,11 +129,113 @@ try
     }
 } catch (DBException $e)
 {
+    /// To-Do: Exception
     echo "DB Error";
-    //echo $e->getMessage();
     echo $e;
     exit();
 }
+
+// ADHOC SCHEDULING PROCESSING
+if ($typeSchedule == 2)
+{
+    try
+    {
+        
+        $reliefPlans = $scheduler->getReliefPlan();
+        $skippingPlan = $scheduler->getSkippingPlan();
+    } catch (DBException $e)
+    {
+        /// To-Do: Exception
+        echo "DB Error";
+        echo $e;
+        exit();
+    }
+
+    foreach ($skippingPlan as $aReliefLesson)
+    {
+        $teacherOriginalAccName = $aReliefLesson->teacherOriginal;
+        $teacherOriginal = NULL;
+        foreach ($typesOfTeachers as $aType)
+        {
+            $varArrTeachers = "arr{$aType}Teachers";
+            if (isset($$varArrTeachers[$teacherOriginalAccName]))
+            {
+                $teacherOriginal = $$varArrTeachers[$teacherOriginalAccName];
+                break;
+            }
+        }
+        for ($i = $aReliefLesson->startTimeSlot; $i < $aReliefLesson->endTimeSlot; $i++)
+        {
+            unset($teacherOriginal[$i]);
+        }
+    }
+
+    foreach ($reliefPlans as $aReliefLesson)
+    {
+        /* @var $aReliefLesson ReliefLesson */
+        $teacherOriginalAccName = $aReliefLesson->teacherOriginal;
+        $teacherReliefAccName = $aReliefLesson->teacherRelief;
+        $teacherOriginal = NULL;
+        $teacherRelief = NULL;
+        foreach ($typesOfTeachers as $aType)
+        {
+            $varArrTeachers = "arr{$aType}Teachers";
+            if (isset($$varArrTeachers[$teacherOriginalAccName]))
+            {
+                $teacherOriginal = $$varArrTeachers[$teacherOriginalAccName];
+                break;
+            }
+        }
+        foreach ($typesOfTeachers as $aType)
+        {
+            $varArrTeachers = "arr{$aType}Teachers";
+            if (isset($$varArrTeachers[$teacherReliefAccName]))
+            {
+                $teacherRelief = $$varArrTeachers[$teacherReliefAccName];
+                break;
+            }
+        }
+
+        /* @var $teacherOriginal Teacher */
+        /* @var $teacherRelief Teacher */
+        /* @var $originalLesson Lesson */
+        $originalTeacherTimetable = $teacherOriginal->timetable;
+        $reliefTeacherTimetable = $teacherRelief->timetable;
+        $originalLesson = $originalTeacherTimetable[$aReliefLesson->startTimeSlot];
+
+        if ($aReliefLesson->startTimeSlot != $originalLesson->startTimeSlot)
+        {
+            $newLesson = clone $originalLesson;
+            $originalLesson->endTimeSlot = $aReliefLesson->startTimeSlot;
+            $newLesson->startTimeSlot = $aReliefLesson->startTimeSlot;
+            for ($i = $newLesson->startTimeSlot; $i < $newLesson->endTimeSlot; $i++)
+            {
+                $originalTeacherTimetable[$i] = $newLesson;
+            }
+            $originalLesson = $newLesson;
+        }
+        if ($aReliefLesson->endTimeSlot != $originalLesson->endTimeSlot)
+        {
+            $newLesson = clone $originalLesson;
+            $originalLesson->startTimeSlot = $aReliefLesson->endTimeSlot;
+            $newLesson->endTimeSlot = $aReliefLesson->endTimeSlot;
+            for ($i = $newLesson->startTimeSlot; $i < $newLesson->endTimeSlot; $i++)
+            {
+                $originalTeacherTimetable[$i] = $newLesson;
+            }
+            $originalLesson = $newLesson;
+        }
+        for ($i = $originalLesson->startTimeSlot; $i < $originalLesson->endTimeSlot; $i++)
+        {
+            unset($originalTeacherTimetable[$i]);
+            $reliefTeacherTimetable[$i] = $originalLesson;
+        }
+    }
+}
+
+
+
+
 
 
 // initialization
@@ -188,30 +293,6 @@ foreach ($typesOfTeachers as $aType)
     {
         unset(${$varArrAvailableTeachers}[$accname]);
     }
-
-
-    // Printing for Debugging
-/*
-    echo "<br><br>Type: $aType";
-    echo "<br>Leaves<br>";
-    print_r($arrLeaves[$aType]);
-    echo "<br>Teachers: <br>";
-    foreach ($$varArrTeachers as $key => $aTeacher)
-    {
-        echo "Key: $key<br>";
-        print_r($aTeacher);
-        echo "<br>";
-    }
-//    print_r($$varArrTeachers);
-    echo "<br>Compact Teacher:<br>";
-    foreach ($$varArrCompactTeachers as $aTeacher)
-    {
-        print_r($aTeacher);
-        echo "<br>";
-    }
- *
- *
- */
 }
 
 
@@ -239,7 +320,8 @@ foreach ($group1Types as $aType)
     unset($$varArrAvailableTeachers);
 }
 
-foreach ($arrGroup1 as $aCompactTeacher){
+foreach ($arrGroup1 as $aCompactTeacher)
+{
     $accName = TeacherCompact::getAccName($aCompactTeacher->teacherId);
 //    echo "<br>$accName";
 }
@@ -364,18 +446,18 @@ if ($successStates->numberStates > 0)
 //    print_r($successResults);
     try
     {
-        SchedulerDB::setScheduleResult($successResults, $dateString);        
+        SchedulerDB::setScheduleResult($successResults, $dateString);
     } catch (DBException $e)
     {
         // To-Do:
         // Database Error
-        $_SESSION['scheduleError']="Database error.";
+        $_SESSION['scheduleError'] = "Database error.";
     }
 } else
 {
     ///To-Do:
     // Failure Case
-    $_SESSION['scheduleError']="Failed to find a scheduling result.";
+    $_SESSION['scheduleError'] = "Failed to find a scheduling result.";
 }
 
 header("Location: result.php");

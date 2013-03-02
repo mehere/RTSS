@@ -1,7 +1,7 @@
 <?php
 require_once 'Teacher.php';
 require_once 'DBException.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/read_sms.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/read_sms.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -39,16 +39,17 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
-        $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied, schedule_date) values ";
+        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date) values ";
         
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
         
-        $sql_insert .= "('".$phone."',".$time_created.",'".$accname."',false, $date);";
+        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '".$date."');";
         
-        $insert_result = Constant::sql_execute($db_con, $sql_insert);
-        if(empty($insert_result))
+        $insert_result = Constant::sql_execute($db_con, $sql_insert);                
+
+        if(is_null($insert_result))
         {
             throw new DBException('Fail to insert out messages', __FILE__, __LINE__);
         }
@@ -69,10 +70,10 @@ class SMSDB
         $time_sent = mysql_real_escape_string(trim($msg['timeSent']));
         $smsId = mysql_real_escape_string($msg['smsId']);
         
-        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = ".$time_sent.", message = '".$message."' where sms_id = ".$smsId.";";
+        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = '".$time_sent."', message = '".$message."' where sms_id = ".$smsId.";";
         
         $update_result = Constant::sql_execute($db_con, $sql_update);
-        if(empty($update_result))
+        if(is_null($update_result))
         {
             throw new DBException('Fail to update out messages', __FILE__, __LINE__);
         }
@@ -122,8 +123,9 @@ class SMSDB
         }
         
         //$sql_sms = "select sms_id as smsId, phone_num as phoneNum, message, DATE_FORMAT(time_created, '%Y/%m/%d %M:%i') as timeCreated, DATE_FORMAT(time_sent, '%Y/%m/%d %M:%i') as timeSent, status, accname as accName, is_replied as replied, DATE_FORMAT(time_replied, '%Y/%m/%d %M:%i') as timeReplied schedule_date as scheduleDate from cm_sms_record where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
-        $sql_sms = "select sms_id as smsId, phone_num as phoneNum where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
-        $sms_result = Constant::sql_execute($db_con, $sql_sms);
+        $sql_sms = "select sms_id as smsId, phone_num as phoneNum from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK' order by smsId;";
+        
+        $sms_result = Constant::sql_execute($db_con, $sql_sms);        
         if(is_null($sms_result))
         {
             throw new DBException("Fail to query sms sent", __FILE__, __LINE__);
@@ -144,7 +146,7 @@ class SMSDB
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
         }
         
-        $sql_sms = "select phone_num, sms_id where scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
+        $sql_sms = "select phone_num, sms_id from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK';";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
@@ -153,12 +155,15 @@ class SMSDB
         
         $sms_id_set = Array();
         $sql_set = "(";
+       
         foreach($sms_result as $row)
         {
             $sql_set .= "'".$row['phone_num']."',";
             $sms_id_set[] = $row['sms_id'];
+            
         }
-        $sql_set .= substr($sql_set, 0, -1).");";
+        
+        $sql_set = substr($sql_set, 0, -1).");";
         
         //query reply
         $db_con_ifins = Constant::connect_to_db("ifins");
@@ -167,7 +172,8 @@ class SMSDB
             throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
         }
         
-        $sql_reply = "select *, DATE_FORMAT(date, '%Y/%m/%d %M:%i') time_received from fs_msgs where num in ".$sql_set.";";
+        $sql_reply = "select *, DATE_FORMAT(date, '%Y/%m/%d %H:%i') as time_received from fs_msgs where num in ".$sql_set.";";
+        //echo $sql_reply;
         $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
         if(is_null($reply_result))
         {
@@ -179,8 +185,8 @@ class SMSDB
         {
             $reply_msg = $a_reply['msg'];
             
-            //reply format : 1232,YES, or 43,NO, or 34, in this case, assume the teacher accept the arrangement
-            $break_reply = explode(",", $reply_msg);
+            //reply format : 1232-YES, or 43-NO, or 34, in this case, assume the teacher accept the arrangement
+            $break_reply = explode("-", $reply_msg);
             if(count($break_reply) === 0)
             {
                 continue;
@@ -202,19 +208,18 @@ class SMSDB
             }
             
             $a_sms = Array(
-                "phoneNum" => $row['num'],
-                "timeReceived" => $row['time_received'],
-                "message" => $row['msg']
+                "phoneNum" => $a_reply['num'],
+                "timeReceived" => $a_reply['time_received'],
+                "message" => $a_reply['msg']
             );
             
             $result[] = $a_sms;
-        }
-        
+        }        
         return $result;
     }
     
     public static function markReplied($replied)
-    {
+    {                
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
@@ -223,7 +228,8 @@ class SMSDB
         
         foreach($replied as $reply)
         {
-            $sql_update = "update cm_sms_record set is_replied = true, time_replied = ".mysql_real_escape_string(trim($reply['timeReceived'])).", response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
+            $sql_update = "update cm_sms_record set is_replied = true, time_replied = '".mysql_real_escape_string(trim($reply['timeReceived']))."', response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
+            //echo $sql_update."<br>";
             Constant::sql_execute($db_con, $sql_update);
         }
     }
