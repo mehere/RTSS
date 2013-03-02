@@ -67,8 +67,6 @@ include_once '../head-frag.php';
                     
                     $timetableIndividual=TimetableDB::getIndividualTimetable($date, $accname);
                     PageConstant::escapeHTMLEntity($timetableIndividual);
-//                    array(0=>array('class'=>array('1F', '2A'), 'subject'=>'Physics', 'venue'=>'LT30'),
-//                        3=>array('class'=>array('1F2A'), 'subject'=>'Chemistry', 'venue'=>'LT10', 'isRelief'=>true));
                     
                     $NO_PREIVEW=true;
                     include 'relief-timetable-frag.php'; 
