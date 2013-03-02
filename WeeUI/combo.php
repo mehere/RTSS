@@ -2,7 +2,7 @@
 spl_autoload_register(
         function ($class)
         {
-            include "./".$class . '.php';
+            include "../class/".$class . '.php';
         });
 Template::printHeaderAndDoValidation(TRUE, "Hellooo", array("ui-combobox.css"), array("templatePage.js", "combobox.js"), 1);
 ?>
