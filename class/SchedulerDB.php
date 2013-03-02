@@ -5,7 +5,7 @@ require_once 'Students.php';
 require_once 'Teacher.php';
 require_once 'TimetableDB.php';
 //require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
-require_once 'sms/send_sms.php';
+//require_once 'sms/send_sms.php';
 
 class SchedulerDB
 {

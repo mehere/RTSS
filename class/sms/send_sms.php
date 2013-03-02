@@ -7,7 +7,7 @@ header("Pragma: no-cache");
 //initialize session
 session_start();
 
-include('../class/SMSDB.php');
+//include('../class/SMSDB.php');
 
 function sendSMS($receiverList, $scheduleDate) {    
     date_default_timezone_set('Asia/Singapore');
