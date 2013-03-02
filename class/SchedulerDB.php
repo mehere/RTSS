@@ -764,6 +764,7 @@ class SchedulerDB
         }
 
 //        sendSMS($sms_input, $date);
+        return array();
     }
 
     public static function allSchduleIndex()
