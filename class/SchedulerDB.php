@@ -3,7 +3,7 @@
 require_once 'util.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
-require_once 'Timetable.php';
+require_once 'TimetableDB.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/send_sms.php';
 
@@ -69,7 +69,7 @@ class SchedulerDB
         $timetable_id = TimetableDB::checkTimetableExistence(0, array('date'=>$this->date_str));
         if($timetable_id === -1)
         {
-            throw new DBException('DB does not have lesson info for '.$this->date, __FILE__, __LINE__, 1);
+            throw new DBException('DB does not have lesson info for '.$this->date_str, __FILE__, __LINE__, 1);
         }
         
         $this->lesson_list = Array();
@@ -103,7 +103,7 @@ class SchedulerDB
 
         //class of lesson
         $sql_query_class = "SELECT ct_class_matching.* FROM ct_class_matching, ct_lesson WHERE ct_lesson.lesson_id = ct_class_matching.lesson_id
-            AND ct_lesson.weekday = $this->weekday and ct_lesson_sem_id = $timetable_id;";
+            AND ct_lesson.weekday = $this->weekday and ct_lesson.sem_id = $timetable_id;";
         $class_query_result = Constant::sql_execute($db_con, $sql_query_class);
 
         if (is_null($class_query_result))
@@ -305,7 +305,7 @@ class SchedulerDB
         return $result_list;
     }
 
-    private static function trimTimePeriod($start_date, $end_date, $start_time, $end_time, $query_date, $leave_id)
+    public static function trimTimePeriod($start_date, $end_date, $start_time, $end_time, $query_date, $leave_id)
     {
         $start_date_obj = new DateTime($start_date);
         $end_date_obj = new DateTime($end_date);
@@ -440,7 +440,7 @@ class SchedulerDB
             }
             
             $skip = $a_result['skippedLessons'];
-            
+
             foreach($skip as $a_skip)
             {
                 $has_skip = true;
@@ -496,11 +496,11 @@ class SchedulerDB
         
         if($schedule_index === -1)
         {
-            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) order by start_time, end_time ASC;";
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) order by start_time_index, end_time_index ASC;";
         }
         else
         {
-            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$schedule_index." order by start_time, end_time ASC;;";
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$schedule_index." order by start_time_index, end_time_index ASC;";
         }
         
         $schedule_result = Constant::sql_execute($db_con, $sql_schedule);
@@ -526,7 +526,7 @@ class SchedulerDB
                     continue;
                 }
 
-                if(strcmp($result[$schedule_id][$i]['id'], $row['lesson_id']) === 0)
+                if(strcmp($result[$schedule_id][$i]['id'], $row['lesson_id']) === 0 && strcmp($result[$schedule_id][$i]['reliefAccName'], $row['relief_teacher']) === 0 && $result[$schedule_id][$i]['time'][0] == $row['start_time_index'] && $result[$schedule_id][$i]['time'][1] == $row['end_time_index'])
                 {
                     $relief_alr_created = true;
                     if(!empty($row['class_name']))
