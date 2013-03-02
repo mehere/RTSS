@@ -1,4 +1,5 @@
 <?php
+require_once 'SMSDB.php';
 
 class SMS {
 
@@ -7,6 +8,11 @@ class SMS {
         set_time_limit(1200);
         $index = 0;
         $attempt = 1;
+        
+        //test
+        $print_command = array();
+        //end of test
+        
         while ($index < sizeof($receiverList)) {
             if ($attempt == 1) {
                 $phoneNum = $receiverList[$index]["phoneNum"];
@@ -22,10 +28,16 @@ class SMS {
                 $message = $message . "Please reply in the following format: '$smsId-Yes' for acceptance or '$smsId-no' for decline.";
             }
             if (trim($phoneNum)) {
-                chdir('C:\xampp\htdocs\fscan\sms');
+                //chdir('C:\xampp\htdocs\fscan\sms');
                 $command = 'java -jar vigsyssmscom4.jar "1" "' . $phoneNum . '" "' . $message . '"';
-                $apiOutput = shell_exec($command . "\n");
-                $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
+                
+                //test
+                $print_command[] = $command;
+                $outputCode = 100;
+                //end of test
+                
+                //$apiOutput = shell_exec($command . "\n");
+                //$outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
             } else {
                 $outputCode = 104;
                 $attemp = 3;
@@ -47,6 +59,16 @@ class SMS {
                 $attempt++;
             }
         }
+        
+        //test
+        $file = fopen('sms_test.txt', 'w');
+        foreach ($print_command as $gem)
+        {
+            fwrite($file, $gem.'\r\n');
+        }
+        fclose($file);
+        //end of test
+        
         return $sendingResult;
     }
 

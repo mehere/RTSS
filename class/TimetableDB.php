@@ -558,6 +558,7 @@ class TimetableDB
         {
             //confirmed
             $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher = '".$accname."';";
+            echo $sql_query_relief."<br>";
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
             {
@@ -603,7 +604,11 @@ class TimetableDB
                             }
                             else
                             {
-                                throw new DBException('Duplicate lesson', __FILE__, __LINE__);
+                                //throw new DBException('Duplicate lesson', __FILE__, __LINE__);
+                                $id = $row['lesson_id'];
+                                $attr = $result[$i]['attr'];
+                                $sbj = $row['subj_code'];
+                                echo "error : $i , $id , $start_time , $end_time , $attr , $sbj <br>";
                             }
                         }
                     }

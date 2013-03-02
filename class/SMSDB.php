@@ -1,7 +1,6 @@
 <?php
 require_once 'Teacher.php';
 require_once 'DBException.php';
-require_once 'sms/read_sms.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -39,14 +38,14 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
-        $sql_insert = "insert into cm_sms_record(phone_num, message, time_created, accname, is_replied, schedule_date) values ";
+        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date) values ";
         
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
         
-        $sql_insert .= "('".$phone."',".$time_created.",'".$accname."',false, $date);";
-        
+        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '$date');";
+
         $insert_result = Constant::sql_execute($db_con, $sql_insert);
         if(empty($insert_result))
         {
@@ -69,7 +68,7 @@ class SMSDB
         $time_sent = mysql_real_escape_string(trim($msg['timeSent']));
         $smsId = mysql_real_escape_string($msg['smsId']);
         
-        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = ".$time_sent.", message = '".$message."' where sms_id = ".$smsId.";";
+        $sql_update = "update cm_sms_record set status = '".$status."', time_sent = '".$time_sent."', message = '".$message."' where sms_id = ".$smsId.";";
         
         $update_result = Constant::sql_execute($db_con, $sql_update);
         if(empty($update_result))
