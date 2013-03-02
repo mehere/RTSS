@@ -1,7 +1,7 @@
 <?php
 require_once 'Teacher.php';
 require_once 'DBException.php';
-require_once 'sms/read_sms.php';
+//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/read_sms.php';
 
 /*
  * To change this template, choose Tools | Templates
