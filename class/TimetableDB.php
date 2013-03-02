@@ -832,7 +832,7 @@ class TimetableDB
         
         foreach($table_result as $row)
         {
-            $day_index = $row['weekday'] - 0;
+            $day_index = $row['weekday'] - 1;
             
             if(!array_key_exists($day_index, $result))
             {
