@@ -97,6 +97,9 @@ if (isset($_POST["btnScheduleAll"]))
 {
     $typeSchedule = 2;
 }
+else {
+    // To-Do: error
+}
 
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
 
@@ -131,6 +134,15 @@ try
     echo $e;
     exit();
 }
+
+if ($typeSchedule == 2){
+
+    // get Relief Lessons Planned
+}
+
+
+
+
 
 
 // initialization
@@ -364,7 +376,7 @@ if ($successStates->numberStates > 0)
 //    print_r($successResults);
     try
     {
-        SchedulerDB::setScheduleResult($successResults, $dateString);        
+        SchedulerDB::setScheduleResult($successResults, $dateString);
     } catch (DBException $e)
     {
         // To-Do:
