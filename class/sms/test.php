@@ -1,4 +1,5 @@
 <?php
+
 header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
@@ -8,17 +9,19 @@ session_start();
 
 include('send_sms.php');
 
-for($i = 0; $i < 5; $i++){
-    $receiverList = array( "name" => "Virgil",
-                       "phoneNum" => "+6597394731",
-                       "message" => "integration test $i",
-                    );
-}
 
-$scheduleDate = "13/02/25";
+$receiverList[0] = array("name" => "Virgil",
+    "phoneNum" => "+6597394731",
+    "message" => "integration test 1",
+    "accname" => "ryujicai",
+);
+$receiverList[1] = array("name" => "Xu Jie",
+    "phoneNum" => "+6592365504",
+    "message" => "integration test 1",
+    "accname" => "xujie0086",
+);
 
-$_SESSION['accname'] = "ryujicai";
+$scheduleDate = "2013/02/24";
 
 sendSMS($receiverList, $scheduleDate)
-
 ?>

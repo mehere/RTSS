@@ -28,8 +28,15 @@ function sendMail($from, $to){
             if (file_exists($attachment))
             $out->attach(Swift_Attachment::fromPath($attachment));
         }        
-        $result = $mailer->send($out);
+        try{
+            $output = $mailer->send($out);
+            $result[] = $output;
+        }catch(Exception $e){
+            $result[] = $e->getMessage();
+        }
+        
     }    
+    return $result;
 }
 
 /*

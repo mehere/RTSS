@@ -63,10 +63,10 @@ for ($i = 3; $i < 4; $i++) {
     $message .= "<tr><td><strong>Urgency:</strong> </td><td>Very Urgent</td></tr>";
     $message .= "<tr><td><strong>URL To Change (main):</strong> </td><td>www.yyets.com</td></tr>";
 
-    $to[$i] = array("name" => "Virgil Cai", "email" => "ryujicai@hotmail.com", "subject" => "FYP Email Testing", "message" => $message, "attachment" => "hahahahahah");    
+    $to[$i] = array("name" => "Virgil Cai", "email" => "ryujicai@gagalolohaha.com", "subject" => "FYP Email Testing", "message" => $message, "attachment" => "hahahahahah");    
 }
 
-$from = array("name" => "Cai Haolan", "email" => "ryujicai@gmail.com", "password" => "haha", "smtp" => "smtp.gmail.com", "port" => 465, "encryption" => "ssl");
+$from = array("name" => "Cai Haolan", "email" => "ryujicai@gmail.com", "password" => "gaga", "smtp" => "smtp.gmail.com", "port" => 465, "encryption" => "ssl");
 
-sendMail($from, $to);
+print_r(sendMail($from, $to));
 ?>
