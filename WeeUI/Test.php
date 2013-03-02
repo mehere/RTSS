@@ -3,7 +3,7 @@
 spl_autoload_register(
         function ($class)
         {
-            include "./" . $class . '.php';
+            include "../class/" . $class . '.php';
         });
 Template::printHeaderAndDoValidation(TRUE, "Hellooo", array("templatePage.js"), 1);
 ?>

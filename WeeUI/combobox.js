@@ -102,11 +102,12 @@ jQuery(document).ready(function(){
 
                 // close if already visible
                 if ( wasOpen ) {
-                    return;
+                    return false;
                 }
 
                 // pass empty string as value to search for, displaying all results
                 input.autocomplete( "search", "" );
+                return false;
             });
 
             input.tooltip({
@@ -119,7 +120,7 @@ jQuery(document).ready(function(){
             this.element.show();
         }
     });
-    
+
     $( ".combobox" ).combobox();
 });
 
