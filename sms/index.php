@@ -44,7 +44,7 @@ include_once '../head-frag.php';
         <div id="content">
             <?php
             $TOPBAR_LIST=array(
-                array('tabname' => 'SMS', 'url' => "/RTSS/SMS/"),
+                array('tabname' => 'SMS', 'url' => "/RTSS/sms/"),
                 array('tabname' => 'Status', 'url' => ""),
             );
             include '../topbar-frag.php';
