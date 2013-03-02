@@ -13,7 +13,7 @@
 class Template
 {
 
-    public static function printHeaderAndDoValidation($allowsAll, $title, $scripts, $mainIndex)
+    public static function printHeaderAndDoValidation($allowsAll, $title, $css, $scripts, $mainIndex)
     {
 
         // To-Do: To check what kind of credentials is required
@@ -33,7 +33,7 @@ class Template
         "<!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv'Content-Type' content='text/html; charset=UTF-8'/>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
         <meta http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate' />
         <meta http-equiv='Pragma' content='no-cache' />
         <meta http-equiv='Expires' content='0' />
@@ -43,7 +43,16 @@ class Template
         "       </title>
         <link rel='stylesheet' type='text/css' href='weeUi.css'/>
         <link rel='stylesheet' type='text/css' href='/RTSS/resources/lib/jquery/css/flat/jquery-ui-1.10.1.custom.css' />
-        <script src='/RTSS/resources/lib/jquery/js/jquery-1.9.1.js'></script>
+";
+        foreach ($css as $aCss){
+            echo
+"        <link rel='stylesheet' type='text/css' href='";
+            echo $aCss;
+            echo
+"'/>";
+        }
+        echo
+"        <script src='/RTSS/resources/lib/jquery/js/jquery-1.9.1.js'></script>
         <script src='/RTSS/resources/lib/jquery/js/jquery-ui-1.10.1.custom.js'></script>
 ";
         foreach ($scripts as $script)
@@ -106,7 +115,8 @@ class Template
 "
                                         </span>
                                     </a>
-                                </div>";
+                                </div>
+";
         }
 
 
@@ -180,15 +190,7 @@ class Template
     public static function printFooter()
     {
         echo
-        "                </div>
-                <div style='clear:both;'></div>
-                <div class='buttons'>
-                    <button class='command red'><div class='icon'><img src='/RTSS/resources/images/redo.png'/></div><div class='words'><span>Re-Schedule All<br><small>The previous relief plan will be cancelled</small></span></div></button>
-                    <button class='command blue'><div class='icon'><img src='/RTSS/resources/images/triangle.png'/></div><div class='words-single'><span>Schedule the remaining</span></div></button>
-
-                </div>
-                <div style='clear:both;'></div>
-            </div>
+"            </div>
             <div class='footer'>
                 <span>Copyright @ 2013 CHIJ St Nicholas Girl's School All rights reserved
                 </span>
