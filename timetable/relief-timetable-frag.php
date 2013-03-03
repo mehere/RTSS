@@ -61,7 +61,7 @@ EOD;
                     if ($otherTdContent)
                     {                        
                         $otherTdContent= <<< EOD
-<span style="text-decoration: line-through;">{$teaching['skipped'][$key]}</span>   
+<span style="text-decoration: line-through; color: black">{$teaching['skipped'][$key]}</span>   
 EOD;
                         $otherTdContent="($otherTdContent)";
                     }

@@ -209,14 +209,20 @@ class SchoolTime
     /**
      *
      * @param type $dateString
-     * @param type $formatOption 0 (default) -- from ISO to SG, 1 -- from SG to ISO
+     * @param type $formatOption 0 (default) -- from ISO to SG, 1 -- from SG to ISO, 2 -- from ISO to SG_DAY
      * @return type
      */
     public static function convertDate($dateString, $formatOption=0)
     {
-        return $formatOption==0 ?
-            date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString), PageConstant::DATE_FORMAT_SG) :
-            date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_SG, $dateString), PageConstant::DATE_FORMAT_ISO);
+        switch ($formatOption)
+        {
+            case 1:
+                return date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_SG, $dateString), PageConstant::DATE_FORMAT_ISO);
+            case 2:
+                return date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString), PageConstant::DATE_FORMAT_SG_DAY);                
+        }
+        
+        return date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString), PageConstant::DATE_FORMAT_SG);            
     }
 
     /**
