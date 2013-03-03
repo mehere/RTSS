@@ -102,7 +102,7 @@ EOD;
      */
     public static function tdWrap($ele, $style='')
     {
-        $ele=htmlentities($ele);
+//        $ele=htmlentities($ele);
         return "<td $style>$ele</td>";
     }
 

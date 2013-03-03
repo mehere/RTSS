@@ -51,7 +51,8 @@ EOD;
             </thead>
             <tbody>
                 <?php
-                $timetable=TimetableDB::getReliefTimetable('', '', $_GET['date']);                
+                $timetable=TimetableDB::getReliefTimetable('', '', $_GET['date']);
+                PageConstant::escapeHTMLEntity($timetable);
 
                 $timeArr=SchoolTime::getTimeArrSub(0, 0);
                 for ($i=0; $i < count($timeArr) - 1; $i++)

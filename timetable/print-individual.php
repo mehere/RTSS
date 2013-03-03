@@ -67,6 +67,7 @@ EOD;
             <tbody>
                 <?php
                 $timetableIndividual=TimetableDB::getIndividualTimetable($_GET['date'], $_GET['accname']);
+                PageConstant::escapeHTMLEntity($timetableIndividual);
 
                 $timeArr=SchoolTime::getTimeArrSub(0, 0);
                 for ($i=0; $i < count($timeArr) - 1; $i++)

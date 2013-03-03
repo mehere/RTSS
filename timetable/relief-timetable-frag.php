@@ -33,21 +33,56 @@ EOD;
             if ($teaching)
             {
                 PageConstant::escapeHTMLEntity($teaching);
+                $teaching['class']=implode(", ", $teaching['class']);
+                if ($teaching['skipped'])
+                {
+                    $teaching['skipped']['class']=implode(", ", $teaching['skipped']['class']);
+                }
+                
+                $style='';
+                $otherTdContent=false;
+                switch ($teaching['attr'])
+                {
+                    case -1:
+                        $style='style="backgound-color: gray"';
+                        break;
+                    case 1:
+                        $style='style="color: blue"';
+                        break;
+                    case 2:
+                        $style='style="color: red"';
+                        $otherTdContent=true;
+                        break;
+                }
+                
                 $timetableEntry=array();
                 foreach (array_slice($headerKeyList, 1) as $key => $value)
                 {
-                    $timetableEntry[]=$teaching[$key];
+                    if ($otherTdContent)
+                    {
+                        $otherTdContent= <<< EOD
+<span style="text-decoration: line-through;">{$teaching['skipped'][$key]}</span>   
+EOD;
+                    }
+                    $timetableEntry[]= <<< EOD
+<span $style>{$teaching[$key]}{$otherTdContent}</span>
+EOD;
                 }
 
                 // Class name display
-                $timetableEntry[1]=implode(", ", $timetableEntry[1]);
+//                $timetableEntry[1]=implode(", ", $timetableEntry[1]);
+//                
+//                if ($teaching['skipped'])
+//                {
+//                    
+//                }
                 
-                $style="";
-                if ($teaching['isRelief']) $style='style="color: red"';
+                
+//                if ($teaching['isRelief']) $style='style="color: red"';
                                                 
                 $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
                 echo <<< EOD
-<tr $style><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
+<tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
             }
             else
