@@ -182,7 +182,8 @@ class SchedulerDB
 
             $a_leave = Array(
                 "startLeave" => $leave_time[0],
-                "endLeave" => $leave_time[1]
+                "endLeave" => $leave_time[1],
+                "leaveID" => $a_info['leaveID']
             );
 
             $algo_type = Constant::$teacher_type[$a_info['type']];
