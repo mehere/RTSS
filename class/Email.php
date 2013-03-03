@@ -4,7 +4,7 @@ require_once 'email_lib/swift_required.php';
 
 class Email {
 
-    public function sendMail($from, $to) {
+    public static function sendMail($from, $to) {
         $fromEmail = $from["email"];
         $fromPassword = $from["password"];
         $fromName = $from["name"];

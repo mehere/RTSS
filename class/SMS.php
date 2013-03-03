@@ -3,7 +3,7 @@ require_once 'SMSDB.php';
 
 class SMS {
 
-    public function sendSMS($receiverList, $scheduleDate) {
+    public static function sendSMS($receiverList, $scheduleDate) {
         date_default_timezone_set('Asia/Singapore');
         set_time_limit(1200);
         $index = 0;
@@ -72,7 +72,7 @@ class SMS {
         return $sendingResult;
     }
 
-    public function mapCode($code) {
+    public static function mapCode($code) {
         switch ($code) {
             case 100:
                 return "OK";
@@ -103,7 +103,7 @@ class SMS {
         }
     }
 
-    public function readSMS($scheduleDate) {
+    public static function readSMS($scheduleDate) {
         set_time_limit(1200);
         $msgSent = SMSDB::getSMSsent($scheduleDate);
 
@@ -152,11 +152,11 @@ class SMS {
         }
     }
 
-    public function examineMsg($smsId, $phoneNum, $msgSent) {
+    public static function examineMsg($smsId, $phoneNum, $msgSent) {
         return SMS::searchMsgSent($smsId, $phoneNum, $msgSent, 0, sizeof($msgSent) - 1);
     }
 
-    public function searchMsgSent($smsId, $phoneNum, $msgSent, $start, $end) {
+    public static function searchMsgSent($smsId, $phoneNum, $msgSent, $start, $end) {
         if ($start > $end) {
             return -1;
         } else {
@@ -197,7 +197,7 @@ class SMS {
         }
     }
 
-    public function checkResponseRelevance($timeReplied, $scheduleDate) {
+    public static function checkResponseRelevance($timeReplied, $scheduleDate) {
         $timeRepliedObj = date_create($timeReplied);
         $scheduleDateObj = date_create($scheduleDate . " 00:00:00");
         $timeDiff = date_diff($timeRepliedObj, $scheduleDateObj)->format("%R %d %h");
