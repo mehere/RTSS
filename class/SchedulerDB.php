@@ -784,14 +784,17 @@ class SchedulerDB
         //5. send sms and record success/failure
         $sms_reply = SMS::sendSMS($sms_input, $date);
         
-        foreach($sms_reply as $a_reply)
+        if(!is_null($sms_reply))
         {
-            $accname = $a_reply['accname'];
-            if(array_key_exists($accname, $return_result))
+            foreach($sms_reply as $a_reply)
             {
-                if(strcmp($a_reply['status'], 'OK') === 0)
+                $accname = $a_reply['accname'];
+                if(array_key_exists($accname, $return_result))
                 {
-                    $return_result[$accname]['smsSent'] = 1;
+                    if(strcmp($a_reply['status'], 'OK') === 0)
+                    {
+                        $return_result[$accname]['smsSent'] = 1;
+                    }
                 }
             }
         }
@@ -859,11 +862,14 @@ class SchedulerDB
 
 //        $email_reply = Email::sendMail($from, $to);
 //        
-//        foreach($email_reply as $accname => $a_reply)
+//        if(!is_null($email_reply))
 //        {
-//            if($a_reply === 1)
+//            foreach($email_reply as $accname => $a_reply)
 //            {
-//                $return_result[$accname]['emailSent'] = 1;
+//                if($a_reply === 1)
+//                {
+//                    $return_result[$accname]['emailSent'] = 1;
+//                }
 //            }
 //        }
         

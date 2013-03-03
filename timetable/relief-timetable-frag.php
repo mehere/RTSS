@@ -37,7 +37,7 @@ EOD;
                 if ($teaching['skipped'])
                 {
                     $teaching['skipped']['class']=implode(", ", $teaching['skipped']['class']);
-                }
+                }                
                 
                 $style='';
                 $otherTdContent=false;
@@ -59,7 +59,7 @@ EOD;
                 foreach (array_slice($headerKeyList, 1) as $key => $value)
                 {
                     if ($otherTdContent)
-                    {
+                    {                        
                         $otherTdContent= <<< EOD
 <span style="text-decoration: line-through;">{$teaching['skipped'][$key]}</span>   
 EOD;

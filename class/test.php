@@ -443,12 +443,8 @@ foreach($result as $key => $row)
  * 
  */ 
 
-$result = SchedulerDB::approve(0, '2013-02-06');
-foreach($result as $row)
-{
-    print_r($row);
-    echo "<br>";
-}
+$result = SchedulerDB::approve(0, '2013/02/06');
+var_dump($result);
 
 /*
 class Test

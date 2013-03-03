@@ -8,7 +8,8 @@ require_once '../../php-head.php';
 require_once '../../class/SchedulerDB.php';
 require_once '../../class/SMSDB.php';
 
-$result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['date']);
+$result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['scheduleDate']);
+
 $trStr='';
 foreach ($result as $key => $value)
 {
@@ -24,7 +25,7 @@ $output=array('error' => 0);
 $output['display']= <<< EOD
 <table class="table-info">
 	<thead>
-        <tr><th>Name</th><th>SMS</th><th>Email</th></tr>
+        <tr><th>Name</th><th style="width: 80px">SMS</th><th style="width: 80px">Email</th></tr>
     </thead>
     <tbody>
         $trStr

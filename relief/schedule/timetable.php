@@ -3,6 +3,7 @@ include_once '../../php-head.php';
 
 require_once '../../class/TimetableDB.php';
 require_once '../../class/ListGenerator.php';
+require_once '../../class/SchedulerDB.php';
 
 $scheduleIndexArr=$_SESSION['scheduleIndex'];
 $curScheduleIndex=$scheduleIndexArr[$_GET['schedule']-1];
@@ -35,25 +36,25 @@ $(document).ready(function(){
                 $TOPBAR_LIST=array(
                     array('tabname' => 'Scheduling', 'url' => "/RTSS/relief/"),
                     array('tabname' => 'Result Approval', 'url' => "/RTSS/relief/schedule/result.php?result={$_GET['schedule']}"),
-                    array('tabname' => 'Result Preview', 'url' => "")                    
+                    array('tabname' => 'Result Preview', 'url' => "")
                 );
                 include '../../topbar-frag.php';
             ?>
             <div class="main">
                 <div style="text-align: center; font-size: 1.2em">Schedule Result Choice <?php echo $_GET['schedule']; ?></div>
                 <form name="switch" class="control" action="" method="post">
-                    <div class="line">                        
+                    <div class="line">
                         <select name="accname">
                             <option value="">-- Select a Teacher --</option>
-                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName(null, $curScheduleIndex), $_POST['accname']); ?>
+                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($_SESSION['scheduleDate'], $curScheduleIndex), $_POST['accname']); ?>
                         </select>                        
                     </div>
                 </form>
                 <?php
-                    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['date'], $curScheduleIndex);
+                    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['scheduleDate'], $curScheduleIndex);
                     PageConstant::escapeHTMLEntity($timetable);
 
-                    $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['date'], $_POST['accname'], $curScheduleIndex);
+                    $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['scheduleDate'], $_POST['accname'], $curScheduleIndex);
                     PageConstant::escapeHTMLEntity($timetableIndividual);
                     
                     include '../../timetable/relief-timetable-frag.php';
