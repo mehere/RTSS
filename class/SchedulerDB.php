@@ -1,6 +1,7 @@
 <?php
 
 require_once 'util.php';
+include 'DBException.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
 require_once 'TimetableDB.php';
@@ -424,7 +425,7 @@ class SchedulerDB
         return 10;
     }
 
-    static function setScheduleResult($scheduleResults, $date)
+    static function setScheduleResult($typeSchedule, $date, $scheduleResults, $arrLeaveId)
     {
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
