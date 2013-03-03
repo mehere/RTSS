@@ -753,6 +753,16 @@ class TimetableDB
         return $result;
     }
     
+    /**
+     * Can only be used in all-scheduling, but not adhoc scheduling
+     * @param type $schedule_index
+     * @param type $time_range
+     * @param type $accname
+     * @param type $schedule_date
+     * @param type $lesson_id
+     * @return int
+     * @throws DBException
+     */
     public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date, $lesson_id)
     {
         $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$schedule_date));
@@ -775,34 +785,37 @@ class TimetableDB
         $normal_result = Constant::sql_execute($db_con, $sql_normal);
         if(is_null($normal_result))
         {
-            return -2;
+            return -1;
         }
         else if(count($normal_result) > 0)
         {
             return 1;
         }
         
+        /*
         $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
         $relief_result = Constant::sql_execute($db_con, $sql_relief);
         if(is_null($relief_result))
         {
-            return -3;
+            return -1;
         }
         else if(count($relief_result) > 0)
         {
-            return 1;
+            return 2;
         }
+         * 
+         */
         
         $sql_temp = "select * from temp_each_alternative where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and schedule_id =".$schedule_index." and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0].")) and lesson_id != '$lesson_id';";
         $temp_result = Constant::sql_execute($db_con, $sql_temp);
         
         if(is_null($temp_result))
         {
-            return -4;
+            return -1;
         }
         else if(count($temp_result) > 0)
         {
-            return 1;
+            return 3;
         }
         
         return 0;

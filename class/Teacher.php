@@ -900,7 +900,7 @@ class Teacher {
 
         $mc_dic = Array();
         //$sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info group by teacher_id";
-        $sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info,  group by teacher_id";
+        $sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info group by teacher_id";
         $query_mc_result = Constant::sql_execute($db_con, $sql_query_mc);
         if(is_null($query_mc_result))
         {
