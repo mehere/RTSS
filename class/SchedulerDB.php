@@ -875,6 +875,15 @@ class SchedulerDB
         }
         
         //7. return
+        $sort_arr = Array();
+
+        foreach($return_result as $key=>$value)
+        {
+            $sort_arr[$key] = $value['fullname'];
+        }
+
+        array_multisort($sort_arr, SORT_ASC, $return_result);
+        
         return $return_result;
     }
 

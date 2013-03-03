@@ -158,7 +158,7 @@ foreach($result as $key=>$a_result)
         //Teacher::abbreToFullnameBatchSetup($arrTeachers);
 
         //$timetableanalyzer = new TimetableAnalyzer("13", '1');
-        //$timetableanalyzer->readCsv('aed_algo_testing_timetable.csv');
+        //$timetableanalyzer->readCsv('normal_algo_testing_timetable_skip.csv');
        /*
         TimetableDB::insertTimetable($arrLessons, $arrTeachers);
         Test::insertAEDTimetable($arrLessons, $arrTeachers);
