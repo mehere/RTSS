@@ -5,7 +5,6 @@ define("NUM_STATES_REQUIRED", 3);
 define("TIME_TO_WAIT", 10);
 
 require_once '../../php-head.php';
-
 spl_autoload_register(
         function ($class)
         {
@@ -89,7 +88,6 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
 
 ///-----------------------------------------------------------------------------
 $dateString = $_POST["date"];
-$typeSchedule = 0;
 if (isset($_POST["btnScheduleAll"]))
 {
     $typeSchedule = 1;
@@ -98,7 +96,7 @@ if (isset($_POST["btnScheduleAll"]))
     $typeSchedule = 2;
 } else
 {
-    // To-Do: error
+    header("/RTSS/index.php");
 }
 
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
@@ -111,13 +109,14 @@ $typesOfTeachers = array(
     "Hod"
 );
 
-$startTime = microtime(true);
+
 // calling scheduler DB
 try
 {
     $scheduler = new SchedulerDB($dateScheduled);
     TeacherCompact::$recommendedNoOfLessons = $scheduler->getRecommendedNoOfLessons();
     $arrLeaves = $scheduler->getLeave();
+    $arrLeaveId = $scheduler->getLeaveIds();
     $arrExcludedTeachers = $scheduler->getExcludedTeachers();
 
     foreach ($typesOfTeachers as $aType)
@@ -140,9 +139,9 @@ if ($typeSchedule == 2)
 {
     try
     {
-        
         $reliefPlans = $scheduler->getReliefPlan();
         $skippingPlan = $scheduler->getSkippingPlan();
+        $blockingPlan = $scheduler->getBlockingPlan();
     } catch (DBException $e)
     {
         /// To-Do: Exception
@@ -205,9 +204,15 @@ if ($typeSchedule == 2)
 
         if ($aReliefLesson->startTimeSlot != $originalLesson->startTimeSlot)
         {
+            $replacementLesson = clone $originalLesson;
             $newLesson = clone $originalLesson;
-            $originalLesson->endTimeSlot = $aReliefLesson->startTimeSlot;
+            $replacementLesson->endTimeSlot = $aReliefLesson->startTimeSlot;
             $newLesson->startTimeSlot = $aReliefLesson->startTimeSlot;
+            for ($i = $replacementLesson->startTimeSlot; $i < $replacementLesson->endTimeSlot; $i++)
+            {
+                $originalTeacherTimetable[$i] = $replacementLesson;
+                ;
+            }
             for ($i = $newLesson->startTimeSlot; $i < $newLesson->endTimeSlot; $i++)
             {
                 $originalTeacherTimetable[$i] = $newLesson;
@@ -216,9 +221,15 @@ if ($typeSchedule == 2)
         }
         if ($aReliefLesson->endTimeSlot != $originalLesson->endTimeSlot)
         {
+            $replacementLesson = clone $originalLesson;
             $newLesson = clone $originalLesson;
-            $originalLesson->startTimeSlot = $aReliefLesson->endTimeSlot;
+            $replacementLesson->startTimeSlot = $aReliefLesson->endTimeSlot;
             $newLesson->endTimeSlot = $aReliefLesson->endTimeSlot;
+            for ($i = $replacementLesson->startTimeSlot; $i < $replacementLesson->endTimeSlot; $i++)
+            {
+                $originalTeacherTimetable[$i] = $replacementLesson;
+                ;
+            }
             for ($i = $newLesson->startTimeSlot; $i < $newLesson->endTimeSlot; $i++)
             {
                 $originalTeacherTimetable[$i] = $newLesson;
@@ -229,6 +240,37 @@ if ($typeSchedule == 2)
         {
             unset($originalTeacherTimetable[$i]);
             $reliefTeacherTimetable[$i] = $originalLesson;
+        }
+    }
+
+    foreach ($blockingPlan as $aBlockLesson)
+    {
+        /* @var $aBlockLesson Lesson */
+        /* @var $aLesson Lesson */
+        $teacherOriginalAccName = $aBlockLesson->teachers;
+        $teacherOriginal = NULL;
+        foreach ($typesOfTeachers as $aType)
+        {
+            $varArrTeachers = "arr{$aType}Teachers";
+            if (isset($$varArrTeachers[$teacherOriginalAccName]))
+            {
+                $teacherOriginal = $$varArrTeachers[$teacherOriginalAccName];
+                break;
+            }
+        }
+
+        $originalTeacherTimetable = $teacherOriginal->timetable;
+        for ($i = $aBlockLesson->startTimeSlot; $i < $aBlockLesson->endTimeSlot; $i++)
+        {
+            if (isset($originalTeacherTimetable[$i]))
+            {
+                $aLesson = clone $originalTeacherTimetable[$i];
+                $aLesson->isMandatory = TRUE;
+                $originalTeacherTimetable[$i] = $aLesson;
+            } else
+            {
+                $originalTeacherTimetable[$i] = $aBlockLesson;
+            }
         }
     }
 }
@@ -295,6 +337,12 @@ foreach ($typesOfTeachers as $aType)
     }
 }
 
+if (empty($lessonsNeedRelief))
+{
+    //To-Do: No Scheduling
+    $_SESSION['scheduleError'] = "No relief required";
+    header("Location: result.php");
+}
 
 // initialization of groups ----------------------------------------------------
 $group1Types = array(
@@ -320,12 +368,11 @@ foreach ($group1Types as $aType)
     unset($$varArrAvailableTeachers);
 }
 
-foreach ($arrGroup1 as $aCompactTeacher)
-{
-    $accName = TeacherCompact::getAccName($aCompactTeacher->teacherId);
-//    echo "<br>$accName";
-}
-
+//foreach ($arrGroup1 as $aCompactTeacher)
+//{
+//    $accName = TeacherCompact::getAccName($aCompactTeacher->teacherId);
+////    echo "<br>$accName";
+//}
 //uasort($arrGroup1, 'cmpTeachers');
 //echo "<br>Group 1<br>";
 //print_r($arrGroup1);
@@ -337,83 +384,92 @@ foreach ($arrGroup1 as $aCompactTeacher)
 //    echo "<br>$str";
 //}
 
-$visitedStates = array();
+
 $activeStates = new ScheduleStateHeap();
 $successStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
 $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
-
 $startState = new ScheduleState($arrGroup1, $lessonsNeedRelief);
-$activeStates->insert($startState);
-$visitedStates[$startState->toString()] = NULL;
 
-unset($aCompactTeacher);
-unset($aTeacher);
-unset($aType);
-unset($accname);
-unset($arrExcludedTeachers);
-unset($arrGroup1);
-unset($arrLeaves);
-//unset($dateScheduled);
-//unset($dateString);
-unset($group1Types);
-unset($leaveRecords);
-unset($lessonsNeedRelief);
-unset($methodGetTeachers);
-unset($numTeachers);
-unset($scheduler);
-unset($someLessonsNeedRelief);
-unset($startState);
-unset($teacherFilter);
-unset($typesOfTeachers);
-unset($value);
-unset($varArrAvailableTeachers);
-unset($varArrCompactTeachers);
-unset($varArrExcludedTeachers);
-unset($varArrTeacherLeaves);
-unset($varArrTeachers);
+//unset($aCompactTeacher);
+//unset($aTeacher);
+//unset($aType);
+//unset($accname);
+//unset($arrExcludedTeachers);
+//unset($arrGroup1);
+//unset($arrLeaves);
+//unset($group1Types);
+//unset($leaveRecords);
+//unset($lessonsNeedRelief);
+//unset($methodGetTeachers);
+//unset($numTeachers);
+//unset($scheduler);
+//unset($someLessonsNeedRelief);
+//unset($teacherFilter);
+//unset($typesOfTeachers);
+//unset($value);
+//unset($varArrAvailableTeachers);
+//unset($varArrCompactTeachers);
+//unset($varArrExcludedTeachers);
+//unset($varArrTeacherLeaves);
+//unset($varArrTeachers);
 
-scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
-//$stoppedStates->insert($startState);
-// round 2
-if ($successStates->numberStates == 0)
+do
 {
-    $arrGroup2 = array();
-    foreach ($group2Types as $aType)
-    {
-        $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
-        $arrGroup2 = $arrGroup2 + $$varArrAvailableTeachers;
-    }
-    foreach ($stoppedStates->heap as $aState)
-    {
-        $aState->splitLessons();
-        $aState->resetTeachers();
-        $aState->addTeachers($arrGroup2);
-        $activeStates->insert($aState);
-    }
-    $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
+    $startTime = microtime(true);
+    $visitedStates = array();
+    $activeStates->insert($startState);
+    $visitedStates[$startState->toString()] = NULL;
+
     scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
-}
 
-// round 3
-if ($successStates->numberStates == 0)
-{
-    $arrGroup3 = array();
-    foreach ($group3Types as $aType)
+    // round 2
+    if ($successStates->numberStates == 0)
     {
-        $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
-        $arrGroup3 = $arrGroup3 + $$varArrAvailableTeachers;
+        $arrGroup2 = array();
+        foreach ($group2Types as $aType)
+        {
+            $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
+            $arrGroup2 = $arrGroup2 + $$varArrAvailableTeachers;
+        }
+        foreach ($stoppedStates->heap as $aState)
+        {
+            $aState->splitLessons();
+            $aState->resetTeachers();
+            $aState->addTeachers($arrGroup2);
+            $activeStates->insert($aState);
+        }
+        $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
+        scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
     }
-    foreach ($stoppedStates->heap as $aState)
+
+    // round 3
+    if ($successStates->numberStates == 0)
     {
-        $aState->addTeachers($arrGroup3);
-        $activeStates->insert($aState);
+        $arrGroup3 = array();
+        foreach ($group3Types as $aType)
+        {
+            $varArrAvailableTeachers = "arrAvailable{$aType}Teachers";
+            $arrGroup3 = $arrGroup3 + $$varArrAvailableTeachers;
+        }
+        foreach ($stoppedStates->heap as $aState)
+        {
+            $aState->addTeachers($arrGroup3);
+            $activeStates->insert($aState);
+        }
+        $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
+        scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
     }
-    $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
-    scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
-}
 
+    if ($successStates->numberStates > 0)
+    {
+        break;
+    } else
+    {
+        TeacherCompact::$recommendedNoOfLessons++;
+    }
+} while (TeacherCompact::$recommendedNoOfLessons <= TeacherCompact::MAX_LESSONS);
 
-$endTime = microtime(true);
+//$endTime = microtime(true);
 //echo "<br>Memory:";
 //echo memory_get_peak_usage(), "\n";
 //
@@ -442,11 +498,9 @@ if ($successStates->numberStates > 0)
         $results = $aState->beautify();
         $successResults[] = $results;
     }
-
-//    print_r($successResults);
     try
     {
-        SchedulerDB::setScheduleResult($successResults, $dateString);
+        SchedulerDB::setScheduleResult($typeSchedule, $dateString, $successResults, $arrLeaveId);
     } catch (DBException $e)
     {
         // To-Do:
