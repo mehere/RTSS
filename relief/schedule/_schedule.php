@@ -8,6 +8,8 @@ require_once '../../php-head.php';
 spl_autoload_register(
         function ($class)
         {
+            echo "<br>";
+            echo $class;
             include '../../class/' . $class . '.php';
         });
 header("Expires: 0");
@@ -465,6 +467,8 @@ do
         break;
     } else
     {
+
+        echo "TESTING TESTING";
         TeacherCompact::$recommendedNoOfLessons++;
     }
 } while (TeacherCompact::$recommendedNoOfLessons <= TeacherCompact::MAX_LESSONS);
@@ -501,6 +505,7 @@ if ($successStates->numberStates > 0)
     try
     {
         SchedulerDB::setScheduleResult($typeSchedule, $dateString, $successResults, $arrLeaveId);
+        print_r($successResults);
     } catch (DBException $e)
     {
         // To-Do:
@@ -514,5 +519,5 @@ if ($successStates->numberStates > 0)
     $_SESSION['scheduleError'] = "Failed to find a scheduling result.";
 }
 
-header("Location: result.php");
+//header("Location: result.php");
 ?>
