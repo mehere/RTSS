@@ -373,7 +373,7 @@ $value = Teacher::individualReport('6937933');
  */
 //echo SchedulerDB::scheduleResultNum();
 /*
-$result = TimetableDB::getIndividualTimetable('2013-02-06', "7032095");
+$result = TimetableDB::getIndividualTimetable('2013-02-06', "7576699", 0);
 foreach($result as $key=>$value)
 {
     echo $key."<br>";
@@ -387,7 +387,7 @@ foreach($result as $key=>$value)
  * 
  */
 
-//echo TimetableDB::checkTimetableConflict(0, Array(2, 11), "TMP2222222", "2013/2/06", "N111310111JC10");
+//echo TimetableDB::checkTimetableConflict(0, Array(1, 2), "TMP4444444", "2013/2/06", "N1313126HD65");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
