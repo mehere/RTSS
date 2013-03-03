@@ -12,6 +12,10 @@
 	margin-right: 10px;
 	text-align: right;
 }
+.main .line .date-field {
+	margin: 0 10px 0 5px;
+	width: 7em;
+}
 
 .table-info {
 	width: 680px;

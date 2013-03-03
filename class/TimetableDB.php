@@ -558,6 +558,7 @@ class TimetableDB
         {
             //confirmed
             $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher = '".$accname."';";
+            echo $sql_query_relief."<br>";
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
             {
@@ -603,7 +604,11 @@ class TimetableDB
                             }
                             else
                             {
-                                throw new DBException('Duplicate lesson', __FILE__, __LINE__);
+                                //throw new DBException('Duplicate lesson', __FILE__, __LINE__);
+                                $id = $row['lesson_id'];
+                                $attr = $result[$i]['attr'];
+                                $sbj = $row['subj_code'];
+                                echo "error : $i , $id , $start_time , $end_time , $attr , $sbj <br>";
                             }
                         }
                     }
@@ -748,6 +753,16 @@ class TimetableDB
         return $result;
     }
     
+    /**
+     * Can only be used in all-scheduling, but not adhoc scheduling
+     * @param type $schedule_index
+     * @param type $time_range
+     * @param type $accname
+     * @param type $schedule_date
+     * @param type $lesson_id
+     * @return int
+     * @throws DBException
+     */
     public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date, $lesson_id)
     {
         $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$schedule_date));
@@ -770,34 +785,37 @@ class TimetableDB
         $normal_result = Constant::sql_execute($db_con, $sql_normal);
         if(is_null($normal_result))
         {
-            return -2;
+            return -1;
         }
         else if(count($normal_result) > 0)
         {
             return 1;
         }
         
+        /*
         $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
         $relief_result = Constant::sql_execute($db_con, $sql_relief);
         if(is_null($relief_result))
         {
-            return -3;
+            return -1;
         }
         else if(count($relief_result) > 0)
         {
-            return 1;
+            return 2;
         }
+         * 
+         */
         
         $sql_temp = "select * from temp_each_alternative where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and schedule_id =".$schedule_index." and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0].")) and lesson_id != '$lesson_id';";
         $temp_result = Constant::sql_execute($db_con, $sql_temp);
         
         if(is_null($temp_result))
         {
-            return -4;
+            return -1;
         }
         else if(count($temp_result) > 0)
         {
-            return 1;
+            return 3;
         }
         
         return 0;
@@ -832,7 +850,7 @@ class TimetableDB
         
         foreach($table_result as $row)
         {
-            $day_index = $row['weekday'] - 0;
+            $day_index = $row['weekday'] - 1;
             
             if(!array_key_exists($day_index, $result))
             {
@@ -1000,5 +1018,20 @@ class TimetableDB
         
         return $query_result[0]['sem_id'] - 0;
     }
+    /*
+    public static function getDatesOfSem($year = '2013', $sem = 1)
+    {
+        $result = array();
+        
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            throw new DBException("Fail to query semester", __FILE__, __LINE__);
+        }
+        
+
+    }
+     * 
+     */
 }
 ?>

@@ -329,7 +329,7 @@ foreach($result as $key=>$value)
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
 
-//$result = ListGenerator::getTeacherName('2013-02-06', 0);
+//$result = ListGenerator::getTeacherName('2013/02/06', -1);
 //print_r($result);
 /*
 foreach($result as $key => $value)
@@ -373,7 +373,7 @@ $value = Teacher::individualReport('6937933');
  */
 //echo SchedulerDB::scheduleResultNum();
 /*
-$result = TimetableDB::getIndividualTimetable('2013-02-06', "TMP1111111", 0);
+$result = TimetableDB::getIndividualTimetable('2013-02-06', "7576699", 0);
 foreach($result as $key=>$value)
 {
     echo $key."<br>";
@@ -387,7 +387,7 @@ foreach($result as $key=>$value)
  * 
  */
 
-//echo TimetableDB::checkTimetableConflict(0, Array(2, 11), "TMP2222222", "2013/2/06", "N111310111JC10");
+//echo TimetableDB::checkTimetableConflict(0, Array(1, 2), "TMP4444444", "2013/2/06", "N1313126HD65");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
@@ -446,10 +446,7 @@ foreach($result as $key => $row)
 $result = SchedulerDB::approve(0, '2013-02-06');
 foreach($result as $row)
 {
-    echo $row['accName']."<br>";
-    echo $row['name']."<br>";
-    echo $row['phoneNum']."<br>";
-    echo $row['message']."<br>";
+    print_r($row);
     echo "<br>";
 }
  * 
