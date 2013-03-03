@@ -3,6 +3,12 @@ include_once '../php-head.php';
 
 require_once '../class/TimetableDB.php';
 
+$date=$_GET['date'];
+if (!$date)
+{
+    die('Please following the link on the previous page to redirect to the print view.');
+}
+
 include_once '../head-frag.php';
 ?>
 <title>Timetable - Print</title>
@@ -21,7 +27,7 @@ include_once '../head-frag.php';
 <body>
 	<div id="container">
         <h2>
-            Timetable on <em><?php echo date('D ' . PageConstant::DATE_FORMAT_SG); ?></em>
+            Timetable on <em><?php echo SchoolTime::convertDate($date); ?></em>
             <div style="font-size: 16px"><?php echo "Sem " . PageConstant::printSemRange(true) . ", " . PageConstant::printYearRange(true); ?></div>
         </h2>        
         <div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.</div>

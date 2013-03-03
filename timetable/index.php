@@ -10,6 +10,7 @@ if ($_SESSION['type'] == 'admin')
 
 require_once '../class/ListGenerator.php';
 require_once '../class/TimetableDB.php';
+require_once '../class/SchedulerDB.php';
 
 include_once '../head-frag.php';
 ?>
@@ -46,6 +47,8 @@ include_once '../head-frag.php';
                         {
                             $date=$_SESSION['scheduleDate'];
                         }
+                        
+//                        var_dump(ListGenerator::getTeacherName($date));
                     ?>
                     <div class="line"><span>Date:</span> <input type="text" class="textfield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
                     </div>
@@ -67,9 +70,9 @@ include_once '../head-frag.php';
                     
                     $timetableIndividual=TimetableDB::getIndividualTimetable($date, $accname);
                     PageConstant::escapeHTMLEntity($timetableIndividual);
-                    
+
                     $NO_PREIVEW=true;
-                    include 'relief-timetable-frag.php'; 
+                    include 'relief-timetable-frag.php';
                 ?>
             </div>
         </div>        

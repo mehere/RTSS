@@ -18,7 +18,7 @@ class ListGenerator
      * @param int $scheduleIndex can be -1 (after approve) or >=0 (preview before approve)
      * @return array teachers' names. in case the teacher fullname cannot be found, accname is returned
      */
-    public static function getTeacherName($date, $scheduleIndex)
+    public static function getTeacherName($date, $scheduleIndex=-1)
     {
         $result = Array();
         $teacher_dict = Teacher::getAllTeachers();  
