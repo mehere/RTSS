@@ -637,15 +637,12 @@ class SchedulerDB
         }
 
         //delete temp
-        /*
         $sql_delete = "delete from temp_each_alternative;";
         $delete_result = Constant::sql_execute($db_con, $sql_delete);
         if(is_null($delete_result))
         {
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
         }
-         * 
-         */
 
         //2. move and delete
         $sql_clear_skip = "delete from rs_aed_skip_info where DATE(schedule_date) = DATE('$date');";
