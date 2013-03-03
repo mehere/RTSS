@@ -5,7 +5,8 @@ class ScheduleStateHeapBest
     public $numberRequired;
     public $numberStates;
     public $heap;
-    public $threshold;
+    public $thresholdCost;
+    public $thresholdNoLesson;
     public $isEnough;
 
     public function __construct($numberRequired)
@@ -14,18 +15,20 @@ class ScheduleStateHeapBest
         $this->numberRequired = $numberRequired;
         $this->numberStates = 0;
         $this->isEnough = FALSE;
-        $this->threshold = NULL;
+        $this->thresholdCost = NULL;
     }
 
     public function insert($aState)
     {
         /* @var $aState ScheduleState */
         /* @var $this->heap ScheduleStateHeapSimple */
-        if ((empty($this->threshold)) ||
-                ($aState->expectedTotalCost < $this->threshold))
+        if ((empty($this->thresholdCost)) ||
+                (($aState->expectedTotalCost < $this->thresholdCost)
+                && ($aState->noLessons <= $this->thresholdNoLesson)))
         {
             $this->heap = array();
-            $this->threshold = $aState->expectedTotalCost;
+            $this->thresholdCost = $aState->expectedTotalCost;
+            $this->thresholdNoLesson = $aState->noLessons;
             $this->numberStates = 1;
         } else
         {
@@ -39,15 +42,15 @@ class ScheduleStateHeapBest
     {
         /* @var $aState ScheduleState*/
         $score = $aState->expectedTotalCost;
-        if (empty($this->threshold))
+        if (empty($this->thresholdCost))
         {
             return FALSE;
         } else
         {
-            if ($score > $this->threshold)
+            if ($score > $this->thresholdCost)
             {
                 return TRUE;
-            } else if (($score == $this->threshold) && ($this->isEnough))
+            } else if (($score == $this->thresholdCost) && ($this->isEnough))
             {
                 return TRUE;
             }
