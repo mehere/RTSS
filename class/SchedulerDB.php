@@ -857,15 +857,15 @@ class SchedulerDB
             $to[] = $recepient;
         }
 
-        $email_reply = Email::sendMail($from, $to);
-        
-        foreach($email_reply as $accname => $a_reply)
-        {
-            if($a_reply === 1)
-            {
-                $return_result[$accname]['emailSent'] = 1;
-            }
-        }
+//        $email_reply = Email::sendMail($from, $to);
+//        
+//        foreach($email_reply as $accname => $a_reply)
+//        {
+//            if($a_reply === 1)
+//            {
+//                $return_result[$accname]['emailSent'] = 1;
+//            }
+//        }
         
         //7. return
         return $return_result;
