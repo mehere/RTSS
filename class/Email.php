@@ -5,7 +5,6 @@ require_once 'email_lib/swift_required.php';
 class Email {
 
     public function sendMail($from, $to) {
-
         $fromEmail = $from["email"];
         $fromPassword = $from["password"];
         $fromName = $from["name"];
@@ -16,7 +15,8 @@ class Email {
         $transport->setUsername($fromEmail);
         $transport->setPassword($fromPassword);
         $mailer = Swift_Mailer::newInstance($transport);
-        for ($i = 0; $i < sizeof($to); $i++) {
+        $result = array();
+        for ($i = 0; $i < sizeof($to); $i++) {         
             $subject = $to[$i]["subject"];
             $toEmail = $to[$i]["email"];
             $toName = $to[$i]["name"];
@@ -33,9 +33,9 @@ class Email {
             }
             try {
                 $output = $mailer->send($out);
-                $result[] = $output;
+                $result[$to[$i]['accname']] = $output;
             } catch (Exception $e) {
-                $result[] = $e->getMessage();
+                $result[$to[$i]['accname']] = $e->getMessage();
             }
         }
         return $result;

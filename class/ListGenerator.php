@@ -49,7 +49,7 @@ class ListGenerator
         $query_normal_result = Constant::sql_execute($db_con, $sql_query_normal);
         if(is_null($query_normal_result))
         {
-            throw new DBException('Fail to query teachers with duty on '.$date, __FILE__, __LINE__);
+            throw new DBException('Fail to query teachers with duty on '.$date, __FILE__, __LINE__, 2);
         }
         
         foreach($query_normal_result as $row)
@@ -85,7 +85,7 @@ class ListGenerator
         $query_teacher_result = Constant::sql_execute($db_con, $sql_query_teacher);
         if(is_null($query_teacher_result))
         {
-            throw new DBException('Fail to query teachers with duty on '.$date, __FILE__, __LINE__);
+            throw new DBException('Fail to query teachers with duty on '.$date, __FILE__, __LINE__, 2);
         }
         
         foreach($query_teacher_result as $row)
