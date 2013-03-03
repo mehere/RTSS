@@ -4,7 +4,7 @@
     <ul class="nav">
         <?php if ($_SESSION['type'] == 'admin') { ?>
             <li><a href="/RTSS/relief/">Scheduling</a></li>
-            <li><a href="/RTSS/SMS/">SMS Console</a></li>
+            <li><a href="/RTSS/sms/">SMS Console</a></li>
             <li><a href="/RTSS/report/">Report</a></li>
             <li><a href="/RTSS/timetable/admin.php">Timetable - Admin</a></li>
         <?php } ?>

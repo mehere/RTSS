@@ -319,6 +319,16 @@ class NameMap
             ),
             'saveKey' => array('datetime-from', 'datetime-to', 'handphone', 'email', 'MT', 'remark', 'accname'),
             'addKey' => array('fullname')
+        ),
+        
+        'adhocSchedule' => array(
+            'display' => array(
+                'fullname' => 'Name', 'time' => 'Time', 'class' => 'Class', 
+                'unavailable' => 'N.A.', 'occupy' => 'Busy Period'
+            ),
+            'hidden' => array(
+                'lessonID', 'reliefAccName'
+            )
         )
     );
 

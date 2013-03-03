@@ -5,7 +5,9 @@ require_once 'Students.php';
 require_once 'Teacher.php';
 require_once 'TimetableDB.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/sms/send_sms.php';
+require_once 'SMS.php';
+require_once 'Email.php';
+//require_once 'sms/send_sms.php';
 
 class SchedulerDB
 {
@@ -180,7 +182,8 @@ class SchedulerDB
 
             $a_leave = Array(
                 "startLeave" => $leave_time[0],
-                "endLeave" => $leave_time[1]
+                "endLeave" => $leave_time[1],
+                "leaveID" => $a_info['leaveID']
             );
 
             $algo_type = Constant::$teacher_type[$a_info['type']];
@@ -668,7 +671,7 @@ class SchedulerDB
         }
 
         //3. construct sms/email content
-        $sql_selected = "select rs_relief_info.lesson_id, start_time_index, end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where DATE(rs_relief_info.schedule_date) = DATE('".$date."');";
+        $sql_selected = "select rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where DATE(rs_relief_info.schedule_date) = DATE('".$date."');";
         $selected_result = Constant::sql_execute($db_con, $sql_selected);
         if(is_null($selected_result))
         {
@@ -677,7 +680,7 @@ class SchedulerDB
 
         //a list of relief teacher, with their relief duties
         //{accname => {unique_relief_key=>{...}, ...}, ...}
-        $list = Array();
+        $list = Array(); // for construct msg content
         foreach($selected_result as $row)
         {
             $accname = $row['relief_teacher'];
@@ -720,22 +723,36 @@ class SchedulerDB
         //4. inform all teachers (Teacher::getTeacherContact)
         $teacher_list = Teacher::getTeacherContact();
 
+        $return_result = array();
+        
         $sms_input = Array();
         foreach($list as $key=>$one)
         {
             $accname = $key;
 
-            $phone = "";
-            $email = "";
-            $name = "";
-
-            if(array_key_exists($accname, $teacher_list))
+            if(!array_key_exists($accname, $teacher_list))
             {
-                $phone = $teacher_list[$accname]['phone'];
-                $email = $teacher_list[$accname]['email'];
-                $name = $teacher_list[$accname]['name'];
+                continue;
             }
-
+            
+            $phone = $teacher_list[$accname]['phone'];
+            $name = $teacher_list[$accname]['name'];
+            
+            $return_result[$accname] = array(
+                'fullname' => $name,
+                'smsSent' => 0,
+                'emailSent' => 0
+            );
+            
+            if(empty($phone))
+            {
+                continue;
+            }
+            if(empty($name))
+            {
+                $name = "Teacher";
+            }
+            
             $message = "";
 
             $index = 1;
@@ -761,9 +778,104 @@ class SchedulerDB
             );
 
             $sms_input[] = $one_teacher;
+            
+            
         }
 
-        sendSMS($sms_input, $date);
+        //5. send sms and record success/failure
+        $sms_reply = SMS::sendSMS($sms_input, $date);
+        
+        if(!is_null($sms_reply))
+        {
+            foreach($sms_reply as $a_reply)
+            {
+                $accname = $a_reply['accname'];
+                if(array_key_exists($accname, $return_result))
+                {
+                    if(strcmp($a_reply['status'], 'OK') === 0)
+                    {
+                        $return_result[$accname]['smsSent'] = 1;
+                    }
+                }
+            }
+        }
+        
+        //6. send email and record success/failure
+        $from = array(
+            "email" => Constant::email,
+            "password" => Constant::email_password,
+            "name" => Constant::email_name,
+            "smtp" => Constant::email_smtp,
+            "port" => Constant::email_port,
+            "encryption" => Constant::email_encryption
+        );
+        
+        $to = array();
+        foreach($list as $key=>$one)
+        {
+            $accname = $key;
+            
+            if(!array_key_exists($accname, $teacher_list))
+            {
+                continue;
+            }
+            
+            $name = $teacher_list[$accname]['name'];
+            $email = $teacher_list[$accname]['email'];
+            
+            if(empty($email))
+            {
+                continue;
+            }
+            if(empty($name))
+            {
+                $name = 'Teacher';
+            }
+            
+            $message = "";
+
+            $index = 1;
+            foreach($one as $a_relief)
+            {
+                $start_time = SchoolTime::getTimeValue($a_relief['start_time']);
+                $end_time = SchoolTime::getTimeValue($a_relief['end_time']);
+
+                $classes = implode(",", $a_relief['class']);
+                $subject = $a_relief['subject'];
+                $venue = empty($a_relief['venue'])?"in classroom":$a_relief['venue'];
+
+                $message .= "|    $index : On $date $start_time-$end_time take relief for $classes subject-$subject venue-$venue  |";
+
+                $index++;
+            }
+            
+            $recepient = array(
+                'accname' => $accname,
+                'subject' => 'Relief timetable for today',
+                'email' => $email,
+                'message' => $message,
+                'attachment' => "",
+                'name' => $name
+            );
+            
+            $to[] = $recepient;
+        }
+
+        $email_reply = Email::sendMail($from, $to);
+        
+        if(!is_null($email_reply))
+        {
+            foreach($email_reply as $accname => $a_reply)
+            {
+                if($a_reply === 1)
+                {
+                    $return_result[$accname]['emailSent'] = 1;
+                }
+            }
+        }
+        
+        //7. return
+        return $return_result;
     }
 
     public static function allSchduleIndex()

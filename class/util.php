@@ -13,6 +13,13 @@ Class Constant
     const ifins_db_password = "";
     const ifins_db_name = "ifins";
 
+    const email = 'chij.ischeduler@gmail.com';
+    const email_password = 'kwngkngk';
+    const email_name = 'CHIJ iScheduler admin';
+    const email_smtp = 'smtp.gmail.com';
+    const email_port = 465;
+    const email_encryption = 'ssl';
+    
     //time slot
     const num_of_time_slot = 15;
     const num_of_week_day = 5;
