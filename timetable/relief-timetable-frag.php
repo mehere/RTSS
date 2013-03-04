@@ -40,7 +40,6 @@ EOD;
                 }                
                 
                 $style='';
-                $otherTdContent='';
                 switch ($teaching['attr'])
                 {
                     case -1:
@@ -51,22 +50,21 @@ EOD;
                         break;
                     case 2:
                         $style='style="color: red"';
-                        $otherTdContent=true;
                         break;
                 }
                 
                 $timetableEntry=array();
                 foreach (array_slice($headerKeyList, 1) as $key => $value)
-                {
-                    if ($otherTdContent)
-                    {                        
-                        $otherTdContent= <<< EOD
-<span style="text-decoration: line-through; color: black">{$teaching['skipped'][$key]}</span>   
+                {                    
+                    $skippedPart=$teaching['skipped'][$key];
+                    if ($skippedPart)
+                    {                       
+                        $skippedPart= <<< EOD
+<div style="color: black;">(<span style="text-decoration: line-through;">$skippedPart</span>)</div>   
 EOD;
-                        $otherTdContent="($otherTdContent)";
                     }
                     $timetableEntry[]= <<< EOD
-<span $style>{$teaching[$key]} $otherTdContent</span>
+<span $style>{$teaching[$key]}{$skippedPart}</span>
 EOD;
                 }
                                                 
