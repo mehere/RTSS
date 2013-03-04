@@ -61,7 +61,8 @@ EOD;
                                 
                                 $curScheduleIndex=$scheduleIndexArr[$curPage-1];                            
                                 $scheduleList=SchedulerDB::getScheduleResult($curScheduleIndex);
-
+                                PageConstant::escapeHTMLEntity($scheduleList);
+                                
                                 foreach ($scheduleList[$curScheduleIndex] as $key => $value)
                                 {
                                     $classStr=implode(', ', $value['class']);

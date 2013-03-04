@@ -78,6 +78,7 @@ EOD;
                                 <tbody id="table-overall">
                                     <?php
                                         $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==2 ? SORT_DESC : SORT_ASC);
+                                        PageConstant::escapeHTMLEntity($reportArr);
 
                                         foreach ($reportArr as $value)
                                         {

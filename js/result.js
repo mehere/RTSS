@@ -5,7 +5,7 @@ $(document).ready(function(){
         modal: true,
         resizable: false,
         draggable: false,
-        width: 350,
+        width: 500,
         buttons: {
             OK: function(){
                 $(this).dialog("close");
