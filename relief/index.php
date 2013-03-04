@@ -2,13 +2,20 @@
 spl_autoload_register(function($class){
     require_once "../class/$class.php";
 });
-Template::printHeaderAndDoValidation('', array(), array(), '', '');
+Template::printHeaderAndDoValidation('', array('relief.css'), array('relief.js'), Template::HOME, '');
 ?>
 <form class="main" name="schedule" action="schedule/_schedule.php" method="post">
-    Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
-    <div class="section">
-        Teacher on Leave: <a href="teacher-edit.php">Edit/Add</a>
-        <table class="table-info">
+    <p>
+        Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+    </p>
+    <div class='accordion colorbox blue'>        
+        <span>
+            Leave Status
+        </span>
+        <a class="schedule-edit" href="teacher-edit.php">Edit/Add</a>
+    </div>    
+    <div>
+        <table class="hovered table-info">
             <thead>
                 <tr class="teacher-thead">
                     <?php
@@ -20,7 +27,7 @@ Template::printHeaderAndDoValidation('', array(), array(), '', '');
                         {
                             // class="sort"
                             echo <<< EOD
-                                <th style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                <th class="hovered" style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                         }
                     ?>
@@ -61,7 +68,7 @@ EOD;
             </tbody>
         </table>
     </div>
-    <div class="section">
+<!--    <div class="section">
         Temporary Relief Teacher: <a href="teacher-edit.php?teacher=temp">Edit/Add</a>
         <table class="table-info">
             <thead>
@@ -74,7 +81,7 @@ EOD;
                         {
                             // class="sort"
                             echo <<< EOD
-                                <th style="width: $width[$i]" >$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                                <th style="width: $width[$i]" >$tableHeaderList[$i]span class="ui-icon ui-icon-arrowthick-2-n-s"></span</th>
 EOD;
                         }
                     ?>
@@ -132,7 +139,7 @@ EOD;
             <tr><th style="width: 120px"><?php echo NameMap::$RELIEF['excludingList']['display']['executive']; ?></th><td><?php echo implode(', ', $adminList); ?></td></tr>
             <tr><th><?php echo NameMap::$RELIEF['excludingList']['display']['non-executive']; ?></th><td><?php echo implode(', ', $normalList); ?></td></tr>
         </table>
-    </div>
+    </div>-->
     <div class="bt-control">
         <input type="submit" name="btnScheduleAll" value="Schedule All" class="button" />
         <input type="button" name="btnScheduleAdhoc" value="Adhoc Schedule" class="button" />

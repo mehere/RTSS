@@ -5,16 +5,10 @@
 	font-size: 15px;
 	width: 200px;
 }
-
-.main .schedule-edit {
-	color: white;
-	
-	position: absolute;
-	right: 15px;
-	bottom: 15px;
+.section {
+	margin-top: 20px;
 }
 
-/*
 .table-info {
 	border-collapse: collapse;
 	table-layout: fixed;
@@ -69,7 +63,6 @@
 .table-info tr td>a {
 	color: #e77200;
 }
-*/
 
 .bt-control {	
 	margin-top: 40px;
@@ -80,7 +73,6 @@
 	margin-right: 100px;
 }
 
-/*
 #teacher-detail .table-info tr td {
 	background-color: #ffffff;
 	word-wrap: break-word;
@@ -96,4 +88,3 @@ div.ui-datepicker {
 	font-size: .75em;
 	box-shadow: 0 2px 6px 1px black;
 }
-*/

@@ -2,18 +2,36 @@
 class Template
 {
     // Main menu display
-    const HOME=<<< EOD
-<img class="menu" src="/RTSS/img/home.png"/>   
-EOD;
+    const HOME="Scheduler";
     const TT_VIEW="View Timetable";
     const TT_ADMIN="Upload Timetable";
     const REPORT="Report";
     
+    // Submenu display
+    const SCHEDULE="Schedule";
+    const SMS="SMS Console";
+    
+    const TT_ADMIN_MASTER="Upload Master Timetable";
+    const TT_ADMIN_AED="Upload AED Timetable";
+    
+    // Menu map
     private static $MAIN_MENU=array(
         self::HOME => "/RTSS/",
         self::TT_VIEW => "/RTSS/timetable/",
         self::TT_ADMIN => "/RTSS/timetable/admin.php",
-        self::REPORT => "/RTSS/report/"        
+        self::REPORT => "/RTSS/report/"
+    );
+    
+    private static $SUBMENU=array(
+        self::HOME => array(
+            self::SCHEDULE => "/RTSS/",
+            self::SMS => "/RTSS/sms/"            
+        ),
+        
+        self::TT_ADMIN => array(
+            self::TT_ADMIN_MASTER => "/RTSS/timetable/",
+            self::TT_ADMIN_AED => "/RTSS/timetable/"
+        )
     );
     
     public static function validate($isController=false, $needsJSON=false, $allowsAll=false)
@@ -46,13 +64,6 @@ EOD;
     public static function printHeaderAndDoValidation($title, $css, $scripts, $mainMenuSelect, $submenuSelect, $allowsAll=false)
     {
         self::validate(false, false, $allowsAll);
-
-        //$mainMenu = array("<img class='menu' src='/RTSS/resources/images/home.png'/>", "Upload Timetable", "View Reports");
-        
-        $mainMenuLinks = array("abc", "abc", "abc");
-        $submenu0 = array("");
-        $submenu1 = array("Upload Master CSV Timetabl", "Upload Aed Timetable");
-        $submenu = array($submenu0, $submenu1);
         
         $title=PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME . " - " . $title;
         
@@ -60,8 +71,9 @@ EOD;
         $menuPart='';
         foreach (self::$MAIN_MENU as $key => $value)
         {
+            $active=$key == $mainMenuSelect ? "active" : '';
             $menuPart .= <<< EOD
-<div class="menu-item">
+<div class="menu-item $active">
     <a class="menu" href="$value">
         <span class="menu">
             $key
@@ -69,7 +81,23 @@ EOD;
     </a>
 </div>
 EOD;
-        }                
+        }
+        
+        // Submenu part
+        $submenuPart='';
+        foreach (self::$SUBMENU[$mainMenuSelect] as $key => $value)
+        {
+            $active=$key == $submenuSelect ? "active" : '';
+            $submenuPart .= <<< EOD
+<div class="submenu-item $active">
+    <a class="submenu" href="$value">
+        <span class="submenu">
+            $key
+        </span>
+    </a>
+</div>
+EOD;
+        }
 
         // HTML of header
         echo <<< EOD
@@ -137,24 +165,11 @@ EOD;
                 <div class="submenu">
                     <div class="submenu-title">
                         <h1 class="submenu-title">
-                            <a class="submenu-title">Upload Timetable</a>
+                            $mainMenuSelect
                         </h1>
                     </div>
                     <div class="submenubar">
-                        <div class="submenu-item first">
-                            <a class="submenu">
-                                <span class="submenu">
-                                    Upload Master CSV Timetable
-                                </span>
-                            </a>
-                        </div>
-                        <div class="submenu-item">
-                            <a class="submenu">
-                                <span class="submenu">
-                                    Upload Aed Timetable
-                                </span>
-                            </a>
-                        </div>
+                        $submenuPart
                     </div>
 
                     <div style="clear:both;"></div>
@@ -165,126 +180,6 @@ EOD;
             <div style="clear:both;"></div>
             <div class="content">
 EOD;
-//        "        <div class='container'>
-//            <div class='header'>
-//                <div class='header-top'>
-//                    <img src='/RTSS/resources/images/school-logo.png' class='logo' />
-//                    <div class='wrapper'>
-//                        <div class='statusBar'>
-//                            <div class='statusbar-item'>
-//                                <span class='statusbar'>
-//";
-//
-//        /// To-Do: print user name
-//
-//        echo
-//        "                                </span>
-//                            </div>
-//                            <div class='statusbar-item'>
-//                                <a class='statusbar'>
-//                                    Log out
-//                                </a>
-//                            </div>
-//                            <div style='clear:both;'></div>
-//                        </div>
-//                        <div style='clear:both;'></div>
-//
-//                        <div class='menubar'>
-//                            <div class='menu-foreground'>
-//";
-//        for ($i = 0; $i < count($mainMenu); $i++)
-//        {
-//            echo
-//            "                                <div class='menu-item";
-//            if ($i == $mainIndex)
-//            {
-//                echo " active";
-//            }
-//
-//            echo
-//            "'>
-//                                    <a class='menu' href='";
-//            echo "$mainMenuLinks[$i]";
-//            echo
-//            "'>
-//                                        <span class='menu'>
-//";
-//
-//            echo $mainMenu[$i];
-//            echo
-//            "
-//                                        </span>
-//                                    </a>
-//                                </div>
-//";
-//        }
-//
-//
-//        echo
-//        " <div style='clear:both;'></div>
-//                            </div>
-//                        </div>
-//                        <div style='clear:both;'></div>
-//                    </div>
-//                    <div style='clear:both;'></div>
-//                </div>
-//                <div style='clear:both;'></div>
-//";
-//
-//
-//        // submenu
-//        echo
-//        "                <div class='submenu'>
-//";
-//        if ($mainIndex != 0)
-//        {
-//            echo
-//            "                    <div class='submenu-title'>
-//                        <h1 class='submenu-title'>
-//                            <a class='submenu-title'>";
-//            echo $mainMenu[$mainIndex];
-//            echo
-//            "
-//                            </a>
-//                        </h1>
-//                    </div>
-//";
-//        }
-//
-//        // submenu bar
-//        echo
-//        "                   <div class='submenubar'>";
-//        $thisSubMenu = $submenu[$mainIndex];
-//        for ($i = 0; $i < count($thisSubMenu); $i++)
-//        {
-//            echo
-//            "<div class='submenu-item";
-//
-//            if ($i == 0)
-//            {
-//                echo " first";
-//            }
-//            echo "'>
-//                            <a class='submenu'>
-//                                <span class='submenu'>
-//                                    ";
-//            echo $thisSubMenu[$i];
-//            echo
-//            "
-//                                </span>
-//                            </a>
-//                        </div>";
-//        }
-//
-//        echo
-//        "                    </div>
-//                    <div style='clear:both;'></div>
-//                    <img class='submenu-separator' src='/RTSS/resources/images/line.png'/>
-//                </div>
-//            </div>
-//            <div style='clear:both;'></div>
-//            <div class='content'>
-//";
     }
 
     public static function printFooter()
