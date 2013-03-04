@@ -2,46 +2,46 @@
 @font-face
 {
     font-family: 'Segoe UI Light';
-    src: url('/RTSS/resources/fonts/segoeuilight/segoeuilight.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/resources/fonts/segoeuilight/segoeuilight.woff') format('woff'),
-        url('/RTSS/resources/fonts/segoeuilight/segoeuilight.ttf')  format('truetype'),
-        url('/RTSS/resources/fonts/segoeuilight/segoeuilight.svg#SegoeUILight') format('svg');
+    src: url('/RTSS/img/fonts/segoeuilight/segoeuilight.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS/img/fonts/segoeuilight/segoeuilight.woff') format('woff'),
+        url('/RTSS/img/fonts/segoeuilight/segoeuilight.ttf')  format('truetype'),
+        url('/RTSS/img/fonts/segoeuilight/segoeuilight.svg#SegoeUILight') format('svg');
 }
 
 
 @font-face
 {
     font-family: 'Segoe UI Semilight';
-    src: url('/RTSS/resources/fonts/segoeuisemilight/segoeuisemilight.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/resources/fonts/segoeuisemilight/segoeuisemilight.woff') format('woff'),
-        url('/RTSS/resources/fonts/segoeuisemilight/segoeuisemilight.ttf')  format('truetype'),
-        url('/RTSS/resources/fonts/segoeuisemilight/segoeuisemilight.svg#SegoeUISemilight') format('svg');
+    src: url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.woff') format('woff'),
+        url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.ttf')  format('truetype'),
+        url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.svg#SegoeUISemilight') format('svg');
 }
 
 @font-face
 {
     font-family: 'Segoe UI';
-    src: url('/RTSS/resources/fonts/segoeui/segoeui.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/resources/fonts/segoeui/segoeui.woff') format('woff'),
-        url('/RTSS/resources/fonts/segoeui/segoeui.ttf')  format('truetype'),
-        url('/RTSS/resources/fonts/segoeui/segoeui.svg#SegoeUI') format('svg');
+    src: url('/RTSS/img/fonts/segoeui/segoeui.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS/img/fonts/segoeui/segoeui.woff') format('woff'),
+        url('/RTSS/img/fonts/segoeui/segoeui.ttf')  format('truetype'),
+        url('/RTSS/img/fonts/segoeui/segoeui.svg#SegoeUI') format('svg');
 }
 
 @font-face{
     font-family: 'Open Sans';
-    src: url('/RTSS/resources/fonts/opensans/opensans.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/resources/fonts/opensans/opensans.woff') format('woff'),
-        url('/RTSS/resources/fonts/opensans/opensans.ttf')  format('truetype'),
-        url('/RTSS/resources/fonts/opensans/opensans.svg#SegoeUI') format('svg');
+    src: url('/RTSS/img/fonts/opensans/opensans.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS/img/fonts/opensans/opensans.woff') format('woff'),
+        url('/RTSS/img/fonts/opensans/opensans.ttf')  format('truetype'),
+        url('/RTSS/img/fonts/opensans/opensans.svg#SegoeUI') format('svg');
 }
 
 @font-face
 {
     font-family: 'Droid Sans Regular';
-    src: url('/RTSS/resources/fonts/droidsans/droidsans.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/resources/fonts/droidsans/droidsans.woff') format('woff'),
-        url('/RTSS/resources/fonts/droidsans/droidsans.ttf')  format('truetype'),
-        url('/RTSS/resources/fonts/droidsans/droidsans.svg#DroidSansRegular') format('svg');
+    src: url('/RTSS/img/fonts/droidsans/droidsans.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS/img/fonts/droidsans/droidsans.woff') format('woff'),
+        url('/RTSS/img/fonts/droidsans/droidsans.ttf')  format('truetype'),
+        url('/RTSS/img/fonts/droidsans/droidsans.svg#DroidSansRegular') format('svg');
 }
 
 
@@ -73,10 +73,10 @@ div.container{
     position: relative;
     padding: 0px;
     z-index: 0;
-    background: url("/RTSS/resources/images/page_gradient_linear.png") no-repeat;
+    background: url("/RTSS/img/images/page_gradient_linear.png") no-repeat;
     background-size: 100% 100%;
-    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/resources/images/page_gradient_linear.png', sizingMethod='scale');
-    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/resources/images/page_gradient_linear.png', sizingMethod='scale')";
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/images/page_gradient_linear.png', sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/images/page_gradient_linear.png', sizingMethod='scale')";
 }
 
 div.header {
@@ -132,7 +132,7 @@ div.menubar{
     -webkit-border-radius:7px;
     -khtml-border-radius:7px;
     border-radius: 7px;
-    behavior:url("/RTSS/resources/lib/PIE.htc");
+    behavior:url("/RTSS/img/PIE.htc");
     padding: 1px;
     background: rgb(211,211,211);
     /*    background: url("/RTSS/WeeUi/menu_border.svg")  scroll 0px 0px / 100% 100% transparent;*/
@@ -148,7 +148,7 @@ div.menu-foreground{
     -webkit-border-radius:6px;
     -khtml-border-radius:6px;
     border-radius: 6px;
-    behavior:url("/RTSS/resources/lib/PIE.htc");
+    behavior:url("/RTSS/img/PIE.htc");
     /*
     background: url("/RTSS/WeeUi/menu_bg.png") repeat-x scroll 0px 0px / 100% 100% transparent;/*
      filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/WeeUi/menu_bg.png', sizingMethod='scale');
@@ -165,7 +165,7 @@ div.menu-foreground{
     background: -o-linear-gradient(top, #FCFDFE, #F5F6F7);
     background: linear-gradient(to bottom, #FCFDFE, #F5F6F7);
     /*        -pie-background: linear-gradient(to bottom, #FCFDFE, #F5F6F7);
-            behavior: url("/RTSS/resources/lib/PIE.htc");*/
+            behavior: url("/RTSS/img/lib/PIE.htc");*/
 
     padding:0px;
     margin:0px;
@@ -185,7 +185,7 @@ div.menu-item:first-child {
     -webkit-border-radius:6px 0px 0px 6px;
     -khtml-border-radius:6px 0px 0px 6px;
     border-radius: 6px 0px 0px 6px;
-    behavior:url("/RTSS/resources/lib/PIE.htc");
+    behavior:url("/RTSS/img/PIE.htc");
 }
 
 div.menu-item.lastchild{
@@ -194,7 +194,7 @@ div.menu-item.lastchild{
     -webkit-border-radius:0px 6px 6px 0px;
     -khtml-border-radius:0px 6px 6px 0px;
     border-radius: 0px 6px 6px 0px;
-    behavior:url("/RTSS/resources/lib/PIE.htc");
+    behavior:url("/RTSS/img/PIE.htc");
 }
 
 div.menu-item:hover{
@@ -214,7 +214,7 @@ div.menu-item:first-child a.menu{
     -webkit-border-radius:6px 0px 0px 6px;
     -khtml-border-radius:6px 0px 0px 6px;
     border-radius: 6px 0px 0px 6px;
-    behavior:url("/RTSS/resources/lib/PIE.htc");
+    behavior:url("/RTSS/img/PIE.htc");
 
     border-left: 1px solid rgb(210, 211, 212);
 }
@@ -227,7 +227,7 @@ div.menu-item.lastchild a.menu{
     -webkit-border-radius:0px 6px 6px 0px;
     -khtml-border-radius:0px 6px 6px 0px;
     border-radius: 0px 6px 6px 0px;
-    behavior:url("/RTSS/resources/lib/PIE.htc");
+    behavior:url("/RTSS/img/PIE.htc");
 }
 
 div.menu-item:hover a.menu{
@@ -282,7 +282,7 @@ div.menu-item.active a.menu{
     background: -o-linear-gradient(top, rgb(247, 248, 249), rgb(251, 252, 253));
     background: linear-gradient(to bottom, rgb(247, 248, 249), rgb(251, 252, 253));
     /*    -pie-background: linear-gradient(to bottom, rgb(247, 248, 249), rgb(251, 252, 253));
-        behavior: url("/RTSS/resources/lib/PIE.htc");*/
+        behavior: url("/RTSS/img/lib/PIE.htc");*/
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05) inset;
     color: rgb(0, 0, 0);
 }

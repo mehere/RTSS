@@ -27,7 +27,7 @@ Class Constant
     public static $mother_tongue = array("Chinese", "Tamil", "Malay");
     public static $teacher_type = array("Teacher"=>"Normal", "AED"=>"Aed", "Temp"=>"Temp", "HOD"=>"Hod", "untrained"=>"Untrained", "ExCo"=>"ExCo");   //key: types in database; value: types in websystem. Due to some reasons, we maintain the two list
 
-    public static $sem_dates = array('01-01', '06-01', '07-01', '12-01');
+    public static $sem_dates = array('01-01', '06-30', '07-01', '12-31');
     
     public static function connect_to_db($db_name)
     {
