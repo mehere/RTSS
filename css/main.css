@@ -66,6 +66,16 @@ p{
    font: 14px/20px "Segoe UI",Arial,Helvetica,sans-serif;
 }
 
+a {
+	color: #0096D7;
+	text-decoration: none;    
+	outline: none;
+}
+a:hover { 
+	color: #55AFD6;
+	text-decoration: underline;
+}
+
 
 div.container{
     min-height: 100%;
@@ -73,10 +83,10 @@ div.container{
     position: relative;
     padding: 0px;
     z-index: 0;
-    background: url("/RTSS/img/images/page_gradient_linear.png") no-repeat;
+    background: url("/RTSS/img/page_gradient_linear.png") no-repeat;
     background-size: 100% 100%;
-    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/images/page_gradient_linear.png', sizingMethod='scale');
-    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/images/page_gradient_linear.png', sizingMethod='scale')";
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/page_gradient_linear.png', sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/page_gradient_linear.png', sizingMethod='scale')";
 }
 
 div.header {
@@ -115,10 +125,6 @@ div.statusbar-item{
     float:left;
     margin: 0px 0px 0px 25px;
     position: relative;
-}
-
-a.statusbar{
-    color: rgb(0,150,215);
 }
 
 div.wrapper{

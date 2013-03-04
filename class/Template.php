@@ -43,7 +43,7 @@ EOD;
         }
     }
 
-    public static function printHeaderAndDoValidation($title, $css, $scripts, $mainIndex, $allowsAll=false)
+    public static function printHeaderAndDoValidation($title, $css, $scripts, $mainMenuSelect, $submenuSelect, $allowsAll=false)
     {
         self::validate(false, false, $allowsAll);
 
@@ -62,9 +62,9 @@ EOD;
         {
             $menuPart .= <<< EOD
 <div class="menu-item">
-    <a class="menu" href="$key">
+    <a class="menu" href="$value">
         <span class="menu">
-            $value
+            $key
         </span>
     </a>
 </div>
