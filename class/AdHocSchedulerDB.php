@@ -9,6 +9,7 @@ require_once 'util.php';
 require_once 'ReliefLesson.php';
 require_once 'DayTime.php';
 require_once 'Lesson.php';
+require_once 'Teacher.php';
 
 class AdHocSchedulerDB
 {
@@ -135,6 +136,122 @@ class AdHocSchedulerDB
         return $result;
     }
     
+    public static function cancelRelief($reliefID, $startBlockingTime, $endBlockingTime)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to connect to database', __FILE__, __LINE__);
+        }
+        
+        //retrieve leave
+        $sql_relief = "select * from rs_relief_info where relief_id = $reliefID;";
+        $relief_result = Constant::sql_execute($db_con, $sql_relief);
+        if(is_null($relief_result))
+        {
+            throw new DBException('Retrieve the latest code');
+        }
+        
+        //if(empty())
+        
+        //store cancel
+        
+        //search for rs_aed_skip
+        
+        //delete relief
+        
+        //delete skip - error : restore relief
+    }
     
+    public static function getApprovedSchedule($scheduleDate)
+    {
+        //query fullname
+        $normal_dict = Teacher::getAllTeachers();
+        $temp_dict = Teacher::getTempTeacher("");
+        
+        //connect
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to connect to database', __FILE__, __LINE__);
+        }
+        
+        //query
+        $sql_query_relief = "SELECT rs_relief_info.*, ct_class_matching.* FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($scheduleDate))."') order by rs_relief_info.start_time_index, rs_relief_info.end_time_index ASC;";
+        
+        $relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+        if(is_null($relief_result))
+        {
+            throw new DBException('Fail to query approved schedule on '.$scheduleDate, __FILE__, __LINE__, 2);
+        }
+        
+        //result
+        $result = array();
+        
+        foreach($relief_result as $row)
+        {
+            $relief_teacher = $row['relief_teacher'];
+            
+            if(!array_key_exists($relief_teacher, $result))
+            {
+                if(array_key_exists($relief_teacher, $temp_dict))
+                {
+                    $relief_name = $temp_dict[$relief_teacher]['fullname'];
+                }
+                else if(array_key_exists($relief_teacher, $normal_dict))
+                {
+                    $relief_name = $normal_dict[$relief_teacher]['name'];
+                }
+                else
+                {
+                    $relief_name = "";
+                }
+                
+                $result[$relief_teacher] = array(
+                    "lesson" => array(),
+                    "reliefTeacher" => $relief_name
+                );
+            }
+            
+            $relief_id = $row['relief_id'];
+            
+            if(!array_key_exists($relief_id, $result[$relief_teacher]['lesson']))
+            {
+                $lesson_id = $row['lesson_id'];
+                $start_time_index = $row['start_time_index'];
+                $end_time_index = $row['end_time_index'];
+                
+                //relief not created
+                $result[$relief_teacher]['lesson'][$relief_id] = array(
+                    'class' => array(),
+                    'time' => array($start_time_index, $end_time_index),
+                    'lessonID' => $lesson_id,
+                    'reliefID' => $relief_id
+                );
+                
+                if(!empty($row['class_name']))
+                {
+                    $result[$relief_teacher]['lesson'][$relief_id]['class'][] = $row['class_name'];
+                }
+            }
+            else
+            {
+                //relief created already, the only difference is in class_name
+                if(!empty($row['class_name']))
+                {
+                    $result[$relief_teacher]['lesson'][$relief_id]['class'][] = $row['class_name'];
+                }
+            }
+        }
+        
+        uasort($result, 'AdHocSchedulerDB::compareName');
+        
+        return $result;
+    }
+    
+    private static function compareName($a, $b)
+    {
+        return strcasecmp($a['reliefTeacher'], $b['reliefTeacher']);
+    }
 }
 ?>

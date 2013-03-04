@@ -947,21 +947,6 @@ class SchedulerDB
      *
      */
 
-    public function getReliefPlan()
-    {
-        return array();
-    }
-
-    public function getSkippingPlan()
-    {
-        return array();
-    }
-
-    public function getBlockingPlan()
-    {
-        return array();
-    }
-
 }
 
 ?>
