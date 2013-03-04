@@ -9,6 +9,7 @@ require_once 'TimetableDB.php';
 require_once 'ListGenerator.php';
 require_once 'DBException.php';
 require_once 'User.php';
+require_once 'AdHocSchedulerDB.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -158,7 +159,7 @@ foreach($result as $key=>$a_result)
         //Teacher::abbreToFullnameBatchSetup($arrTeachers);
 
         //$timetableanalyzer = new TimetableAnalyzer("13", '1');
-        //$timetableanalyzer->readCsv('aed_algo_testing_timetable.csv');
+        //$timetableanalyzer->readCsv('normal_algo_testing_timetable_skip.csv');
        /*
         TimetableDB::insertTimetable($arrLessons, $arrTeachers);
         Test::insertAEDTimetable($arrLessons, $arrTeachers);
@@ -263,7 +264,38 @@ foreach($result as $key=>$a_result)
           }
          *
          */
+
+//$result = AdHocSchedulerDB::getReliefPlan('2013-02-06');
+//$result = AdHocSchedulerDB::getSkippingPlan('2013-02-06');
 /*
+$index = 1;
+foreach($result as $one)
+{
+    echo ($index++)."<br>";
+    echo $one->lessonId."<br>";
+    echo $one->startTimeSlot."<br>";
+    echo $one->endTimeSlot."<br>";
+    echo $one->teacherOriginal."<br>";
+    echo $one->teacherRelief."<br>";
+    echo "<br>";
+}
+ * 
+ */
+/*
+$result = AdHocSchedulerDB::getBlockingPlan('2013-02-06');
+$index = 1;
+foreach($result as $row)
+{
+    echo ($index++)."<br>";
+    echo $row->teachers[0]."<br>";
+    echo $row->startTimeSlot."<br>";
+    echo $row->endTimeSlot."<br>";
+    echo $row->subject."<br>";
+    echo "<br>";
+}
+ * 
+ */
+/* 
 $result = User::queryTeacherID("S8104329I", "Li Huili");
 echo "id : ".$result;
  * 
@@ -442,10 +474,15 @@ foreach($result as $key => $row)
 }
  * 
  */ 
-
-$result = SchedulerDB::approve(0, '2013/02/06');
-var_dump($result);
-
+/*
+$result = SchedulerDB::approve(0, '2013-02-06');
+foreach($result as $row)
+{
+    print_r($row);
+    echo "<br>";
+}
+ * 
+ */
 /*
 class Test
 {
