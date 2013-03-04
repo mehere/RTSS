@@ -200,3 +200,7 @@ textarea {
 	font-size: 1px;
 	line-height: 0px;
 }
+
+.ui-dialog .ui-dialog-titlebar-close {
+    visibility: hidden;
+}

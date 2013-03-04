@@ -308,6 +308,7 @@ $(document).ready(function(){
 
             }
 
+            formAdd['period'].value='';
             formAdd.reset();
         });
 

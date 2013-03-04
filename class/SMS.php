@@ -61,12 +61,12 @@ class SMS {
         }
         
         //test
-        $file = fopen('sms_test.txt', 'w');
-        foreach ($print_command as $gem)
-        {
-            fwrite($file, $gem.'\r\n');
-        }
-        fclose($file);
+//        $file = fopen('sms_test.txt', 'w');
+//        foreach ($print_command as $gem)
+//        {
+//            fwrite($file, $gem.'\r\n');
+//        }
+//        fclose($file);
         //end of test
         
         return $sendingResult;

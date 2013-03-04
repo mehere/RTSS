@@ -1,11 +1,11 @@
 <?php
 
 require_once 'util.php';
-include 'DBException.php';
+require_once 'DBException.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
 require_once 'TimetableDB.php';
-////require_once $_SERVER['DOCUMENT_ROOT'] . '/RTSS/constant.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/RTSS/constant.php';
 require_once 'SMS.php';
 require_once 'Email.php';
 
@@ -884,7 +884,7 @@ class SchedulerDB
                 }
             }
         }
-         *
+         * 
          */
 
         //7. return
@@ -896,7 +896,7 @@ class SchedulerDB
         }
 
         array_multisort($sort_arr, SORT_ASC, $return_result);
-
+        
         return $return_result;
     }
 
