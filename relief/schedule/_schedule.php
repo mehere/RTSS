@@ -100,7 +100,7 @@ if (isset($_POST["btnScheduleAll"]))
 }
 
 //To-do: to remove hardcoding
-//$typeSchedule = 2;
+$typeSchedule = 2;
 
 
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
@@ -132,10 +132,8 @@ try
     }
 } catch (DBException $e)
 {
-    /// To-Do: Exception
-    echo "DB Error";
-    echo $e;
-    exit();
+    $_SESSION['scheduleError'] = "Database error.";
+    header("Location: result.php");
 }
 
 // ADHOC SCHEDULING PROCESSING
@@ -143,15 +141,13 @@ if ($typeSchedule == 2)
 {
     try
     {
-        $reliefPlans = $scheduler->getReliefPlan();
-        $skippingPlan = $scheduler->getSkippingPlan();
-        $blockingPlan = $scheduler->getBlockingPlan();
+        $reliefPlans = AdHocSchedulerDB::getReliefPlan($dateString);
+        $skippingPlan = AdHocSchedulerDB::getSkippingPlan($dateString);
+        $blockingPlan = AdHocSchedulerDB::getBlockingPlan($dateString);
     } catch (DBException $e)
     {
-        /// To-Do: Exception
-        echo "DB Error";
-        echo $e;
-        exit();
+        $_SESSION['scheduleError'] = "Database error.";
+        header("Location: result.php");
     }
 
     foreach ($skippingPlan as $aReliefLesson)
@@ -161,15 +157,15 @@ if ($typeSchedule == 2)
         foreach ($typesOfTeachers as $aType)
         {
             $varArrTeachers = "arr{$aType}Teachers";
-            if (isset($$varArrTeachers[$teacherOriginalAccName]))
+            if (isset(${$varArrTeachers}[$teacherOriginalAccName]))
             {
-                $teacherOriginal = $$varArrTeachers[$teacherOriginalAccName];
+                $teacherOriginal = ${$varArrTeachers}[$teacherOriginalAccName];
                 break;
             }
         }
         for ($i = $aReliefLesson->startTimeSlot; $i < $aReliefLesson->endTimeSlot; $i++)
         {
-            unset($teacherOriginal[$i]);
+            unset($teacherOriginal->timetable[$i]);
         }
     }
 
@@ -183,18 +179,18 @@ if ($typeSchedule == 2)
         foreach ($typesOfTeachers as $aType)
         {
             $varArrTeachers = "arr{$aType}Teachers";
-            if (isset($$varArrTeachers[$teacherOriginalAccName]))
+            if (isset(${$varArrTeachers}[$teacherOriginalAccName]))
             {
-                $teacherOriginal = $$varArrTeachers[$teacherOriginalAccName];
+                $teacherOriginal = ${$varArrTeachers}[$teacherOriginalAccName];
                 break;
             }
         }
         foreach ($typesOfTeachers as $aType)
         {
             $varArrTeachers = "arr{$aType}Teachers";
-            if (isset($$varArrTeachers[$teacherReliefAccName]))
+            if (isset(${$varArrTeachers}[$teacherReliefAccName]))
             {
-                $teacherRelief = $$varArrTeachers[$teacherReliefAccName];
+                $teacherRelief = ${$varArrTeachers}[$teacherReliefAccName];
                 break;
             }
         }
@@ -202,9 +198,7 @@ if ($typeSchedule == 2)
         /* @var $teacherOriginal Teacher */
         /* @var $teacherRelief Teacher */
         /* @var $originalLesson Lesson */
-        $originalTeacherTimetable = $teacherOriginal->timetable;
-        $reliefTeacherTimetable = $teacherRelief->timetable;
-        $originalLesson = $originalTeacherTimetable[$aReliefLesson->startTimeSlot];
+        $originalLesson = $teacherOriginal->timetable[$aReliefLesson->startTimeSlot];
 
         if ($aReliefLesson->startTimeSlot != $originalLesson->startTimeSlot)
         {
@@ -214,12 +208,11 @@ if ($typeSchedule == 2)
             $newLesson->startTimeSlot = $aReliefLesson->startTimeSlot;
             for ($i = $replacementLesson->startTimeSlot; $i < $replacementLesson->endTimeSlot; $i++)
             {
-                $originalTeacherTimetable[$i] = $replacementLesson;
-                ;
+                $teacherOriginal->timetable[$i] = $replacementLesson;
             }
             for ($i = $newLesson->startTimeSlot; $i < $newLesson->endTimeSlot; $i++)
             {
-                $originalTeacherTimetable[$i] = $newLesson;
+                $teacherOriginal->timetable[$i] = $newLesson;
             }
             $originalLesson = $newLesson;
         }
@@ -231,19 +224,19 @@ if ($typeSchedule == 2)
             $newLesson->endTimeSlot = $aReliefLesson->endTimeSlot;
             for ($i = $replacementLesson->startTimeSlot; $i < $replacementLesson->endTimeSlot; $i++)
             {
-                $originalTeacherTimetable[$i] = $replacementLesson;
-                ;
+                $teacherOriginal->timetable[$i] = $replacementLesson;
             }
             for ($i = $newLesson->startTimeSlot; $i < $newLesson->endTimeSlot; $i++)
             {
-                $originalTeacherTimetable[$i] = $newLesson;
+                $teacherOriginal->timetable[$i] = $newLesson;
             }
             $originalLesson = $newLesson;
         }
+
         for ($i = $originalLesson->startTimeSlot; $i < $originalLesson->endTimeSlot; $i++)
         {
-            unset($originalTeacherTimetable[$i]);
-            $reliefTeacherTimetable[$i] = $originalLesson;
+            unset($teacherOriginal->timetable[$i]);
+            $teacherRelief->timetable[$i] = $originalLesson;
         }
     }
 
@@ -256,24 +249,23 @@ if ($typeSchedule == 2)
         foreach ($typesOfTeachers as $aType)
         {
             $varArrTeachers = "arr{$aType}Teachers";
-            if (isset($$varArrTeachers[$teacherOriginalAccName]))
+            if (isset(${$varArrTeachers}[$teacherOriginalAccName]))
             {
-                $teacherOriginal = $$varArrTeachers[$teacherOriginalAccName];
+                $teacherOriginal = ${$varArrTeachers}[$teacherOriginalAccName];
                 break;
             }
         }
 
-        $originalTeacherTimetable = $teacherOriginal->timetable;
         for ($i = $aBlockLesson->startTimeSlot; $i < $aBlockLesson->endTimeSlot; $i++)
         {
             if (isset($originalTeacherTimetable[$i]))
             {
                 $aLesson = clone $originalTeacherTimetable[$i];
                 $aLesson->isMandatory = TRUE;
-                $originalTeacherTimetable[$i] = $aLesson;
+                $teacherOriginal->timetable[$i] = $aLesson;
             } else
             {
-                $originalTeacherTimetable[$i] = $aBlockLesson;
+                $teacherOriginal->timetable[$i] = $aBlockLesson;
             }
         }
     }
@@ -529,5 +521,5 @@ if ($successStates->numberStates > 0)
     $_SESSION['scheduleError'] = "Failed to find a scheduling result.";
 }
 
-//header("Location: result.php");
+header("Location: result.php");
 ?>
