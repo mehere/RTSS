@@ -529,5 +529,5 @@ if ($successStates->numberStates > 0)
     $_SESSION['scheduleError'] = "Failed to find a scheduling result.";
 }
 
-header("Location: result.php");
+//header("Location: result.php");
 ?>
