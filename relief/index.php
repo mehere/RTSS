@@ -20,10 +20,6 @@ include_once '../head-frag.php';
 	text-align: left;
 	word-wrap: break-word;
 }
-
-.ui-dialog .ui-dialog-titlebar-close {
-    visibility: hidden;
-}
 </style>
 </head>
 <body>

@@ -33,21 +33,44 @@ EOD;
             if ($teaching)
             {
                 PageConstant::escapeHTMLEntity($teaching);
+                $teaching['class']=implode(", ", $teaching['class']);
+                if ($teaching['skipped'])
+                {
+                    $teaching['skipped']['class']=implode(", ", $teaching['skipped']['class']);
+                }                
+                
+                $style='';
+                switch ($teaching['attr'])
+                {
+                    case -1:
+                        $style='style="backgound-color: gray"';
+                        break;
+                    case 1:
+                        $style='style="color: blue"';
+                        break;
+                    case 2:
+                        $style='style="color: red"';
+                        break;
+                }
+                
                 $timetableEntry=array();
                 foreach (array_slice($headerKeyList, 1) as $key => $value)
-                {
-                    $timetableEntry[]=$teaching[$key];
+                {                    
+                    $skippedPart=$teaching['skipped'][$key];
+                    if ($skippedPart)
+                    {                       
+                        $skippedPart= <<< EOD
+<div style="color: black;">(<span style="text-decoration: line-through;">$skippedPart</span>)</div>   
+EOD;
+                    }
+                    $timetableEntry[]= <<< EOD
+<span $style>{$teaching[$key]}{$skippedPart}</span>
+EOD;
                 }
-
-                // Class name display
-                $timetableEntry[1]=implode(", ", $timetableEntry[1]);
-                
-                $style="";
-                if ($teaching['isRelief']) $style='style="color: red"';
                                                 
                 $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
                 echo <<< EOD
-<tr $style><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
+<tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
             }
             else
