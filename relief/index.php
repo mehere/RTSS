@@ -5,9 +5,9 @@ spl_autoload_register(function($class){
 Template::printHeaderAndDoValidation('', array('relief.css'), array('relief.js'), Template::HOME, '');
 ?>
 <form class="main" name="schedule" action="schedule/_schedule.php" method="post">
-    <p>
+    <div style="margin-bottom: 10px">
         Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
-    </p>
+    </div>
     <div class='accordion colorbox blue'>        
         <span>
             Leave Status
@@ -52,7 +52,7 @@ EOD;
 //                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$leaveID]);
                         $scheduledStr=PageConstant::stateRepresent($teacherScheduledList[$leaveID]);
                         echo <<< EOD
-<tr><td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>$dateFromDisplay {$datetime[0][1]}<br />$dateToDisplay {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$reasonArr[$teacher[$keyList[4]]]}</td><td>$scheduledStr</td></tr>
+<tr><td class="text-left"><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>$dateFromDisplay {$datetime[0][1]}<br />$dateToDisplay {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td class="text-left">{$reasonArr[$teacher[$keyList[4]]]}</td><td>$scheduledStr</td></tr>
 EOD;
                     }
                     if (empty($teacherOnLeaveList))
@@ -66,6 +66,56 @@ EOD;
                     }
                 ?>
             </tbody>
+        </table>
+    </div>
+    <div class='accordion colorbox green'>        
+        <span>
+            Temporary Relief
+        </span>
+        <a class="schedule-edit" href="teacher-edit.php?teacher=temp">Edit/Add</a>
+    </div>    
+    <div>
+        <table class="hovered table-info">
+            <thead>
+                <tr class="teacher-thead">
+                    <?php
+                        $width=array('30%', '100px', '130px', '70%');
+                        $tableHeaderList=array_values(NameMap::$RELIEF['tempTeacher']['display']);
+
+                        for ($i=0; $i<count($tableHeaderList); $i++)
+                        {
+                            // class="sort"
+                            echo <<< EOD
+                                <th class="hovered" style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+EOD;
+                        }
+                    ?>
+                </tr>
+            </thead>
+            <tbody id="align-temp">
+                <?php
+                    $tempTeacherList=Teacher::getTempTeacher($date);
+                    PageConstant::escapeHTMLEntity($tempTeacherList);
+                    $keyList=array_keys(NameMap::$RELIEF['tempTeacher']['display']);
+                    $keyExtraList=NameMap::$RELIEF['tempTeacher']['hidden'];
+                    foreach ($tempTeacherList as $teacher)
+                    {
+                        $datetime=$teacher[$keyList[2]];
+                        echo <<< EOD
+<tr><td class="text-left">{$teacher[$keyList[0]]}</td><td>{$teacher[$keyList[1]]}</td><td>{$datetime[0][1]} - {$datetime[1][1]}</td><td class="text-left">{$teacher[$keyList[3]]}</td></tr>
+EOD;
+                    }
+                    if (empty($tempTeacherList))
+                    {
+                        echo "<tr>";
+                        foreach ($width as $value)
+                        {
+                            echo "<td>--</td>";
+                        }
+                        echo "</tr>";
+                    }
+                ?>
+            </tbody>            
         </table>
     </div>
 <!--    <div class="section">

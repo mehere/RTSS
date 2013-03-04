@@ -116,13 +116,13 @@ EOD;
 EOD;
         }
         echo <<< EOD
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        <script src="/RTSS/jquery-ui/jQui1.9.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+        <script src="/RTSS/jquery-ui/jQui1.9.2.min.js" type="text/javascript"></script>        
 EOD;
         foreach ($scripts as $script)
         {
             echo <<< EOD
-        <script src="/RTSS/js/$script"></script>
+        <script src="/RTSS/js/$script" type="text/javascript"></script>
 EOD;
         }
 

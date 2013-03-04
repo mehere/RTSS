@@ -62,10 +62,6 @@ body{
     min-width: 1000px;
 }
 
-p{
-   font: 14px/20px "Segoe UI",Arial,Helvetica,sans-serif;
-}
-
 a {
 	color: #0096D7;
 	text-decoration: none;    
@@ -93,11 +89,6 @@ div.header {
     margin-left: 150px;
     margin-right:150px;
     padding-top:20px;
-    margin-bottom: 15px;
-    /*    margin-top: 20px;*/
-    /*    border: blue;
-        border-style: solid;
-        border-width: 1px;*/
 }
 
 div.header-top {
@@ -409,64 +400,43 @@ table.hovered{
     line-height: 20px;
 }
 
-th.hovered{
-    display: table-cell;
+table.hovered th.hovered{	
     vertical-align: bottom;
     padding-bottom: 5px;
     padding-top:10px;
     padding-left: 5px;
-    border: 1px solid;
-    border-color: transparent rgb(221,221,221) rgb(221,221,221) transparent;
     font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif;
-    font-weight: 400;
+	font-weight: 400;
     font-size:15px;
     letter-spacing: 0.01em;
     line-height: 19px;
     color:rgb(0,0,0);
+	border-left: 1px solid #DDDDDD;
+	border-bottom: 1px solid #DDDDDD;
 }
 
-th.hovered.right{
-    text-align: right;
-    padding-right: 10px;
-}
-
-
-
-table.hovered tbody td{
+table.hovered td{
     font-family: 'Open Sans',Verdana,Arial,Helvetica,sans-serif;
     font-weight: 300;
     font-size: 11pt;
     letter-spacing: 0.02em;
     line-height: 20px;
     padding: 3px 10px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: transparent rgb(221, 221, 221) rgb(221, 221, 221) transparent;
+    border-left: 1px solid #DDDDDD;
+	border-bottom: 1px solid #DDDDDD;
 }
 
-td.right{
-    text-align: right;
+table.hovered tr td:first-child, table.hovered tr th:first-child {
+	border-left: none;
 }
 
-table.hovered thead tr th.last, table.hovered tbody tr td.last{
-    border-right: 1px solid transparent;
+table.hovered tr td.text-left {
+	text-align: left;
 }
 
 table.hovered tbody tr:hover{
     background-color: rgb(28,183,236);
-}
-
-table.hovered tbody tr:hover td:first-child{
-    border-left: 1px solid rgb(28, 152, 204);
-}
-
-table.hovered tbody tr:hover td{
-    border-top: 1px solid rgb(28, 152, 204);
-    border-bottom: 1px solid rgb(28, 152, 204);
-}
-
-table.hovered tbody tr:hover td.last{
-    border-right: 1px solid rgb(28, 152, 204);
+	border: 1px solid rgb(28, 152, 204);
 }
 
 div.colorbox{
@@ -652,6 +622,6 @@ button.command img{
     margin-right: 15px;
 }
 
-.ui-datepicker table{
-    font-size: 10px;
+.ui-datepicker {
+    font-size: .8em;
 }
