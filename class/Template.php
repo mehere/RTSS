@@ -1,78 +1,166 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of Template
- *
- * @author Wee
- */
 class Template
-{
-
-    public static function validate($allowsAll)
+{    
+    public static function validate($isController=false, $needsJSON=false, $allowsAll=false)
     {
         session_start();
-        header('Cache-Control: no-cache, no-store, must-revalidate');
-        header('Pragma: no-cache');
-        header('Expires: 0');
-
-        if (!isset($_SESSION['accname']) || (!$allowsAll && $_SESSION['type'] != 'admin'))
+        
+        if ($isController)
         {
-            header("Location: /RTSS/");
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+        }
+
+        if (!$_SESSION['accname'] || (!$allowsAll && $_SESSION['type'] != 'admin'))
+        {
+            if ($needsJSON)
+            {
+                header('Content-type: application/json');
+                echo json_encode(array('error'=>1));
+                return;
+            }
+            else
+            {
+                header("Location: /RTSS/");
+                exit;
+            }
         }
     }
 
-    public static function printHeaderAndDoValidation($allowsAll, $title, $css, $scripts, $mainIndex)
+    public static function printHeaderAndDoValidation($title, $css, $scripts, $mainIndex, $allowsAll=false)
     {
-        self::validate($allowsAll);
+        self::validate(false, false, $allowsAll);
 
         $mainMenu = array("<img class='menu' src='/RTSS/resources/images/home.png'/>", "Upload Timetable", "View Reports");
         $mainMenuLinks = array("abc", "abc", "abc");
         $submenu0 = array("");
         $submenu1 = array("Upload Master CSV Timetabl", "Upload Aed Timetable");
         $submenu = array($submenu0, $submenu1);
+        
+        $title=PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME . " - " . $title;
 
-        echo
-        "<!DOCTYPE html>
-<html>
+        echo <<< EOD
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
-        <meta http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate' />
-        <meta http-equiv='Pragma' content='no-cache' />
-        <meta http-equiv='Expires' content='0' />
-        <title>";
-        echo $title;
-        echo
-        "       </title>
-        <link rel='stylesheet' type='text/css' href='weeUi.css'/>
-        <link rel='stylesheet' type='text/css' href='/RTSS/resources/lib/jquery/css/flat/jquery-ui-1.10.1.custom.css' />
-";
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />      
+        <title>$title</title>
+        <link href="/RTSS/jquery-ui/css/jQui1.9.2.min.css" rel="stylesheet" type="text/css" />
+        <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
+EOD;
         foreach ($css as $aCss)
         {
-            echo
-            "        <link rel='stylesheet' type='text/css' href='";
-            echo $aCss;
-            echo
-            "'/>";
+            echo <<< EOD
+        <link href="/RTSS/css/$aCss" rel="stylesheet" type="text/css" />
+EOD;
         }
-        echo
-        "        <script src='/RTSS/resources/lib/jquery/js/jquery-1.9.1.js'></script>
-        <script src='/RTSS/resources/lib/jquery/js/jquery-ui-1.10.1.custom.js'></script>
-";
+        echo <<< EOD
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="/RTSS/jquery-ui/jQui1.9.2.min.js"></script>
+EOD;
         foreach ($scripts as $script)
         {
-            echo
-            "      <script src='";
-            echo $script;
-            echo
-            "'></script>";
+            echo <<< EOD
+        <script src="/RTSS/js/$script"></script>
+EOD;
         }
 
-        echo
+        echo <<< EOD
+   <div class="container">
+            <!--            <div class="background">
+                            <img src="/RTSS/WeeUI/page_gradient_linear.png" class="stretch" alt="Background" />
+                        </div>-->
+            <div class="header">
+                <div class="header-top">
+                    <img src="/RTSS/resources/images/school-logo.png" class="logo" />
+                    <div class="wrapper">
+                        <div class="statusBar">
+                            <div class="statusbar-item">
+                                <span class="statusbar">
+                                    User
+                                </span>
+                            </div>
+                            <div class="statusbar-item">
+                                <a class="statusbar">
+                                    Log out
+                                </a>
+                            </div>
+                            <div style="clear:both;"></div>
+                        </div>
+                        <div style="clear:both;"></div>
+
+                        <div class="menubar">
+                            <div class="menu-foreground">
+
+                                <div class="menu-item">
+                                    <a class="menu">
+                                        <span class="menu">
+                                            <img class="menu" src="/RTSS/resources/images/home.png"/>
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="menu-item active">
+                                    <a class="menu">
+                                        <span class="menu">
+                                            Upload Timetable
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="menu-item">
+                                    <a class="menu">
+                                        <span class="menu">
+                                            View Records
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="menu-item lastchild">
+                                    <a class="menu">
+                                        <span class="menu">
+                                            Menu 4
+                                        </span>
+                                    </a>
+                                </div>
+                                <div style="clear:both;"></div>
+                            </div>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+                <div style="clear:both;"></div>
+
+                <div class="submenu">
+                    <div class="submenu-title">
+                        <h1 class="submenu-title">
+                            <a class="submenu-title">Upload Timetable</a>
+                        </h1>
+                    </div>
+                    <div class="submenubar">
+                        <div class="submenu-item first">
+                            <a class="submenu">
+                                <span class="submenu">
+                                    Upload Master CSV Timetable
+                                </span>
+                            </a>
+                        </div>
+                        <div class="submenu-item">
+                            <a class="submenu">
+                                <span class="submenu">
+                                    Upload Aed Timetable
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div style="clear:both;"></div>
+
+                    <img class="submenu-separator" src="/RTSS/resources/images/line.png"/>
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+            <div class="content">
+EOD;
         "        <div class='container'>
             <div class='header'>
                 <div class='header-top'>
