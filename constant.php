@@ -9,6 +9,7 @@ class PageConstant
 
     const DATE_FORMAT_ISO='Y/m/d';
     const DATE_FORMAT_SG='d/m/Y';
+    const DATE_FORMAT_SG_DAY='l, d/m/Y';
 
     public static $DAY=array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
 
@@ -21,7 +22,7 @@ class PageConstant
     /**
      * Year range in timetable/admin.php
      * @param bool $showYearOnly will return sem no only
-     * @return string print format of <option>
+     * @return string print format of &lt;option&gt;
      */
     public static function printYearRange($showYearOnly)
     {
@@ -43,7 +44,7 @@ class PageConstant
     /**
      * Sem range in timetable/admin.php
      * @param bool $showSemOnly will return sem no only
-     * @return string print format of <option> (or return sem no)
+     * @return string print format of &lt;option&gt; (or return sem no)
      */
     public static function printSemRange($showSemOnly=false)
     {
@@ -59,8 +60,8 @@ class PageConstant
     }
 
     /**
-     * Output string representation of option array in 'select' tag
-     * @param array $optionArr {key}/{value} pair as in: <option value="{key}">{value}</option>
+     * Output string representation of option array in &lt;select&gt; tag
+     * @param array $optionArr {key}/{value} pair as in: &lt;option value=&quot;{key}&quot;&gt;{value}&lt;/option&gt;
      * @param string $selectedOption option is to be selected
      * @return string output
      */
@@ -208,14 +209,20 @@ class SchoolTime
     /**
      *
      * @param type $dateString
-     * @param type $formatOption 0 (default) -- from ISO to SG, 1 -- from SG to ISO
+     * @param type $formatOption 0 (default) -- from ISO to SG, 1 -- from SG to ISO, 2 -- from ISO to SG_DAY
      * @return type
      */
     public static function convertDate($dateString, $formatOption=0)
     {
-        return $formatOption==0 ?
-            date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString), PageConstant::DATE_FORMAT_SG) :
-            date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_SG, $dateString), PageConstant::DATE_FORMAT_ISO);
+        switch ($formatOption)
+        {
+            case 1:
+                return date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_SG, $dateString), PageConstant::DATE_FORMAT_ISO);
+            case 2:
+                return date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString), PageConstant::DATE_FORMAT_SG_DAY);                
+        }
+        
+        return date_format(DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString), PageConstant::DATE_FORMAT_SG);            
     }
 
     /**

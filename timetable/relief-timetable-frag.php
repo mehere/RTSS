@@ -40,7 +40,6 @@ EOD;
                 }                
                 
                 $style='';
-                $otherTdContent=false;
                 switch ($teaching['attr'])
                 {
                     case -1:
@@ -51,34 +50,23 @@ EOD;
                         break;
                     case 2:
                         $style='style="color: red"';
-                        $otherTdContent=true;
                         break;
                 }
                 
                 $timetableEntry=array();
                 foreach (array_slice($headerKeyList, 1) as $key => $value)
-                {
-                    if ($otherTdContent)
-                    {                        
-                        $otherTdContent= <<< EOD
-<span style="text-decoration: line-through;">{$teaching['skipped'][$key]}</span>   
+                {                    
+                    $skippedPart=$teaching['skipped'][$key];
+                    if ($skippedPart)
+                    {                       
+                        $skippedPart= <<< EOD
+<div style="color: black;">(<span style="text-decoration: line-through;">$skippedPart</span>)</div>   
 EOD;
                     }
                     $timetableEntry[]= <<< EOD
-<span $style>{$teaching[$key]}{$otherTdContent}</span>
+<span $style>{$teaching[$key]}{$skippedPart}</span>
 EOD;
                 }
-
-                // Class name display
-//                $timetableEntry[1]=implode(", ", $timetableEntry[1]);
-//                
-//                if ($teaching['skipped'])
-//                {
-//                    
-//                }
-                
-                
-//                if ($teaching['isRelief']) $style='style="color: red"';
                                                 
                 $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
                 echo <<< EOD

@@ -1,7 +1,7 @@
 <?php
 
 require_once 'util.php';
-include 'DBException.php';
+require_once 'DBException.php';
 require_once 'Students.php';
 require_once 'Teacher.php';
 require_once 'TimetableDB.php';
