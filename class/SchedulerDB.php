@@ -9,8 +9,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/RTSS/constant.php';
 require_once 'SMS.php';
 require_once 'Email.php';
 
-//require_once 'sms/send_sms.php';
-
 class SchedulerDB
 {
 
@@ -884,7 +882,7 @@ class SchedulerDB
                 }
             }
         }
-         * 
+         *
          */
 
         //7. return
@@ -896,7 +894,7 @@ class SchedulerDB
         }
 
         array_multisort($sort_arr, SORT_ASC, $return_result);
-        
+
         return $return_result;
     }
 
@@ -947,22 +945,6 @@ class SchedulerDB
       }
      *
      */
-
-    public function getReliefPlan()
-    {
-        return array();
-    }
-
-    public function getSkippingPlan()
-    {
-        return array();
-    }
-
-    public function getBlockingPlan()
-    {
-        return array();
-    }
-
 }
 
 ?>
