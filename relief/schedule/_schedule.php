@@ -100,8 +100,7 @@ if (isset($_POST["btnScheduleAll"]))
 }
 
 //To-do: to remove hardcoding
-$typeSchedule = 2;
-
+//$typeSchedule = 2;
 
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
 
