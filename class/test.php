@@ -507,7 +507,7 @@ foreach($result as $row)
 }
  * 
  */
-AdHocSchedulerDB::cancelRelief(821, 2, 5);
+//AdHocSchedulerDB::cancelRelief(821, 2, 5);
 /*
 class Test
 {
