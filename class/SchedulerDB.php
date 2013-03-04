@@ -465,7 +465,7 @@ class SchedulerDB
             {
                 $has_skip = true;
                 $end_time = $a_skip->startTimeIndex + 1;
-                $sql_skip .= "($id, '$a_skip->lessonId', '$date', $a_skip->startTimeSlot, $end_time, '$a_skip->teacherId'),";
+                $sql_skip .= "($id, '$a_skip->lessonId', '$date', $a_skip->startTimeSlot, $end_time, '$a_skip->teacherOriginal'),";
             }
         }
 
@@ -871,6 +871,7 @@ class SchedulerDB
             $to[] = $recepient;
         }
 
+        /*
         $email_reply = Email::sendMail($from, $to);
 
         if (!is_null($email_reply))
@@ -883,6 +884,8 @@ class SchedulerDB
                 }
             }
         }
+         * 
+         */
 
         //7. return
         $sort_arr = Array();
