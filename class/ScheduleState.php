@@ -106,7 +106,8 @@ class ScheduleState
                 $numberLessonSkipped++;
             }
         }
-        $numberLessonSkipped += $firstTeacher->cancelExcess($this->lessonsSkipped);
+        $maxMoreSkipped = $noLessonAllocated - $numberLessonSkipped;
+        $numberLessonSkipped += $firstTeacher->cancelExcess($this->lessonsSkipped, $maxMoreSkipped);
 
         // setting status of lesson
         $aLesson->teacherRelief = $firstTeacher->teacherId;
