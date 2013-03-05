@@ -1,15 +1,25 @@
 @charset "UTF-8";
 
-.accordion .control-top {
-	position: absolute;
-	right: 15px;
-	bottom: 15px;
+#container {	
+	min-width: 1000px;
 }
-.accordion .control-top >a {
-	color: white;
-	margin-left: 10px;
+.section {
+	margin-top: 15px;
+}
+.section .control-top {
+	margin-top: 10px;
+}
+.section .control-top>a {
+	margin-right: 30px;
+	font-size: .9em;
 }
 
+.table-info {
+	width: 100%;
+}
+.table-info tbody tr td:nth-child(3) {
+	text-align: left;
+}
 .table-info input, .table-info select {
 	font-size: 12px;
 }
@@ -39,9 +49,9 @@
 	display: none;
 }
 .table-info .textfield {
-    width: 95%;	
+    width: 95%;
 }
-/*
+
 .ui-autocomplete {
 	max-height: 10em;
 	overflow-y: auto;
@@ -50,4 +60,3 @@
 .ui-autocomplete .ui-menu-item {
 	font-size: .9em;
 }
-*/

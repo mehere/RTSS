@@ -113,13 +113,15 @@ $(document).ready(function(){
         }
     }
 
+    // Style for contact column (temp)
+    if (formEdit['prop'].value == PROP_OPTION[0])
+    {
+        $('.table-info tr td:nth-child(4)').css('word-wrap', 'break-word');
+    }
+    $('.table-info tr td:last-child').css('text-align', 'left');
+
     // For verify and delete
-    $("#dialog-confirm").dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        draggable: false,
-        width: 350,
+    $("#dialog-alert").dialog("option", {
         buttons: {
             OK: function(){
                 $(this).dialog("close");
@@ -128,7 +130,8 @@ $(document).ready(function(){
             Cancel: function(){
                 $(this).dialog("close");
             }
-        }
+        },
+        title: "Warning"
     });
 
     function multipleOp(mode)
@@ -190,7 +193,7 @@ $(document).ready(function(){
     });
 
     function confirm(text, func){
-        $("#dialog-confirm").html(text).dialog("open").data('exec', func);
+        $("#dialog-alert").html(text).dialog("open").data('exec', func);
     }
 
     // Edit, Save and Delete
@@ -422,6 +425,8 @@ $(document).ready(function(){
             nameList.push(value['fullname']);
             nameAccMap[value['fullname']]=value['accname'];
         });
+
+//        $("#last-row .fullname-server").autocomplete('option', 'source', nameList);
     });
     function addAutoComplete(obj)
     {
@@ -501,8 +506,6 @@ $(document).ready(function(){
         $.get("/RTSS/relief/teacher-edit-frag.php", {"num": numOfTeacher, "teacher": formEdit['prop'].value}, function(data){
             formEdit['num'].value=numOfTeacher;
             $(selfDelegate).parent().append(data);
-
-            adjustSidebar();
 
             ajaxAddRow(numOfTeacher);
         }, 'text');

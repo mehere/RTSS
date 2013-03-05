@@ -11,11 +11,8 @@
 
 @font-face
 {
-    font-family: 'Segoe UI Semilight';
-    src: url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.woff') format('woff'),
-        url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.ttf')  format('truetype'),
-        url('/RTSS/img/fonts/segoeuisemilight/segoeuisemilight.svg#SegoeUISemilight') format('svg');
+    font-family: 'Segoe UI Semibold';
+    src: url('/RTSS/img/fonts/seguisb.ttf')  format('truetype');
 }
 
 @font-face
@@ -68,13 +65,12 @@ a {
 	outline: none;
 }
 a:hover { 
-	color: #55AFD6;
+	color: #21AFED;
 	text-decoration: underline;
 }
 
 
-div.container{
-    min-height: 100%;
+#container {
     margin: 0 auto -50px;
     position: relative;
     padding: 0px;
@@ -86,8 +82,8 @@ div.container{
 }
 
 div.header {
-    margin-left: 150px;
-    margin-right:150px;
+    margin-left: 100px;
+    margin-right:100px;
     padding-top:20px;
 }
 
@@ -364,8 +360,8 @@ img.menu{
 }
 
 div.content{
-    margin-left: 150px;
-    margin-right:150px;
+    margin-left: 100px;
+    margin-right: 100px;
     padding-bottom: 150px;
 }
 
@@ -382,8 +378,8 @@ div.footer{
 }
 
 div.footer span{
-    margin-left: 150px;
-    margin-right:150px;
+    margin-left: 100px;
+    margin-right:100px;
     color: #CCC;
 }
 
@@ -405,9 +401,8 @@ table.hovered th.hovered{
     padding-bottom: 5px;
     padding-top:10px;
     padding-left: 5px;
-    font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif;
-	font-weight: 400;
-    font-size:15px;
+    font-family: "Segoe UI Semibold", Verdana,Arial,Helvetica,sans-serif;
+	font-weight: 500;
     letter-spacing: 0.01em;
     line-height: 19px;
     color:rgb(0,0,0);
@@ -418,7 +413,6 @@ table.hovered th.hovered{
 table.hovered td{
     font-family: 'Open Sans',Verdana,Arial,Helvetica,sans-serif;
     font-weight: 300;
-    font-size: 11pt;
     letter-spacing: 0.02em;
     line-height: 20px;
     padding: 3px 10px;
@@ -435,8 +429,7 @@ table.hovered tr td.text-left {
 }
 
 table.hovered tbody tr:hover{
-    background-color: rgb(28,183,236);
-	border: 1px solid rgb(28, 152, 204);
+    background-color: #C7EAF9;
 }
 
 div.colorbox{
@@ -455,7 +448,7 @@ div.colorbox span{
     font-family: 'Segoe UI Light', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
     font-weight: 200;
     font-size: 20px;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.05em;
     line-height: 24pt;
     color: rgb(255, 255, 255);
     /*    margin: 10px 0px;*/
@@ -479,149 +472,77 @@ div.colorbox span{
     background-color:rgb(255, 23, 105);
 }
 
-button.right{
-    float: right;
-}
-img.active, img.inactive{
-    padding-left: 15px;
-    /*    height: 100%;*/
-    /*    width: 100%;*/
-}
-
-img.inactive{
-    display: none;
-}
-
-div.status{
-    display: inline-block;
-    vertical-align: middle;
-}
-
 div.accordion{
     display:inline-block;
     width: 100%;
 	
 	position: relative;
 }
-/*
-button{
-    font-family: 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif;
-    font-weight: 400;
-    font-size: 11pt;
-    min-width: 90px;
-    min-height: 32px;
-        height: 32px;
-    background-color: rgb(204, 204, 204);
-    border: 1px solid transparent;
-    color: rgb(53, 53, 53);
 
-
-    color: white;
-    margin-left: 100px;
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    padding: 4px 10px;
-    position: relative;
-    letter-spacing: 0.02em;
-
-}*/
-
-
-div.buttons{
-    float: right;
-    margin-top: 50px;
-    vertical-align: middle;
-    display: inline;
-    white-space:nowrap;
-    overflow: no-content;
+div.accordion .icon-link {
+	margin-left: 15px;
+	margin-right: -5px;
+	
+	position: relative;
+	top: 2px;
 }
 
-button.command{
-    height: auto;
-    width: auto;
-    color: white;
-    border: 2px solid white;
-
-    text-align: left;
-    padding: 10px 20px;
-    font-family: 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: 0.02em;
-
-    font-smooth: always;
-
-    margin-right: 10px;
-    margin-bottom: 10px;
-    vertical-align: middle;
-    cursor: pointer;
-    position: relative;
-    display: inline-block;
+/** common for all */
+#container .error-msg {
+	color: red;
+	padding-top: 10px;
 }
 
-button.command.red:hover{
-    background-color:rgb(155, 23, 90);
+.button {
+	padding: 10px 20px;
+	background-color: #2D89EF;
+	
+	color: white;
+	font-size: 16px;
+	cursor: pointer;
+	outline: none;
+	border: none;
+}
+.button:hover {
+	background-color: #24459A;
+	color: #dddddd;
+	text-decoration: none;
+}
+.button.red {
+	background-color: #FF1769;
+}
+.button.red:hover {
+	background-color: #9B175A;
 }
 
-button.blue:hover{
-    background-color: rgb(36, 69, 154);;
+.button .icon {
+	width: 15px;
+	margin-right: 10px;
 }
 
-button.command:active{
-    top:2px;
-    left:2px;
-}
-
-small:hover{
-    color: whitesmoke;
-}
-
-
-small{
-    color: whitesmoke;
-    display:inline-block;
-    font-family: 'Open Sans',Verdana,Arial,Helvetica,sans-serif;
-    font-weight: 300;
-    letter-spacing: 0.02em;
-    line-height: 20px;
-    font-size: 10pt;
-}
-
-button div.icon{
-    line-height: 45px;
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    float:left;
-}
-
-button div.words, button div.words-single{
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    float: left;
-    width: auto;
-}
-
-div.words span{
-    display: inline-block;
-    vertical-align: middle;
-}
-
-div.words-single span{
-    display: inline-block;
-    line-height: 45px;
-}
-
-button.command img{
-    height: 17px;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 15px;
+.textfield {
+	margin: 15px 5px 0;
+	font-size: 14px;
+	width: 200px;
 }
 
 .ui-datepicker {
     font-size: .8em;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+    visibility: hidden;
+}
+
+.ui-dialog .ui-dialog-buttonset .ui-button {
+	outline: none;
+}
+
+.ui-autocomplete {
+	max-height: 10em;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.ui-autocomplete .ui-menu-item {
+	font-size: .9em;
 }

@@ -1,10 +1,11 @@
 @charset "UTF-8";
 
-#content {
-	margin-left: 0
+#container {
+    margin: 0 auto;
+	padding-top: 100px;
 }
 #content .logo-name {
-	margin: 100px auto 70px;
+	margin: 0 auto 70px;
 	display: block;
 }
 #content .login-form {

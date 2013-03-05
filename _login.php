@@ -1,11 +1,14 @@
 <?php
+spl_autoload_register(function($class){
+    require_once "class/$class.php";
+});
+
 header("Expires: 0");
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 
 //initialize session
 session_start();
-include('class/User.php');
 
 //page to be redirected to
 $destination = "/RTSS/index.php";

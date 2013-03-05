@@ -16,7 +16,7 @@ class Template
     
     // Menu map
     private static $MAIN_MENU=array(
-        self::HOME => "/RTSS/",
+        self::HOME => "/RTSS/relief/",
         self::TT_VIEW => "/RTSS/timetable/",
         self::TT_ADMIN => "/RTSS/timetable/admin.php",
         self::REPORT => "/RTSS/report/"
@@ -24,7 +24,7 @@ class Template
     
     private static $SUBMENU=array(
         self::HOME => array(
-            self::SCHEDULE => "/RTSS/",
+            self::SCHEDULE => "/RTSS/relief/",
             self::SMS => "/RTSS/sms/"            
         ),
         
@@ -61,7 +61,7 @@ class Template
         }
     }
 
-    public static function printHeaderAndDoValidation($title, $css, $scripts, $mainMenuSelect, $submenuSelect, $allowsAll=false)
+    public static function printHeaderAndDoValidation($title, $css, $scripts, $mainMenuSelect, $submenuTitle, $submenuSelect, $allowsAll=false)
     {
         self::validate(false, false, $allowsAll);
         
@@ -117,7 +117,8 @@ EOD;
         }
         echo <<< EOD
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
-        <script src="/RTSS/jquery-ui/jQui1.9.2.min.js" type="text/javascript"></script>        
+        <script src="/RTSS/jquery-ui/jQui1.9.2.min.js" type="text/javascript"></script>
+        <script src="/RTSS/js/config.js" type="text/javascript"></script>
 EOD;
         foreach ($scripts as $script)
         {
@@ -130,7 +131,7 @@ EOD;
         echo <<< EOD
     </head>
     <body>
-        <div class="container">
+        <div id="container">
             <div class="header">
                 <div class="header-top">
                     <img src="/RTSS/img/school-logo.png" class="logo" />
@@ -165,7 +166,7 @@ EOD;
                 <div class="submenu">
                     <div class="submenu-title">
                         <h1 class="submenu-title">
-                            $mainMenuSelect
+                            $submenuTitle
                         </h1>
                     </div>
                     <div class="submenubar">
