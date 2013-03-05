@@ -5,7 +5,7 @@ spl_autoload_register(function($class){
 
 Template::printHeaderAndDoValidation('Scheduler (Edit)', 
         array('relief.css', 'relief-edit.css'),
-        array('relief-edit.js'), 
+        array("teacher-detail.js", 'relief-edit.js'), 
         Template::HOME, Template::HOME . " (Edit)", Template::SCHEDULE);
 
 $isTemp=$_GET['teacher'] == 'temp';
@@ -63,8 +63,12 @@ EOD;
                         $teacher=$teacherList[$i];
                         $verifiedFrag='';
 
+                        $teacherName="{$teacher[$keyList[0]]}";
                         if (!$isTemp)
                         {
+                            $teacherName=<<< EOD
+<a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a>   
+EOD;
                             $datetime=$teacher[$keyList[2]];
                             $reasonOptionStr=PageConstant::formatOptionInSelect($reasonArr, $teacher[$keyList[1]]);
                             $remarkStr=$teacher[$keyList[3]];
@@ -94,8 +98,8 @@ EOD;
 <td>
 <div class="toggle-display"><span>{$teacher[$keyList[1]]}</span><br /><span>{$teacher[$keyList[2]]}</span></div>
 <div class="toggle-edit">
-<div class="time-line"><input type="text" name="handphone-$i" /></div>
-<div class="time-line"><input type="text" name="email-$i" /></div>
+<div class="time-line"><input type="text" name="handphone-$i" value="{$teacher['handphone']}" /></div>
+<div class="time-line"><input type="text" name="email-$i" value="{$teacher['email']}" /></div>
 </div>
 </td>
 <td>
@@ -114,7 +118,7 @@ EOD;
 <tr>
 <td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>
 <td><input type="checkbox" name="select-$i" /></td>
-<td>{$teacher[$keyList[0]]} <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /><input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" /></td>
+<td>$teacherName <input type="hidden" name="accname-$i" value="{$teacher[$keyExtraList[0]]}" /><input type="hidden" name="leaveID-$i" value="{$teacher[$keyExtraList[1]]}" /></td>
 $nameTimeInBetweenFrag
 <td>
 <div class="toggle-display"><span>$dateFromDisplay</span>, <span>{$datetime[0][1]}</span><br /><span>$dateToDisplay</span>, <span>{$datetime[1][1]}</span></div>
@@ -145,6 +149,7 @@ EOD;
     </div>
     <input type="hidden" name="num" value="<?php echo count($teacherList); ?>" />
 </form>
+<div id="teacher-detail"></div>
 <div id="dialog-alert"></div>
 <?php
 Template::printFooter();

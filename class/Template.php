@@ -68,6 +68,11 @@ class Template
         $title=PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME . " - " . $title;
         
         // Menu part
+        if ($allowsAll)
+        {
+            self::$MAIN_MENU=array_slice(self::$MAIN_MENU, 1, 1);
+        }
+        
         $menuPart='';
         foreach (self::$MAIN_MENU as $key => $value)
         {

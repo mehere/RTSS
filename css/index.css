@@ -1,7 +1,9 @@
 @charset "UTF-8";
 
 #container {
-    margin: 0 auto;
+    margin: 0 auto;	
+}
+#content {
 	padding-top: 100px;
 }
 #content .logo-name {
@@ -23,6 +25,6 @@
 #content .comment-bottom {
 	margin-top: 150px; 
 	text-align: center;
-	color: #bebebe;
+	color: #969696;
 	font-size: .9em;
 }
