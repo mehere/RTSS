@@ -107,9 +107,9 @@ class SMS {
         set_time_limit(1200);
         $msgSent = SMSDB::getSMSsent($scheduleDate);
 
-        chdir('C:\xampp\htdocs\fscan\sms');
-        $command = 'java -jar vigsyssmscom4.jar "2"';
-        $output = shell_exec($command);
+        //chdir('C:\xampp\htdocs\fscan\sms');
+        //$command = 'java -jar vigsyssmscom4.jar "2"';
+        //$output = shell_exec($command);
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
         if ($startPos > 20) {
             $msgString = substr($output, $startPos);

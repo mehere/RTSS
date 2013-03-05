@@ -1,6 +1,7 @@
 <?php
 require_once 'Teacher.php';
 require_once 'DBException.php';
+require_once 'SMS.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -121,7 +122,7 @@ class SMSDB
         }
         
         //$sql_sms = "select sms_id as smsId, phone_num as phoneNum, message, DATE_FORMAT(time_created, '%Y/%m/%d %M:%i') as timeCreated, DATE_FORMAT(time_sent, '%Y/%m/%d %M:%i') as timeSent, status, accname as accName, is_replied as replied, DATE_FORMAT(time_replied, '%Y/%m/%d %M:%i') as timeReplied schedule_date as scheduleDate from cm_sms_record where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
-        $sql_sms = "select sms_id as smsId, phone_num as phoneNum where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
+        $sql_sms = "select sms_id as smsId, phone_num as phoneNum from cm_sms_record where schedule_date = DATE(".$schedule_date.") and status = 'OK' order by sms_id;";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
@@ -143,21 +144,33 @@ class SMSDB
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
         }
         
-        $sql_sms = "select phone_num, sms_id where scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
+        $sql_sms = "select phone_num, sms_id from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK';";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
             throw new DBException("Fail to query sms sent", __FILE__, __LINE__);
         }
         
-        $sms_id_set = Array();
-        $sql_set = "(";
+        $sms_id_set = array();
+        $sms_phone_set = array();
         foreach($sms_result as $row)
         {
-            $sql_set .= "'".$row['phone_num']."',";
-            $sms_id_set[] = $row['sms_id'];
+            if(!in_array($row['phone_num'], $sms_phone_set))
+            {
+                $sms_phone_set[] = $row['phone_num'];
+            }
+            if(!in_array($row['sms_id'], $sms_id_set))
+            {
+                $sms_id_set[] = $row['sms_id'];
+            }
         }
-        $sql_set .= substr($sql_set, 0, -1).");";
+        
+        $sql_set = "(";
+        foreach($sms_phone_set as $a_phone)
+        {
+            $sql_set .= "'".$a_phone."',";
+        }
+        $sql_set = substr($sql_set, 0, -1).");";
         
         //query reply
         $db_con_ifins = Constant::connect_to_db("ifins");
@@ -166,11 +179,11 @@ class SMSDB
             throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
         }
         
-        $sql_reply = "select *, DATE_FORMAT(date, '%Y/%m/%d %M:%i') time_received from fs_msgs where num in ".$sql_set.";";
+        $sql_reply = "select DATE_FORMAT(date, '%Y/%m/%d %M:%i') as time_received from fs_msgs where num in ".$sql_set;
         $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
         if(is_null($reply_result))
         {
-            throw new DBException("Fail to query sms sent", __FILE__, __LINE__);
+            throw new DBException("Fail to query sms reply", __FILE__, __LINE__, 2);
         }
         
         $result = Array();
@@ -229,7 +242,7 @@ class SMSDB
     
     public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC)
     {
-        readSMS($date);
+        SMS::readSMS($date);
         
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
