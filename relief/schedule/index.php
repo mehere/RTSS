@@ -4,7 +4,7 @@ spl_autoload_register(function($class){
 });
 
 Template::printHeaderAndDoValidation('Schedule Result', 
-        array('relief.css', 'schedule-result.css'),
+        array('relief.css', 'page-control.css', 'schedule-result.css'),
         array('result.js'), 
         Template::HOME, Template::HOME . " (Result)", Template::SCHEDULE);
 
@@ -120,12 +120,21 @@ EOD;
         </div>
     </div>
     <div class="bt-control">
-        <?php if (!$scheduleList) { ?>
-            <a class="button" href="../">Go Back</a>
-        <?php } else { ?>
-            <a class="button green" href="timetable.php?schedule=$curPage">Preview Timetable</a>
-            <input type="submit" value="Approve" class="button" />
-        <?php } ?>
+        <?php 
+            if (!$scheduleList) 
+            {
+                echo <<< EOD
+<a class="button" href="../">Go Back</a>   
+EOD;
+            }
+            else 
+            {
+                echo <<< EOD
+<a class="button green" href="timetable.php?schedule=$curPage">Preview Timetable</a>
+<input type="submit" value="Approve" class="button" />
+EOD;
+            }
+        ?>
     </div>
     <input type="hidden" name="num" value="<?php echo $scheduleResultNum; ?>" />
     <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />

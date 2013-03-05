@@ -1,21 +1,25 @@
 @charset "UTF-8";
 
-.textfield {
-	margin: 15px 5px 0;
-	font-size: 15px;
-	width: 6.5em;
+select.dropdown {
+	margin-left: 10px;
+	letter-spacing: 0;
+	position: relative;
+	top: -3px;
 }
 
-.main .control {
-	margin-bottom: 10px;
-}
-.main .control select {
-	margin-right: 15px;
-}
-.main .control .line {
-    padding-bottom: 10px;
+.hovered.table-info thead tr th, .hovered.table-info tbody tr td {
+	border-right: 1px solid #DDDDDD;
+	border-left: 1px solid #DDDDDD;
 }
 
+.table-info .time-col {
+	background-color: #F1F2F3;
+	background: -ms-linear-gradient(top, #F1F2F3 0%,#EAEBEC 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F1F2F3), color-stop(100%,#EAEBEC));
+	background: linear-gradient(to bottom, #F1F2F3 0%,#EAEBEC 100%);
+}
+
+/*
 #content .bt-control {
 	text-align: center;
 	margin-top: 20px;
@@ -25,6 +29,7 @@
 	text-shadow: none;
 	color: inherit;
 }
+
 
 .table-info {
 	border-collapse: collapse;
@@ -72,3 +77,4 @@ div.ui-datepicker {
 	font-size: .75em;
 	box-shadow: 0 2px 6px 1px black;
 }
+*/

@@ -28,6 +28,9 @@ class Template
             self::SMS => "/RTSS/sms/"            
         ),
         
+        self::TT_VIEW => array(            
+        ),
+        
         self::TT_ADMIN => array(
             self::TT_ADMIN_MASTER => "/RTSS/timetable/",
             self::TT_ADMIN_AED => "/RTSS/timetable/"
@@ -75,7 +78,7 @@ class Template
         $title=PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME . " - " . $title;
         
         // Menu part
-        if ($allowsAll)
+        if ($_SESSION['type'] != 'admin')
         {
             self::$MAIN_MENU=array_slice(self::$MAIN_MENU, 1, 1);
         }

@@ -1,9 +1,9 @@
 <?php 
-$BYPASS_ADMIN=true;
-include_once '../php-head.php';
+spl_autoload_register(function($class){
+    require_once "../class/$class.php";
+});
 
-require_once '../class/TimetableDB.php';
-require_once '../class/ListGenerator.php';
+Template::validate(false, false, true);
 
 if ($_SESSION['type'] != 'admin')
 {
@@ -15,9 +15,11 @@ if (!$date)
 {
     die('Please following the link on the previous page to redirect to the print view.');
 }
-
-include_once '../head-frag.php';
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Timetable - Print</title>
 <link href="/RTSS/css/print.css" rel="stylesheet" type="text/css">
 <style type="text/css">
@@ -34,7 +36,7 @@ include_once '../head-frag.php';
 <body>
 	<div id="container">
         <h2>
-            Timetable on <em><?php echo SchoolTime::convertDate($date); ?></em>
+            Timetable on <em><?php echo SchoolTime::convertDate($date, 2); ?></em>
             <div style="font-size: 16px"><?php echo "Sem " . PageConstant::printSemRange(true) . ", " . PageConstant::printYearRange(true); ?></div>
         </h2>
         <div style="padding-bottom: 5px; margin-top: -10px">
@@ -44,7 +46,8 @@ include_once '../head-frag.php';
                     echo $teacherList[$_GET['accname']]; 
                 ?>
             </strong>
-            <span style="color: red">(Relief classes are highlighted in red.)</span>
+            (<span>Relief classes are in <strong>bold</strong>.</span>
+            <span>For AED: classes <u>underlined</u> are not mandatory.</span>)
         </div>        
         <table class="table-info">
             <thead>
@@ -77,28 +80,51 @@ EOD;
                     if ($teaching)
                     {
                         PageConstant::escapeHTMLEntity($teaching);
-                        $timetableEntry=array();
-                        foreach (array_slice($headerKeyList, 1) as $key => $value)
+                        $teaching['class']=implode(", ", $teaching['class']);
+                        if ($teaching['skipped'])
                         {
-                            $timetableEntry[]=$teaching[$key];
+                            $teaching['skipped']['class']=implode(", ", $teaching['skipped']['class']);
+                        }                
+
+                        $style='';
+                        switch ($teaching['attr'])
+                        {
+                            case -1:
+                                $style='style="text-decoration: line-through"';
+                                break;
+                            case 1:
+                                $style='style="text-decoraction: underline"';
+                                break;
+                            case 2:
+                                $style='style="font-weight: bold"';
+                                break;
                         }
 
-                        // Class name display
-                        $timetableEntry[1]=implode(", ", $timetableEntry[1]);
-
-                        $style="";
-                        if ($teaching['isRelief']) $style='style="color: red"';
+                        $timetableEntry=array();
+                        foreach (array_slice($headerKeyList, 1) as $key => $value)
+                        {                    
+                            $skippedPart=$teaching['skipped'][$key];
+                            if ($skippedPart)
+                            {                       
+                                $skippedPart= <<< EOD
+        <div style="color: black;">(<span style="text-decoration: line-through;">$skippedPart</span>)</div>   
+EOD;
+                            }
+                            $timetableEntry[]= <<< EOD
+        <span $style>{$teaching[$key]}{$skippedPart}</span>
+EOD;
+                        }
 
                         $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
                         echo <<< EOD
-<tr $style><th class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</th>$otherTdStr</tr>
+        <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
                     }
                     else
                     {
                         $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
                         echo <<< EOD
-<tr><th class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</th>$otherTdStr</tr>
+        <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
                     }
                 }

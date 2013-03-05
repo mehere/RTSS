@@ -432,7 +432,7 @@ table.hovered tbody tr:hover{
     background-color: #C7EAF9;
 }
 
-div.colorbox{
+.colorbox{
     z-index: 30;
     min-height: 10px;
     vertical-align: middle;
@@ -444,7 +444,7 @@ div.colorbox{
     /*    display: inline-table;*/
 }
 
-div.colorbox .box-title {
+.colorbox .box-title {
     font-family: 'Segoe UI Light', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
     font-weight: 200;
     font-size: 20px;
@@ -472,14 +472,14 @@ div.colorbox .box-title {
     background-color:rgb(255, 23, 105);
 }
 
-div.accordion{
+.accordion{
     display:inline-block;
     width: 100%;
 	
 	position: relative;
 }
 
-div.accordion .icon-link {
+.accordion .icon-link {
 	margin-left: 15px;
 	margin-right: 5px;
 	
