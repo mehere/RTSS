@@ -1,7 +1,4 @@
 @charset "UTF-8";
-.section {
-	margin-top: 15px;
-}
 
 .section .page-control {
 	width: 95%;
@@ -11,7 +8,7 @@
 .section .page-control .page-no {
 	padding: 5px 10px;
 	color: black;
-	border: 1px solid #282828;
+	border: 1px solid #757575;
 	
 	background-color: #a5a5a5;
 	background: -ms-linear-gradient(top, #aaaaaa 0%,#999999 100%);
@@ -30,7 +27,7 @@
 	background: none;
 	background-color: #ededed;
 	
-	box-shadow: inset 0 0 5px 0 gray;
+	box-shadow: inset 0 0 3px 0 gray;
 }
 .section .page-control .page-turn {
 	color: white;
@@ -46,23 +43,19 @@
 	width: 90%;
 }
 
-.link-control {
-	padding-bottom: 10px;
+#dialog-alert .table-info {
+	border-collapse: collapse;
+	table-layout: fixed;
+	width: 100%;
+	font-size: 14px;
 }
-.link-control .link {
-	display: block;
-	margin-top: 10px;
-	margin-left: 10px;
+#dialog-alert .table-info tr td, #dialog-alert .table-info tr th {
+	background-color: #ffffff;
+	word-wrap: break-word;
+	border: 1px solid black;
+	padding: 5px;
+	text-align: center;
 }
-.fltrt .button {
-	margin-right: 30px;
-}
-
-.ui-autocomplete {
-	max-height: 10em;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-.ui-autocomplete .ui-menu-item {
-	font-size: .9em;
+#dialog-alert .table-info tr th {
+	background-color: #f9f9f9;
 }

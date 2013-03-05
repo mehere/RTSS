@@ -22,10 +22,10 @@ $_SESSION['scheduleDate']=$date;
     </div>
     <div class="accordion colorbox blue">
         <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
-        <span>
+        <span class="box-title">
             Leave Status
         </span>
-        <a class="schedule-edit" href="teacher-edit.php">Edit/Add</a>
+        <div class="control-top"><a href="teacher-edit.php">Edit/Add</a></div>
     </div>    
     <div>
         <table class="hovered table-info">
@@ -83,10 +83,10 @@ EOD;
     </div>
     <div class='accordion colorbox green'>
         <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
-        <span>
+        <span class="box-title">
             Temporary Relief
         </span>
-        <a class="schedule-edit" href="teacher-edit.php?teacher=temp">Edit/Add</a>
+        <div class="control-top"><a href="teacher-edit.php?teacher=temp">Edit/Add</a></div>
     </div>    
     <div>
         <table class="hovered table-info">
@@ -134,10 +134,10 @@ EOD;
     </div>
     <div class='accordion colorbox yellow'>
         <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
-        <span>
+        <span class="box-title">
             Excluding List
         </span>
-        <a class="schedule-edit" href="exclude-list.php">Edit/Add</a>
+        <div class="control-top"><a href="exclude-list.php">Edit/Add</a></div>        
     </div>    
     <div>
         <table class="hovered table-info">

@@ -23,8 +23,8 @@ if ($num)
 ?>
 <form class="main" name="edit" action="" method="post">            	
     <div class="accordion colorbox blue">
-        <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
-        <span>
+        <span class="icon-link">&#x25CB;</span>
+        <span class="box-title">
             Excluding List
         </span>        
     </div>
@@ -42,7 +42,7 @@ if ($num)
                     if ($nonexecInfo[$value])  $nonexecInfo[$value]['checked']=true;
                 }
             ?>
-            <tr><th class="hovered" style="width: 120px"><?php echo NameMap::$RELIEF['excludingList']['display']['executive']; ?></th>
+            <tr><th class="hovered" style="width: 100px"><?php echo NameMap::$RELIEF['excludingList']['display']['executive']; ?></th>
                 <td>
                     <?php
                         $i=0;
@@ -57,7 +57,7 @@ EOD;
                         }                                    
                     ?>                    
                 </td>
-                <td style="width: 120px;">
+                <td style="width: 100px;">
                 	<div class="select-control">
                         <a href="" class="select-all">Select All</a>
                         <a href="" class="deselect-all">Deselect All</a>

@@ -104,7 +104,6 @@ div.statusBar{
     /*    padding: 1px;*/
     display: inline-block;
     float: right;
-    font-size: 13px;
     line-height: 55px;
     margin-top: 5px;
     margin-bottom: 10px;
@@ -445,7 +444,7 @@ div.colorbox{
     /*    display: inline-table;*/
 }
 
-div.colorbox span{
+div.colorbox .box-title {
     font-family: 'Segoe UI Light', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
     font-weight: 200;
     font-size: 20px;
@@ -454,8 +453,8 @@ div.colorbox span{
     color: rgb(255, 255, 255);
     /*    margin: 10px 0px;*/
     padding: 10px;
+	padding-left: 0;
     display: inline-block;
-
 }
 
 .blue{
@@ -482,7 +481,10 @@ div.accordion{
 
 div.accordion .icon-link {
 	margin-left: 15px;
-	margin-right: -5px;
+	margin-right: 5px;
+	
+	color: white;
+	font-size: 20px;
 	
 	position: relative;
 	top: 2px;
@@ -491,7 +493,7 @@ div.accordion .icon-link {
 /** common for all */
 #container .error-msg {
 	color: red;
-	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .button {
@@ -549,6 +551,8 @@ div.accordion .icon-link {
 	max-height: 10em;
 	overflow-y: auto;
 	overflow-x: hidden;
+	
+	box-shadow: 0 3px 3px 0 gray;
 }
 .ui-autocomplete .ui-menu-item {
 	font-size: .9em;

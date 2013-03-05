@@ -1,6 +1,12 @@
 @charset "UTF-8";
+
+.table-info tr td {
+	padding: 5px 10px;
+}
 .table-info .label-content {
-    margin-right: 20px;
+    margin-right: 3%;
+	padding: 3px 0;
+	
     float: left;
 	width: 30%;
 	text-align: left;

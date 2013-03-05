@@ -1,48 +1,59 @@
 $(document).ready(function(){
-    // Alert dialog box
-    $("#dialog-alert").dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        draggable: false,
-        width: 500,
-        buttons: {
-            OK: function(){
-                $(this).dialog("close");
+    if ($.trim($('#dialog-alert').text()))
+    {
+        $('#dialog-alert').dialog('open');
+    }
 
-                var func=$(this).data('func');
-                if (func) func();
-            }
-        }
-    });
+    $('#dialog-alert').dialog('option', 'title', 'Warning');
 
     var formEdit=document.forms['edit'],
         ALERT_MSG=['Please provide relief teacher for each teacher on leave.',
             'Failed to override the relief teacher due to database error.'];
 
-    var OVERRIDE_TEXT=["Override", "Cancel"];
-    $(formEdit['override']).click(function(){
-        if (this.value == OVERRIDE_TEXT[1])
-        {
-            $(".text-hidden").hide();
-            $(".text-display").fadeIn();
-            this.value=OVERRIDE_TEXT[0];
+    $('#override').click(function(){
+        $(".text-display").hide();
+        $(".text-hidden").fadeIn();
 
-            $('input[name^="relief-teacher-"]').val(function(index, value){
-                if (!value)
-                {
-                    return $(this).parents('tr').first().find(".text-display").text();
-                }
+        /*$('input[name^="relief-teacher-"]').val(function(index, value){
+            if (!value)
+            {
+                return $(this).parents('tr').first().find(".text-display").text();
+            }
 
-                return value;
-            });
-        }
-        else
-        {
-            $(".text-display").hide();
-            $(".text-hidden").fadeIn();
-            this.value=OVERRIDE_TEXT[1];
-        }
+            return value;
+        });*/
+
+        $('.control-top a[id^="override"]').toggle();
+
+        return false;
+    });
+
+    $('#override-ok').click(function(){
+        $('.relief-col .text-display').text(function(index, value){
+            return $(this).parents('tr').first().find('input[name^="relief-teacher-"]').val();
+        });
+
+        $(".text-hidden").hide();
+        $(".text-display").fadeIn();
+
+        $('.control-top a[id^="override"]').toggle();
+
+        return false;
+    });
+
+    $('#override-cancel').click(function(){
+        formEdit.reset();
+
+        $('.relief-col .text-display').text(function(index, value){
+            return $(this).parents('tr').first().find('input[name^="relief-teacher-"]').val();
+        });
+
+        $(".text-hidden").hide();
+        $(".text-display").fadeIn();
+
+        $('.control-top a[id^="override"]').toggle();
+
+        return false;
     });
 
     $(formEdit).submit(function(){
@@ -62,7 +73,7 @@ $(document).ready(function(){
         }
 
         $.post(this.action, $(formEdit).serializeArray(), function(data){
-            $("#dialog-alert").html(data['display']).data('func', function(){
+            $("#dialog-alert").dialog('option', 'title', '').html(data['display']).data('func', function(){
                 window.location="/RTSS/relief/";
             }).dialog('open');
         }, 'json');
@@ -89,8 +100,7 @@ $(document).ready(function(){
         $('input[name^="relief-teacher-"]', formEdit).autocomplete({
             source: nameList,
             delay: 0,
-            minLength: 0,
-            autoFocus: true
+            minLength: 0
         }).focusin(function(){
             $(this).autocomplete("search");
         }).focusout(function(){
@@ -120,6 +130,7 @@ $(document).ready(function(){
             if (!isMatch)
             {
                 this.value='';
+                trObj.find('input[name^="relief-accname-"]').val('');
             }
             else
             {
@@ -152,6 +163,6 @@ $(document).ready(function(){
             }
         }).focusin(function(){
             $(this).autocomplete("search");
-        });;
+        });
     });
 });

@@ -1,19 +1,10 @@
 <?php
-
-require_once 'util.php';
-require_once 'DBException.php';
-require_once 'Students.php';
-require_once 'Teacher.php';
-require_once 'TimetableDB.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/RTSS/constant.php';
-require_once 'SMS.php';
-require_once 'Email.php';
-
-//require_once 'sms/send_sms.php';
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
 
 class SchedulerDB
 {
-
     private $date;
     private $weekday;
     private $date_str;

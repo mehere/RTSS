@@ -1,15 +1,5 @@
 @charset "UTF-8";
 
-.accordion .control-top {
-	position: absolute;
-	right: 15px;
-	bottom: 15px;
-}
-.accordion .control-top >a {
-	color: white;
-	margin-left: 10px;
-}
-
 .table-info input, .table-info select {
 	font-size: 12px;
 }
@@ -41,13 +31,3 @@
 .table-info .textfield {
     width: 95%;	
 }
-/*
-.ui-autocomplete {
-	max-height: 10em;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-.ui-autocomplete .ui-menu-item {
-	font-size: .9em;
-}
-*/

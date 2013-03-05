@@ -34,6 +34,13 @@ class Template
         )
     );
     
+    /**
+     * 
+     * @param type $isController default false
+     * @param type $needsJSON default false
+     * @param type $allowsAll default false
+     * @return void
+     */
     public static function validate($isController=false, $needsJSON=false, $allowsAll=false)
     {
         session_start();

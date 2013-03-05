@@ -13,8 +13,8 @@ $isTemp=$_GET['teacher'] == 'temp';
 <form class="main" name="edit" action="_teacher_edit.php" method="post">            	
     <input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
     <div class="accordion colorbox blue">
-        <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
-        <span>
+        <span class="icon-link">&#x25CB;</span>
+        <span class="box-title">
             <?php echo $isTemp ? "Temporary Relief Teacher:" : "Teacher on Leave:"; ?>
         </span>
         <div class="control-top"><a id="select-all" href="">Select All</a><a id="deselect-all" href="">Deselect All</a></div>
@@ -153,4 +153,4 @@ EOD;
 <div id="dialog-alert"></div>
 <?php
 Template::printFooter();
-?>   
+?>
