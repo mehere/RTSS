@@ -97,28 +97,23 @@ class Teacher {
 
         //start
         //query relief info to check whether scheduled
-        //No need now
-        /*
-        $sql_query_relief = "select * from rs_relief_info where date = '".mysql_real_escape_string($query_date)."';";
-        $relief_query_result = mysql_query($sql_query_relief);
-        if(!$relief_query_result)
+        $sql_query_scheduled = "select * from rs_leave_scheduled where schedule_date = '".mysql_real_escape_string($query_date)."';";
+        $scheduled_query_result = Constant::sql_execute($db_con, $sql_query_scheduled);
+        if(empty($scheduled_query_result))
         {
-            return $result;
+            throw new DBException("Fail to query leave information", __FILE__, __LINE__, 2);
         }
 
-        $leave_id_array = Array();
-
-        while($row = mysql_fetch_assoc($relief_query_result))
+        $leave_id_array = array();
+        foreach($scheduled_query_result as $row)
         {
-            $one_leave_id = $row['leave_id_ref'];
+            $one_leave_id = $row['leave_id'];
             if(!in_array($one_leave_id, $leave_id_array))
             {
-                array_push($leave_id_array, $one_leave_id);
+                $leave_id_array[] = $one_leave_id;
             }
         }
-         *
-         */
-
+         
         //query leave
         $sql_query_leave = "select *, DATE_FORMAT(rs_leave_info.start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_leave_info.end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info
             where DATE('".mysql_real_escape_string(trim($query_date))."') between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
@@ -140,14 +135,11 @@ class Teacher {
             $each_record['isVerified'] = ($row['verified'] === 'YES')?true:false;
             $each_record['datetime'] = Array(Array($row['start_date'], $row['start_time_point']), Array($row['end_date'], $row['end_time_point']));
             $each_record['isScheduled'] = false;
-            /*
             if(in_array($each_record['leaveID'], $leave_id_array))
             {
                 $each_record['isScheduled'] = true;
             }
-             *
-             */
-
+            
             $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"":$teacher_dict[$row['teacher_id']]['name'];
             if(strcmp(substr($each_record['accname'], 0, 3), "TMP") === 0)
             {
@@ -602,6 +594,19 @@ class Teacher {
         }
     }
 
+    /**
+     * 
+     * @param string $cancelled_start_datetime  "yyyy/mm/dd hh:mm"
+     * @param string $cancelled_end_datetime    "yyyy/mm/dd hh:mm"
+     */
+    /*
+    public static function checkHasRelief($cancelled_start_datetime, $cancelled_end_datetime)
+    {
+        
+    }
+     * 
+     */
+    
     public static function delete($leaveIDList, $prop)
     {
         $db_con = Constant::connect_to_db('ntu');

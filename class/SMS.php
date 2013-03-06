@@ -23,7 +23,7 @@ class SMS {
                 $message = "<iScheduler> Dear $name, " . $receiverList[$index]["message"];
                 $timeCreated = date('Y-m-d H:i:s');
                 $accname = $receiverList[$index]["accname"];
-                $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname);
+                $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $receiverList[$index]["type"]);
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
                 $message = $message . "Please reply in the following format: '$smsId-Yes' for acceptance or '$smsId-no' for decline.";
             }

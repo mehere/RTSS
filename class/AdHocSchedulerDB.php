@@ -312,7 +312,7 @@ class AdHocSchedulerDB
         }
 
         //3. construct sms cancel relief content
-        $sql_cancelled = "select temp_ah_cancelled_relief.* from schedule_date = DATE('$date');";
+        $sql_cancelled = "select temp_ah_cancelled_relief.* from temp_ah_cancelled_relief where schedule_date = DATE('$date');";
         $cancelled_result = Constant::sql_execute($db_con, $sql_cancelled);
         if(is_null($cancelled_result))
         {
@@ -362,20 +362,15 @@ class AdHocSchedulerDB
                     "phoneNum" => $phone,
                     "name" => $name,
                     "accName" => $accname,
-                    "message" => $message
+                    "message" => $message,
+                    "type" => 'C'
                 );
 
                 $cancel_sms_list[$accname] = $one_cancel;
             }
         }
         
-        //3.1. delete temp each alternative
-        $sql_delete = "delete from temp_each_alternative;";
-        $delete_result = Constant::sql_execute($db_con, $sql_delete);
-        if (is_null($delete_result))
-        {
-            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
-        }
+        //3.1. delete cancel list
         
         //4. send cancel sms
         $cancel_sms_reply = SMS::sendSMS($cancel_sms_list, $date);
@@ -494,7 +489,8 @@ class AdHocSchedulerDB
                 "phoneNum" => $phone,
                 "name" => $name,
                 "accName" => $accname,
-                "message" => $message
+                "message" => $message,
+                "type" => 'R'
             );
 
             $sms_input[] = $one_teacher;
@@ -565,6 +561,7 @@ class AdHocSchedulerDB
         }
         
         //8. send cancel email
+        /*
         $cancel_email_reply = Email::sendMail($from, $cancel_to);
 
         if (!is_null($cancel_email_reply))
@@ -577,7 +574,8 @@ class AdHocSchedulerDB
                 }
             }
         }
-        
+         * 
+         */
         //9. construct relief email
         $to = array();
         foreach ($list as $key => $one)
@@ -631,6 +629,7 @@ class AdHocSchedulerDB
         }
 
         //10. send relief email
+        /*
         $email_reply = Email::sendMail($from, $to);
 
         if (!is_null($email_reply))
@@ -643,8 +642,18 @@ class AdHocSchedulerDB
                 }
             }
         }
-
-        //11. return
+         * 
+         */
+        
+        //11. delete temp each alternative
+        $sql_delete = "delete from temp_each_alternative;";
+        $delete_result = Constant::sql_execute($db_con, $sql_delete);
+        if (is_null($delete_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
+        }
+        
+        //12. return
         uasort($final_result['cancelNotified'], "AdHocSchedulerDB::compareApprove");
         uasort($final_result['reliefNotified'], "AdHocSchedulerDB::compareApprove");
         

@@ -415,7 +415,22 @@ class SchedulerDB
 
     public function getRecommendedNoOfLessons()
     {
-        return 10;
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to query recommended lesson', __FILE__, __LINE__);
+        }
+        
+        $sql_query = "select value from admin_config where identifier = 'recommended_num';";
+        $query_result = Constant::sql_execute($db_con, $sql_query);
+        if(empty($query_result))
+        {
+            throw new DBException('Fail to query recommended lesson', __FILE__, __LINE__);
+        }
+        
+        $num = $query_result[0]['value'] - 0;
+        
+        return $num;
     }
 
     static function setScheduleResult($typeSchedule, $date, $scheduleResults, $arrLeaveId)
@@ -488,6 +503,21 @@ class SchedulerDB
             if (is_null($execute))
             {
                 throw new DBException("Fail to insert scheduling result", __FILE__, __LINE__, 2);
+            }
+        }
+        
+        if(!empty($arrLeaveId))
+        {
+            $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
+            foreach($arrLeaveId as $a_leave)
+            {
+                $sql_mark_scheduled .= "($a_leave, '$date'),";
+            }
+            $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
+            $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
+            if (is_null($mark_schedule_result))
+            {
+                throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
             }
         }
     }
@@ -616,7 +646,7 @@ class SchedulerDB
         $accname_new = mysql_real_escape_string(trim($accname_new));
 
         //1. retrieve old relief
-        $sql_old_relief = "select * from temp_each_alternative where schedule_index = $schedule_index and temp_relief_id = $relief_id;";
+        $sql_old_relief = "select * from temp_each_alternative where schedule_id = $schedule_index and temp_relief_id = $relief_id;";
         $old_relief_result = Constant::sql_execute($db_con, $sql_old_relief);
         if(empty($old_relief_result))
         {
@@ -765,15 +795,23 @@ class SchedulerDB
             }
             
             //insert new skip_array
-            $sql_insert_new_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
-            foreach($new_skip as $a_skip)
+            if(count($new_skip) > 0)
             {
-                $lesson_id = $a_skip['lesson_id'];
-                $start_skip = $a_skip['start_time'];
-                $end_skip = $start_skip + 1;
-                $sql_insert_new_skip .= "($schedule_index, '$lesson_id', '$schedule_date', $start_skip, $end_skip, '$accname_new'),";
+                $sql_insert_new_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
+                foreach($new_skip as $a_skip)
+                {
+                    $lesson_id = $a_skip['lesson_id'];
+                    $start_skip = $a_skip['start_time'];
+                    $end_skip = $start_skip + 1;
+                    $sql_insert_new_skip .= "($schedule_index, '$lesson_id', '$schedule_date', $start_skip, $end_skip, '$accname_new'),";
+                }
+                $sql_insert_new_skip = substr($sql_insert_new_skip, 0, -1).';';
+                $insert_new = Constant::sql_execute($db_con, $sql_insert_new_skip);
+                if(is_null($insert_new))
+                {
+                    throw new DBException('Fail to insert new relief', __FILE__, __LINE__, 2);
+                }
             }
-            $sql_insert_new_skip = substr($sql_insert_new_skip, 0, -1).';';
         }
         
         return true;
@@ -941,7 +979,8 @@ class SchedulerDB
                 "phoneNum" => $phone,
                 "name" => $name,
                 "accName" => $accname,
-                "message" => $message
+                "message" => $message,
+                "type" => 'R'
             );
 
             $sms_input[] = $one_teacher;

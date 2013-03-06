@@ -10,6 +10,7 @@ require_once 'ListGenerator.php';
 require_once 'DBException.php';
 require_once 'User.php';
 require_once 'AdHocSchedulerDB.php';
+require_once 'AdminConfig.php';
 
 /*
  * To change this template, choose Tools | Templates
@@ -173,7 +174,7 @@ foreach($result as $key=>$a_result)
           echo $a_teacher->abbreviation."<br>";
           echo $a_teacher->name."<br>";
           echo $a_teacher->accname."<br><br>";
-          }
+          } 
          * 
          */
         //Teacher::insertAbbrMatch(array('AF ADF'=>'2344244'));
@@ -428,8 +429,12 @@ $value = Teacher::individualReport('8909732');
  * 
  */
 //echo SchedulerDB::scheduleResultNum();
+
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", 0);  //go through normal before approve
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "7032095", -1);  //go through normal after approve, AED
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", 0, "ad_hoc");  //go through ad hoc before approve
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", -1, "ad_hoc");  //go through ad hoc after approve
 /*
-$result = TimetableDB::getIndividualTimetable('2013-02-06', "7576699", 0);
 foreach($result as $key=>$value)
 {
     echo $key."<br>";
@@ -437,14 +442,16 @@ foreach($result as $key=>$value)
     echo $value['attr']."<br>";
     echo $value['venue']." hehe<br>";
     print_r($value['class']);
+    echo "<br>";
+    print_r($value['skipped']);
     
     echo "<br><br>";
 }
  * 
  */
 
-//echo TimetableDB::checkTimetableConflict(0, Array(1, 2), "TMP4444444", "2013/2/06", "N1313126HD65");
-
+//echo TimetableDB::checkTimetableConflict(0, Array(4, 5), "TMP4444444", "2013/2/06", "N1313126HD65");
+/*
 $result = SchedulerDB::getScheduleResult(0);
 
 foreach($result as $a => $b)
@@ -464,7 +471,8 @@ foreach($result as $a => $b)
         echo "<br><br>";
     }
 }
-
+ * 
+ */
 
 //echo print_r(SchedulerDB::allSchduleIndex());
 
@@ -487,7 +495,7 @@ foreach($result as $key=>$row)
  * 
  */
 
-//var_dump(SchedulerDB::override(0, "N1313121HC31", "6644942", "TMP1111111"));
+//var_dump(SchedulerDB::override(0,1174, '7832040')); //extreme case : override one AED with another AED
 /*
 $result = Teacher::getTeacherContact();
 foreach($result as $key => $row)
@@ -508,6 +516,12 @@ foreach($result as $row)
  * 
  */
 //AdHocSchedulerDB::cancelRelief(821, 2, 5);
+
+//print_r(AdHocSchedulerDB::adHocApprove(0, '2013-02-06'));
+
+//AdminConfig::setRecommendedLesson(10);
+//echo $scheduling->getRecommendedNoOfLessons();
+
 /*
 class Test
 {

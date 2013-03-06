@@ -39,13 +39,14 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
         
-        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date) values ";
+        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date, type) values ";
         
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
+        $type = mysql_real_escape_string(trim($msg['type']));
         
-        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '$date');";
+        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '$date', '$type');";
 
         $insert_result = Constant::sql_execute($db_con, $sql_insert);
         if(empty($insert_result))
@@ -165,28 +166,36 @@ class SMSDB
             }
         }
         
-        $sql_set = "(";
-        foreach($sms_phone_set as $a_phone)
+        if(count($sms_phone_set) > 0)
         {
-            $sql_set .= "'".$a_phone."',";
+            $sql_set = "(";
+            foreach($sms_phone_set as $a_phone)
+            {
+                $sql_set .= "'".$a_phone."',";
+            }
+            $sql_set = substr($sql_set, 0, -1).");";
+            
+            //query reply
+            $db_con_ifins = Constant::connect_to_db("ifins");
+            if(empty($db_con_ifins))
+            {
+                throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
+            }
+
+            $sql_reply = "select DATE_FORMAT(date, '%Y/%m/%d %H:%i') as time_received from fs_msgs where num in ".$sql_set;
+            $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
+            if(is_null($reply_result))
+            {
+                throw new DBException("Fail to query sms reply ".$sql_reply, __FILE__, __LINE__, 2);
+            }
         }
-        $sql_set = substr($sql_set, 0, -1).");";
-        
-        //query reply
-        $db_con_ifins = Constant::connect_to_db("ifins");
-        if(empty($db_con_ifins))
+        else
         {
-            throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
+            return array();
+            //throw new DBException($sql_set, __FILE__, __LINE__);
         }
         
-        $sql_reply = "select DATE_FORMAT(date, '%Y/%m/%d %M:%i') as time_received from fs_msgs where num in ".$sql_set;
-        $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
-        if(is_null($reply_result))
-        {
-            throw new DBException("Fail to query sms reply", __FILE__, __LINE__, 2);
-        }
-        
-        $result = Array();
+        $result = array();
         foreach($reply_result as $a_reply)
         {
             $reply_msg = $a_reply['msg'];
@@ -240,7 +249,16 @@ class SMSDB
         }
     }
     
-    public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC)
+    /**
+     * 
+     * @param type $date
+     * @param type $order
+     * @param type $direction
+     * @param string $type "R": relief msg; "C": cancel msg
+     * @return type
+     * @throws DBException
+     */
+    public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC, $type = 'R')
     {
         SMS::readSMS($date);
         
@@ -265,7 +283,8 @@ class SMSDB
             'repliedMsg' => 'response'
         );
         
-        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record";
+        $type_trimed = mysql_real_escape_string(trim($type));
+        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record where type = '$type_trimed'";
         
         if(array_key_exists($order, $order_db))
         {
