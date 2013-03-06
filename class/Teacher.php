@@ -594,18 +594,34 @@ class Teacher {
         }
     }
 
-    /**
-     * 
-     * @param string $cancelled_start_datetime  "yyyy/mm/dd hh:mm"
-     * @param string $cancelled_end_datetime    "yyyy/mm/dd hh:mm"
-     */
-    /*
-    public static function checkHasRelief($cancelled_start_datetime, $cancelled_end_datetime)
+    public static function checkHasReliefDeleteLeave($leaveIDList)
     {
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            return false;
+        }
         
+        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $today_obj = new DateTime();
+        $today_obj->setTimezone($time_zone);
+        $today_str = $today_obj->format('Y-m-d');
+        $now_time_str = $today_obj->format('H:i');
+        
+        $sql_check = "select * from rs_relief_info where leave_id_ref in (".  implode(',', $leaveIDList).") and schedule_date >= '$today_str'";
+        $check_result = Constant::sql_execute($db_con, $sql_check);
+        if(is_null($check_result))
+        {
+            return false;
+        }
+        if(!empty($check_result))
+        {
+            //has future relief
+            return false;
+        }
+        
+        return true;
     }
-     * 
-     */
     
     public static function delete($leaveIDList, $prop)
     {
