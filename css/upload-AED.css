@@ -1,0 +1,97 @@
+@charset "UTF-8";
+
+.main {
+	margin-bottom: 10px;
+}
+
+.main form .field {
+	font-size: 14px;
+}
+
+.hovered.table-info {
+	width: 800px;
+	
+	margin-bottom: 90px;
+}
+.hovered.table-info tr td {
+	padding: 0;
+	height: 55px;
+	
+	background-color: white;
+}
+
+.hovered.table-info tr th {
+	border-top: 1px solid #DDDDDD;
+}
+.hovered.table-info tbody tr:hover {
+	background-color: inherit;
+}
+
+.form-table {
+	margin-bottom: 15px;
+	table-layout: fixed;
+	width: 750px;
+	
+	font-size: 14px;
+}
+.form-table td {
+	padding: 5px;
+}
+.form-table .label {
+	padding-left: 20px;
+	padding-right: 0;
+	margin-left: 10px;
+	text-align: right;
+}
+.form-table .comment {
+	font-size: .8em;
+	color: #EC8E0C;
+	margin-left: 10px;
+}
+
+.row {
+	margin-bottom: 15px;
+	margin-left: -10px;
+}
+.row .label {
+	margin-right: 5px;
+	margin-left: 30px;
+}
+
+.subject {
+	position: absolute;  
+	background-color: #ededed;
+	
+	font-size: 12px;
+	color: black;
+	overflow: hidden;
+	
+	box-shadow: 0 0 5px 0 #5E5E5E;
+}
+.subject>table {
+	height: 100%;
+	width: 100%;
+	text-align: center;
+}
+.subject .subject-close {
+	width: 16px;
+	height: 16px;
+	
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.subject .subject-close .ui-button-text {
+	padding: 0;
+}
+.subject .subject-highlight {
+	width: 16px;
+	height: 16px;
+	
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.subject .subject-highlight .ui-button-text {
+	padding: 0;
+}

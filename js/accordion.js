@@ -1,8 +1,15 @@
 $(document).ready(function(){
     $('.accordion .icon-link').click(function() {
-        var acc=$(this).parents('.accordion').first();
-        acc.next().toggle('fast');
-        acc.find('.icon-link>img').toggle();
+        GlobalFunction.toggleAccordion($(this), 'fast');
+
         return false;
     });
 });
+
+var GlobalFunction={
+    toggleAccordion: function(objQ, speed) {
+        var acc=objQ.parents('.accordion').first();
+        acc.next().toggle(speed);
+        acc.find('.icon-link>img').toggle();
+    }
+}

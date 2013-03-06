@@ -171,9 +171,10 @@ EOD;
         <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS/img/redo.png" class="icon" />Re-Schedule All</a>
         <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule the Remaining</a>
     </div>
+    <div style="clear: both"></div>
 </form>
 <div id="teacher-detail"></div>
 <div id="dialog-alert"></div>
 <?php
 Template::printFooter();
-?>        
+?>

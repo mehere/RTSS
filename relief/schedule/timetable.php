@@ -25,7 +25,7 @@ $(document).ready(function(){
     });
     
     <?php if (!$_POST['accname']) { ?>    
-        $('.accordion.blue .icon-link').click();
+        GlobalFunction.toggleAccordion($('.icon-link', document.forms['teacher-select']), 0);
     <?php } ?>     
 });
 </script>
@@ -66,9 +66,11 @@ EOD;
 
     include '../../timetable/relief-timetable-frag.php';
 ?>
+<div style="clear: both"></div>
 <div class="bt-control">
     <a href="index.php?result=<?php echo $_GET['schedule']; ?>" class="button">Go Back</a>
 </div>
+<div style="clear: both"></div>
 <?php
 Template::printFooter();
 ?>

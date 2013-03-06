@@ -363,7 +363,7 @@ img.menu{
 div.content{
     margin-left: 100px;
     margin-right: 100px;
-    padding-bottom: 150px;
+    padding-bottom: 100px;
 }
 
 div.footer{
@@ -374,8 +374,8 @@ div.footer{
     line-height: 50px;
     /*    border-top: 1px solid rgb(35, 36, 37);*/
     background: rgb(45,46,47);
-    margin:0;
-    padding:0;
+    
+	margin-bottom: -1px;
 }
 
 div.footer span{
@@ -489,7 +489,7 @@ table.hovered tbody tr:hover{
 /** common for all */
 #container .error-msg {
 	color: red;
-	padding-bottom: 10px;
+	padding: 10px 0;
 }
 
 .button {

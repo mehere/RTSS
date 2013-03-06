@@ -1,15 +1,9 @@
 <?php
-header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
+spl_autoload_register(function($class){
+    require_once "../class/$class.php";
+});
 
-require_once '../php-head.php';
-
-spl_autoload_register(
-        function ($class)
-        {
-            include '../class/' . $class . '.php';
-        });
+Template::validate(true);
 
 $year = $_POST["year"];
 $semester = $_POST["sem"];
@@ -41,17 +35,17 @@ try
     {
         $arrLesson = $analyzer->arrLessons;
         TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
-        $destination = "/RTSS/timetable/admin.php";
+        $destination = "/RTSS/upload/";
         
         $_SESSION['uploadSuccess']="Upload timetable successfully.";
     } else
     {
         $_SESSION["abbrNameList"] = $unknownTeachers;        
-        $destination = "/RTSS/timetable/namematch.php";
+        $destination = "/RTSS/upload/namematch.php";
     }
 } catch (Exception $e)
 {
-    $destination = "/RTSS/timetable/admin.php";
+    $destination = "/RTSS/upload/";
     $_SESSION['uploadError'] = "Uploading Error: " . $e->getMessage();
 }
 

@@ -18,7 +18,7 @@ class Template
     private static $MAIN_MENU=array(
         self::HOME => "/RTSS/relief/",
         self::TT_VIEW => "/RTSS/timetable/",
-        self::TT_ADMIN => "/RTSS/timetable/admin.php",
+        self::TT_ADMIN => "/RTSS/upload/",
         self::REPORT => "/RTSS/report/"
     );
     
@@ -32,9 +32,11 @@ class Template
         ),
         
         self::TT_ADMIN => array(
-            self::TT_ADMIN_MASTER => "/RTSS/timetable/",
-            self::TT_ADMIN_AED => "/RTSS/timetable/"
-        )
+            self::TT_ADMIN_MASTER => "/RTSS/upload/",
+            self::TT_ADMIN_AED => "/RTSS/upload/AED.php"
+        ),
+        
+        self::REPORT => array()
     );
     
     /**
@@ -71,7 +73,7 @@ class Template
         }
     }
 
-    public static function printHeaderAndDoValidation($title, $css, $scripts, $mainMenuSelect, $submenuTitle, $submenuSelect, $allowsAll=false)
+    public static function printHeaderAndDoValidation($title, $css, $scripts, $mainMenuSelect, $submenuTitle, $submenuSelect='', $allowsAll=false)
     {
         self::validate(false, false, $allowsAll);
         

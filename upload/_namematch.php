@@ -1,16 +1,9 @@
 <?php
+spl_autoload_register(function($class){
+    require_once "../class/$class.php";
+});
 
-spl_autoload_register(
-        function ($class)
-        {
-            include '../class/' . $class . '.php';
-        });
-
-header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
-
-require_once '../php-head.php';
+Template::validate(true, true);
 
 $output=array('error' => 0);
 

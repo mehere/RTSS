@@ -1,11 +1,9 @@
 <?php 
-header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
+spl_autoload_register(function($class){
+    require_once "../class/$class.php";
+});
 
-require_once '../controller-head.php';
-require_once '../constant.php';
-require_once '../class/TimetableDB.php';
+Template::validate(true, true);
 
 $output=array();
 

@@ -3,7 +3,7 @@ spl_autoload_register(function($class){
     require_once "../class/$class.php";
 });
 
-Template::printHeaderAndDoValidation('Timetable', 
+Template::printHeaderAndDoValidation('View Timetable', 
         array('relief.css', 'timetable.css'), 
         array('accordion.js', 'timetable.js'), 
         Template::TT_VIEW, 'Timetable', '', true);

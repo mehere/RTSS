@@ -136,6 +136,7 @@ EOD;
             }
         ?>
     </div>
+    <div style="clear: both"></div>
     <input type="hidden" name="num" value="<?php echo $scheduleResultNum; ?>" />
     <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />
 </form>

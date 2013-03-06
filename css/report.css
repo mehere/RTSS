@@ -1,34 +1,20 @@
 @charset "UTF-8";
 
-#tabs {
-    max-width: 700px;
+.field {
+	font-size: 14px;
+	width: 200px;
 }
 
-#tabs .main {
-	color: white;
-	font-size: 1.1em;
-	overflow: auto;	
-}
-.main fieldset {
-    padding: 10px;
-}
-.main fieldset>legend {
+.box-title .filter-control {
+	position: relative;
+	top: -3px;
 	margin-left: 15px;
-	color: white;
-	padding: 0 10px;
-}
-.main .line {
-    margin-left: 5px;
-    margin-bottom: 5px;
+	
+	font-size: 14px;
+	letter-spacing: 0;
 }
 
-.table-info {
-	width: 100%;
-    
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-#table-overall tr td:first-child {
+#overall tr td:first-child {
 	text-align: left;
 	word-wrap: break-word;
 }
@@ -36,15 +22,16 @@
 #individual-summary tr th, #individual-detail tr th {
     width: 110px;
 }
-#individual-summary tr td, #individual-detail tr td {
-	background-color: white;
+#individual .table-info tbody tr:hover {
+	background-color: inherit;
 }
 
-.ui-autocomplete {
-	max-height: 11em;
-	overflow-y: auto;
-	overflow-x: hidden;
+#individual-summary tr th, #individual-summary tr td {
+	border-left: 1px solid #DDDDDD;
+	border-right: 1px solid #DDDDDD;
 }
-.ui-autocomplete .ui-menu-item {
-	font-size: .9em;
+	
+
+#individual-detail tr td, #individual-detail tr th {
+	border: 1px solid #DDDDDD;
 }

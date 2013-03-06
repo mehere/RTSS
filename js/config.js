@@ -14,4 +14,9 @@ $(document).ready(function(){
             }
         }
     });
+
+    if ($.trim($('#dialog-alert').html()))
+    {
+        $('#dialog-alert').dialog('open');
+    }
 });

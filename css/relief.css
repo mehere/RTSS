@@ -26,6 +26,17 @@
 	margin-left: 20px;
 }
 
+.hovered.table-info tr th.sort {	
+	cursor: pointer;
+}
+.hovered.table-info tr th.sort:hover {
+	box-shadow: inset 0 5px 10px 0 #AAAAAA;
+}
+.hovered.table-info tr th .ui-icon {
+	float: right;
+	margin-top: 3px;
+}
+
 #teacher-detail .table-info {
 	border-collapse: collapse;
 	table-layout: fixed;

@@ -1,9 +1,4 @@
 $(document).ready(function(){
-    if ($.trim($('#dialog-alert').text()))
-    {
-        $('#dialog-alert').dialog('open');
-    }
-
     $('#dialog-alert').dialog('option', 'title', 'Warning');
 
     var formEdit=document.forms['edit'],
