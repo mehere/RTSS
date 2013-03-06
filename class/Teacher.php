@@ -888,7 +888,18 @@ class Teacher {
         return true;
     }
 
-    public static function overallReport($type = "", $order = "fullname", $direction = SORT_ASC, $year = "2013", $sem = 1)
+    /**
+     * 
+     * @param type $type
+     * @param type $order
+     * @param type $direction
+     * @param type $year
+     * @param type $sem
+     * @param boolean $future_leave true -> count in future leave, false -> ignore future leave
+     * @return type
+     * @throws DBException
+     */
+    public static function overallReport($type = "", $order = "fullname", $direction = SORT_ASC, $year = "2013", $sem = 1, $future_leave = false)
     {
         $result = Array();
 
@@ -898,19 +909,74 @@ class Teacher {
             throw new DBException('Fail to query report', __FILE__, __LINE__);
         }
 
-        $mc_dic = Array();
-        //$sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info group by teacher_id";
-        $sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from (select rs_leave_info.* from rs_leave_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_leave_info.start_time) between ct_semester_info.start_date and ct_semester_info.end_date)) AS temp_leave group by teacher_id;";
-        $query_mc_result = Constant::sql_execute($db_con, $sql_query_mc);
-        if(is_null($query_mc_result))
+        $mc_dic = array();
+        
+        if($future_leave)
         {
-            throw new DBException('Fail to query report', __FILE__, __LINE__, 2);
+            $sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from (select rs_leave_info.* from rs_leave_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_leave_info.start_time) between ct_semester_info.start_date and ct_semester_info.end_date)) AS temp_leave group by teacher_id;";
+            $query_mc_result = Constant::sql_execute($db_con, $sql_query_mc);
+            if(is_null($query_mc_result))
+            {
+                throw new DBException('Fail to query report', __FILE__, __LINE__, 2);
+            }
+            
+            foreach($query_mc_result as $row)
+            {
+                $mc_dic[$row["teacher_id"]] = $row["num_of_leave"];
+            }
         }
-        foreach($query_mc_result as $row)
+        else
         {
-            $mc_dic[$row["teacher_id"]] = $row["num_of_leave"];
-        }
+            //trim future leave
+            $sql_query_mc = "select rs_leave_info.*, DATE_FORMAT(start_time, '%Y/%m/%d %H:%i') as start_datetime, DATE_FORMAT(end_time, '%Y/%m/%d %H%i') as end_datetime from rs_leave_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_leave_info.start_time) between ct_semester_info.start_date and ct_semester_info.end_date);";
+            $query_mc_result = Constant::sql_execute($db_con, $sql_query_mc);
+            if(is_null($query_mc_result))
+            {
+                throw new DBException('Fail to query report', __FILE__, __LINE__, 2);
+            }
+            
+            $today = new DateTime();
+            $asia_timezone = new DateTimeZone("Asia/Singapore");
+            $today->setTimezone($asia_timezone);
+            $today_stamp = $today->getTimestamp();
+            
+            foreach($query_mc_result as $row)
+            {
+                $start_datetime_str = $row['start_datetime'];
+                $start_date = new DateTime($start_datetime_str);
+                $start_stamp = $start_date->getTimestamp();
 
+                if($start_stamp > $today_stamp)
+                {
+                    continue;
+                }
+             
+                $accname = $row['teacher_id'];
+                if(!array_key_exists($accname, $mc_dic))
+                {
+                    $mc_dic[$accname] = 0;
+                }
+                
+                $end_date_str = $row['end_datetime'];
+                $end_date = new DateTime($end_date_str);
+                $end_date_stamp = $end_date->getTimestamp();
+                
+                if($end_date_stamp > $today_stamp)
+                {
+                    //need to trim
+                    $start_date_str = $row['start_datetime'];
+                    $trimed_slot = Teacher::calculateLeaveSlot($accname, $start_date_str, $end_date_str);
+                    
+                    $mc_dic[$accname] += $trimed_slot;
+                }
+                else
+                {
+                    //no future leave to trim
+                    $mc_dic[$accname] += $row["num_of_slot"];
+                }
+            }
+        }
+        
         $relief_dic = Array();
         $sql_query_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from (select rs_relief_info.* from rs_relief_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date)) AS temp_relief group by relief_teacher;";
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
@@ -968,7 +1034,7 @@ class Teacher {
         return $result;
     }
 
-    public static function individualReport($accname)
+    public static function individualReport($accname, $year = '2013', $sem = 1, $future_leave = false)
     {
         $result = Array(
             "numOfMC" => 0,
@@ -984,24 +1050,64 @@ class Teacher {
         }
 
         //leave
-        $sql_query_leave = "select *, DATE_FORMAT(start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(start_time, '%H:%i') as start_time_point, TIME_FORMAT(end_time, '%H:%i') as end_time_point from rs_leave_info where teacher_id = '".mysql_real_escape_string(trim($accname))."';";
+        $sql_query_leave = "select *, DATE_FORMAT(start_time, '%Y/%m/%d') as start_date_point, DATE_FORMAT(end_time, '%Y/%m/%d') as end_date_point, TIME_FORMAT(start_time, '%H:%i') as start_time_point, TIME_FORMAT(end_time, '%H:%i') as end_time_point from rs_leave_info, ct_semester_info where teacher_id = '".mysql_real_escape_string(trim($accname))."' and ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_leave_info.start_time) between ct_semester_info.start_date and ct_semester_info.end_date);";
+
         $query_leave_result = Constant::sql_execute($db_con, $sql_query_leave);
         if(is_null($query_leave_result))
         {
             throw new DBException('Fail to query individual report', __FILE__, __LINE__, 2);
         }
 
-        foreach($query_leave_result as $row)
+        if($future_leave)
         {
-            $result['numOfMC'] += $row['num_of_slot'] - 0;
+            foreach($query_leave_result as $row)
+            {
+                $result['numOfMC'] += $row['num_of_slot'] - 0;
 
-            $one_leave = Array(Array($row['start_date'], $row['start_time_point']), Array($row['end_date'], $row['end_time_point']));
-
-            $result['mc'][] = $one_leave;
+                $one_leave = Array(Array($row['start_date_point'], $row['start_time_point']), Array($row['end_date_point'], $row['end_time_point']));
+                $result['mc'][] = $one_leave;
+            }
         }
-
+        else
+        {
+            $today = new DateTime();
+            $asia_timezone = new DateTimeZone("Asia/Singapore");
+            $today->setTimezone($asia_timezone);
+            $today_stamp = $today->getTimestamp();
+            
+            foreach($query_leave_result as $row)
+            {
+                $start_datetime_str = $row['start_date_point']." ".$row['start_time_point'];
+                $start_date = new DateTime($start_datetime_str);
+                $start_stamp = $start_date->getTimestamp();
+                
+                if($start_stamp > $today_stamp)
+                {
+                    continue;
+                }
+                
+                $end_datetime_str = $row['end_date_point']." ".$row['end_time_point'];
+                $end_date = new DateTime($end_datetime_str);
+                $end_stamp = $end_date->getTimestamp();
+                
+                if($end_stamp > $today_stamp)
+                {
+                    $trimed_slot = Teacher::calculateLeaveSlot($accname, $start_datetime_str, $end_datetime_str);
+                    $result['numOfMC'] += $trimed_slot;
+                    $one_leave = Array(Array($row['start_date_point'], $row['start_time_point']), Array($today->format("Y/m/d"), $today->format("H:i")));
+                }
+                else
+                {
+                    $one_leave = Array(Array($row['start_date_point'], $row['start_time_point']), Array($row['end_date_point'], $row['end_time_point']));
+                    $result['numOfMC'] += $row['num_of_slot'] - 0;
+                }
+                
+                $result['mc'][] = $one_leave;
+            }
+        }
+        
         //relief
-        $sql_query_relief = "select *, DATE_FORMAT(schedule_date, '%Y/%m/%d') as date from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."';";
+        $sql_query_relief = "select *, DATE_FORMAT(schedule_date, '%Y/%m/%d') as date from rs_relief_info, ct_semester_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date);";
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
         if(is_null($query_relief_result))
         {

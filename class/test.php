@@ -84,7 +84,7 @@ foreach($result as $key=>$value)
  */
 //print_r($scheduling->getExcludedTeachers());
 /*
-$result = $scheduling->getHodTeachers();
+$result = $scheduling->getAedTeachers();
 foreach($result as $key=>$value)
 {
     echo "S**************************<br>";
@@ -408,7 +408,7 @@ foreach($result as $key=>$value)
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-02-06 08:15', 'email'=>'dddddddf@adf.com', 'handphone'=>'23232323', 'MT'=>'Malay')); //'datetime-to'=>'2013-01-14 12:15', 
         //********xue : testing end
 /*
-$result = Teacher::overallReport('', 'net', SORT_DESC);
+$result = Teacher::overallReport('', 'net', SORT_DESC, "2013", 1);
 foreach($result as $value)
 {
     print_r($value);
@@ -417,7 +417,7 @@ foreach($result as $value)
  * 
  */
 /*
-$value = Teacher::individualReport('6937933');
+$value = Teacher::individualReport('8909732');
 
     echo $value['numOfMC']."<br>";
     echo $value['numOfRelief']."<br>";
@@ -444,7 +444,7 @@ foreach($result as $key=>$value)
  */
 
 //echo TimetableDB::checkTimetableConflict(0, Array(1, 2), "TMP4444444", "2013/2/06", "N1313126HD65");
-/*
+
 $result = SchedulerDB::getScheduleResult(0);
 
 foreach($result as $a => $b)
@@ -457,14 +457,14 @@ foreach($result as $a => $b)
         echo $c['teacherAccName']."<br>";
         echo $c['reliefTeacher']."<br>";
         echo $c['reliefAccName']."<br>";
+        echo $c['reliefID']."<br>";
         print_r($c['time']);
         echo "<br>";
         print_r($c['class']);
         echo "<br><br>";
     }
 }
- * 
- */
+
 
 //echo print_r(SchedulerDB::allSchduleIndex());
 

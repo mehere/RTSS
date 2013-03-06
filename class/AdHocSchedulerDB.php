@@ -152,7 +152,7 @@ class AdHocSchedulerDB
             throw new DBException('Fail to connect to database', __FILE__, __LINE__);
         }
         
-        //retrieve leave
+        //retrieve relief
         $sql_relief = "select * from rs_relief_info where relief_id = $reliefID;";
         $relief_result = Constant::sql_execute($db_con, $sql_relief);
         if(is_null($relief_result))
@@ -251,19 +251,404 @@ class AdHocSchedulerDB
         }
         
         //delete skip - error : restore relief
-        $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".implode(",", $recover_list).");";
-        $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
-        if(is_null($delete_skip_result))
+        if(count($recover_list) > 0)
         {
-            $sql_recover_relief = "insert into rs_relief_info(relief_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ($reliefID, '$lesson_id', '$schedule_date', $relief_start, $relief_end, '$leave_teacher', '$relief_teacher', $diff);";
-            $recover_relief_result = Constant::sql_execute($db_con, $sql_recover_relief);
-            if(is_null($recover_relief_result))
+            $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".implode(",", $recover_list).");";
+            $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
+            if(is_null($delete_skip_result))
             {
-                throw new DBException('Fatal !!! : Fail to cancel relief and fail to recover to previous state, resulting in data inconsistency. Reschedule for all teachers are highly recommended.', __FILE__, __LINE__, 2);
+                $sql_recover_relief = "insert into rs_relief_info(relief_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ($reliefID, '$lesson_id', '$schedule_date', $relief_start, $relief_end, '$leave_teacher', '$relief_teacher', $diff);";
+                $recover_relief_result = Constant::sql_execute($db_con, $sql_recover_relief);
+                if(is_null($recover_relief_result))
+                {
+                    throw new DBException('Fatal !!! : Fail to cancel relief and fail to recover to previous state, resulting in data inconsistency. Reschedule for all teachers are highly recommended.', __FILE__, __LINE__, 2);
+                }
+
+                throw new DBException('Fail to cancel teh relief', __FILE__, __LINE__, 2);
+            }
+        }
+    }
+    
+    public static function adHocApprove($schedule_index, $date)
+    {
+        $teacher_list = Teacher::getTeacherContact();
+        
+        $db_con = Constant::connect_to_db("ntu");
+        if (empty($db_con))
+        {
+            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
+        }
+        
+        $final_result = array(
+            "cancelNotified" => array(),
+            "reliefNotified" => array()
+        );
+        
+        //1. move from temp to relief_info and delete temp
+        $sql_insert_select = "insert into rs_relief_info (lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot, leave_id_ref)
+            (select lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot, leave_id_ref from temp_each_alternative where schedule_id = $schedule_index);";
+        $insert_result = Constant::sql_execute($db_con, $sql_insert_select);
+        if (is_null($insert_result))
+        {
+            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
+        }
+
+        //delete temp later as need to send sms and email
+
+        //2. move and delete skip
+        $sql_insert_skip = "insert into rs_aed_skip_info (lesson_id, schedule_date, start_time_index, end_time_index, accname)
+            (select lesson_id, schedule_date, start_time_index, end_time_index, accname from temp_aed_skip_info where schedule_id = $schedule_index);";
+        $insert_skip_result = Constant::sql_execute($db_con, $sql_insert_skip);
+        if (is_null($insert_skip_result))
+        {
+            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
+        }
+
+        $sql_delete_skip = "delete from temp_aed_skip_info;";
+        $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
+        if (is_null($delete_skip_result))
+        {
+            throw new DBException('Fail to clear temporary skip record', __FILE__, __LINE__, 2);
+        }
+
+        //3. construct sms cancel relief content
+        $sql_cancelled = "select temp_ah_cancelled_relief.* from schedule_date = DATE('$date');";
+        $cancelled_result = Constant::sql_execute($db_con, $sql_cancelled);
+        if(is_null($cancelled_result))
+        {
+            throw new DBException("Fail to send cancel information", __FILE__, __LINE__, 2);
+        }
+        
+        $cancel_sms_list = array();
+        foreach($cancelled_result as $row)
+        {
+            $accname = $row['accname'];
+            
+            $block_start_index = $row['block_start_index'];
+            $block_end_index = $row['block_end_index'];
+            $block_start = SchoolTime::getTimeValue($block_start_index);
+            $block_end = SchoolTime::getTimeValue($block_end_index);
+            
+            if(array_key_exists($accname, $cancel_sms_list))
+            {
+                $cancel_sms_list[$accname]['message'] .= " $block_start - $block_end ;";
+            }
+            else
+            {
+                if(array_key_exists($accname, $teacher_list))
+                {
+                    $phone = $teacher_list[$accname]['phone'];
+                    $name = $teacher_list[$accname]['name'];
+                }
+                if (empty($phone))
+                {
+                    continue;
+                }
+                if (empty($name))
+                {
+                    $name = "Teacher";
+                }
+                
+                $final_result['cancelNotified'][$accname]  = array(
+                    'smsSent' => 0,
+                    'emailSent' => 0,
+                    'fullname' => $name
+                );
+                
+                $message = "Dear Teacher, your relief duties during following time period(s) on $date has been cancelled. The skipped optional lessons will be recovered. For more details, please check iScheduler website or contact admin : ";
+                $message .= " $block_start - $block_end; ";
+                
+                $one_cancel = array(
+                    "phoneNum" => $phone,
+                    "name" => $name,
+                    "accName" => $accname,
+                    "message" => $message
+                );
+
+                $cancel_sms_list[$accname] = $one_cancel;
+            }
+        }
+        
+        //3.1. delete temp each alternative
+        $sql_delete = "delete from temp_each_alternative;";
+        $delete_result = Constant::sql_execute($db_con, $sql_delete);
+        if (is_null($delete_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
+        }
+        
+        //4. send cancel sms
+        $cancel_sms_reply = SMS::sendSMS($cancel_sms_list, $date);
+
+        if (!is_null($cancel_sms_reply))
+        {
+            foreach ($cancel_sms_reply as $a_reply)
+            {
+                $accname = $a_reply['accname'];
+                if (array_key_exists($accname, $final_result['cancelNotified']))
+                {
+                    if (strcmp($a_reply['status'], 'OK') === 0)
+                    {
+                        $final_result['cancelNotified'][$accname]['smsSent'] = 1;
+                    }
+                }
+            }
+        }
+        
+        //5. construct sms relief content
+        $sql_selected = "select temp_each_alternative.lesson_id, temp_each_alternative.start_time_index, temp_each_alternative.end_time_index, relief_teacher, subj_code, venue, class_name from ((temp_each_alternative left join ct_lesson on temp_each_alternative.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where DATE(temp_each_alternative.schedule_date) = DATE('".$date."') and temp_each_alternative.schedule_id = $schedule_index;";
+        $selected_result = Constant::sql_execute($db_con, $sql_selected);
+        if (is_null($selected_result))
+        {
+            throw new DBException('Fail to send sms', __FILE__, __LINE__);
+        }
+
+        //a list of relief teacher, with their relief duties
+        //{accname => {unique_relief_key=>{...}, ...}, ...}
+        $list = array(); // for construct msg content
+        foreach ($selected_result as $row)
+        {
+            $accname = $row['relief_teacher'];
+
+            if (!array_key_exists($accname, $list))
+            {
+                $list[$accname] = array();
+            }
+
+            $unique_relief_key = $row['lesson_id'] . $row['start_time_index'] . $row['end_time_index'];
+            if (array_key_exists($unique_relief_key, $list[$accname]))
+            {
+                if (!empty($row['class_name']))
+                {
+                    $list[$accname][$unique_relief_key]['class'][] = $row['class_name'];
+                }
+            } else
+            {
+                $venue = empty($row['venue']) ? "" : $row['venue'];
+                $subject = empty($row['subj_code']) ? "" : $row['subj_code'];
+
+                $one_relief = Array(
+                    "start_time" => $row['start_time_index'] - 0,
+                    "end_time" => $row['end_time_index'] - 0,
+                    "subject" => $subject,
+                    "venue" => $venue,
+                    "class" => Array()
+                );
+
+                if (!empty($row['class_name']))
+                {
+                    $one_relief['class'][] = $row['class_name'];
+                }
+
+                $list[$accname][$unique_relief_key] = $one_relief;
+            }
+        }
+
+        $sms_input = Array();
+        foreach ($list as $key => $one)
+        {
+            $accname = $key;
+
+            if (!array_key_exists($accname, $teacher_list))
+            {
+                continue;
+            }
+
+            $phone = $teacher_list[$accname]['phone'];
+            $name = $teacher_list[$accname]['name'];
+
+            if (empty($name))
+            {
+                $name = "Teacher";
             }
             
-            throw new DBException('Fail to cancel teh relief', __FILE__, __LINE__, 2);
+            $final_result['reliefNotified'][$accname] = array(
+                'fullname' => $name,
+                'smsSent' => 0,
+                'emailSent' => 0
+            );
+
+            if (empty($phone))
+            {
+                continue;
+            }
+            
+            $message = "";
+
+            $index = 1;
+            foreach ($one as $a_relief)
+            {
+                $start_time = SchoolTime::getTimeValue($a_relief['start_time']);
+                $end_time = SchoolTime::getTimeValue($a_relief['end_time']);
+
+                $classes = implode(",", $a_relief['class']);
+                $subject = $a_relief['subject'];
+                $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
+
+                $message .= "|    $index : On $date $start_time-$end_time take relief for $classes subject-$subject venue-$venue  |";
+
+                $index++;
+            }
+
+            $one_teacher = Array(
+                "phoneNum" => $phone,
+                "name" => $name,
+                "accName" => $accname,
+                "message" => $message
+            );
+
+            $sms_input[] = $one_teacher;
         }
+
+        //6. send relief sms
+        $sms_reply = SMS::sendSMS($sms_input, $date);
+
+        if (!is_null($sms_reply))
+        {
+            foreach ($sms_reply as $a_reply)
+            {
+                $accname = $a_reply['accname'];
+                if (array_key_exists($accname, $final_result['reliefNotified']))
+                {
+                    if (strcmp($a_reply['status'], 'OK') === 0)
+                    {
+                        $final_result['reliefNotified'][$accname]['smsSent'] = 1;
+                    }
+                }
+            }
+        }
+
+        //7. construct cancel email
+        $from = array(
+            "email" => Constant::email,
+            "password" => Constant::email_password,
+            "name" => Constant::email_name,
+            "smtp" => Constant::email_smtp,
+            "port" => Constant::email_port,
+            "encryption" => Constant::email_encryption
+        );
+
+        $cancel_to = array();
+        foreach($cancel_sms_list as $a_cancel)
+        {
+            $accname = $a_cancel['accName'];
+            
+            $a_cancel_email = array(
+                "subject" => "Relief duty cancellation notification",
+                "message" => $a_cancel['message'],
+                'attachment' => "",
+                'accname' => $accname
+            );
+            
+            
+            if(!array_key_exists($accname, $teacher_list))
+            {
+                continue;
+            }
+            
+            $email = $teacher_list[$accname]['email'];
+            $name = $teacher_list[$accname]['name'];
+            
+            if(empty($email))
+            {
+                continue;
+            }
+            if(empty($name))
+            {
+                $name = Teacher;
+            }
+            
+            $a_cancel_email['name'] = $name;
+            $a_cancel_email['email'] = $email;
+            
+            $cancel_to = $a_cancel_email;
+        }
+        
+        //8. send cancel email
+        $cancel_email_reply = Email::sendMail($from, $cancel_to);
+
+        if (!is_null($cancel_email_reply))
+        {
+            foreach ($cancel_email_reply as $accname => $a_reply)
+            {
+                if ($a_reply === 1)
+                {
+                    $final_result['cancelNotified'][$accname]['emailSent'] = 1;
+                }
+            }
+        }
+        
+        //9. construct relief email
+        $to = array();
+        foreach ($list as $key => $one)
+        {
+            $accname = $key;
+
+            if (!array_key_exists($accname, $teacher_list))
+            {
+                continue;
+            }
+
+            $name = $teacher_list[$accname]['name'];
+            $email = $teacher_list[$accname]['email'];
+
+            if (empty($email))
+            {
+                continue;
+            }
+            if (empty($name))
+            {
+                $name = 'Teacher';
+            }
+
+            $message = "";
+
+            $index = 1;
+            foreach ($one as $a_relief)
+            {
+                $start_time = SchoolTime::getTimeValue($a_relief['start_time']);
+                $end_time = SchoolTime::getTimeValue($a_relief['end_time']);
+
+                $classes = implode(",", $a_relief['class']);
+                $subject = $a_relief['subject'];
+                $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
+
+                $message .= "|    $index : On $date $start_time-$end_time take relief for $classes subject-$subject venue-$venue  |";
+
+                $index++;
+            }
+
+            $recepient = array(
+                'accname' => $accname,
+                'subject' => 'Relief timetable for today',
+                'email' => $email,
+                'message' => $message,
+                'attachment' => "",
+                'name' => $name
+            );
+
+            $to[] = $recepient;
+        }
+
+        //10. send relief email
+        $email_reply = Email::sendMail($from, $to);
+
+        if (!is_null($email_reply))
+        {
+            foreach ($email_reply as $accname => $a_reply)
+            {
+                if ($a_reply === 1)
+                {
+                    $final_result['reliefNotified'][$accname]['emailSent'] = 1;
+                }
+            }
+        }
+
+        //11. return
+        uasort($final_result['cancelNotified'], "AdHocSchedulerDB::compareApprove");
+        uasort($final_result['reliefNotified'], "AdHocSchedulerDB::compareApprove");
+        
+        return $final_result;
     }
     
     public static function getApprovedSchedule($scheduleDate)
@@ -355,6 +740,11 @@ class AdHocSchedulerDB
     private static function compareName($a, $b)
     {
         return strcasecmp($a['reliefTeacher'], $b['reliefTeacher']);
+    }
+    
+    private static function compareApprove($a, $b)
+    {
+        return strcasecmp($a['fullname'], $b['fullname']);
     }
 }
 ?>
