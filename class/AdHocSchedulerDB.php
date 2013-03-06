@@ -15,7 +15,7 @@ class AdHocSchedulerDB
 {
     public static function getReliefPlan($scheduleDate)
     {
-        //check data validity
+        //check date validity
         /*
         $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$scheduleDate));
         if($sem_id === -1)
@@ -371,6 +371,12 @@ class AdHocSchedulerDB
         }
         
         //3.1. delete cancel list
+        $sql_delete_cancelled = "delete from temp_ah_cancelled_relief where schedule_date = DATE('$date');";
+        $delete_cancelled = Constant::sql_execute($db_con, $sql_delete_cancelled);
+        if(is_null($delete_cancelled))
+        {
+            throw new DBException('Fail to delete relief cancellation', __FILE__, __LINE__);
+        }
         
         //4. send cancel sms
         $cancel_sms_reply = SMS::sendSMS($cancel_sms_list, $date);
