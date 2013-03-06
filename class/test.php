@@ -372,7 +372,31 @@ foreach($result as $key => $value)
 }
  * 
  */
-
+/*
+$result = AdHocSchedulerDB::getApprovedSchedule('2013-02-06');
+foreach($result as $key=>$value)
+{
+    echo $key." : <br>";
+    echo $value['reliefTeacher']."<br>";
+    
+    $lessons = $value['lesson'];
+    foreach($lessons as $id=>$one)
+    {
+        echo "**********<br>";
+        echo $id." : <br>";
+        echo $one['lessonID']."<br>";
+        echo $one['reliefID']."<br>";
+        print_r($one['time']);
+        echo "<br>";
+        print_r($one['class']);
+        echo "<br>";
+        echo "..........<br>";
+    }
+    
+    echo "<br><br>";
+}
+ * 
+ */
         //$result1 = Teacher::add('', 'temp', Array('fullname' => 'Robot Haphati Fckek', 'remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00',  'email' => '111@adb.com', 'MT' => 'tamil'));
         //$result2 = Teacher::add('TMP1111111', 'temp', Array('remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'handphone' =>  '11111111'));
         //$result3 = Teacher::add('7032095' , 'leave',Array('datetime-from' => '2013-02-06 08:15', 'datetime-to' => '2013-02-06 13:15', 'remark' => 'okay haha'));
@@ -483,6 +507,7 @@ foreach($result as $row)
 }
  * 
  */
+//AdHocSchedulerDB::cancelRelief(821, 2, 5);
 /*
 class Test
 {
