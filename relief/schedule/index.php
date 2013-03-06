@@ -1,50 +1,150 @@
-<?php 
-header("Location: result.php");
-include_once '../../php-head.php';
-include_once '../../head-frag.php';
-?>
-<title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
-<link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
-<link href="/RTSS/css/schedule.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+<?php
+spl_autoload_register(function($class){
+    require_once "../../class/$class.php";
+});
 
-<div id="container">  	
-    <div id="content-wrapper">
-    	<div id="content">
-            <div id="topbar">
-            	<div class="fltrt">XXX | <a href="/RTSS/">Log out</a></div>
-                <ul class="breadcrumb">
-                    <li><a href="/RTSS/relief/">Scheduling</a></li>
-                    <li>Result Preview</li>
-                </ul>                
-            </div>
-            <form class="result" method="get" action="result.php">
-                <fieldset>
-                    <legend>Schedule 1</legend>
-                    <table class="result-table">
-                    	<tr><td>Type:</td><td>Relief</td></tr>
-                        <tr><td>Min Period:</td><td>2</td></tr>
-                        <tr><td>Subject:</td><td>Almost</td></tr>
-                    </table>
-                    <input type="submit" value="View" class="button" />
-                </fieldset>
-                <input type="hidden" name="scheduleIndex" value="0" />                
-            </form>
-            <form class="result">
-                <fieldset>
-                    <legend>Schedule 2</legend>
-                    <table class="result-table">
-                    	<tr><td>Type:</td><td>AED</td></tr>
-                        <tr><td>Min Period:</td><td>3</td></tr>
-                        <tr><td>Subject:</td><td>Almost</td></tr>
-                    </table>
-                </fieldset>
-            </form>
-        </div>        
+Template::printHeaderAndDoValidation('Schedule Result', 
+        array('relief.css', 'page-control.css', 'schedule-result.css'),
+        array('result.js'), 
+        Template::HOME, Template::HOME . " (Result)", Template::SCHEDULE);
+
+$scheduleIndexArr=$_SESSION['scheduleIndex'];
+if (!$scheduleIndexArr) 
+{
+    $scheduleIndexArr=$_SESSION['scheduleIndex']=SchedulerDB::allSchduleIndex();
+}
+$scheduleResultNum=count($scheduleIndexArr);
+$scheduleList=array();
+
+$curPage=$_GET['result'];
+if (!$curPage) $curPage=1;
+
+$curScheduleIndex=$scheduleIndexArr[$curPage-1];
+if ($scheduleIndexArr)
+{
+    $scheduleList=SchedulerDB::getScheduleResult($curScheduleIndex);
+    PageConstant::escapeHTMLEntity($scheduleList);
+}
+?>
+<form class="main" name="edit" action="_approve.php" method="post">
+    <div class="accordion colorbox blue">
+        <span class="icon-link">&#x25CB;</span>
+        <span class="box-title">
+            Result Preview
+        </span>
+        <?php if ($scheduleList) { ?>
+            <div class="control-top">
+                <a href="" id="override">Override</a>
+                <a href="" id="override-ok" style="display: none">OK</a>
+                <a href="" id="override-cancel" style="display: none">Cancel</a>
+            </div>        
+        <?php } ?>
     </div>
-    <?php include '../../sidebar-frag.php'; ?>
-</div>
-    
-</body>
-</html>
+    <div class="section">        
+        <table class="hovered table-info">
+            <thead>
+                <tr>
+                    <?php
+                        $width=array('24%', '130px', '38%', '38%');                                                                        
+
+                        $tableHeaderList=array_values(NameMap::$SCHEDULE_RESULT['schedule']['display']);
+
+                        for ($i=0; $i<count($tableHeaderList); $i++)
+                        {
+                            echo <<< EOD
+                                <th class="hovered" style="width: $width[$i]">$tableHeaderList[$i]</th>
+EOD;
+                        }
+                    ?>                                
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    
+
+                    if ($scheduleList)
+                    {
+                        foreach ($scheduleList[$curScheduleIndex] as $key => $value)
+                        {
+                            $classStr=implode(', ', $value['class']);
+                            $timeStart=SchoolTime::getTimeValue($value['time'][0]);
+                            $timeEnd=SchoolTime::getTimeValue($value['time'][1]);
+                            echo <<< EOD
+<tr><td>$classStr<input type="hidden" name="lessonID-$key" value="{$value['id']}" /></td>
+<td>$timeStart<span style="margin: 0 3px">-</span>$timeEnd</td>        
+<input type="hidden" name="time-start-$key" value="{$value['time'][0]}" />
+<input type="hidden" name="time-end-$key" value="{$value['time'][1]}" />
+</td>
+<td>{$value['teacherOnLeave']}<input type="hidden" name="teacher-accname-$key" value="{$value['teacherAccName']}" /></td>
+<td class="relief-col">
+<span class="text-display">{$value['reliefTeacher']}</span>
+<input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" />
+<input type="hidden" name="relief-accname-$key" value="{$value['reliefAccName']}" />
+</td>
+</tr>
+EOD;
+                        }
+                    }
+                    else
+                    {
+                        $scheduleResultNum=1;
+
+                        $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count($tableHeaderList), '--')));                                            
+                        echo "<tr>$otherTdStr</tr>";
+                    }
+                ?>
+            </tbody>
+        </table>
+        <div class="page-control">Schedule Result Choice</div>
+        <div class="page-control">                    	
+            <?php
+                $prevPage=max(1, $curPage-1);
+                echo <<< EOD
+<a href="?result=$prevPage" class="page-no page-turn">&lt;</a>   
+EOD;
+
+                for ($i=1; $i<=$scheduleResultNum; $i++)
+                {
+                    $selectedStr='';
+                    if ($curPage == $i) $selectedStr='page-selected';
+                    echo <<< EOD
+<a href="?result=$i" class="page-no $selectedStr">$i</a>
+EOD;
+                }
+
+                $nextPage=min($scheduleResultNum, $curPage+1);
+                echo <<< EOD
+<a href="?result=$nextPage" class="page-no page-turn">&gt;</a>
+EOD;
+            ?>
+        </div>
+    </div>
+    <div class="bt-control">
+        <?php 
+            if (!$scheduleList) 
+            {
+                echo <<< EOD
+<a class="button" href="../">Go Back</a>   
+EOD;
+            }
+            else 
+            {
+                echo <<< EOD
+<a class="button green" href="timetable.php?schedule=$curPage">Preview Timetable</a>
+<input type="submit" value="Approve" class="button" />
+EOD;
+            }
+        ?>
+    </div>
+    <div style="clear: both"></div>
+    <input type="hidden" name="num" value="<?php echo $scheduleResultNum; ?>" />
+    <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />
+</form>
+<div id="dialog-alert"><?php echo $_SESSION['scheduleError']; ?></div>
+<?php
+Template::printFooter();
+
+unset($_SESSION['timetableAnalyzer']);
+unset($_SESSION['abbrNameList']);
+unset($_SESSION['scheduleError']);
+?>

@@ -1,72 +1,76 @@
-<?php 
-include_once '../../php-head.php';
+<?php
+spl_autoload_register(function($class){
+    require_once "../../class/$class.php";
+});
 
-require_once '../../class/TimetableDB.php';
-require_once '../../class/ListGenerator.php';
-require_once '../../class/SchedulerDB.php';
+Template::printHeaderAndDoValidation('Home', 
+        array('relief.css', 'page-control.css', 'timetable.css'), 
+        array('accordion.js'), 
+        Template::HOME, Template::HOME . "(Timetable Preview)", Template::SCHEDULE, true);
+
+$curPage=$_GET['schedule'];
+if (!$curPage) $curPage=1;
 
 $scheduleIndexArr=$_SESSION['scheduleIndex'];
-$curScheduleIndex=$scheduleIndexArr[$_GET['schedule']-1];
+$scheduleResultNum=count($scheduleIndexArr);
 
-include_once '../../head-frag.php';
+$curScheduleIndex=$scheduleIndexArr[$curPage-1];
 ?>
-<title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
-<link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
-<link href="/RTSS/css/timetable.css" rel="stylesheet" type="text/css" />
-
-<link href="/RTSS/jquery-ui/ui-lightness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" type="text/css" />
-<script src="/RTSS/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
-
 <script type="text/javascript">
 $(document).ready(function(){
-    var formS=document.forms['switch'];
+    var formT=document.forms['teacher-select'];
     
-    $(formS['accname']).change(function(){
+    $(formT['accname']).change(function(){
         this.form.submit();
     });
+    
+    <?php if (!$_POST['accname']) { ?>    
+        GlobalFunction.toggleAccordion($('.icon-link', document.forms['teacher-select']), 0);
+    <?php } ?>     
 });
 </script>
-</head>
-<body>
+<div class="section">
+    <h3 class="page-control" style="margin-top: 0">Schedule Result Choice</h3>
+    <div class="page-control">                    	
+        <?php
+            $prevPage=max(1, $curPage-1);
+            echo <<< EOD
+<a href="?schedule=$prevPage" class="page-no page-turn">&lt;</a>   
+EOD;
 
-<div id="container">  	
-    <div id="content-wrapper">
-    	<div id="content">
-            <?php
-                $TOPBAR_LIST=array(
-                    array('tabname' => 'Scheduling', 'url' => "/RTSS/relief/"),
-                    array('tabname' => 'Result Approval', 'url' => "/RTSS/relief/schedule/result.php?result={$_GET['schedule']}"),
-                    array('tabname' => 'Result Preview', 'url' => "")
-                );
-                include '../../topbar-frag.php';
-            ?>
-            <div class="main">
-                <div style="text-align: center; font-size: 1.2em">Schedule Result Choice <?php echo $_GET['schedule']; ?></div>
-                <form name="switch" class="control" action="" method="post">
-                    <div class="line">
-                        <select name="accname">
-                            <option value="">-- Select a Teacher --</option>
-                            <?php echo PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($_SESSION['scheduleDate'], $curScheduleIndex), $_POST['accname']); ?>
-                        </select>                        
-                    </div>
-                </form>
-                <?php
-                    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['scheduleDate'], $curScheduleIndex);
-                    PageConstant::escapeHTMLEntity($timetable);
+            for ($i=1; $i<=$scheduleResultNum; $i++)
+            {
+                $selectedStr='';
+                if ($curPage == $i) $selectedStr='page-selected';
+                echo <<< EOD
+<a href="?schedule=$i" class="page-no $selectedStr">$i</a>
+EOD;
+            }
 
-                    $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['scheduleDate'], $_POST['accname'], $curScheduleIndex);
-                    PageConstant::escapeHTMLEntity($timetableIndividual);
-                    
-                    include '../../timetable/relief-timetable-frag.php';
-                ?>
-            </div>
-            <div class="bt-control">
-                <a href="result.php?result=<?php echo $_GET['schedule']; ?>" class="button">Go Back</a>
-            </div>
-        </div>        
+            $nextPage=min($scheduleResultNum, $curPage+1);
+            echo <<< EOD
+<a href="?schedule=$nextPage" class="page-no page-turn">&gt;</a>
+EOD;
+        ?>
     </div>
-    <?php include '../../sidebar-frag.php'; ?>
+</div>    
+<?php
+    $teacherList=PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($_SESSION['scheduleDate']), $_POST['accname']);
+    $isAdmin=true;
+
+    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['scheduleDate'], $curScheduleIndex);
+    PageConstant::escapeHTMLEntity($timetable);
+
+    $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['scheduleDate'], $_POST['accname'], $curScheduleIndex);
+    PageConstant::escapeHTMLEntity($timetableIndividual);
+
+    include '../../timetable/relief-timetable-frag.php';
+?>
+<div style="clear: both"></div>
+<div class="bt-control">
+    <a href="index.php?result=<?php echo $_GET['schedule']; ?>" class="button">Go Back</a>
 </div>
-    
-</body>
-</html>
+<div style="clear: both"></div>
+<?php
+Template::printFooter();
+?>

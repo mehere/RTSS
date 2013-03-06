@@ -12,90 +12,13 @@
 	margin-right: 10px;
 	text-align: right;
 }
-.main .line .date-field {
-	margin: 0 10px 0 5px;
-	width: 7em;
-}
 
-.table-info {
-	width: 680px;
-}
-.table-info tr td {
-	padding: 0;
-	height: 55px;
-}
-
-.form-table {
-	margin-bottom: 15px;
-	table-layout: fixed;
-	width: 695px;
-}
-.form-table td {
-	padding: 5px;	
-}
-.form-table .label {
-	padding-left: 20px;
-	padding-right: 0;
-	margin-left: 10px;
-	text-align: right;
-}
-.form-table .comment {
-	font-size: .8em;
-	color: #EC8E0C;
-	margin-left: 10px;
-}
-
-.row {
-	margin-top: 15px;
-}
-.row .label {
-	margin-right: 10px;
-	margin-left: 30px;
-}
-
-.subject {
-	position: absolute;  
-	background-color: #ededed;
+.hovered.table-info {
+	width: 60%;
 	
-	font-size: 12px;
-	color: black;
-	overflow: hidden;
-	
-	box-shadow: 0 0 5px 0 #5E5E5E;
-}
-.subject>table {
-	height: 100%;
-	width: 100%;
-	text-align: center;
-}
-.subject .subject-close {
-	width: 16px;
-	height: 16px;
-	
-	position: absolute;
-	top: 0;
-	right: 0;
-}
-.subject .subject-close .ui-button-text {
-	padding: 0;
-}
-.subject .subject-highlight {
-	width: 16px;
-	height: 16px;
-	
-	position: absolute;
-	bottom: 0;
-	right: 0;
-}
-.subject .subject-highlight .ui-button-text {
-	padding: 0;
+	font-size: 1.1em;
 }
 
-.ui-autocomplete {
-	max-height: 10em;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-.ui-autocomplete .ui-menu-item {
-	font-size: .9em;
+.hovered.table-info tr td {
+	padding: 5px 10px;
 }
