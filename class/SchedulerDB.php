@@ -5,6 +5,7 @@ spl_autoload_register(function($class){
 
 class SchedulerDB
 {
+
     private $date;
     private $weekday;
     private $date_str;
@@ -431,6 +432,13 @@ class SchedulerDB
         {
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
         }
+        
+        $sql_delete_skip = "delete from temp_aed_skip_info;";
+        $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
+        if (is_null($delete_skip_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
+        }
 
         //insert relief into temp
         $sql_insert = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
@@ -455,7 +463,7 @@ class SchedulerDB
             foreach ($skip as $a_skip)
             {
                 $has_skip = true;
-                $end_time = $a_skip->startTimeIndex + 1;
+                $end_time = $a_skip->startTimeSlot + 1;
                 $sql_skip .= "($id, '$a_skip->lessonId', '$date', $a_skip->startTimeSlot, $end_time, '$a_skip->teacherOriginal'),";
             }
         }
@@ -875,7 +883,7 @@ class SchedulerDB
                 }
             }
         }
-         * 
+         *
          */
 
         //7. return
@@ -887,7 +895,7 @@ class SchedulerDB
         }
 
         array_multisort($sort_arr, SORT_ASC, $return_result);
-        
+
         return $return_result;
     }
 
@@ -938,21 +946,6 @@ class SchedulerDB
       }
      *
      */
-
-    public function getReliefPlan()
-    {
-        return array();
-    }
-
-    public function getSkippingPlan()
-    {
-        return array();
-    }
-
-    public function getBlockingPlan()
-    {
-        return array();
-    }
 
 }
 

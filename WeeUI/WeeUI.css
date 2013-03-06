@@ -173,6 +173,7 @@ div.menu-foreground{
 }
 
 div.menu-item{ /* li */
+    border-left: 1px solid transparent;
     float:left;
     margin: -1px 0px;
 }
@@ -190,6 +191,7 @@ div.menu-item:first-child {
 
 div.menu-item.lastchild{
     margin-right: -1px;
+    border-left: 1px solid transparent;
     -moz-border-radius:0px 6px 6px 0px;
     -webkit-border-radius:0px 6px 6px 0px;
     -khtml-border-radius:0px 6px 6px 0px;
@@ -207,6 +209,11 @@ a.menu{
     color: rgb(68, 68, 68);
     display: block;
     text-decoration: none;
+
+/*    border-top: 1px solid rgb(210, 211, 21);*/
+/*    margin-left: -1px;*/
+    border-left: 1px solid transparent;
+    border-right:  1px solid transparent;
 }
 
 div.menu-item:first-child a.menu{
@@ -234,6 +241,7 @@ div.menu-item:hover a.menu{
     margin-top: -1px;
     border-top: 1px solid rgb(210, 211, 212);
     margin-left: -1px;
+    padding-left: 1px;
     border-left: 1px solid rgb(220, 221, 222);
     border-right:  1px solid rgb(220, 221, 222);
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.07) inset;
@@ -241,7 +249,7 @@ div.menu-item:hover a.menu{
 }
 
 div.menu-item.lastchild:hover a.menu{
-    border-right: 0px;
+    border-right: 1px solid  rgb(210, 211, 212);
 }
 
 a.hover{
@@ -259,11 +267,13 @@ span.menu{
 div.menu-item:hover a.menu span {
     /* inserted */
     padding-left: 18px;
+    margin-left: 2px;
 }
 
 div.active a.menu span{
     /* inserted */
     padding-left: 18px;
+    margin-left: 2px;
 }
 
 div.active {
