@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var formS=document.forms['switch'];
+    var formS=document.forms['switch'], formT=document.forms['teacher-select'];
     $(formS['date-display']).datepicker({
         beforeShowDay: $.datepicker.noWeekends,
         dateFormat: "dd/mm/yy",
@@ -20,12 +20,13 @@ $(document).ready(function(){
         }
     });
 
-    $(formS['accname']).change(function(){
+    $(formT['accname']).change(function(){
         this.form.submit();
     });
 
     $("#print-individual").click(function(){
-        this.href += "?" + $(formS).serialize();
+        var dataGet={"date": formS['date'].value, 'accname': formT['accname'].value};
+        this.href += "?" + $.param(dataGet);
 
         return true;
     });

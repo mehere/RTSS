@@ -17,6 +17,7 @@ $(document).ready(function(){
 
         $("#teacher-detail").html('Loading ...');
         $("#teacher-detail").dialog("open");
+        $("#teacher-detail").parents('.ui-dialog').first().find('.ui-dialog-titlebar-close').css('visibility', 'visible');
         return false;
     });
 });

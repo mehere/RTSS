@@ -1,15 +1,11 @@
 <?php
-header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
+spl_autoload_register(function($class){
+    require_once "class/$class.php";
+});
 
-//initialize session
-session_start();
+Template::validate(true, false);
 
-//log out only if user is currently logged in
-if ($_SESSION['accname']){
-    //destroy session
-    session_destroy();
-}
+session_destroy();
+
 header("Location: /RTSS/");
 ?>

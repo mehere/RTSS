@@ -1,10 +1,14 @@
 <?php 
-include_once '../php-head.php';
+spl_autoload_register(function($class){
+    require_once "../class/$class.php";
+});
 
-require_once '../class/Teacher.php';
-
-include_once '../head-frag.php';
+Template::validate();
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Report - Print</title>
 <link href="/RTSS/css/print.css" rel="stylesheet" type="text/css">
 <style type="text/css">

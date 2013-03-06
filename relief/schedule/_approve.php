@@ -1,12 +1,9 @@
 <?php
-header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
+spl_autoload_register(function($class){
+    require_once "../../class/$class.php";
+});
 
-require_once '../../php-head.php';
-
-require_once '../../class/SchedulerDB.php';
-require_once '../../class/SMSDB.php';
+Template::validate(true, true);
 
 $result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['scheduleDate']);
 
