@@ -19,7 +19,8 @@
 
 .bt-control {
 	float: right;
-	margin-top: 15px;	
+	padding-top: 15px;
+	display: block;
 }
 .bt-control .button {
 	margin-left: 20px;

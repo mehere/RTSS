@@ -21,7 +21,7 @@
         <thead>
             <tr>
                 <?php
-                $width=array('90px', '30%', '40%', '30%');
+                $width=array('120px', '30%', '40%', '30%');
 
                 $headerKeyList=NameMap::$TIMETABLE['individual']['display'];
                 $tableHeaderList=array_values($headerKeyList);
@@ -115,7 +115,7 @@ EOD;
         <thead>
             <tr>
                 <?php
-                $width=array('90px', '15%', '20%', '15%', '25%', '25%');
+                $width=array('120px', '15%', '20%', '15%', '25%', '25%');
 
                 $headerKeyList=NameMap::$TIMETABLE['layout']['display'];
                 $tableHeaderList=array_values($headerKeyList);

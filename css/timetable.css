@@ -13,68 +13,11 @@ select.dropdown {
 }
 
 .table-info .time-col {
-	background-color: #F1F2F3;
+	background-color: #F1F2F3;	
 	background: -ms-linear-gradient(top, #F1F2F3 0%,#EAEBEC 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F1F2F3), color-stop(100%,#EAEBEC));
 	background: linear-gradient(to bottom, #F1F2F3 0%,#EAEBEC 100%);
-}
-
-/*
-#content .bt-control {
-	text-align: center;
-	margin-top: 20px;
-}
-#content .bt-control .button:hover {
-	text-decoration: none;
-	text-shadow: none;
-	color: inherit;
-}
-
-
-.table-info {
-	border-collapse: collapse;
-	table-layout: fixed;
-	width: 90%;
-	color: black;
-	text-align: center;
-	background-color: #ffffff;
+	-pie-background: linear-gradient(to bottom, #F1F2F3, #EAEBEC);
 	
-	box-shadow: 0 0 1px 1px white;
-	
-	word-wrap: break-word;
+	behavior: url(../img/PIE.htc);
 }
-.table-info th {
-	border: 1px black solid;
-	padding: 10px 0;
-	
-	color: white;
-	
-	background-color: #505050;	
-	background: -ms-linear-gradient(top, #6c6c6c 0%,#505050 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6c6c6c), color-stop(100%,#505050));
-	background: linear-gradient(to bottom, #6c6c6c 0%,#505050 100%);
-}
-.table-info tbody tr {
-	background-color: #ffffff;
-}
-.table-info tr td {
-	border: 1px black solid;
-	padding: 5px;
-	font-size: .9em;
-}
-.table-info .time-col {
-	color: white;
-	font-size: 12px;
-	padding: 5px 0;
-	
-	background-color: #6c6c6c;	
-	background: -ms-linear-gradient(top, #6c6c6c 0%,#505050 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6c6c6c), color-stop(100%,#505050));
-	background: linear-gradient(to bottom, #6c6c6c 0%,#505050 100%);
-}
-
-div.ui-datepicker {
-	font-size: .75em;
-	box-shadow: 0 2px 6px 1px black;
-}
-*/

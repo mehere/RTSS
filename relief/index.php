@@ -166,6 +166,7 @@ EOD;
         </table>
     </div>
 
+    <div style="clear: both"></div>
     <div class="bt-control">
         <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS/img/redo.png" class="icon" />Re-Schedule All</a>
         <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule the Remaining</a>

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 
 @font-face
 {
@@ -7,7 +8,6 @@
         url('/RTSS/img/fonts/segoeuilight/segoeuilight.ttf')  format('truetype'),
         url('/RTSS/img/fonts/segoeuilight/segoeuilight.svg#SegoeUILight') format('svg');
 }
-
 
 @font-face
 {
@@ -42,11 +42,6 @@
 }
 
 
-
-root {
-    display: inline-block;
-}
-
 html, body{
     height:100%;
     margin:0;
@@ -57,6 +52,8 @@ body{
     font: 14px 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif;
 /*    color: rgb(68, 68, 68);*/
     min-width: 1000px;
+	
+	margin-top: -1px;
 }
 
 a {
@@ -69,6 +66,9 @@ a:hover {
 	text-decoration: underline;
 }
 
+a img {
+	border: none;
+}
 
 #container {
 	min-height: 100%;
@@ -79,7 +79,7 @@ a:hover {
     background: url("/RTSS/img/page_gradient_linear.png") no-repeat;
     background-size: 100% 100%;
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/page_gradient_linear.png', sizingMethod='scale');
-    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/page_gradient_linear.png', sizingMethod='scale')";
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/page_gradient_linear.png', sizingMethod='scale')";	
 }
 
 div.header {
@@ -392,8 +392,6 @@ table.hovered{
 	text-align: center;
 	
     margin:0px 0px 20px;
-	
-    letter-spacing: 0.02em;
     line-height: 20px;
 }
 
@@ -403,7 +401,6 @@ table.hovered th.hovered {
     padding-left: 5px;
     font-family: "Segoe UI Semibold", Verdana,Arial,Helvetica,sans-serif;
 	font-weight: 500;
-    letter-spacing: 0.01em;
     line-height: 19px;
     color:rgb(0,0,0);
 	border-left: 1px solid #DDDDDD;
@@ -413,7 +410,6 @@ table.hovered th.hovered {
 table.hovered td{
     font-family: 'Open Sans',Verdana,Arial,Helvetica,sans-serif;
     font-weight: 300;
-    letter-spacing: 0.02em;
     line-height: 20px;
     padding: 3px 10px;
     border-left: 1px solid #DDDDDD;
