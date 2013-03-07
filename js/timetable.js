@@ -35,13 +35,13 @@ $(document).ready(function(){
         var dataGet={"date": formS['date'].value, 'accname': formT['accname'].value};
         this.href += "?" + $.param(dataGet);
 
-        return true;
+        window.location.reload();
     });
 
     $("#print-relief").click(function(){
         var dataGet={"date": formS['date'].value};
         this.href += "?" + $.param(dataGet);
 
-        return true;
+        window.location.reload();
     });
 });

@@ -25,8 +25,8 @@ $dayArr=PageConstant::$DAY;
             <select name="sem">
                 <?php echo PageConstant::printSemRange(); ?>
             </select>
-            <input type="submit" class="button button-small" value="Retrieve" style="margin-left: 30px" />
-            <input type="button" class="button red button-small" name="upload" value="Upload" style="margin-left: 30px" />
+            <input type="submit" class="button button-small" value="Load" style="margin-left: 30px" />
+            <input type="button" class="button red button-small" name="upload" value="Save" style="margin-left: 30px" />
         </div>
     </form>                    
     <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
@@ -63,7 +63,7 @@ EOD;
         <thead>
             <tr>
                 <?php
-                    $width=array("65px", "25%", "55px", "45%", "70px", "30%", "70px");
+                    $width=array("65px", "25%", "55px", "40%", "70px", "35%", "70px");
                     foreach ($width as $value)
                     {
                         echo <<< EOD
@@ -93,8 +93,9 @@ EOD;
                     <?php
                         echo PageConstant::formatOptionInSelect($timeFromArr, '');
                     ?>
-                </select>
-                <select name="time-to" style="margin-left: 10px;">
+                </select> 
+                - 
+                <select name="time-to">
                     <?php
                         echo PageConstant::formatOptionInSelect($timeToArr, '');
                     ?>

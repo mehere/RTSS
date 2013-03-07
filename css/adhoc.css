@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+.hovered.table-info tbody tr td, .hovered.table-info thead tr th {
+	border-left: 1px solid #DDDDDD;
+	border-right: 1px solid #DDDDDD;
+	
+	padding: 5px 5px;
+}
+
+.hovered.table-info tbody tr:hover {
+	background-color: inherit;
+}

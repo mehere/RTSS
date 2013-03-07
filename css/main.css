@@ -95,9 +95,8 @@ div.header-top {
 
 img.logo {
     float: left;
-    height: 120px;
+    height: 100px;
     width: auto;
-    margin-right:60px;
 }
 
 div.statusBar{
@@ -165,7 +164,7 @@ div.wrapper{
     -pie-background: linear-gradient(to bottom, #F7F8F9,#FBFCFD);
     behavior: url("/RTSS/img/lib/PIE.htc");
     
-	box-shadow: 0 2px 5px -3px #B9B9B9;	
+	box-shadow: 0 3px 6px -4px #B9B9B9;	
 }
 
 div.submenu{
