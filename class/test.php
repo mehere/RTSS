@@ -1,15 +1,8 @@
 <?php
 
-require_once 'Teacher.php';
-require_once 'TimetableAnalyzer.php';
-require_once 'SchedulerDB.php';
-require_once 'DayTime.php';
-require_once 'Lesson.php';
-require_once 'TimetableDB.php';
-require_once 'ListGenerator.php';
-require_once 'DBException.php';
-require_once 'User.php';
-require_once 'AdHocSchedulerDB.php';
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
 
 /*
  * To change this template, choose Tools | Templates
@@ -84,7 +77,7 @@ foreach($result as $key=>$value)
  */
 //print_r($scheduling->getExcludedTeachers());
 /*
-$result = $scheduling->getHodTeachers();
+$result = $scheduling->getAedTeachers();
 foreach($result as $key=>$value)
 {
     echo "S**************************<br>";
@@ -173,7 +166,7 @@ foreach($result as $key=>$a_result)
           echo $a_teacher->abbreviation."<br>";
           echo $a_teacher->name."<br>";
           echo $a_teacher->accname."<br><br>";
-          }
+          } 
          * 
          */
         //Teacher::insertAbbrMatch(array('AF ADF'=>'2344244'));
@@ -408,7 +401,7 @@ foreach($result as $key=>$value)
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-02-06 08:15', 'email'=>'dddddddf@adf.com', 'handphone'=>'23232323', 'MT'=>'Malay')); //'datetime-to'=>'2013-01-14 12:15', 
         //********xue : testing end
 /*
-$result = Teacher::overallReport('', 'net', SORT_DESC);
+$result = Teacher::overallReport('', 'net', SORT_DESC, "2013", 1);
 foreach($result as $value)
 {
     print_r($value);
@@ -417,7 +410,7 @@ foreach($result as $value)
  * 
  */
 /*
-$value = Teacher::individualReport('6937933');
+$value = Teacher::individualReport('8909732');
 
     echo $value['numOfMC']."<br>";
     echo $value['numOfRelief']."<br>";
@@ -428,8 +421,12 @@ $value = Teacher::individualReport('6937933');
  * 
  */
 //echo SchedulerDB::scheduleResultNum();
+
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", 0);  //go through normal before approve
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "7032095", -1);  //go through normal after approve, AED
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", 0, "ad_hoc");  //go through ad hoc before approve
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", -1, "ad_hoc");  //go through ad hoc after approve
 /*
-$result = TimetableDB::getIndividualTimetable('2013-02-06', "7576699", 0);
 foreach($result as $key=>$value)
 {
     echo $key."<br>";
@@ -437,13 +434,15 @@ foreach($result as $key=>$value)
     echo $value['attr']."<br>";
     echo $value['venue']." hehe<br>";
     print_r($value['class']);
+    echo "<br>";
+    print_r($value['skipped']);
     
     echo "<br><br>";
 }
  * 
  */
 
-//echo TimetableDB::checkTimetableConflict(0, Array(1, 2), "TMP4444444", "2013/2/06", "N1313126HD65");
+//echo TimetableDB::checkTimetableConflict(0, Array(4, 5), "TMP4444444", "2013/2/06", "N1313126HD65");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
@@ -457,6 +456,7 @@ foreach($result as $a => $b)
         echo $c['teacherAccName']."<br>";
         echo $c['reliefTeacher']."<br>";
         echo $c['reliefAccName']."<br>";
+        echo $c['reliefID']."<br>";
         print_r($c['time']);
         echo "<br>";
         print_r($c['class']);
@@ -487,7 +487,7 @@ foreach($result as $key=>$row)
  * 
  */
 
-//var_dump(SchedulerDB::override(0, "N1313121HC31", "6644942", "TMP1111111"));
+//var_dump(SchedulerDB::override(0,1174, '7832040')); //extreme case : override one AED with another AED
 /*
 $result = Teacher::getTeacherContact();
 foreach($result as $key => $row)
@@ -508,6 +508,12 @@ foreach($result as $row)
  * 
  */
 //AdHocSchedulerDB::cancelRelief(821, 2, 5);
+
+//print_r(AdHocSchedulerDB::adHocApprove(0, '2013-02-06'));
+
+//AdminConfig::setRecommendedLesson(10);
+//echo $scheduling->getRecommendedNoOfLessons();
+
 /*
 class Test
 {
