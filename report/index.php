@@ -22,8 +22,8 @@ Template::printHeaderAndDoValidation('Report',
         </span>
     </span>
     <div class="control-top"><a href="print.php" target="_blank" id="print">Print</a></div>
-    <input type="hidden" name="order" />
-    <input type="hidden" name="direction" />
+    <input type="hidden" name="order" value="<?php echo $_POST['order'] ?>" />
+    <input type="hidden" name="direction" value="<?php echo $_POST['direction'] ?>" />
 </form>
 <div id="overall">
     <table class="hovered table-info">

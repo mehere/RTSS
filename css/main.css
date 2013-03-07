@@ -415,6 +415,11 @@ table.hovered tbody tr:hover{
 	width: 200px;
 }
 
+.datefield {
+	width: 6.5em; 
+	text-align: center;
+}
+
 .ui-datepicker {
     font-size: .8em;
 }
