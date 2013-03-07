@@ -35,14 +35,17 @@ class SMSDB
         {
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
-
-        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date) values ";
-
+        
+        $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date, type) values ";
+        
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
 
-        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '$date');";
+        $type = mysql_real_escape_string(trim($msg['type']));
+        
+        $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '$date', '$type');";
+
 
         $insert_result = Constant::sql_execute($db_con, $sql_insert);
         if(empty($insert_result))
@@ -119,7 +122,7 @@ class SMSDB
         }
 
         //$sql_sms = "select sms_id as smsId, phone_num as phoneNum, message, DATE_FORMAT(time_created, '%Y/%m/%d %M:%i') as timeCreated, DATE_FORMAT(time_sent, '%Y/%m/%d %M:%i') as timeSent, status, accname as accName, is_replied as replied, DATE_FORMAT(time_replied, '%Y/%m/%d %M:%i') as timeReplied schedule_date as scheduleDate from cm_sms_record where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
-        $sql_sms = "select sms_id as smsId, phone_num as phoneNum where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
+        $sql_sms = "select sms_id as smsId, phone_num as phoneNum from cm_sms_record where schedule_date = DATE(".$schedule_date.") and status = 'OK' order by sms_id;";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
@@ -140,38 +143,62 @@ class SMSDB
         {
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
         }
+        
+        $sql_sms = "select phone_num, sms_id from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK';";
 
-        $sql_sms = "select phone_num, sms_id where scheduleDate = DATE(".$schedule_date.") and status = 'OK';";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
             throw new DBException("Fail to query sms sent", __FILE__, __LINE__);
         }
+        
+        $sms_id_set = array();
+        $sms_phone_set = array();
 
-        $sms_id_set = Array();
-        $sql_set = "(";
         foreach($sms_result as $row)
         {
-            $sql_set .= "'".$row['phone_num']."',";
-            $sms_id_set[] = $row['sms_id'];
+            if(!in_array($row['phone_num'], $sms_phone_set))
+            {
+                $sms_phone_set[] = $row['phone_num'];
+            }
+            if(!in_array($row['sms_id'], $sms_id_set))
+            {
+                $sms_id_set[] = $row['sms_id'];
+            }
         }
-        $sql_set .= substr($sql_set, 0, -1).");";
 
-        //query reply
-        $db_con_ifins = Constant::connect_to_db("ifins");
-        if(empty($db_con_ifins))
+        if(count($sms_phone_set) > 0)
         {
-            throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
+            $sql_set = "(";
+            foreach($sms_phone_set as $a_phone)
+            {
+                $sql_set .= "'".$a_phone."',";
+            }
+            $sql_set = substr($sql_set, 0, -1).");";
+            
+            //query reply
+            $db_con_ifins = Constant::connect_to_db("ifins");
+            if(empty($db_con_ifins))
+            {
+                throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
+            }
+
+            $sql_reply = "select DATE_FORMAT(date, '%Y/%m/%d %H:%i') as time_received from fs_msgs where num in ".$sql_set;
+            $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
+            if(is_null($reply_result))
+            {
+                throw new DBException("Fail to query sms reply ".$sql_reply, __FILE__, __LINE__, 2);
+            }
         }
 
-        $sql_reply = "select *, DATE_FORMAT(date, '%Y/%m/%d %M:%i') time_received from fs_msgs where num in ".$sql_set.";";
-        $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
-        if(is_null($reply_result))
+        else
         {
-            throw new DBException("Fail to query sms sent", __FILE__, __LINE__);
+            return array();
+            //throw new DBException($sql_set, __FILE__, __LINE__);
         }
+        
+        $result = array();
 
-        $result = Array();
         foreach($reply_result as $a_reply)
         {
             $reply_msg = $a_reply['msg'];
@@ -224,8 +251,17 @@ class SMSDB
             Constant::sql_execute($db_con, $sql_update);
         }
     }
-
-    public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC)
+    
+    /**
+     * 
+     * @param type $date
+     * @param type $order
+     * @param type $direction
+     * @param string $type "R": relief msg; "C": cancel msg
+     * @return type
+     * @throws DBException
+     */
+    public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC, $type = 'R')
     {
         SMS::readSMS($date);
         
@@ -249,9 +285,10 @@ class SMSDB
             'repliedTime' => 'time_replied',
             'repliedMsg' => 'response'
         );
-
-        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record";
-
+        
+        $type_trimed = mysql_real_escape_string(trim($type));
+        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record where type = '$type_trimed'";
+        
         if(array_key_exists($order, $order_db))
         {
             $sql_query_sms .= " order by ".$order_db[$order]." ".$direction_db[$direction].";";
