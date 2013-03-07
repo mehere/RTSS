@@ -1,8 +1,7 @@
 <?php
-require_once 'util.php';
-require_once 'Teacher.php';
-//require_once 'DBException.php';
-require_once "SchedulerDB.php";
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
 
 class TimetableDB
 {

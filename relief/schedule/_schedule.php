@@ -1,18 +1,13 @@
 <?php
-
 ini_set("memory_limit", "512M");
 define("NUM_STATES_REQUIRED", 3);
 define("TIME_TO_WAIT", 10);
 
-require_once '../../php-head.php';
-spl_autoload_register(
-        function ($class)
-        {
-            include '../../class/' . $class . '.php';
-        });
-header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
+spl_autoload_register(function($class){
+    require_once "../../class/$class.php";
+});
+
+Template::validate(true);
 
 function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleStateHeapBest $successStates, ScheduleStateHeapBest $stoppedStates)
 {
@@ -519,6 +514,5 @@ if ($successStates->numberStates > 0)
     // Failure Case
     $_SESSION['scheduleError'] = "Failed to find a scheduling result.";
 }
-
-header("Location: result.php");
+header("Location: index.php");
 ?>

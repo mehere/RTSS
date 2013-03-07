@@ -2,23 +2,6 @@ $(document).ready(function(){
     var formM=document.forms['match'],
         ALERT_TEXT=['Please provide full name for each abbreviation.'];
 
-    // Alert
-    $("#dialog-alert").dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        draggable: false,
-        width: 350,
-        buttons: {
-            OK: function(){
-                $(this).dialog("close");
-
-                var func=$(this).data('func');
-                if (func) func();
-            }
-        }
-    });
-
     // AED name auto complete
     var nameList=[], nameAccMap={};
     $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "all_normal"}, function(data){
@@ -76,7 +59,7 @@ $(document).ready(function(){
             }
             else
             {
-                $("#dialog-alert").html("Upload timetable successfully.").dialog('open').data('func', function(){ window.location='admin.php'; });
+                $("#dialog-alert").html("Upload timetable successfully.").dialog('open').data('func', function(){ window.location='index.php'; });
             }
         }, 'json');
 

@@ -1,16 +1,8 @@
 <?php
 
-require_once 'Teacher.php';
-require_once 'TimetableAnalyzer.php';
-require_once 'SchedulerDB.php';
-require_once 'DayTime.php';
-require_once 'Lesson.php';
-require_once 'TimetableDB.php';
-require_once 'ListGenerator.php';
-require_once 'DBException.php';
-require_once 'User.php';
-require_once 'AdHocSchedulerDB.php';
-require_once 'AdminConfig.php';
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
 
 /*
  * To change this template, choose Tools | Templates

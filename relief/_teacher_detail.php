@@ -1,12 +1,9 @@
 <?php
-header("Expires: 0");
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
+spl_autoload_register(function($class){
+    require_once "../class/$class.php";
+});
 
-//initialize session, check login, etc
-require_once '../controller-head.php';
-
-include '../class/Teacher.php';
+Template::validate(true, true);
 
 //retrieve account name of the selected entry
 $accname=$_GET['accname'];

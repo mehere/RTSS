@@ -223,9 +223,10 @@ class TeacherCompact
         }
     }
 
-    public function cancelExcess(&$lessonsSkipped)
+    public function cancelExcess(&$lessonsSkipped, $maxMoreSkipped)
     {
-        if ($this->noTeachingPeriod > self::$recommendedNoOfLessons)
+        if (($this->noTeachingPeriod > self::$recommendedNoOfLessons)
+                && ($maxMoreSkipped > 0))
         {
             $noCancelled = 0;
             foreach ($this->timetable as $timeIndex => $aLesson)
@@ -241,6 +242,9 @@ class TeacherCompact
 
                     if ($this->noTeachingPeriod == self::$recommendedNoOfLessons)
                     {
+                        break;
+                    }
+                    if ($noCancelled == $maxMoreSkipped){
                         break;
                     }
                 }

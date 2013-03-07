@@ -4,12 +4,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-require_once 'TimetableDB.php';
-require_once 'util.php';
-require_once 'ReliefLesson.php';
-require_once 'DayTime.php';
-require_once 'Lesson.php';
-require_once 'Teacher.php';
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
 
 class AdHocSchedulerDB
 {
