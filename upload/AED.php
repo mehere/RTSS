@@ -6,7 +6,7 @@ spl_autoload_register(function($class){
 Template::printHeaderAndDoValidation('Upload Timetable', 
         array('timetable.css', 'upload-AED.css'), 
         array('upload.js'), 
-        Template::TT_ADMIN, 'AED Timetable', Template::TT_ADMIN_MASTER);
+        Template::TT_ADMIN, 'AED Timetable', Template::TT_ADMIN_AED);
 
 $timeFromArr=SchoolTime::getTimeArrSub(0, -1);
 $timeToArr=SchoolTime::getTimeArrSub(1, 0);
