@@ -153,7 +153,7 @@ EOD;
         <div id="container">
             <div class="header">
                 <div class="header-top">
-                    <img src="/RTSS/img/school-logo.png" class="logo" />
+                    <a href="/RTSS/relief/" title="Home"><img src="/RTSS/img/school-logo.png" class="logo" /></a>
                     <div class="wrapper">
                         <div class="statusBar">
                             <div class="statusbar-item">

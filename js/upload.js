@@ -3,8 +3,8 @@ $(document).ready(function(){
         autoOpen: false,
         resizable: false,
         draggable: true,
-        width: '99%',
-        title: 'Add Class',
+        width: '700px',
+        title: 'New Class',
         buttons: null,
         position: { at: "center bottom" }
     });

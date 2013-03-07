@@ -10,9 +10,6 @@
 	margin-left: 10px;
 }
 
-#btnScheduleAll {
-	padding: 10px 40px;
-}
 #btnScheduleAll .icon {
 	width: 17px;
 }
@@ -20,10 +17,10 @@
 .bt-control {
 	float: right;
 	padding-top: 15px;
-	display: block;
 }
 .bt-control .button {
 	margin-left: 20px;
+	display: inline-block;
 }
 
 .hovered.table-info tr th.sort {	
