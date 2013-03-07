@@ -27,7 +27,7 @@ if ($_SESSION['type'] == 'admin')
         
         $teacherList=PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $_POST['accname']);
     ?>
-    <div class="line">Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+    <div class="line">Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em;  text-align: right" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
     </div>    
 </form>
 <?php

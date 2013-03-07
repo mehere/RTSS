@@ -18,7 +18,7 @@ $_SESSION['scheduleDate']=$date;
 ?>
 <form class="main" name="schedule" action="schedule/_schedule.php" method="post">
     <div style="margin-bottom: 10px">
-        Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+        Date: <input type="text" class="textfield" name="date-display" maxlength="10" style="width: 6.5em; text-align: right" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
     </div>
     <div class="accordion colorbox blue">
         <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
@@ -50,7 +50,7 @@ EOD;
                 <?php
                     $teacherOnLeaveList=Teacher::getTeacherOnLeave($date);
                     PageConstant::escapeHTMLEntity($teacherOnLeaveList);
-
+//var_dump($teacherOnLeaveList);
                     $keyList=array_keys(NameMap::$RELIEF['teacherOnLeave']['display']);
                     $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
                     $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
@@ -61,7 +61,7 @@ EOD;
                         $dateFromDisplay=SchoolTime::convertDate($datetime[0][0]);
                         $dateToDisplay=SchoolTime::convertDate($datetime[1][0]);
 
-                        $leaveID=$teacher[$keyExtraList[1]];
+//                        $leaveID=$teacher[$keyExtraList[1]];
 //                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$leaveID]);
                         $scheduledStr=PageConstant::stateRepresent($teacher[$keyList[5]]);
                         echo <<< EOD

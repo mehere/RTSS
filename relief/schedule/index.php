@@ -28,7 +28,7 @@ if ($scheduleIndexArr)
 ?>
 <form class="main" name="edit" action="_approve.php" method="post">
     <div class="accordion colorbox blue">
-        <span class="icon-link">&#x25CB;</span>
+        <span class="icon-link"></span>
         <span class="box-title">
             Result Preview
         </span>
