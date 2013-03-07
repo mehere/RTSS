@@ -8,7 +8,7 @@ class NameMap
 //                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason',
 //                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
                 'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'handphone' => 'Handphone', 'reason' => 'Reason',
-                'teacherScheduled' => '&#x267B;'
+                'isScheduled' => '&#x267B;'
             ),
             'hidden' => array(
                 'accname', 'leaveID'
@@ -172,7 +172,7 @@ class NameMap
 
         'individual' => array(
             'display' => array(
-                'numOfMC' => 'MC(times)', 'numOfRelief' => 'Relief(times)', 'net' => 'Net',
+                'numOfMC' => 'MC', 'numOfRelief' => 'Relief', 'net' => 'Net',
                 'mc' => 'MC Period', 'relief' => 'Relief Period'
             ),
             'hidden' => array(

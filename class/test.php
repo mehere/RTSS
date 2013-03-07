@@ -1,5 +1,5 @@
 <?php
-
+require_once 'email_lib/swift_required.php';
 spl_autoload_register(function($class){
     require_once "$class.php";
 });
