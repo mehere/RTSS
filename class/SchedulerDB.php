@@ -1102,6 +1102,13 @@ class SchedulerDB
         }
 
         //5. send sms and record success/failure
+        $all_input = array(
+            "date" => $date,
+            "input" => $sms_input
+        );
+        $all_input_str = serialize($all_input);
+        header("../sms/sendSMS.php?sms_input=".$all_input_str);
+        /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
         if (!is_null($sms_reply))
@@ -1118,6 +1125,8 @@ class SchedulerDB
                 }
             }
         }
+         * 
+         */
 
         //6. send email and record success/failure
         $from = array(
@@ -1198,6 +1207,7 @@ class SchedulerDB
         }
 
         //7. return
+        /*
         $sort_arr = Array();
 
         foreach($return_result as $key=>$value)
@@ -1206,8 +1216,10 @@ class SchedulerDB
         }
 
         array_multisort($sort_arr, SORT_ASC, $return_result);
+         * 
+         */
 
-        return $return_result;
+        return array();
     }
 
     public static function allSchduleIndex()

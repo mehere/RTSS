@@ -377,7 +377,7 @@ table.hovered tbody tr:hover{
 	background-color: #2D89EF;
 	
 	color: white;
-	font-size: 16px;
+	font: 16px 'Segoe UI','Open Sans',Verdana,Arial,Helvetica,sans-serif;
 	cursor: pointer;
 	outline: none;
 	border: none;
@@ -398,6 +398,11 @@ table.hovered tbody tr:hover{
 }
 .button.green:hover {
 	background-color: #006600;
+}
+
+.button.button-small {
+	font-size: 14px; 
+	padding: 5px 10px;
 }
 
 .button .icon {

@@ -99,7 +99,7 @@ class Teacher {
         //query relief info to check whether scheduled
         $sql_query_scheduled = "select * from rs_leave_scheduled where schedule_date = '".mysql_real_escape_string($query_date)."';";
         $scheduled_query_result = Constant::sql_execute($db_con, $sql_query_scheduled);
-        if(empty($scheduled_query_result))
+        if(is_null($scheduled_query_result))
         {
             throw new DBException("Fail to query leave information", __FILE__, __LINE__, 2);
         }

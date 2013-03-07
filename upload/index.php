@@ -29,7 +29,10 @@ Template::printHeaderAndDoValidation('Upload Timetable',
 EOD;
         }        
     ?>
-    <div class="line"><span class="label">&nbsp;</span><input type="submit" value="Upload" name="submit" style="font-size: .9em" class="button" /></div>
+    <div class="line">
+        <span class="label">&nbsp;</span>
+        <input type="submit" value="Upload" name="submit" class="button button-small" />
+    </div>
 </form>
 <div id="dialog-alert"><?php echo $_SESSION['uploadSuccess']; ?></div>
 <?php

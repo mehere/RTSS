@@ -25,8 +25,8 @@ $dayArr=PageConstant::$DAY;
             <select name="sem">
                 <?php echo PageConstant::printSemRange(); ?>
             </select>
-            <input type="submit" class="button" value="Retrieve" style="margin-left: 30px" />
-            <input type="button" class="button red" name="upload" value="Upload" style="margin-left: 30px" />
+            <input type="submit" class="button button-small" value="Retrieve" style="margin-left: 30px" />
+            <input type="button" class="button red button-small" name="upload" value="Upload" style="margin-left: 30px" />
         </div>
     </form>                    
     <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
