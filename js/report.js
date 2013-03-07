@@ -11,64 +11,63 @@ $(document).ready(function(){
         });
     });
 
-    // Auto complete
-    var formR=document.forms['report-individual'];
-
-    $(formR['fullname']).autocomplete({
-        source: nameList,
-        delay: 0,
-        autoFocus: true,
-        minLength: 0
-    }).focusout(function(){
-        var curText= $.trim(this.value), isMatch=false;
-        $.each(nameList, function(index, value){
-            if (curText.toLowerCase() == value.toLowerCase())
-            {
-                isMatch=true;
-                formR["accname"].value=nameAccMap[value];
-
-                return false;
-            }
-        });
-        if (!isMatch)
-        {
-            this.value="";
-            formR["accname"].value='';
-        }
-    }).focusin(function(){
-        $(this).autocomplete("search", '');
-    });;
-
-    // Expand
-    if ($('.accordion-expand').length)
+    // Report overall
+    if ($('#overall').length)
     {
-        GlobalFunction.toggleAccordion($('.accordion .icon-link').not('.accordion-expand'), 0);
+        // Sort overall report
+        var formO=document.forms['report-overall'];
+        $("#overall .table-info .sort").click(function(){
+            formO['order'].value=this.getAttribute('search');
+
+            var dir=this.getAttribute('direction');
+            if (dir != 1)
+            {
+                dir=1;
+            }
+            else
+            {
+                dir=2;
+            }
+            formO['direction'].value=this['direction']=dir;
+
+            $(formO).submit();
+        });
+
+        // Filter type
+        $(formO['type']).change(function(){
+            $(this.form).submit();
+        });
     }
 
+    if ($('#individual').length)
+    {
+        var formR=document.forms['report-individual'];
 
-    // Sort overall report
-    var formO=document.forms['report-overall'];
-    $("#overall .table-info .sort").click(function(){
-        formO['order'].value=this.getAttribute('search');
+        $(formR['fullname']).autocomplete({
+            source: nameList,
+            delay: 0,
+            autoFocus: true,
+            minLength: 0
+        }).focusout(function(){
+            var curText= $.trim(this.value), isMatch=false;
+            $.each(nameList, function(index, value){
+                if (curText.toLowerCase() == value.toLowerCase())
+                {
+                    isMatch=true;
+                    formR["accname"].value=nameAccMap[value];
 
-        var dir=this.getAttribute('direction');
-        if (dir != 1)
-        {
-            dir=1;
-        }
-        else
-        {
-            dir=2;
-        }
-        formO['direction'].value=this['direction']=dir;
-
-        $(formO).submit();
-    });
-
-    // Filter type
-    $(formO['type']).change(function(){
-        $(this.form).submit();
-    });
+                    return false;
+                }
+            });
+            if (!isMatch)
+            {
+                this.value="";
+                formR["accname"].value='';
+            }
+        }).focusin(function(){
+            $(this).autocomplete("search", '');
+        });
+    }
 
     // Print
     $("#print").click(function(){
