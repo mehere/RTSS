@@ -16,9 +16,9 @@ spl_autoload_register(function($class){
 
 $options = getopt("string:");
 $input_str = $options["string"];
-$input_str = substr($input_str, 1, strlen($input_str) - 1);
-error_log($input_str);
-$input = unserialize($input_str);
+$input_str_trim = substr($input_str, 1, strlen($input_str) - 1);
+
+$input = unserialize($input_str_trim);
 
 $sms_input = $input['input'];
 $date = $input['date'];

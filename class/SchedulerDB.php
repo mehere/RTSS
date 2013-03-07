@@ -1108,7 +1108,7 @@ class SchedulerDB
         );
         $all_input_str = serialize($all_input);
 
-        BackgroundRunner::execInBackground(realpath('../sms/sendSMS.php'), array('string'), array($all_input));
+        BackgroundRunner::execInBackground(realpath('../sms/sendSMS.php'), array('string'), array($all_input_str));
         /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
@@ -1194,6 +1194,15 @@ class SchedulerDB
             $to[] = $recepient;
         }
 
+        $all_input_email = array(
+            "from" => $from,
+            "to" => $to
+        );
+        $all_input_str_email = serialize($all_input_email);
+
+        BackgroundRunner::execInBackground(realpath('../sms/sendEmail.php'), array('string'), array($all_input_str_email));
+        
+        /*
         $email_reply = Email::sendMail($from, $to);
 
         if (!is_null($email_reply))
@@ -1206,6 +1215,8 @@ class SchedulerDB
                 }
             }
         }
+         * 
+         */
 
         //7. return
         /*

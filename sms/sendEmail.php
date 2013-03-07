@@ -3,11 +3,14 @@ spl_autoload_register(function($class){
     require_once "../class/$class.php";
 });
 
-$input_str = $_REQUEST['sms_input'];
-$input = unserialize($input_str);
+$options = getopt("string:");
+$input_str = $options["string"];
+$input_str_trim = substr($input_str, 1, strlen($input_str) - 1);
 
-$sms_input = $input['input'];
-$date = $input['date'];
+$input = unserialize($input_str_trim);
 
-SMS::sendSMS($sms_input, $date);
+$from = $input['from'];
+$to = $input['to'];
+
+Email::sendMail($from, $to);
 ?>
