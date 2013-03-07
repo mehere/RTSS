@@ -90,13 +90,11 @@ class Template
         {
             $active=$key == $mainMenuSelect ? "active" : '';
             $menuPart .= <<< EOD
-<div class="menu-item $active">
+<li class="menu-item $active">
     <a class="menu" href="$value">
-        <span class="menu">
-            $key
-        </span>
+        $key
     </a>
-</div>
+</li>
 EOD;
         }
         
@@ -106,13 +104,11 @@ EOD;
         {
             $active=$key == $submenuSelect ? "active" : '';
             $submenuPart .= <<< EOD
-<div class="submenu-item $active">
+<li class="submenu-item $active">
     <a class="submenu" href="$value">
-        <span class="submenu">
-            $key
-        </span>
+        $key
     </a>
-</div>
+</li>
 EOD;
         }
 
@@ -168,12 +164,9 @@ EOD;
                         </div>
                         <div style="clear:both;"></div>
 
-                        <div class="menubar">
-                            <div class="menu-foreground">
-                                $menuPart                                
-                            <div style="clear:both;"></div>
-                            </div>
-                        </div>                        
+                        <ul class="menubar">
+                            $menuPart
+                        </ul>                        
                         <div style="clear:both;"></div>
                     </div>
                     <div style="clear:both;"></div>
@@ -186,9 +179,9 @@ EOD;
                             $submenuTitle
                         </h1>
                     </div>
-                    <div class="submenubar">
+                    <ul class="submenubar">
                         $submenuPart
-                    </div>
+                    </ul>
 
                     <div style="clear:both;"></div>
 
