@@ -284,7 +284,7 @@ class SMSDB
         );
         
         $type_trimed = mysql_real_escape_string(trim($type));
-        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record where type = '$type_trimed'";
+        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record where type = '$type_trimed' and schedule_date = DATE('$date');";
         
         if(array_key_exists($order, $order_db))
         {
