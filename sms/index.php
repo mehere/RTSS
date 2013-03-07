@@ -40,7 +40,7 @@ if (!$date)
             <thead>
                 <tr>
                     <?php
-                    $width=array('60px', '40%', '90px', '100px', '80px', '60%');
+                    $width=array('60px', '40%', '110px', '100px', '80px', '60%');
 
                     $tableHeaderList=NameMap::$SMS['layout']['display'];
 
