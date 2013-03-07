@@ -1184,7 +1184,6 @@ class SchedulerDB
             $to[] = $recepient;
         }
 
-        /*
         $email_reply = Email::sendMail($from, $to);
 
         if (!is_null($email_reply))
@@ -1197,8 +1196,6 @@ class SchedulerDB
                 }
             }
         }
-         *
-         */
 
         //7. return
         $sort_arr = Array();
