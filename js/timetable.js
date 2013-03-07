@@ -10,7 +10,14 @@ $(document).ready(function(){
     }).datepicker('setDate', new Date(formS['date'].value));
 
     $("#calendar-trigger").click(function(){
-        $(formS['date-display']).datepicker("show");
+        if ($(formS['date-display']).datepicker('widget').is(':visible'))
+        {
+            $(formS['date-display']).datepicker("hide");
+        }
+        else
+        {
+            $(formS['date-display']).datepicker("show");
+        }
     });
 
     $(formS['date-display']).change(function(){

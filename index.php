@@ -24,7 +24,7 @@ session_start();
                 <div>Log in to <?php echo PageConstant::PRODUCT_NAME ?></div>
                 <input type="text" name="username" value="User Name" class="textfield" />
                 <input type="password" name="password" value="Password" class="textfield" />
-                <input type="submit" value="Login" class="button" />
+                <input type="submit" value="Login" class="button button-small" />
                 <!--a href="">Forgot password?</a-->
                 <div class="error-msg"><?php if ($_SESSION['loginError']) echo PageConstant::$ERROR_TEXT['login']['mismatch']; ?></div>
             </form>

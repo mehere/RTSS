@@ -14,6 +14,9 @@ class Template
     const TT_ADMIN_MASTER="Upload Master Timetable";
     const TT_ADMIN_AED="Upload AED Timetable";
     
+    const REPORT_OVERALL='Overall';
+    const REPORT_INDIVIDUAL='Indivudal';
+    
     // Menu map
     private static $MAIN_MENU=array(
         self::HOME => "/RTSS/relief/",
@@ -36,7 +39,10 @@ class Template
             self::TT_ADMIN_AED => "/RTSS/upload/AED.php"
         ),
         
-        self::REPORT => array()
+        self::REPORT => array(
+            self::REPORT_OVERALL => "/RTSS/report",
+            self::REPORT_INDIVIDUAL => "/RTSS/report/individual.php"
+        )
     );
     
     /**
