@@ -13,7 +13,14 @@ $(document).ready(function(){
     }).datepicker('setDate', new Date(formSch['date'].value));
 
     $("#calendar-trigger").click(function(){
-        $(formSch['date-display']).datepicker("show");
+        if ($(formSch['date-display']).datepicker('widget').is(':visible'))
+        {
+            $(formSch['date-display']).datepicker("hide");
+        }
+        else
+        {
+            $(formSch['date-display']).datepicker("show");
+        }
     });
 
     $(formSch['date-display']).change(function(){
