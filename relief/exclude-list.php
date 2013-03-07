@@ -6,7 +6,7 @@ spl_autoload_register(function($class){
 Template::printHeaderAndDoValidation('Scheduler (Edit)', 
         array('relief.css', 'excluding-list.css'),
         array('excluding-list.js'), 
-        Template::HOME, Template::HOME . " (Excluding List)", Template::SCHEDULE);
+        Template::HOME, "Edit Excluding List", Template::SCHEDULE);
 
 $num=$_POST['num'];
 if ($num)
@@ -23,7 +23,7 @@ if ($num)
 ?>
 <form class="main" name="edit" action="" method="post">            	
     <div class="accordion colorbox blue">
-        <span class="icon-link">&#x25CB;</span>
+        <span class="icon-link"></span>
         <span class="box-title">
             Excluding List
         </span>        

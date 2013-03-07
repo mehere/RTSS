@@ -9,7 +9,7 @@ Template::printHeaderAndDoValidation('Report',
         Template::REPORT, 'Report (Overall)', Template::REPORT_OVERALL);
 ?>
 <form class="accordion colorbox blue" name="report-overall" method="post">
-    <span class="icon-link">&#x25CB;</span>
+    <span class="icon-link"></span>
     <span class="box-title">
         Overall
         <span class="filter-control">

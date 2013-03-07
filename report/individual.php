@@ -7,9 +7,9 @@ Template::printHeaderAndDoValidation('Report',
         array('report.css'), 
         array('report.js'), 
         Template::REPORT, 'Report (Individual)', Template::REPORT_INDIVIDUAL);
-?>                                       
+?>
 <form class="accordion colorbox green" name="report-individual" method="post">
-    <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
+    <a href="" class="icon-link"></a>
     <span class="box-title">
         Individual
         <span class="filter-control">

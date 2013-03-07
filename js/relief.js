@@ -32,7 +32,9 @@ $(document).ready(function(){
     });
 
     $('#btnScheduleAll').click(function(){
-        $("#dialog-alert").html(ALERT_MSG[0]).dialog('option', 'buttons', null).dialog('open');
+        $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
+            position: "fixed"
+        }).end().dialog('option', 'buttons', null).dialog('open');
 
         $(formSch).submit();
 

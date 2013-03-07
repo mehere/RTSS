@@ -3,17 +3,17 @@ spl_autoload_register(function($class){
     require_once "../class/$class.php";
 });
 
+$isTemp=$_GET['teacher'] == 'temp';
+
 Template::printHeaderAndDoValidation('Scheduler (Edit)', 
         array('relief.css', 'relief-edit.css'),
         array("teacher-detail.js", 'relief-edit.js'), 
-        Template::HOME, Template::HOME . " (Edit)", Template::SCHEDULE);
-
-$isTemp=$_GET['teacher'] == 'temp';
+        Template::HOME, $isTemp ? "Edit Temporary Relief" : "Edit Leave", Template::SCHEDULE);
 ?>
 <form class="main" name="edit" action="_teacher_edit.php" method="post">            	
     <input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
     <div class="accordion colorbox blue">
-        <span class="icon-link">&#x25CB;</span>
+        <span class="icon-link"></span>
         <span class="box-title">
             <?php echo $isTemp ? "Temporary Relief Teacher:" : "Teacher on Leave:"; ?>
         </span>

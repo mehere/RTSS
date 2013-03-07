@@ -50,7 +50,7 @@ EOD;
                 <?php
                     $teacherOnLeaveList=Teacher::getTeacherOnLeave($date);
                     PageConstant::escapeHTMLEntity($teacherOnLeaveList);
-
+var_dump($teacherOnLeaveList);
                     $keyList=array_keys(NameMap::$RELIEF['teacherOnLeave']['display']);
                     $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
                     $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
@@ -61,7 +61,7 @@ EOD;
                         $dateFromDisplay=SchoolTime::convertDate($datetime[0][0]);
                         $dateToDisplay=SchoolTime::convertDate($datetime[1][0]);
 
-                        $leaveID=$teacher[$keyExtraList[1]];
+//                        $leaveID=$teacher[$keyExtraList[1]];
 //                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$leaveID]);
                         $scheduledStr=PageConstant::stateRepresent($teacher[$keyList[5]]);
                         echo <<< EOD
