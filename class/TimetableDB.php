@@ -1,8 +1,7 @@
 <?php
-require_once 'util.php';
-require_once 'Teacher.php';
-//require_once 'DBException.php';
-require_once "SchedulerDB.php";
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
 
 class TimetableDB
 {
@@ -828,10 +827,11 @@ class TimetableDB
      * @param type $accname
      * @param type $schedule_date
      * @param type $lesson_id
+     * @param int $type 0:normal, 1:ad hoc
      * @return int
      * @throws DBException
      */
-    public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date, $lesson_id)
+    public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date, $lesson_id, $type = 0)
     {
         $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$schedule_date));
 
@@ -860,26 +860,29 @@ class TimetableDB
             return 1;
         }
 
-        $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
-        $relief_result = Constant::sql_execute($db_con, $sql_relief);
-        if(is_null($relief_result))
+        if($type !== 0)
         {
-            return -1;
-        }
-        else if(count($relief_result) > 0)
-        {
-            return 1;
-        }
+            $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
+            $relief_result = Constant::sql_execute($db_con, $sql_relief);
+            if(is_null($relief_result))
+            {
+                return -1;
+            }
+            else if(count($relief_result) > 0)
+            {
+                return 1;
+            }
 
-        $sql_block = "select * from temp_ah_cancelled_relief where accname = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((block_start_index < ".$time_range[1].") and (block_end_index > ".$time_range[0]."));";
-        $block_result = Constant::sql_execute($db_con, $sql_block);
-        if(is_null($block_result))
-        {
-            return -1;
-        }
-        else if(count($block_result) > 0)
-        {
-            return 1;
+            $sql_block = "select * from temp_ah_cancelled_relief where accname = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((block_start_index < ".$time_range[1].") and (block_end_index > ".$time_range[0]."));";
+            $block_result = Constant::sql_execute($db_con, $sql_block);
+            if(is_null($block_result))
+            {
+                return -1;
+            }
+            else if(count($block_result) > 0)
+            {
+                return 1;
+            }
         }
         
         $sql_temp = "select * from temp_each_alternative where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and schedule_id =".$schedule_index." and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0].")) and lesson_id != '$lesson_id';";

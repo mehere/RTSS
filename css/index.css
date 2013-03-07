@@ -1,10 +1,13 @@
 @charset "UTF-8";
 
+#container {
+    margin: 0 auto;	
+}
 #content {
-	margin-left: 0
+	padding-top: 100px;
 }
 #content .logo-name {
-	margin: 100px auto 70px;
+	margin: 0 auto 70px;
 	display: block;
 }
 #content .login-form {
@@ -22,6 +25,6 @@
 #content .comment-bottom {
 	margin-top: 150px; 
 	text-align: center;
-	color: #bebebe;
+	color: #969696;
 	font-size: .9em;
 }

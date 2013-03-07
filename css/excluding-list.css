@@ -1,6 +1,12 @@
 @charset "UTF-8";
+
+.table-info tr td {
+	padding: 5px 10px;
+}
 .table-info .label-content {
-    margin-right: 20px;
+    margin-right: 3%;
+	padding: 3px 0;
+	
     float: left;
 	width: 30%;
 	text-align: left;
@@ -9,16 +15,8 @@
 	background: none;
 	box-shadow: none;
 }
-.table-info tr td .select-control {
-	text-align: center;
-	clear: both;
-}
-.table-info tr td .select-control>a {
-	width: 20px;
-	height: 20px;
-	
-	margin: 5px 30px;
-}
-.table-info tr td .select-control>a .ui-button-text {
-	padding: 0;
+
+.select-control>a {
+	display: block;
+	margin: 5px 0;
 }

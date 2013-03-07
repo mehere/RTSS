@@ -1,0 +1,62 @@
+@charset "UTF-8";
+
+#container {	
+	min-width: 1000px;
+}
+.section {
+	margin-top: 15px;
+}
+.section .control-top {
+	margin-top: 10px;
+}
+.section .control-top>a {
+	margin-right: 30px;
+	font-size: .9em;
+}
+
+.table-info {
+	width: 100%;
+}
+.table-info tbody tr td:nth-child(3) {
+	text-align: left;
+}
+.table-info input, .table-info select {
+	font-size: 12px;
+}
+.table-info textarea {
+	font-size: 14px;
+	width: 95%;
+	height: 5em;
+}
+.table-info .time-line {
+	text-align: right;
+	padding-right: 10px;
+	margin: 5px auto;
+}
+.table-info .small-bt {
+	margin: 5px 0;
+	width: 24px;
+	height: 24px;
+}
+.table-info .toggle-edit {
+	display: none;
+}
+.table-info #last-row {
+	display: none;
+	min-height: 100px;
+}
+.table-info #last-row .add-edit {
+	display: none;
+}
+.table-info .textfield {
+    width: 95%;
+}
+
+.ui-autocomplete {
+	max-height: 10em;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+.ui-autocomplete .ui-menu-item {
+	font-size: .9em;
+}

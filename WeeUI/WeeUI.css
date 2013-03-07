@@ -450,7 +450,7 @@ td.right{
     text-align: right;
 }
 
-table.hovered thead th.last, table.hovered tbody td.last{
+table.hovered thead tr th.last, table.hovered tbody tr td.last{
     border-right: 1px solid transparent;
 }
 

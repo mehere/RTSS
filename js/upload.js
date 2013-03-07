@@ -1,85 +1,18 @@
 $(document).ready(function(){
-    var formT=document.forms['timetable'];
+    $("#dialog-help").dialog({
+        autoOpen: false,
+        resizable: false,
+        draggable: true,
+        width: '99%',
+        title: 'Add Class',
+        buttons: null,
+        position: { at: "center bottom" }
+    });
 
-    // Alert dialog box
     var ALERT_TEXT=["Please fill in all fields.",
         "This time slot has been occupied. Please delete that class on the timetable before adding new class.",
         "Upload AED Timetable Successfully.", "Failed to Upload AED Timetable."];
-    $("#dialog-alert").dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        draggable: false,
-        width: 350,
-        buttons: {
-            OK: function(){
-                $(this).dialog("close");
-
-                var func=$(this).data('func');
-                if (func) func();
-            }
-        }
-    });
-
-    if ($.trim($("#dialog-alert").html()))
-    {
-        $("#dialog-alert").dialog('open');
-    }
-
-    // Upload module
-    /*var DATE_WARN_TEXT=["Date of semester should not be empty.", "Date-To should be no smaller than Date-From."];
-    function setDatePicker(target1, target2, altTarget1, altTarget2)
-    {
-        var curDate1=altTarget1.value?new Date(altTarget1.value):'',
-            curDate2=altTarget2.value?new Date(altTarget2.value):'';
-        target1.datepicker({
-            dateFormat: "dd/mm/yy",
-            changeMonth: true,
-            changeYear: true,
-            altField: altTarget1,
-            altFormat: "yy/mm/dd",
-            onSelect: function(dateText){
-                target2.datepicker( "option", "minDate", dateText );
-            },
-            onClose: function(dateText){
-                if (!dateText)
-                {
-                    var self=$(this);
-                    $("#dialog-alert").html(DATE_WARN_TEXT[0]).data('func', function(){
-                        self.datepicker('setDate', curDate1);
-                    }).dialog('open');
-                }
-            }
-        }).datepicker('setDate', curDate1);
-
-        target2.datepicker({
-            dateFormat: "dd/mm/yy",
-            changeMonth: true,
-            changeYear: true,
-            minDate: curDate1,
-            altField: altTarget2,
-            altFormat: "yy/mm/dd",
-            onClose: function(dateText){
-                var self=$(this);
-                if (self.datepicker('getDate') < target1.datepicker('getDate'))
-                {
-                    $("#dialog-alert").html(DATE_WARN_TEXT[1]).data('func', function(){
-                        self.datepicker('setDate', target1.datepicker('getDate'));
-                    }).dialog('open');
-                }
-            }
-        }).datepicker('setDate', curDate2);
-    }
-
-    setDatePicker($(formT['date-from-display']), $(formT['date-to-display']), formT['date-from'], formT['date-to']);
-
-    $(formT).submit(function(){
-        if (!formT['date-from'].value || !formT['date-to'].value)
-        {
-            $("#dialog-alert").html(DATE_WARN_TEXT[0]).dialog('open');
-            return false;
-        }
-    });*/
+    var formT=document.forms['timetable'];
 
     // Add AED
     var formAdd=document.forms['add-class'], formAED=document.forms['AED'], formG=document.forms['AED-get'],
@@ -272,6 +205,12 @@ $(document).ready(function(){
         return false;
     });
 
+    $(formG['upload']).click(function(){
+        $(formAED).submit();
+
+        return false;
+    });
+
     // Retrieve AED timetable
     $(formG).submit(function(){
         if (!this['accname'].value)
@@ -310,6 +249,11 @@ $(document).ready(function(){
 
             formAdd['period'].value='';
             formAdd.reset();
+
+            $("#dialog-help").parent().css({
+                position: "fixed",
+                boxShadow: "0 0 20px -5px black"
+            }).end().dialog('open');
         });
 
         return false;

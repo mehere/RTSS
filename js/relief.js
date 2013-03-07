@@ -1,21 +1,6 @@
 $(document).ready(function(){
     // Alert dialog box
     var ALERT_MSG=['Scheduling ... <br /> Please do not close current window.'];
-    $("#dialog-alert").dialog({
-        autoOpen: false,
-        modal: true,
-        resizable: false,
-        draggable: false,
-        width: 350,
-        buttons: {
-            OK: function(){
-                $(this).dialog("close");
-
-                var func=$(this).data('func');
-                if (func) func();
-            }
-        }
-    });
 
     var formSch=document.forms['schedule'];
     $(formSch['date-display']).datepicker({
@@ -28,7 +13,14 @@ $(document).ready(function(){
     }).datepicker('setDate', new Date(formSch['date'].value));
 
     $("#calendar-trigger").click(function(){
-        $(formSch['date-display']).datepicker("show");
+        if ($(formSch['date-display']).datepicker('widget').is(':visible'))
+        {
+            $(formSch['date-display']).datepicker("hide");
+        }
+        else
+        {
+            $(formSch['date-display']).datepicker("show");
+        }
     });
 
     $(formSch['date-display']).change(function(){
@@ -39,11 +31,13 @@ $(document).ready(function(){
         }
     });
 
-    $(formSch).submit(function(){
-        $("#dialog-alert").html(ALERT_MSG[0]).dialog('option', 'buttons', null).dialog('open');
-    });
+    $('#btnScheduleAll').click(function(){
+        $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
+            position: "fixed"
+        }).end().dialog('option', 'buttons', null).dialog('open');
 
-    $(formSch['btnScheduleAdhoc']).click(function(){
-        window.location="adhoc-setting.php";
+        $(formSch).submit();
+
+        return false;
     });
 });

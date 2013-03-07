@@ -1,7 +1,7 @@
 <?php
-
-require_once 'util.php';
-//require_once $_SERVER['DOCUMENT_ROOT'].'/RTSS/constant.php';
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
 
 class Teacher {
 
@@ -99,7 +99,7 @@ class Teacher {
         //query relief info to check whether scheduled
         $sql_query_scheduled = "select * from rs_leave_scheduled where schedule_date = '".mysql_real_escape_string($query_date)."';";
         $scheduled_query_result = Constant::sql_execute($db_con, $sql_query_scheduled);
-        if(empty($scheduled_query_result))
+        if(is_null($scheduled_query_result))
         {
             throw new DBException("Fail to query leave information", __FILE__, __LINE__, 2);
         }
@@ -496,14 +496,20 @@ class Teacher {
                 return -3;
             }
 
+            $clean_datetime_from = mysql_real_escape_string(trim($entry['datetime-from']));
+            $clean_datetime_to = mysql_real_escape_string(trim($entry['datetime-to']));
+            $clean_accname = mysql_real_escape_string(trim($accname));
+            
+            $sql_check_conflict = "select * from rs_leave_info where teacher_id = '$clean_accname' and ";
+            
             $reason = empty($entry['reason'])?'':$entry['reason'];
             $remark = empty($entry['remark'])?'':$entry['remark'];
 
-            $num_of_slot = Teacher::calculateLeaveSlot($accname, $entry['datetime-from'], $entry['datetime-to']);
+            $num_of_slot = Teacher::calculateLeaveSlot($clean_accname, $clean_datetime_from, $clean_datetime_to);
 
             $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified, num_of_slot) values
-                ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
-                    '".mysql_real_escape_string(trim($entry['datetime-from']))."', '".mysql_real_escape_string(trim($entry['datetime-to']))."', 'NO', ".$num_of_slot.");";
+                ('".$clean_accname."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
+                    '".$clean_datetime_from."', '".$clean_datetime_to."', 'NO', ".$num_of_slot.");";
 
             $insert_leave_result = Constant::sql_execute($db_con, $sql_insert_leave);
 

@@ -1,13 +1,4 @@
 $(document).ready(function(){
-    var COOKIE_KEY=['report-tab-index'];
-
-    $("#tabs").tabs({
-        active: $.cookie(COOKIE_KEY[0]),
-        select: function(event, ui){
-            $.cookie(COOKIE_KEY[0], ui.index);
-        }
-    });
-
     // Auto complete setup
     var nameList=[], nameAccMap={};
     $.getJSON("/RTSS/relief/_teacher_name.php", {"type": 'all_normal'}, function(data){
@@ -20,56 +11,63 @@ $(document).ready(function(){
         });
     });
 
-    // Auto complete
-    var formR=document.forms['report-individual'];
+    // Report overall
+    if ($('#overall').length)
+    {
+        // Sort overall report
+        var formO=document.forms['report-overall'];
+        $("#overall .table-info .sort").click(function(){
+            formO['order'].value=this.getAttribute('search');
 
-    $(formR['fullname']).autocomplete({
-        source: nameList,
-        delay: 0,
-        autoFocus: true,
-        minLength: 0
-    }).focusout(function(){
-        var curText= $.trim(this.value), isMatch=false;
-        $.each(nameList, function(index, value){
-            if (curText.toLowerCase() == value.toLowerCase())
+            var dir=this.getAttribute('direction');
+            if (dir != 1)
             {
-                isMatch=true;
-                formR["accname"].value=nameAccMap[value];
-
-                return false;
+                dir=1;
             }
+            else
+            {
+                dir=2;
+            }
+            formO['direction'].value=this['direction']=dir;
+
+            $(formO).submit();
         });
-        if (!isMatch)
-        {
-            this.value="";
-        }
-    }).focusin(function(){
-        $(this).autocomplete("search", '');
-    });;
 
-    // Submit
-    $(formR).submit(function(){
-        var dataPost={}, dataKey=["accname"];
-        dataPost[dataKey[0]]=formR[dataKey[0]].value;
-        $(ui.panel).load(ui.tab.href, dataPost);
-        return false;
-    });
+        // Filter type
+        $(formO['type']).change(function(){
+            $(this.form).submit();
+        });
+    }
 
-    // Sort overall report
-    var formO=document.forms['report-overall'];
-    $(".table-info .sort", formO).click(function(){
-        formO['order'].value=this.getAttribute('search');
-        if (formO['direction'].value != 1)
-        {
-            formO['direction'].value=1;
-        }
-        else
-        {
-            formO['direction'].value=2;
-        }
+    if ($('#individual').length)
+    {
+        var formR=document.forms['report-individual'];
 
-        $(formO).submit();
-    });
+        $(formR['fullname']).autocomplete({
+            source: nameList,
+            delay: 0,
+            autoFocus: true,
+            minLength: 0
+        }).focusout(function(){
+            var curText= $.trim(this.value), isMatch=false;
+            $.each(nameList, function(index, value){
+                if (curText.toLowerCase() == value.toLowerCase())
+                {
+                    isMatch=true;
+                    formR["accname"].value=nameAccMap[value];
+
+                    return false;
+                }
+            });
+            if (!isMatch)
+            {
+                this.value="";
+                formR["accname"].value='';
+            }
+        }).focusin(function(){
+            $(this).autocomplete("search", '');
+        });
+    }
 
     // Print
     $("#print").click(function(){

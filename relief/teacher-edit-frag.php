@@ -1,5 +1,9 @@
-<?php 
-require_once '../constant.php';
+<?php
+spl_autoload_register(function($class){
+    require_once "../class/$class.php";
+});
+
+
 
 $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), '', true);
 $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), '', true);
@@ -56,7 +60,7 @@ echo <<< EOD
     $nameTimeInBetweenFrag
     <td>
     	<div class="add-edit">
-            <div class="toggle-display"><span></span> <span></span><br /><span></span> <span></span></div>
+            <div class="toggle-display"><span></span>, <span></span><br /><span></span>, <span></span></div>
             <div class="toggle-edit">
                 <div class="time-line">From: <input type="text" name="date-from-$numOfTeacher" maxlength="10" style="width: 7em; margin-right: 5px" /><input type="hidden" name="server-date-from-$numOfTeacher" value="$date" />
                     <select name="time-from-$numOfTeacher">$timeFromOptionStr</select>
