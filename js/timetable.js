@@ -10,7 +10,14 @@ $(document).ready(function(){
     }).datepicker('setDate', new Date(formS['date'].value));
 
     $("#calendar-trigger").click(function(){
-        $(formS['date-display']).datepicker("show");
+        if ($(formS['date-display']).datepicker('widget').is(':visible'))
+        {
+            $(formS['date-display']).datepicker("hide");
+        }
+        else
+        {
+            $(formS['date-display']).datepicker("show");
+        }
     });
 
     $(formS['date-display']).change(function(){
@@ -28,13 +35,13 @@ $(document).ready(function(){
         var dataGet={"date": formS['date'].value, 'accname': formT['accname'].value};
         this.href += "?" + $.param(dataGet);
 
-        return true;
+        window.location.reload();
     });
 
     $("#print-relief").click(function(){
         var dataGet={"date": formS['date'].value};
         this.href += "?" + $.param(dataGet);
 
-        return true;
+        window.location.reload();
     });
 });

@@ -1,4 +1,5 @@
 <?php
+
 spl_autoload_register(function($class){
     require_once "$class.php";
 });
@@ -30,7 +31,6 @@ class SchedulerDB
         $this->temp_list = Teacher::getTempTeacher($this->date_str);
 
         //query num_of_leave slot
-        $sql_query_num_of_leave = "select teacher_id, sum(num_of_slot) as num_of_leave from rs_leave_info group by teacher_id";
         $db_con = Constant::connect_to_db('ntu');
 
         if (empty($db_con))
@@ -38,36 +38,32 @@ class SchedulerDB
             throw new DBException("Fail to query algo input", __FILE__, __LINE__);
         }
 
-        $query_num_of_leave_result = Constant::sql_execute($db_con, $sql_query_num_of_leave);
-        if (is_null($query_num_of_leave_result))
+        //query sem info by date
+        $sql_query_sem = "select * from ct_semester_info where date('$this->date_str') between start_date and end_date;";
+        $query_sem_result = Constant::sql_execute($db_con, $sql_query_sem);
+        if(is_null($query_sem_result))
         {
-            throw new DBException("Fail to query number of leave information", __FILE__, __LINE__, 2);
-        }
-        foreach ($query_num_of_leave_result as $row)
-        {
-            $this->leave_dict[$row['teacher_id']] = $row['num_of_leave'];
+            throw new DBException('Fail to query algorithm input', __FILE__, __LINE__);
         }
 
-        //query num_of_relief slot
-        //num of relief should not include cancelled relief duties
-        $sql_query_num_of_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from rs_relief_info where relief_id not in (select relief_id from temp_ah_cancelled_relief) group by relief_teacher";
-        $query_num_of_relief_result = Constant::sql_execute($db_con, $sql_query_num_of_relief);
-        if (is_null($query_num_of_relief_result))
+        if(empty($query_sem_result))
         {
-            throw new DBException("Fail to query number of relief information:" . mysql_error(), __FILE__, __LINE__, 2);
+            throw new DBException('Lesson info not available on '.$this->date_str, __FILE__, __LINE__, 1);
         }
-        foreach ($query_num_of_relief_result as $row)
+
+        $timetable_id = $query_sem_result[0]['sem_id'];
+        $year = $query_sem_result[0]['year'];
+        $sem = $query_sem_result[0]['sem_num'];
+
+        //query number of leave and relief
+        $overall_report = Teacher::overallReport("", "fullname", SORT_ASC, $year, $sem);
+        foreach($overall_report as $row)
         {
-            $this->relief_dict[$row['relief_teacher']] = $row['num_of_relief'];
+            $this->leave_dict[$row['accname']] = $row['numOfMC'];
+            $this->relief_dict[$row['accname']] = $row['numOfRelief'];
         }
 
         //create lesson dictionary
-        $timetable_id = TimetableDB::checkTimetableExistence(0, array('date' => $this->date_str));
-        if ($timetable_id === -1)
-        {
-            throw new DBException('DB does not have lesson info for ' . $this->date_str, __FILE__, __LINE__, 1);
-        }
-
         $this->lesson_list = Array();
 
         $sql_query_lessons = "select * from ct_lesson where weekday = $this->weekday and sem_id = $timetable_id;";
@@ -414,7 +410,22 @@ class SchedulerDB
 
     public function getRecommendedNoOfLessons()
     {
-        return 10;
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to query recommended lesson', __FILE__, __LINE__);
+        }
+
+        $sql_query = "select value from admin_config where identifier = 'recommended_num';";
+        $query_result = Constant::sql_execute($db_con, $sql_query);
+        if(empty($query_result))
+        {
+            throw new DBException('Fail to query recommended lesson', __FILE__, __LINE__);
+        }
+
+        $num = $query_result[0]['value'] - 0;
+
+        return $num;
     }
 
     static function setScheduleResult($typeSchedule, $date, $scheduleResults, $arrLeaveId)
@@ -432,7 +443,7 @@ class SchedulerDB
         {
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
         }
-        
+
         $sql_delete_skip = "delete from temp_aed_skip_info;";
         $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
         if (is_null($delete_skip_result))
@@ -487,6 +498,21 @@ class SchedulerDB
             if (is_null($execute))
             {
                 throw new DBException("Fail to insert scheduling result", __FILE__, __LINE__, 2);
+            }
+        }
+
+        if(!empty($arrLeaveId))
+        {
+            $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
+            foreach($arrLeaveId as $a_leave)
+            {
+                $sql_mark_scheduled .= "($a_leave, '$date'),";
+            }
+            $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
+            $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
+            if (is_null($mark_schedule_result))
+            {
+                throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
             }
         }
     }
@@ -586,7 +612,8 @@ class SchedulerDB
                     "teacherAccName" => $leave_acc,
                     "reliefAccName" => $relief_acc,
                     "teacherOnLeave" => $leave_full,
-                    "reliefTeacher" => $relief_full
+                    "reliefTeacher" => $relief_full,
+                    "reliefID" => $row['temp_relief_id']
                 );
 
                 if (!empty($row['class_name']))
@@ -601,23 +628,185 @@ class SchedulerDB
         return $result;
     }
 
-    public static function override($schedule_index, $lesson_id, $accname_old, $accname_new)
+    public static function override($schedule_index, $relief_id, $accname_new)
     {
+        $aed_list = Teacher::getTeacherInfo('AED');
+
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
         {
             return false;
         }
 
-        $lesson_id = mysql_real_escape_string(trim($lesson_id));
-        $accname_old = mysql_real_escape_string(trim($accname_old));
         $accname_new = mysql_real_escape_string(trim($accname_new));
 
-        $sql_update = "update temp_each_alternative set relief_teacher = '" . $accname_new . "' where schedule_id = " . $schedule_index . " and lesson_id = '" . $lesson_id . "' and leave_teacher = '" . $accname_old . "';";
+        //1. retrieve old relief
+        $sql_old_relief = "select * from temp_each_alternative where schedule_id = $schedule_index and temp_relief_id = $relief_id;";
+        $old_relief_result = Constant::sql_execute($db_con, $sql_old_relief);
+        if(empty($old_relief_result))
+        {
+            return false;
+        }
+
+        $old_relief = $old_relief_result[0];
+
+        $old_relief_teacher = $old_relief['relief_teacher'];
+        $start_time_index = $old_relief['start_time_index'];
+        $end_time_index = $old_relief['end_time_index'];
+        $schedule_date = $old_relief['schedule_date'];
+
+        // 1.1. see whether teachers are AED
+        $old_aed = false;
+        $new_aed = false;
+
+        if(array_key_exists($old_relief_teacher, $aed_list))
+        {
+            $old_aed = true;
+        }
+        if(array_key_exists($accname_new, $aed_list))
+        {
+            $new_aed = true;
+        }
+
+        //update
+        $sql_update = "update temp_each_alternative set relief_teacher = '" . $accname_new . "' where schedule_id = " . $schedule_index . " and temp_relief_id = " . $relief_id . ";";
         $update_result = Constant::sql_execute($db_con, $sql_update);
         if (is_null($update_result))
         {
-            return false;
+            //return false;
+            throw new DBException("update", __FILE__, __LINE__);
+        }
+
+        //clear old aed
+        if($old_aed)
+        {
+            //2. search skip of old relief
+            // 2.1. - search all relief
+            $sql_all_relief = "select start_time_index, end_time_index from temp_each_alternative where schedule_date = DATE('$schedule_date') and relief_teacher = '$old_relief_teacher' and schedule_id = $schedule_index;";
+            $all_relief_result = Constant::sql_execute($db_con, $sql_all_relief);
+            if(is_null($all_relief_result))
+            {
+                throw new DBException('Fail to query all relief duties', __FILE__, __LINE__, 2);
+            }
+
+            $have_class_index = array();  //array of start time index of releif duties
+            foreach($all_relief_result as $row)
+            {
+                $start_time = $row['start_time_index'];
+                $end_time = $row['end_time_index'];
+
+                for($i = $start_time; $i < $end_time; $i++)
+                {
+                    $have_class_index[] = $i;
+                }
+            }
+
+            // 2.2. - search all rs_aed_skip
+            $sql_all_skip = "select * from temp_aed_skip_info where schedule_date = DATE('$schedule_date') and accname = '$old_relief_teacher' and schedule_id = $schedule_index;";
+            $all_skip_result = Constant::sql_execute($db_con, $sql_all_skip);
+            if(is_null($all_skip_result))
+            {
+                throw new DBException('Fail to query all skipped lessons', __FILE__, __LINE__, 2);
+            }
+
+            $skip_array = array();
+            foreach($all_skip_result as $row)
+            {
+                $skip_array[$row['start_time_index']] = $row['temp_skip_id'];
+            }
+
+            // 2.3. - find skip ids to be recovered
+            $diff = $end_time_index - $start_time_index;
+            $recover_list = array();    //skip ids to be deleted
+
+            for($i = $start_time_index; $i < $end_time_index; $i++)
+            {
+                if(!empty($skip_array[$i]))
+                {
+                    $recover_list[] = $skip_array[$i];
+                }
+            }
+
+            foreach ($skip_array as $start=>$id)
+            {
+                if(count($recover_list) >= $diff)
+                {
+                    break;
+                }
+
+                if(!in_array($start, $have_class_index))
+                {
+                    $recover_list[] = $id;
+                }
+            }
+
+             //delete old old skip
+            if(count($recover_list) > 0)
+            {
+                $sql_delete_skip = "delete from temp_aed_skip_info where temp_skip_id in (".implode(",", $recover_list).");";
+                $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
+                if(is_null($delete_skip_result))
+                {
+                    throw new DBException('Fail to cancel teh relief', __FILE__, __LINE__, 2);
+                }
+            }
+        }
+
+        //search lesson during relief of new accname; if there's mandatory, return false, else if there is optional, put to skip_array;
+        if($new_aed)
+        {
+            $schedule_date_obj = new DateTime($schedule_date);
+            $weekday = $schedule_date_obj->format('N');
+
+            $sql_select_lesson = "select ct_lesson.* from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id = '$accname_new' and ct_lesson.weekday = $weekday and !ct_lesson.highlighted;";
+            $select_lesson_result = Constant::sql_execute($db_con, $sql_select_lesson);
+            if(is_null($select_lesson_result))
+            {
+                throw new DBException("override", __FILE__, __LINE__);
+            }
+
+            $optional_lessons = array();
+            foreach($select_lesson_result as $row)
+            {
+                $opt_start = $row['start_time_index'];
+                $opt_end = $row['end_time_index'];
+
+                for($i = $opt_start; $i < $opt_end; $i++)
+                {
+                    $optional_lessons[$i] = $row['lesson_id'];
+                }
+            }
+
+            $new_skip = array();
+            for($i = $start_time_index; $i < $end_time_index; $i++)
+            {
+                if(array_key_exists($i, $optional_lessons))
+                {
+                    $new_skip[] = array(
+                        "start_time" => $i,
+                        "lesson_id" => $optional_lessons[$i]
+                    );
+                }
+            }
+
+            //insert new skip_array
+            if(count($new_skip) > 0)
+            {
+                $sql_insert_new_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
+                foreach($new_skip as $a_skip)
+                {
+                    $lesson_id = $a_skip['lesson_id'];
+                    $start_skip = $a_skip['start_time'];
+                    $end_skip = $start_skip + 1;
+                    $sql_insert_new_skip .= "($schedule_index, '$lesson_id', '$schedule_date', $start_skip, $end_skip, '$accname_new'),";
+                }
+                $sql_insert_new_skip = substr($sql_insert_new_skip, 0, -1).';';
+                $insert_new = Constant::sql_execute($db_con, $sql_insert_new_skip);
+                if(is_null($insert_new))
+                {
+                    throw new DBException('Fail to insert new relief', __FILE__, __LINE__, 2);
+                }
+            }
         }
 
         return true;
@@ -625,11 +814,13 @@ class SchedulerDB
 
     public static function approve($schedule_index, $date)
     {
+        $sessionId = session_id();
+
         //1. move from temp to relief_info and delete temp
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
         {
-            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
+            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__);
         }
 
         //override for the particular day
@@ -640,21 +831,123 @@ class SchedulerDB
             throw new DBException('Fail to clear exist relief record', __FILE__, __LINE__, 2);
         }
 
+        //get leaves
+        $sql_select_leave = "select * from rs_leave_info where DATE('$date') between DATE(start_time) and DATE(end_time);";
+        $select_leave = Constant::sql_execute($db_con, $sql_select_leave);
+        if(is_null($select_leave))
+        {
+            throw new DBException('Fail to clear exist relief record', __FILE__, __LINE__, 2);
+        }
+
+        $leave_dict = array();
+        foreach($select_leave as $row)
+        {
+            $accname = $row['teacher_id'];
+
+            if(empty($leave_dict[$accname]))
+            {
+                $leave_dict[$accname] = array();
+            }
+
+            $leave_id = $row['leave_id'];
+
+            $time_zone = new DateTimeZone('Asia/Singapore');
+
+            $start_time_str = $row['start_time'];
+            $start_time_obj = new DateTime($start_time_str);
+            $start_time_obj->setTimezone($time_zone);
+            $start_time_stamp = $start_time_obj->getTimestamp();
+
+            $end_time_str = $row['end_time'];
+            $end_time_obj = new DateTime($end_time_str);
+            $end_time_obj->setTimezone($time_zone);
+            $end_time_stamp = $end_time_obj->getTimestamp();
+
+            $leave_dict[$accname][] = array($start_time_stamp, $end_time_stamp, $leave_id);
+        }
+
         //copy selected one
-        $sql_insert_select = "insert into rs_relief_info (lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot, leave_id_ref)
-            (select lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot, leave_id_ref from temp_each_alternative where schedule_id = $schedule_index);";
-        $insert_result = Constant::sql_execute($db_con, $sql_insert_select);
-        if (is_null($insert_result))
+        $sql_select_temp = "select lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot, leave_id_ref from temp_each_alternative where schedule_id = $schedule_index";
+        $select_temp = Constant::sql_execute($db_con, $sql_select_temp);
+        if (is_null($select_temp))
         {
             throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
         }
 
+        if(count($select_temp) > 0)
+        {
+            $sql_insert_select = "insert into rs_relief_info (lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot, leave_id_ref) values ";
+            foreach($select_temp as $row)
+            {
+                $lesson_id = $row['lesson_id'];
+                $schedule_date = $row['schedule_date'];
+                $start_time_relief = $row['start_time_index'];
+                $end_time_relief = $row['end_time_index'];
+                $leave_teacher = $row['leave_teacher'];
+                $relief_teacher = $row['relief_teacher'];
+                $num_of_slot = $row['num_of_slot'];
+
+                $start_time_value = SchoolTime::getTimeValue($start_time_relief);
+
+                $start_time_relief_obj = new DateTime($schedule_date." ".$start_time_value);
+                $start_time_relief_obj->setTimezone($time_zone);
+                $start_time_relief_stamp = $start_time_relief_obj->getTimestamp();
+
+                $leave_id_ref = "NULL";
+                foreach($leave_dict[$leave_teacher] as $row)
+                {
+                    if($start_time_relief_stamp >= $row[0] && $start_time_relief_stamp <= $row[1])
+                    {
+                        $leave_id_ref = $row[2];
+                    }
+                }
+
+                $sql_insert_select .= "('$lesson_id', '$schedule_date', $start_time_relief, $end_time_relief, '$leave_teacher', '$relief_teacher', $num_of_slot, $leave_id_ref),";
+            }
+            $sql_insert_select = substr($sql_insert_select, 0, -1).';';
+
+            $insert_result = Constant::sql_execute($db_con, $sql_insert_select);
+            if (is_null($insert_result))
+            {
+                throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
+            }
+        }
+
         //delete temp
+        /*
         $sql_delete = "delete from temp_each_alternative;";
         $delete_result = Constant::sql_execute($db_con, $sql_delete);
         if (is_null($delete_result))
         {
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
+        }
+         *
+         */
+
+        //get list of relief to construct skip reference
+        $sql_select_relief = "select * from rs_relief_info where schedule_date = DATE('$date')";
+        $select_relief_result = Constant::sql_execute($db_con, $sql_select_relief);
+        if(is_null($select_relief_result))
+        {
+            throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
+        }
+        $relief_dict = array();
+        foreach($select_relief_result as $row)
+        {
+            $accname = $row['relief_teacher'];
+            if(empty($relief_dict[$accname]))
+            {
+                $relief_dict[$accname] = array();
+            }
+
+            $start_time = $row['start_time_index'];
+            $end_time = $row['end_time_index'];
+            $relief_id = $row['relief_id'];
+
+            for($i = $start_time; $i < $end_time; $i++)
+            {
+                $relief_dict[$accname][$i] = $relief_id;
+            }
         }
 
         //2. move and delete
@@ -666,12 +959,33 @@ class SchedulerDB
         }
 
         //copy selected one
-        $sql_insert_skip = "insert into rs_aed_skip_info (lesson_id, schedule_date, start_time_index, end_time_index, accname)
-            (select lesson_id, schedule_date, start_time_index, end_time_index, accname from temp_aed_skip_info where schedule_id = $schedule_index);";
-        $insert_skip_result = Constant::sql_execute($db_con, $sql_insert_skip);
-        if (is_null($insert_skip_result))
+        $sql_select_temp_skip = "select * from temp_aed_skip_info where schedule_id = $schedule_index;";
+        $select_temp_skip = Constant::sql_execute($db_con, $sql_select_temp_skip);
+        if(is_null($select_temp_skip))
         {
-            throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
+            throw new DBException('Fail to clear exist skip record', __FILE__, __LINE__, 2);
+        }
+
+        if(count($select_temp_skip) > 0)
+        {
+            $sql_insert_skip = "insert into rs_aed_skip_info (lesson_id, schedule_date, start_time_index, end_time_index, accname, relief_id_ref) values ";
+            foreach($select_temp_skip as $row)
+            {
+                $lesson_id = $row['lesson_id'];
+                $start_time_skip = $row['start_time_index'];
+                $end_time_skip = $start_time_skip + 1;
+                $accname = $row['accname'];
+                $relief_id_ref = empty($relief_dict[$accname][$start_time_skip])?'NULL':$relief_dict[$accname][$start_time_skip];
+
+                $sql_insert_skip .= "('$lesson_id', '$date', $start_time_skip, $end_time_skip, '$accname', $relief_id_ref),";
+            }
+            $sql_insert_skip = substr($sql_insert_skip, 0, -1).';';
+
+            $insert_skip_result = Constant::sql_execute($db_con, $sql_insert_skip);
+            if (is_null($insert_skip_result))
+            {
+                throw new DBException('Fail to approve the schedule', __FILE__, __LINE__, 2);
+            }
         }
 
         //delete temp
@@ -785,13 +1099,23 @@ class SchedulerDB
                 "phoneNum" => $phone,
                 "name" => $name,
                 "accName" => $accname,
-                "message" => $message
+                "message" => $message,
+                "type" => 'R'
             );
 
             $sms_input[] = $one_teacher;
         }
 
         //5. send sms and record success/failure
+        $all_input = array(
+            "date" => $date,
+            "input" => $sms_input
+        );
+//        $all_input_str = serialize($all_input);
+
+        $_SESSION['sms']=$all_input;
+        BackgroundRunner::execInBackground(realpath('../sms/sendSMS.php'), array('s'), array($sessionId));
+        /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
         if (!is_null($sms_reply))
@@ -808,6 +1132,8 @@ class SchedulerDB
                 }
             }
         }
+         *
+         */
 
         //6. send email and record success/failure
         $from = array(
@@ -841,22 +1167,26 @@ class SchedulerDB
                 $name = 'Teacher';
             }
 
-            $message = "";
-
-            $index = 1;
+            $email_timetable_input = array();
             foreach ($one as $a_relief)
             {
-                $start_time = SchoolTime::getTimeValue($a_relief['start_time']);
-                $end_time = SchoolTime::getTimeValue($a_relief['end_time']);
+                $start_time = $a_relief['start_time'] - 1;
+                $end_time = $a_relief['end_time'] - 1;
 
-                $classes = implode(",", $a_relief['class']);
-                $subject = $a_relief['subject'];
-                $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
+                for($i = $start_time; $i < $end_time; $i++)
+                {
+                    $subject = $a_relief['subject'];
+                    $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
 
-                $message .= "|    $index : On $date $start_time-$end_time take relief for $classes subject-$subject venue-$venue  |";
-
-                $index++;
+                    $email_timetable_input[$i] = array(
+                        "class" => $a_relief['class'],
+                        "subject" => $subject,
+                        "venue" => $venue
+                    );
+                }
             }
+
+            $message = Email::formatEmail($name, $date, $email_timetable_input, Constant::email_name);
 
             $recepient = array(
                 'accname' => $accname,
@@ -869,6 +1199,14 @@ class SchedulerDB
 
             $to[] = $recepient;
         }
+
+        $all_input_email = array(
+            "from" => $from,
+            "to" => $to
+        );
+//        $all_input_str_email = serialize($all_input_email);
+        $_SESSION["email"] = $all_input_email;
+        BackgroundRunner::execInBackground(realpath('../sms/sendEmail.php'), array('s'), array($sessionId));
 
         /*
         $email_reply = Email::sendMail($from, $to);
@@ -887,6 +1225,7 @@ class SchedulerDB
          */
 
         //7. return
+        /*
         $sort_arr = Array();
 
         foreach($return_result as $key=>$value)
@@ -895,8 +1234,10 @@ class SchedulerDB
         }
 
         array_multisort($sort_arr, SORT_ASC, $return_result);
+         *
+         */
 
-        return $return_result;
+        return array();
     }
 
     public static function allSchduleIndex()

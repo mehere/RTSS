@@ -1,16 +1,9 @@
 <?php
-
-require_once 'Teacher.php';
-require_once 'TimetableAnalyzer.php';
-require_once 'SchedulerDB.php';
-require_once 'DayTime.php';
-require_once 'Lesson.php';
-require_once 'TimetableDB.php';
-require_once 'ListGenerator.php';
-require_once 'DBException.php';
-require_once 'User.php';
-require_once 'AdHocSchedulerDB.php';
-
+require_once 'email_lib/swift_required.php';
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
+session_start();
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -18,7 +11,7 @@ require_once 'AdHocSchedulerDB.php';
 /*
 Teacher::setExcludingList("2013/01/01", Array('123','2345'));
 print_r(Teacher::getExcludingList("2013/01/01"));
- * 
+ *
  */
 /*
 $lesson_1 = Array(
@@ -42,12 +35,12 @@ $lesson_2 = Array(
     "class" => Array('5A', '2B', '3C')
 );
 $input = Array($lesson_1, $lesson_2);
- * 
+ *
  */
 //
 //$input=array(array (
 //      'accname' => '0142380',
-//      'class' => 
+//      'class' =>
 //      array (
 //        0 => 'c',
 //        1 => 'dfl',
@@ -63,11 +56,11 @@ $input = Array($lesson_1, $lesson_2);
 //    ));
 
 //echo TimetableDB::uploadAEDTimetable($input)?"okay":"no";
- 
+
 /*
 $test = new DBException("Test Error", __FILE__, __LINE__);
 echo $test;
- * 
+ *
  */
 //********xue : testing
 //$scheduling = new SchedulerDB(new DateTime("2013-02-06"));
@@ -80,11 +73,11 @@ foreach($result as $key=>$value)
     print_r($value);
     echo "<br><br>";
 }
- * 
+ *
  */
 //print_r($scheduling->getExcludedTeachers());
 /*
-$result = $scheduling->getHodTeachers();
+$result = $scheduling->getAedTeachers();
 foreach($result as $key=>$value)
 {
     echo "S**************************<br>";
@@ -114,7 +107,7 @@ foreach($result as $key=>$value)
     echo "E**************************<br>";
     echo "<br><br><br>";
 }
- * 
+ *
  */
 /*
 $result = $scheduling->getTempTeachers();
@@ -127,7 +120,7 @@ foreach($result as $key=>$value)
     echo print_r($value->availability);
     echo "<br>";
 }
- * 
+ *
  */
 /*
 $result = Teacher::getAllTeachers();
@@ -139,7 +132,7 @@ foreach($result as $key=>$a_teacher)
     echo $a_teacher['mobile']."<br>";
     echo "<br>";
 }
- * 
+ *
  */
 //echo Teacher::calculateLeaveSlot("8104329", "2013-01-08 09:15", "2013-01-08 13:15");
 //$result = Teacher::getLessonSlotsOfTeacher("8104329");
@@ -153,7 +146,7 @@ foreach($result as $key=>$a_result)
     }
     echo "<br>";
 }
- * 
+ *
  */
         //Teacher::listUnmatchedAbbreName($arrTeachers);
         //Teacher::abbreToFullnameBatchSetup($arrTeachers);
@@ -163,9 +156,9 @@ foreach($result as $key=>$a_result)
        /*
         TimetableDB::insertTimetable($arrLessons, $arrTeachers);
         Test::insertAEDTimetable($arrLessons, $arrTeachers);
-        * 
+        *
         */
-        
+
         /*
           Teacher::getTeachersAccnameAndFullname($arrTeachers);
           foreach($arrTeachers as $a_teacher)
@@ -174,11 +167,11 @@ foreach($result as $key=>$a_result)
           echo $a_teacher->name."<br>";
           echo $a_teacher->accname."<br><br>";
           }
-         * 
+         *
          */
         //Teacher::insertAbbrMatch(array('AF ADF'=>'2344244'));
         //echo Teacher::insertAbbrMatch(array('ADE'=>'122333121', 'ASDFASF'=>'434332333','AF ADF'=>'2344244','CDDE'=>'ASFEAF'));
-        
+
         /*
           $query_date = "2013-02-06";
           $teacher_on_leave = Teacher::getTeacherOnLeave($query_date);
@@ -198,9 +191,9 @@ foreach($result as $key=>$a_result)
           echo ($a_leave_teacher['isScheduled']?"YES":"NO")."<br>";
           echo "end<br><br>";
           }
-         * 
+         *
          */
-         
+
        /*
           $query_date = "2013-02-06";
           $temp_teacher = Teacher::getTempTeacher($query_date);
@@ -219,7 +212,7 @@ foreach($result as $key=>$a_result)
             echo $a_leave_teacher['handphone']."<br>";
             echo "end<br><br>";
           }
-        * 
+        *
         */
         /*
           $test_result = Teacher::getIndividualTeacherDetail("aie");
@@ -279,7 +272,7 @@ foreach($result as $one)
     echo $one->teacherRelief."<br>";
     echo "<br>";
 }
- * 
+ *
  */
 /*
 $result = AdHocSchedulerDB::getBlockingPlan('2013-02-06');
@@ -293,23 +286,23 @@ foreach($result as $row)
     echo $row->subject."<br>";
     echo "<br>";
 }
- * 
+ *
  */
-/* 
+/*
 $result = User::queryTeacherID("S8104329I", "Li Huili");
 echo "id : ".$result;
- * 
+ *
  */
         /*
           $result = User::login("G6471009K", '0707');
           echo "accname : ".$result['accname']."<br>";
           echo "type : ".$result['type']."<br>";
           echo "fullname : ".$result['fullname']."<br>";
-         * 
+         *
          */
         /*
           $result = Teacher::getTeacherName('');
-         
+
           foreach($result as $key=>$one_teacher)
           {
                 echo $key."<br>";
@@ -317,31 +310,31 @@ echo "id : ".$result;
                 echo $one_teacher['type']."<br>";
                 echo $one_teacher['fullname']."<br><br>";
           }
-         * 
+         *
          */
 /*
         $result = Teacher::getTeacherInfo('temp');
-         
+
           foreach($result as $key=>$one_teacher)
           {
                 echo $key."<br>";
                 echo $one_teacher['type']."<br>";
                 echo $one_teacher['fullname']."<br><br>";
           }
- * 
+ *
  */
 
         /*
           $result = Teacher::getIndividualTeacherDetail("TMP1111111");
           print_r($result);
-         * 
+         *
          */
 /*
 $result = TimetableDB::getReliefTimetable("", "", "2013-02-06");
 foreach($result as $key=>$value)
 {
     echo 'start : '.$key.' :<br><br>';
-    
+
     foreach($value as $teaching)
     {
         echo $teaching['subject'].'<br>';
@@ -355,7 +348,7 @@ foreach($result as $key=>$value)
         echo '<br>';
     }
 }
- * 
+ *
  */
 
 //print_r(ListGenerator::getTeacherType());
@@ -370,7 +363,7 @@ foreach($result as $key => $value)
     echo $value.'<br>';
     echo '<br>';
 }
- * 
+ *
  */
 /*
 $result = AdHocSchedulerDB::getApprovedSchedule('2013-02-06');
@@ -378,7 +371,7 @@ foreach($result as $key=>$value)
 {
     echo $key." : <br>";
     echo $value['reliefTeacher']."<br>";
-    
+
     $lessons = $value['lesson'];
     foreach($lessons as $id=>$one)
     {
@@ -392,10 +385,10 @@ foreach($result as $key=>$value)
         echo "<br>";
         echo "..........<br>";
     }
-    
+
     echo "<br><br>";
 }
- * 
+ *
  */
         //$result1 = Teacher::add('', 'temp', Array('fullname' => 'Robot Haphati Fckek', 'remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00',  'email' => '111@adb.com', 'MT' => 'tamil'));
         //$result2 = Teacher::add('TMP1111111', 'temp', Array('remark' => 'I am new here', 'datetime-from' => '2013-01-15 08:00', 'datetime-to' => '2013-01-16 08:00', 'handphone' =>  '11111111'));
@@ -405,19 +398,19 @@ foreach($result as $key=>$value)
         //echo Teacher::delete(Array(11, 12, 13), 'leave');
         //echo Teacher::delete(Array(10), 'temp');
         //Teacher::edit(1, "leave", Array('reason'=>'Ha ha', 'remark'=>'cdddc','datetime-from'=>'2013-02-06 11:15'));//, 'datetime-to'=>'2013-02-11 14:15'
-        //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-02-06 08:15', 'email'=>'dddddddf@adf.com', 'handphone'=>'23232323', 'MT'=>'Malay')); //'datetime-to'=>'2013-01-14 12:15', 
+        //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-02-06 08:15', 'email'=>'dddddddf@adf.com', 'handphone'=>'23232323', 'MT'=>'Malay')); //'datetime-to'=>'2013-01-14 12:15',
         //********xue : testing end
 /*
-$result = Teacher::overallReport('', 'net', SORT_DESC);
+$result = Teacher::overallReport('', 'net', SORT_DESC, "2013", 1);
 foreach($result as $value)
 {
     print_r($value);
     echo "<br>";
 }
- * 
+ *
  */
 /*
-$value = Teacher::individualReport('6937933');
+$value = Teacher::individualReport('8909732');
 
     echo $value['numOfMC']."<br>";
     echo $value['numOfRelief']."<br>";
@@ -425,11 +418,15 @@ $value = Teacher::individualReport('6937933');
     echo "<br>";
     print_r($value['relief']);
     echo "<br>";
- * 
+ *
  */
 //echo SchedulerDB::scheduleResultNum();
+
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", 0);  //go through normal before approve
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "7032095", -1);  //go through normal after approve, AED
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", 0, "ad_hoc");  //go through ad hoc before approve
+//$result = TimetableDB::getIndividualTimetable('2013-02-06', "6937933", -1, "ad_hoc");  //go through ad hoc after approve
 /*
-$result = TimetableDB::getIndividualTimetable('2013-02-06', "7576699", 0);
 foreach($result as $key=>$value)
 {
     echo $key."<br>";
@@ -437,13 +434,15 @@ foreach($result as $key=>$value)
     echo $value['attr']."<br>";
     echo $value['venue']." hehe<br>";
     print_r($value['class']);
-    
+    echo "<br>";
+    print_r($value['skipped']);
+
     echo "<br><br>";
 }
- * 
+ *
  */
 
-//echo TimetableDB::checkTimetableConflict(0, Array(1, 2), "TMP4444444", "2013/2/06", "N1313126HD65");
+//echo TimetableDB::checkTimetableConflict(0, Array(4, 5), "TMP4444444", "2013/2/06", "N1313126HD65");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
@@ -457,13 +456,14 @@ foreach($result as $a => $b)
         echo $c['teacherAccName']."<br>";
         echo $c['reliefTeacher']."<br>";
         echo $c['reliefAccName']."<br>";
+        echo $c['reliefID']."<br>";
         print_r($c['time']);
         echo "<br>";
         print_r($c['class']);
         echo "<br><br>";
     }
 }
- * 
+ *
  */
 
 //echo print_r(SchedulerDB::allSchduleIndex());
@@ -484,10 +484,10 @@ foreach($result as $key=>$row)
         echo "<br><br>";
     }
 }
- * 
+ *
  */
 
-//var_dump(SchedulerDB::override(0, "N1313121HC31", "6644942", "TMP1111111"));
+//var_dump(SchedulerDB::override(0,1174, '7832040')); //extreme case : override one AED with another AED
 /*
 $result = Teacher::getTeacherContact();
 foreach($result as $key => $row)
@@ -496,18 +496,23 @@ foreach($result as $key => $row)
     print_r($row);
     echo "<br>";
 }
- * 
- */ 
-/*
+ *
+ */
+
 $result = SchedulerDB::approve(0, '2013-02-06');
 foreach($result as $row)
 {
     print_r($row);
     echo "<br>";
 }
- * 
- */
+
 //AdHocSchedulerDB::cancelRelief(821, 2, 5);
+
+//print_r(AdHocSchedulerDB::adHocApprove(0, '2013-02-06'));
+
+//AdminConfig::setRecommendedLesson(10);
+//echo $scheduling->getRecommendedNoOfLessons();
+
 /*
 class Test
 {
@@ -515,7 +520,7 @@ class Test
     {
         //insert semester info
         $sem_id = TimetableDB::checkTimetableExistence(1, array('year'=>$year, 'sem'=>$sem));
-        
+
         if($sem_id === -1)
         {
             if($sem === 1)
@@ -534,12 +539,12 @@ class Test
             }
 
             $db_con = Constant::connect_to_db('ntu');
-        
+
             if (empty($db_con))
             {
                 throw new DBException("Fail to connect to database", __FILE__, __LINE__);
             }
-            
+
             $sql_insert_sem = "insert into ct_semester_info (start_date, end_date, year, sem_num) values ('$sem_start_date', '$sem_end_date', '$year', $sem);";
             $insert_sem = Constant::sql_execute($db_con, $sql_insert_sem);
             if(is_null($insert_sem))
@@ -549,20 +554,20 @@ class Test
 
             $sem_id = mysql_insert_id();
         }
-        
+
         //teacher list
         //temp - will delete later
         Teacher::getTeachersAccnameAndFullname($teacher_list);
-        
+
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time_index, end_time_index, subj_code, venue, type, highlighted, sem_id) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
-        
+
         $has_teacher = false;
         $has_lesson = false;
         $has_class = false;
-        
+
         foreach($lesson_list as $key=>$value){
             //insert into ct_lesson table
             $subject = $value->subject;
@@ -573,7 +578,7 @@ class Test
             if (!(empty($value->venue))){
                 $venue = $value->venue;
             }
-            
+
             if(empty($day_index) || !is_numeric($day_index) || $day_index < 1 || $day_index > Constant::num_of_week_day)
             {
                 throw new DBException('Lesson '.$key."'s day index is not a number", __FILE__, __LINE__, 2);
@@ -586,15 +591,15 @@ class Test
             {
                 throw new DBException('Lesson '.$key."'s end time index is not a number", __FILE__, __LINE__, 2);
             }
-            
+
             $lesson_id = TimetableDB::generateLessonPK('A', $year, $sem, $day_index, $start_time_index, $end_time_index, empty($value->classes)?array():array_keys($value->classes), empty($value->teachers)?array():array_keys($value->teachers));
-            
+
             $sql_insert_lesson .= "('".mysql_real_escape_string(trim($lesson_id))."', ".$day_index.", ".$start_time_index.", ".$end_time_index.", '".mysql_real_escape_string(trim($subject))."', '".mysql_real_escape_string(trim($venue))."', 'A', true, $sem_id), ";
             $has_lesson = true;
-            
+
             //insert into ct_class_matching
             $classes = $value->classes;
-            
+
             if(count($classes)>0)
             {
                 foreach ($classes as $aClass) {
@@ -606,56 +611,56 @@ class Test
                     }
 
                     $sql_insert_lesson_class .= "('".mysql_real_escape_string($lesson_id)."', '".mysql_real_escape_string($class_name)."'), ";
-                    
+
                     $has_class = true;
                 }
             }
-            
+
             //insert into ct_teacher_matching
             $teachers = $value->teachers;
-            
+
             foreach ($teachers as $a_teacher){
                 $abbre_name = $a_teacher->abbreviation;
                 $teacher_accname = $teacher_list[$abbre_name]->accname;
-                
+
                 if(empty($teacher_accname))
                 {
                     //throw new DBException($abbre_name." does not have accname", __FILE__, __LINE__);
                     continue;
                 }
-                
+
                 $sql_insert_lesson_teacher .= "('".mysql_real_escape_string($teacher_accname)."', '".mysql_real_escape_string($lesson_id)."'), ";
-                
+
                 $has_teacher = true;
             }
         }
-        
+
         $sql_insert_lesson = substr($sql_insert_lesson, 0, -2).';';
         $sql_insert_lesson_class = substr($sql_insert_lesson_class, 0, -2).';';
         $sql_insert_lesson_teacher = substr($sql_insert_lesson_teacher, 0, -2).';';
-        
-        
+
+
         echo $sql_insert_lesson.'<br><br>';
         echo $sql_insert_lesson_class.'<br><br>';
         echo $sql_insert_lesson_teacher.'<br><br>';
-         
-        
+
+
         $db_con_new = Constant::connect_to_db('ntu');
-        
+
         if (empty($db_con_new))
         {
             throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
-        
+
         //clear existing data
         $delete_sql_lesson = "delete from ct_lesson where type = 'A' and sem_id = $sem_id;";
-        
+
         $clear_old_result = Constant::sql_execute($db_con_new, $delete_sql_lesson);
         if (is_null($clear_old_result))
         {
             throw new DBException("Fail to clear old data", __FILE__, __LINE__, 2);
         }
-        
+
         //insert new data
         if($has_lesson)
         {
@@ -681,11 +686,11 @@ class Test
                 throw new DBException("Fail to insert into ct_teacher_matching", __FILE__, __LINE__, 2);
             }
         }
-        
+
         return true;
     }
 }
- * 
+ *
  */
 
 ?>

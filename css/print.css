@@ -8,6 +8,7 @@ body {
 #container {
 	width: 900px;
 	margin: 10px auto;
+	padding-left: 30px;
 }
 
 .table-info {

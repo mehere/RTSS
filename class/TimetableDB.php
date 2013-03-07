@@ -482,9 +482,9 @@ class TimetableDB
      * @param type $isPreview
      * @return
      */
-    public static function getIndividualTimetable($date, $accname,$scheduleIndex = -1)
+    public static function getIndividualTimetable($date, $accname,$scheduleIndex = -1, $type = 'normal')
     {
-        $result = Array();
+        $result = array();
 
         $db_con = Constant::connect_to_db('ntu');
         if(empty($db_con))
@@ -535,12 +535,12 @@ class TimetableDB
                     $venue = empty($row['venue'])?"":$row['venue'];
                     $attr = $row['highlighted']?0:1;
 
-                    $a_lesson = Array(
+                    $a_lesson = array(
                         "id" => $row['lesson_id'],
                         "subject" => $row['subj_code'],
                         "venue" => $venue,
                         "attr" => $attr,
-                        "class" => Array()
+                        "class" => array()
                     );
 
                     if(!empty($row['class_name']))
@@ -554,10 +554,10 @@ class TimetableDB
         }
 
         //from relief timetable
-        if($scheduleIndex === -1)
+        if($scheduleIndex === -1 || ($scheduleIndex >= 0 && strcmp($type, 'ad_hoc') === 0))
         {
             //confirmed
-            $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher = '".$accname."';";
+            $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher = '".$accname."' and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname = '$accname');";
 
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
@@ -588,12 +588,12 @@ class TimetableDB
                                 $temp = $result[$i];
                                 $venue = empty($row['venue'])?"":$row['venue'];
 
-                                $result[$i] = Array(
+                                $result[$i] = array(
                                     "id" => $row['lesson_id'],
                                     "subject" => $row['subj_code'],
                                     "venue" => $venue,
                                     "attr" => 2,
-                                    "class" => Array(),
+                                    "class" => array(),
                                     "skipped" => $temp
                                 );
 
@@ -616,12 +616,12 @@ class TimetableDB
                     {
                         $venue = empty($row['venue'])?"":$row['venue'];
 
-                        $a_lesson = Array(
+                        $a_lesson = array(
                             "id" => $row['lesson_id'],
                             "subject" => $row['subj_code'],
                             "venue" => $venue,
                             "attr" => 2,
-                            "class" => Array()
+                            "class" => array()
                         );
 
                         if(!empty($row['class_name']))
@@ -633,8 +633,42 @@ class TimetableDB
                     }
                 }
             }
+            
+            //get skipped lessons without relief 
+            $sql_skip_no_relief = "select * from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname = '$accname';";
+            $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
+            if(is_null($skip_no_relief))
+            {
+                throw new DBException('Fail to query timetable', __FILE__, __LINE__);
+            }
+            foreach($skip_no_relief as $row)
+            {
+                $start_index = $row['start_time_index'] - 1;
+                
+                if(!array_key_exists($start_index, $result))
+                {
+                    //it's theoretically impossible as skip lesson must be associated with an optional lesson
+                    continue;
+                }
+                if($result[$start_index] !== 1)
+                {
+                    //not an optional lesson here
+                    continue;
+                }
+                
+                $temp_optional = array(
+                    "class" => array(),
+                    "subject" => "",
+                    "venue" => "",
+                    "attr" =>2,
+                    "skipped" => $result[$start_index]
+                );
+                
+                $result[$start_index] = $temp_optional;
+            }
         }
-        else
+        
+        if($scheduleIndex >= 0)
         {
             //not confirmed
             $sql_query_relief = "select * from ((temp_each_alternative left join ct_lesson on ct_lesson.lesson_id = temp_each_alternative.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$scheduleIndex." AND temp_each_alternative.relief_teacher = '".$accname."';";
@@ -667,12 +701,12 @@ class TimetableDB
                                 $temp = $result[$i];
                                 $venue = empty($row['venue'])?"":$row['venue'];
 
-                                $result[$i] = Array(
+                                $result[$i] = array(
                                     "id" => $row['lesson_id'],
                                     "subject" => $row['subj_code'],
                                     "venue" => $venue,
                                     "attr" => 2,
-                                    "class" => Array(),
+                                    "class" => array(),
                                     "skipped" => $temp
                                 );
 
@@ -691,13 +725,13 @@ class TimetableDB
                     {
                         $venue = empty($row['venue'])?"":$row['venue'];
 
-                        $a_lesson = Array(
+                        $a_lesson = array(
                             "id" => $row['lesson_id'],
                             "subject" => $row['subj_code'],
                             "venue" => $venue,
                             "attr" => 2,
                             "isRelief" => true,
-                            "class" => Array()
+                            "class" => array()
                         );
 
                         if(!empty($row['class_name']))
@@ -709,8 +743,41 @@ class TimetableDB
                     }
                 }
             }
+            
+            //get skipped lessons without relief 
+            $sql_skip_no_relief = "select * from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_aed_skip_info.schedule_id = $scheduleIndex and temp_aed_skip_info.accname = '$accname';";
+            $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
+            if(is_null($skip_no_relief))
+            {
+                throw new DBException('Fail to query timetable', __FILE__, __LINE__);
+            }
+            foreach($skip_no_relief as $row)
+            {
+                $start_index = $row['start_time_index'] - 1;
+                
+                if(!array_key_exists($start_index, $result))
+                {
+                    //it's theoretically impossible as skip lesson must be associated with an optional lesson
+                    continue;
+                }
+                if($result[$start_index] !== 1)
+                {
+                    //not an optional lesson here
+                    continue;
+                }
+                
+                $temp_optional = array(
+                    "class" => array(),
+                    "subject" => "",
+                    "venue" => "",
+                    "attr" =>2,
+                    "skipped" => $result[$start_index]
+                );
+                
+                $result[$start_index] = $temp_optional;
+            }
         }
-
+        
         //grey out leave period
         $sql_leave = "select *, DATE_FORMAT(rs_leave_info.start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_leave_info.end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info where ('$date' between DATE(start_time) and DATE(end_time)) and teacher_id = '$accname';";
         $leave_result = Constant::sql_execute($db_con, $sql_leave);
@@ -760,10 +827,11 @@ class TimetableDB
      * @param type $accname
      * @param type $schedule_date
      * @param type $lesson_id
+     * @param int $type 0:normal, 1:ad hoc
      * @return int
      * @throws DBException
      */
-    public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date, $lesson_id)
+    public static function checkTimetableConflict($schedule_index, $time_range, $accname, $schedule_date, $lesson_id, $type = 0)
     {
         $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$schedule_date));
 
@@ -792,20 +860,31 @@ class TimetableDB
             return 1;
         }
 
-        /*
-        $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
-        $relief_result = Constant::sql_execute($db_con, $sql_relief);
-        if(is_null($relief_result))
+        if($type !== 0)
         {
-            return -1;
-        }
-        else if(count($relief_result) > 0)
-        {
-            return 2;
-        }
-         *
-         */
+            $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
+            $relief_result = Constant::sql_execute($db_con, $sql_relief);
+            if(is_null($relief_result))
+            {
+                return -1;
+            }
+            else if(count($relief_result) > 0)
+            {
+                return 1;
+            }
 
+            $sql_block = "select * from temp_ah_cancelled_relief where accname = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((block_start_index < ".$time_range[1].") and (block_end_index > ".$time_range[0]."));";
+            $block_result = Constant::sql_execute($db_con, $sql_block);
+            if(is_null($block_result))
+            {
+                return -1;
+            }
+            else if(count($block_result) > 0)
+            {
+                return 1;
+            }
+        }
+        
         $sql_temp = "select * from temp_each_alternative where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and schedule_id =".$schedule_index." and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0].")) and lesson_id != '$lesson_id';";
         $temp_result = Constant::sql_execute($db_con, $sql_temp);
 

@@ -86,6 +86,11 @@ class ListGenerator
         {
             $accname = $row['relief_teacher'];
 
+            if(array_key_exists($accname, $result))
+            {
+                continue;
+            }
+            
             if(array_key_exists($accname, $teacher_dict))
             {
                 $fullname = $teacher_dict[$accname]['name'];

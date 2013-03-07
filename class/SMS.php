@@ -10,11 +10,11 @@ class SMS {
         set_time_limit(1200);
         $index = 0;
         $attempt = 1;
-        
+
         //test
         $print_command = array();
         //end of test
-        
+
         while ($index < sizeof($receiverList)) {
             if ($attempt == 1) {
                 $phoneNum = $receiverList[$index]["phoneNum"];
@@ -24,20 +24,20 @@ class SMS {
                 $name = $receiverList[$index]["name"];
                 $message = "<iScheduler> Dear $name, " . $receiverList[$index]["message"];
                 $timeCreated = date('Y-m-d H:i:s');
-                $accname = $receiverList[$index]["accname"];
-                $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname);
+                $accname = $receiverList[$index]["accName"];
+                $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $receiverList[$index]["type"]);
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
                 $message = $message . "Please reply in the following format: '$smsId-Yes' for acceptance or '$smsId-no' for decline.";
             }
             if (trim($phoneNum)) {
                 //chdir('C:\xampp\htdocs\fscan\sms');
                 $command = 'java -jar vigsyssmscom4.jar "1" "' . $phoneNum . '" "' . $message . '"';
-                
+
                 //test
                 $print_command[] = $command;
                 $outputCode = 100;
                 //end of test
-                
+
                 //$apiOutput = shell_exec($command . "\n");
                 //$outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
             } else {
@@ -61,7 +61,7 @@ class SMS {
                 $attempt++;
             }
         }
-        
+
         //test
 //        $file = fopen('sms_test.txt', 'w');
 //        foreach ($print_command as $gem)
@@ -70,7 +70,7 @@ class SMS {
 //        }
 //        fclose($file);
         //end of test
-        
+
         return $sendingResult;
     }
 
@@ -109,9 +109,9 @@ class SMS {
         set_time_limit(1200);
         $msgSent = SMSDB::getSMSsent($scheduleDate);
 
-        chdir('C:\xampp\htdocs\fscan\sms');
-        $command = 'java -jar vigsyssmscom4.jar "2"';
-        $output = shell_exec($command);
+        //chdir('C:\xampp\htdocs\fscan\sms');
+        //$command = 'java -jar vigsyssmscom4.jar "2"';
+        //$output = shell_exec($command);
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
         if ($startPos > 20) {
             $msgString = substr($output, $startPos);
