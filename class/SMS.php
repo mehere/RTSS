@@ -25,7 +25,7 @@ class SMS {
                 $message = "<iScheduler> Dear $name, " . $receiverList[$index]["message"];
                 $timeCreated = date('Y-m-d H:i:s');
                 $accname = $receiverList[$index]["accname"];
-                $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname);
+                $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $receiverList[$index]["type"]);
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
                 $message = $message . "Please reply in the following format: '$smsId-Yes' for acceptance or '$smsId-no' for decline.";
             }
@@ -109,9 +109,9 @@ class SMS {
         set_time_limit(1200);
         $msgSent = SMSDB::getSMSsent($scheduleDate);
 
-        chdir('C:\xampp\htdocs\fscan\sms');
-        $command = 'java -jar vigsyssmscom4.jar "2"';
-        $output = shell_exec($command);
+        //chdir('C:\xampp\htdocs\fscan\sms');
+        //$command = 'java -jar vigsyssmscom4.jar "2"';
+        //$output = shell_exec($command);
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
         if ($startPos > 20) {
             $msgString = substr($output, $startPos);
