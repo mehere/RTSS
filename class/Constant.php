@@ -24,6 +24,8 @@ Class Constant
     const num_of_time_slot = 15;
     const num_of_week_day = 5;
 
+    const default_recom_num = 10; //in case fail to query from database
+    
     public static $mother_tongue = array("Chinese", "Tamil", "Malay");
     public static $teacher_type = array("Teacher"=>"Normal", "AED"=>"Aed", "Temp"=>"Temp", "HOD"=>"Hod", "untrained"=>"Untrained", "ExCo"=>"ExCo");   //key: types in database; value: types in websystem. Due to some reasons, we maintain the two list
 
