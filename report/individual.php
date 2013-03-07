@@ -15,7 +15,7 @@ Template::printHeaderAndDoValidation('Report',
         <span class="filter-control">
             <input type="text" name="fullname" value="<?php echo $_POST['fullname']; ?>" class="field" />
             <input type="hidden" name="accname" value="<?php echo $_POST['accname']; ?>" />
-            <input type="submit" value="Go" class="button" style="font-size: 12px; padding: 5px 10px" />
+            <input type="submit" value="Go" class="button button-small" style="margin-left: 10px" />
         </span>
     </span>
 </form>                

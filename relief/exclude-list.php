@@ -92,6 +92,7 @@ EOD;
         <input type="submit" name="save" value="Save" class="button green" />
         <input type="reset" name="reset" value="Reset" class="button red" />
     </div>
+    <div style="clear: both"></div>
     <input type="hidden" name="num" value="<?php echo $i; ?>" />
 </form>
 <?php 

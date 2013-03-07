@@ -147,6 +147,7 @@ EOD;
         <input type="button" name="goback" value="Go Back" class="button" />
         <input type="button" name="delete" value="Delete Selected" class="button red" />
     </div>
+    <div style="clear: both"></div>
     <input type="hidden" name="num" value="<?php echo count($teacherList); ?>" />
 </form>
 <div id="teacher-detail"></div>
