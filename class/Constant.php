@@ -20,7 +20,7 @@ Class Constant
     const email_port = 465;
     const email_encryption = 'ssl';
     
-    const php_exe = "D:\xampp\php\php.exe";
+    const php_exe = "D:\\xampp\php\php.exe";
     
     //time slot
     const num_of_time_slot = 15;
