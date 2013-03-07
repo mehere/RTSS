@@ -730,22 +730,26 @@ class AdHocSchedulerDB
                 $name = 'Teacher';
             }
 
-            $message = "";
-
-            $index = 1;
+            $email_timetable_input = array();
             foreach ($one as $a_relief)
             {
-                $start_time = SchoolTime::getTimeValue($a_relief['start_time']);
-                $end_time = SchoolTime::getTimeValue($a_relief['end_time']);
+                $start_time = $a_relief['start_time'] - 1;
+                $end_time = $a_relief['end_time'] - 1;
 
-                $classes = implode(",", $a_relief['class']);
-                $subject = $a_relief['subject'];
-                $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
-
-                $message .= "|    $index : On $date $start_time-$end_time take relief for $classes subject-$subject venue-$venue  |";
-
-                $index++;
+                for($i = $start_time; $i < $end_time; $i++)
+                {
+                    $subject = $a_relief['subject'];
+                    $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
+                    
+                    $email_timetable_input[$i] = array(
+                        "class" => $a_relief['class'],
+                        "subject" => $subject,
+                        "venue" => $venue
+                    );
+                }
             }
+
+            $message = Email::formatEmail($name, $date, $email_timetable_input, Constant::email_name);
 
             $recepient = array(
                 'accname' => $accname,
