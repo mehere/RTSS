@@ -14,11 +14,15 @@ spl_autoload_register(function($class){
     require_once "../class/$class.php";
 });
 
-$options = getopt("string:");
-$input_str = $options["string"];
-$input_str_trim = substr($input_str, 1, strlen($input_str) - 1);
+$options = getopt("s:");
+$input_str = $options["s"];
+$input_str_trim = substr($input_str, 1, strlen($input_str) - 2);
 
-$input = unserialize($input_str_trim);
+session_id($input_str_trim);
+session_start();
+
+$input = $_SESSION["sms"];
+unset($_SESSION['sms']);
 
 $sms_input = $input['input'];
 $date = $input['date'];

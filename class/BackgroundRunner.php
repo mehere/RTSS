@@ -10,7 +10,7 @@ class BackgroundRunner
         $phpExec = '"' . self::PHP_EXE . '"';
         $cmd = "start \"bla\" $phpExec \"$scriptPath\" ";
         for ($i=0; $i<count($argumentType); $i++){
-            $cmd.= "-$argumentType[$i]='$argumentValue[$i]' ";
+            $cmd.= "-{$argumentType[$i]}='{$argumentValue[$i]}' ";
         }
         $cmd .= "&";
         error_log($cmd);
