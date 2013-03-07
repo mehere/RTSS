@@ -8,7 +8,7 @@ class NameMap
 //                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason',
 //                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
                 'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'handphone' => 'Handphone', 'reason' => 'Reason',
-                'isScheduled' => '&#x267B;'
+                'isScheduled' => '<img src="/RTSS/img/thumbup.png"></img>'
             ),
             'hidden' => array(
                 'accname', 'leaveID'
@@ -86,7 +86,7 @@ class NameMap
         'adhocSchedule' => array(
             'display' => array(
                 'fullname' => 'Name', 'time' => 'Time', 'class' => 'Class', 
-                'unavailable' => 'N.A.', 'occupy' => 'Busy Period'
+                'reply' => 'Reply', 'unavailable' => 'Cancel', 'occupy' => 'Busy Period'
             ),
             'hidden' => array(
                 'lessonID', 'reliefAccName'
