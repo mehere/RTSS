@@ -914,16 +914,13 @@ class SchedulerDB
         }
 
         //delete temp
-        /*
         $sql_delete = "delete from temp_each_alternative;";
         $delete_result = Constant::sql_execute($db_con, $sql_delete);
         if (is_null($delete_result))
         {
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
         }
-         *
-         */
-
+        
         //get list of relief to construct skip reference
         $sql_select_relief = "select * from rs_relief_info where schedule_date = DATE('$date')";
         $select_relief_result = Constant::sql_execute($db_con, $sql_select_relief);
@@ -1114,7 +1111,8 @@ class SchedulerDB
 //        $all_input_str = serialize($all_input);
 
         $_SESSION['sms']=$all_input;
-        BackgroundRunner::execInBackground(realpath('../sms/sendSMS.php'), array('s'), array($sessionId));
+        $absolute_path = dirname(__FILE__);
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
         /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
@@ -1206,7 +1204,7 @@ class SchedulerDB
         );
 //        $all_input_str_email = serialize($all_input_email);
         $_SESSION["email"] = $all_input_email;
-        BackgroundRunner::execInBackground(realpath('../sms/sendEmail.php'), array('s'), array($sessionId));
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
 
         /*
         $email_reply = Email::sendMail($from, $to);
