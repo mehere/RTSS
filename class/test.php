@@ -1,5 +1,5 @@
 <?php
-
+require_once 'email_lib/swift_required.php';
 spl_autoload_register(function($class){
     require_once "$class.php";
 });
@@ -498,15 +498,14 @@ foreach($result as $key => $row)
 }
  * 
  */ 
-/*
+
 $result = SchedulerDB::approve(0, '2013-02-06');
 foreach($result as $row)
 {
     print_r($row);
     echo "<br>";
 }
- * 
- */
+ 
 //AdHocSchedulerDB::cancelRelief(821, 2, 5);
 
 //print_r(AdHocSchedulerDB::adHocApprove(0, '2013-02-06'));
