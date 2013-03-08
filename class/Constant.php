@@ -23,15 +23,17 @@ Class Constant
     const php_exe = "D:\\xampp\php\php.exe";
     
     //time slot
-    const num_of_time_slot = 15;
+//    const num_of_time_slot = 15;
     const num_of_week_day = 5;
 
     const default_recom_num = 10; //in case fail to query from database
     
-    public static $mother_tongue = array("Chinese", "Tamil", "Malay");
     public static $teacher_type = array("Teacher"=>"Normal", "AED"=>"Aed", "Temp"=>"Temp", "HOD"=>"Hod", "untrained"=>"Untrained", "ExCo"=>"ExCo");   //key: types in database; value: types in websystem. Due to some reasons, we maintain the two list
 
+    // To-do: delete and make it consistent with 'sem date' in 'SchoolTime'
     public static $sem_dates = array('01-01', '06-30', '07-01', '12-31');
+    
+    public static $SEM_PERIOD;
     
     public static function connect_to_db($db_name)
     {
