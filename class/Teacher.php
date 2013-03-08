@@ -500,7 +500,7 @@ class Teacher {
             $clean_datetime_to = mysql_real_escape_string(trim($entry['datetime-to']));
             $clean_accname = mysql_real_escape_string(trim($accname));
             
-            $sql_check_conflict = "select * from rs_leave_info where teacher_id = '$clean_accname' and ";
+            $sql_check_conflict = "select * from rs_leave_info where teacher_id = '$clean_accname' and start_time ";
             
             $reason = empty($entry['reason'])?'':$entry['reason'];
             $remark = empty($entry['remark'])?'':$entry['remark'];
