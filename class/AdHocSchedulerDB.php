@@ -172,11 +172,12 @@ class AdHocSchedulerDB
         $leave_teacher = $relief['leave_teacher'];
         
         //store cancel
-        $sql_insert_cancel = "insert into temp_ah_cancelled_relief values ($reliefID, '$schedule_date', $startBlockingTime, $endBlockingTime);";
+        $sql_insert_cancel = "insert into temp_ah_cancelled_relief values ($reliefID, '$relief_teacher', '$schedule_date', $startBlockingTime, $endBlockingTime);";
         $cancel_result = Constant::sql_execute($db_con, $sql_insert_cancel);
+
         if(is_null($cancel_result))
         {
-            throw new DBException('Fail to insert cancel relief', __FILE__, __LINE__, 2);
+            throw new DBException('Fail to insert cancel relief ', __FILE__, __LINE__, 2);
         }
         
         //search all relief
@@ -240,12 +241,15 @@ class AdHocSchedulerDB
         }
         
         //delete relief
+        /*  will do it after scheduling
         $sql_delete_relief = "delete from rs_relief_info where relief_id = '$reliefID';";
         $delete_relief_result = Constant::sql_execute($db_con, $sql_delete_relief);
         if(is_null($delete_relief_result))
         {
             throw new DBException("Fail to cancel the relief", __FILE__, __LINE__, 2);
         }
+         * 
+         */
         
         //delete skip - error : restore relief
         if(count($recover_list) > 0)
@@ -254,12 +258,15 @@ class AdHocSchedulerDB
             $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
             if(is_null($delete_skip_result))
             {
+                /*
                 $sql_recover_relief = "insert into rs_relief_info(relief_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ($reliefID, '$lesson_id', '$schedule_date', $relief_start, $relief_end, '$leave_teacher', '$relief_teacher', $diff);";
                 $recover_relief_result = Constant::sql_execute($db_con, $sql_recover_relief);
                 if(is_null($recover_relief_result))
                 {
                     throw new DBException('Fatal !!! : Fail to cancel relief and fail to recover to previous state, resulting in data inconsistency. Reschedule for all teachers are highly recommended.', __FILE__, __LINE__, 2);
                 }
+                 * 
+                 */
 
                 throw new DBException('Fail to cancel teh relief', __FILE__, __LINE__, 2);
             }
@@ -282,7 +289,7 @@ class AdHocSchedulerDB
         );
         
         //0. delete cancelled relief and associated skip
-        $sql_delete_cancelled_relief = "delete from rs_relief_info where relief_id in (select distinct relief_id_ref from rs_aed_skip_info);";
+        $sql_delete_cancelled_relief = "delete from rs_relief_info where relief_id in (select distinct relief_id from temp_ah_cancelled_relief);";
         $delete_cancelled_relief = Constant::sql_execute($db_con, $sql_delete_cancelled_relief);
         if(is_null($delete_cancelled_relief))
         {
@@ -809,7 +816,7 @@ class AdHocSchedulerDB
         }
         
         //query
-        $sql_query_relief = "SELECT rs_relief_info.*, ct_class_matching.* FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($scheduleDate))."') order by rs_relief_info.start_time_index, rs_relief_info.end_time_index ASC;";
+        $sql_query_relief = "SELECT rs_relief_info.*, ct_class_matching.* FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($scheduleDate))."') and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief) order by rs_relief_info.start_time_index, rs_relief_info.end_time_index ASC;";
         
         $relief_result = Constant::sql_execute($db_con, $sql_query_relief);
         if(is_null($relief_result))
