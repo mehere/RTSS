@@ -172,7 +172,7 @@ class AdHocSchedulerDB
         $leave_teacher = $relief['leave_teacher'];
         
         //store cancel
-        $sql_insert_cancel = "insert into temp_ah_cancelled_relief values ($reliefID, $schedule_date, $startBlockingTime, $endBlockingTime);";
+        $sql_insert_cancel = "insert into temp_ah_cancelled_relief values ($reliefID, '$schedule_date', $startBlockingTime, $endBlockingTime);";
         $cancel_result = Constant::sql_execute($db_con, $sql_insert_cancel);
         if(is_null($cancel_result))
         {
