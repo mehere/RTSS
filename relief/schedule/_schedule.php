@@ -235,7 +235,7 @@ if ($typeSchedule == 2)
     {
         /* @var $aBlockLesson Lesson */
         /* @var $aLesson Lesson */
-        $teacherOriginalAccName = $aBlockLesson->teachers;
+        $teacherOriginalAccName = $aBlockLesson->teachers[0];
         $teacherOriginal = NULL;
         foreach ($typesOfTeachers as $aType)
         {
