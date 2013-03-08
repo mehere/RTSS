@@ -63,7 +63,7 @@ class PageConstant
      * @param string $selectedOption option is to be selected
      * @return string output
      */
-    public static function formatOptionInSelect($optionArr, $selectedOption, $useValueOnly=false)
+    public static function formatOptionInSelect($optionArr, $selectedOption='', $useValueOnly=false)
     {
         $output="";
         foreach ($optionArr as $key => $value)

@@ -86,7 +86,7 @@ class NameMap
         'adhocSchedule' => array(
             'display' => array(
                 'fullname' => 'Name', 'time' => 'Time', 'class' => 'Class', 
-                'reply' => 'Reply', 'unavailable' => 'Cancel', 'occupy' => 'Busy Period'
+                'reply' => 'Reply Msg', 'unavailable' => 'Cancel', 'occupy' => 'Busy Period'
             ),
             'hidden' => array(
                 'lessonID', 'reliefAccName'

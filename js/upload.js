@@ -18,25 +18,8 @@ $(document).ready(function(){
     var formAdd=document.forms['add-class'], formAED=document.forms['AED'], formG=document.forms['AED-get'],
         matrixTime=[]; // [day][time]={subject, class[], venue, period, boxObj, isHighlighted};
 
-    function constrainTimeSelect(selectFromObj, selectToObj)
-    {
-        selectFromObj.change(function(){
-            var curIndex=this.selectedIndex;
-            if (curIndex-selectToObj.prop('selectedIndex') > 0)
-            {
-                selectToObj.prop('selectedIndex', curIndex);
-            }
-        });
 
-        selectToObj.change(function(){
-            var curIndex=this.selectedIndex;
-            if (curIndex-selectFromObj.prop('selectedIndex')  < 0)
-            {
-                selectFromObj.prop('selectedIndex', curIndex);
-            }
-        });
-    }
-    constrainTimeSelect($(formAdd['time-from']), $(formAdd['time-to']));
+    GlobalFunction.constrainTimeSelect($(formAdd['time-from']), $(formAdd['time-to']));
 
     $(formAdd).submit(function(){
         var failToSubmit=false;

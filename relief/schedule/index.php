@@ -70,7 +70,7 @@ EOD;
                             $timeStart=SchoolTime::getTimeValue($value['time'][0]);
                             $timeEnd=SchoolTime::getTimeValue($value['time'][1]);
                             echo <<< EOD
-<tr><td>$classStr<input type="hidden" name="lessonID-$key" value="{$value['id']}" /></td>
+<tr><td>$classStr<input type="hidden" name="lessonID-$key" value="{$value['id']}" /><input type="hidden" name="reliefID-$key" value="{$value['reliefID']}" /></td>
 <td>$timeStart<span style="margin: 0 3px">-</span>$timeEnd</td>        
 <input type="hidden" name="time-start-$key" value="{$value['time'][0]}" />
 <input type="hidden" name="time-end-$key" value="{$value['time'][1]}" />
@@ -78,7 +78,7 @@ EOD;
 <td>{$value['teacherOnLeave']}<input type="hidden" name="teacher-accname-$key" value="{$value['teacherAccName']}" /></td>
 <td class="relief-col">
 <span class="text-display">{$value['reliefTeacher']}</span>
-<input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" />
+<input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" /><input type="text" style="width: 0; opacity: 0" />
 <input type="hidden" name="relief-accname-$key" value="{$value['reliefAccName']}" />
 </td>
 </tr>

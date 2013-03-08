@@ -27,6 +27,8 @@ $(document).ready(function(){
         }
     });
 
+    GlobalFunction.toggleAccordion($('.icon-link', document.forms['teacher-select']), 0);
+
     $(formT['accname']).change(function(){
         this.form.submit();
     });

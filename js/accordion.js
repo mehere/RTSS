@@ -6,10 +6,12 @@ $(document).ready(function(){
     });
 });
 
-var GlobalFunction={
-    toggleAccordion: function(objQ, speed) {
-        var acc=objQ.parents('.accordion').first();
-        acc.next().toggle(speed);
-        acc.find('.icon-link>img').toggle();
-    }
+if (!window.GlobalFunction)
+{
+    window.GlobalFunction={};
 }
+window.GlobalFunction.toggleAccordion=function(objQ, speed) {
+    var acc=objQ.parents('.accordion').first();
+    acc.next().toggle(speed);
+    acc.find('.icon-link>img').toggle();
+};

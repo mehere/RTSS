@@ -37,6 +37,13 @@ $(document).ready(function(){
         $(formO['type']).change(function(){
             $(this.form).submit();
         });
+
+        // Print
+        $("#print").click(function(){
+            this.href += "?" + $(formO).serialize();
+
+            return true;
+        });
     }
 
     if ($('#individual').length)
@@ -68,11 +75,4 @@ $(document).ready(function(){
             $(this).autocomplete("search", '');
         });
     }
-
-    // Print
-    $("#print").click(function(){
-        this.href += "?" + $(formO).serialize();
-
-        return true;
-    });
 });
