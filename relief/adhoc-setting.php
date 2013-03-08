@@ -5,10 +5,10 @@ spl_autoload_register(function($class){
 
 Template::printHeaderAndDoValidation('Home', 
         array('relief.css', 'adhoc.css'), 
-        array("teacher-detail.js", "accordion.js", 'relief.js'), 
-        Template::HOME, "Adhoc", Template::SCHEDULE);
+        array("teacher-detail.js", 'adhoc.js'), 
+        Template::HOME, "Adhoc Scheduling", Template::SCHEDULE);
 ?>
-<form class="main" name="schedule" action="" method="post">
+<form class="main" name="schedule" method="post" action="schedule/_adhoc.php">
     <div class="accordion colorbox blue">
         <span href="" class="icon-link"></span>
         <span class="box-title">
@@ -20,7 +20,7 @@ Template::printHeaderAndDoValidation('Home',
             <thead>
                 <tr class="teacher-thead">
                     <?php
-                        $width=array('50%', '110px', '50%', '80px', '60px', '170px');
+                        $width=array('50%', '110px', '50%', '90px', '60px', '170px');
                         $tableHeaderList=array_values(NameMap::$RELIEF_EDIT['adhocSchedule']['display']);
 
                         for ($i=0; $i<count($tableHeaderList); $i++)
@@ -35,21 +35,7 @@ EOD;
             </thead>
             <tbody>
                 <?php                            
-                    $allocationList=array(
-                        '8800121'=>array(
-                            'lesson'=>array(
-                                array('class'=>array ('2P'), 'time'=>array(1, 2), 'lessonID'=>'N1313122PQ82'),
-                                array('class'=>array ('2P 5P'), 'time'=>array(3, 6), 'lessonID'=>'N88')
-                            ),
-                            'reliefTeacher'=>'AED 1'
-                        ),
-                        '8800123'=>array(
-                            'lesson'=>array(
-                                array('class'=>array ('2Q'), 'time'=>array(9, 10), 'lessonID'=>'X11')
-                            ),
-                            'reliefTeacher'=>'Cool'
-                        )
-                    );                            
+                    $allocationList=AdHocSchedulerDB::getApprovedSchedule($_SESSION['scheduleDate']);                          
                     PageConstant::escapeHTMLEntity($allocationList);
 
                     $i=0;
@@ -61,26 +47,19 @@ EOD;
                             $timeFrom=SchoolTime::getTimeValue($lesson['time'][0]);
                             $timeTo=SchoolTime::getTimeValue($lesson['time'][1]);
 
-                            $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), '', true);
-                            $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), '', true);
+                            $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, $lesson['time'][0]-1), $lesson['time'][0]-1);
+                            $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub($lesson['time'][1]-1, -1, true));
 
                             $classStr=implode(', ', $lesson['class']);
 
                             $firstRowSpanName='';
-                            $firstRowSpanPeriod='';
                             if ($isFirstRow)
                             {
                                 $rowNum=count($allocation['lesson']);
                                 $firstRowSpanName=<<< EOD
 <td rowspan="$rowNum">{$allocation['reliefTeacher']}</td>
 EOD;
-                                $firstRowSpanPeriod=<<< EOD
-<td rowspan="$rowNum">
-    <select name="busy-from-$i"><option value="">--</option>$timeFromOptionStr</select>
-    -    
-    <select name="busy-to-$i"><option value="">--</option>$timeToOptionStr</select>
-</td>
-EOD;
+
                                 $isFirstRow=false;
                             }
 
@@ -90,8 +69,13 @@ EOD;
         <input type="checkbox" name="unavailable-$i" />
         <input type="hidden" name="relief-accname-$i" value="$reliefAccname" />
         <input type="hidden" name="lessonID-$i" value="{$lesson['lessonID']}" />
+        <input type="hidden" name="reliefID-$i" value="{$lesson['reliefID']}" />            
     </td>
-    $firstRowSpanPeriod
+    <td>
+        <select name="busy-from-$i" disabled="disabled">$timeFromOptionStr</select>
+        -    
+        <select name="busy-to-$i" disabled="disabled">$timeToOptionStr</select>
+    </td>
 </tr>
 EOD;
                             $i++;
@@ -106,6 +90,7 @@ EOD;
         <input type="submit" value="Go" class="button" />
     </div>
     <div style="clear: both"></div>
+    <input type="hidden" name="num" value="<?php echo $i; ?>" />
 </form>
 <div id="dialog-alert"></div>
 <?php

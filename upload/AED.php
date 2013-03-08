@@ -8,8 +8,8 @@ Template::printHeaderAndDoValidation('Upload Timetable',
         array('upload.js'), 
         Template::TT_ADMIN, 'AED Timetable', Template::TT_ADMIN_AED);
 
-$timeFromArr=SchoolTime::getTimeArrSub(0, -1);
-$timeToArr=SchoolTime::getTimeArrSub(1, 0);
+$timeFromArr=SchoolTime::getTimeArrSub(0, -2);
+$timeToArr=SchoolTime::getTimeArrSub(1, -1);
 
 $dayArr=PageConstant::$DAY;
 ?>
@@ -91,13 +91,13 @@ EOD;
             <td>
                 <select name="time-from">
                     <?php
-                        echo PageConstant::formatOptionInSelect($timeFromArr, '');
+                        echo PageConstant::formatOptionInSelect($timeFromArr);
                     ?>
                 </select> 
                 - 
                 <select name="time-to">
                     <?php
-                        echo PageConstant::formatOptionInSelect($timeToArr, '');
+                        echo PageConstant::formatOptionInSelect($timeToArr);
                     ?>
                 </select>
                 <input type="hidden" name="period" />

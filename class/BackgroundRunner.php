@@ -1,9 +1,13 @@
 <?php
 
+spl_autoload_register(function($class){
+    require_once "$class.php";
+});
+
 class BackgroundRunner
 {
 
-    const PHP_EXE = 'C:\Program Files (x86)\PHP\v5.3\php.exe';
+    const PHP_EXE = Constant::php_exe;
 
     static function execInBackground($scriptPath,$argumentType, $argumentValue)
     {

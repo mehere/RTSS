@@ -22,6 +22,11 @@
 	margin-left: 20px;
 	display: inline-block;
 }
+.bt-control .button .icon {
+	vertical-align: middle;
+	position: relative;
+	top: -2px;
+}
 
 .hovered.table-info tr th.sort {	
 	cursor: pointer;

@@ -1,7 +1,7 @@
 <?php
-require_once 'email_lib/swift_required.php';
+require_once dirname(__FILE__).'/../class/email_lib/swift_required.php';
 spl_autoload_register(function($class){
-    require_once "../class/$class.php";
+    require_once dirname(__FILE__)."/../class/$class.php";
 });
 
 $options = getopt("s:");

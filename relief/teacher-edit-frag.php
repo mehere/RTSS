@@ -5,14 +5,14 @@ spl_autoload_register(function($class){
 
 
 
-$timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), '', true);
-$timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), '', true);
+$timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -2));
+$timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, -1));
 
 if ($_GET['num']) $numOfTeacher=$_GET['num'];
 
 if ($isTemp===false || $_GET['teacher'] != 'temp')
 {
-    $reasonOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['leaveReason']['display'], '');
+    $reasonOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['leaveReason']['display']);
     
     $nameTimeInBetweenFrag= <<< EOD
 <td>
@@ -30,7 +30,7 @@ EOD;
 }
 else
 {    
-    $motherTongueOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['MT']['display'], '');
+    $motherTongueOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['MT']['display']);
 
     $nameTimeInBetweenFrag= <<< EOD
 <td>

@@ -116,6 +116,7 @@ $(document).ready(function(){
 
                     teacherAccName=trObj.find('input[name^="teacher-accname-"]').val();
                     lessonID=trObj.find('input[name^="lessonID-"]').val();
+                    reliefID=trObj.find('input[name^="reliefID-"]').val();
                     time[0]=trObj.find('input[name^="time-start-"]').val();
                     time[1]=trObj.find('input[name^="time-end-"]').val();
 
@@ -135,7 +136,8 @@ $(document).ready(function(){
                     "scheduleIndex": formEdit['schedule-index'].value,
                     "timeStart": time[0],
                     "timeEnd": time[1],
-                    "lessonID": lessonID
+                    "lessonID": lessonID,
+                    "reliefID": reliefID
                 }, function(data){
                     if (data['hasConflict'] != 0)
                     {

@@ -27,5 +27,20 @@ $(document).ready(function(){
         }
     });
 
+    $("#console .table-info .sort").click(function(){
+        formS['order'].value=this.getAttribute('search');
 
+        var dir=this.getAttribute('direction');
+        if (dir != 1)
+        {
+            dir=1;
+        }
+        else
+        {
+            dir=2;
+        }
+        formS['direction'].value=this['direction']=dir;
+
+        $(formS).submit();
+    });
 });
