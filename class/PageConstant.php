@@ -20,13 +20,12 @@ class PageConstant
     /**
      * Year range in timetable/admin.php
      * @param bool $showYearOnly will return sem no only
+     * @param string/int $selectYear '' -- current year
      * @return string print format of &lt;option&gt;
      */
-    public static function printYearRange($showYearOnly=false)
+    public static function printYearRange($selectYear='')
     {
-        $curYear=date('Y');
-
-        if ($showYearOnly) return $curYear;
+        $curYear=$selectYear? $selectYear : SchoolTime::getSemYearFromDate(1);
 
         $NUM_OF_YEAR=5; // number of year before & after current year in 'timetable/admin.php'
 
@@ -41,18 +40,13 @@ class PageConstant
 
     /**
      * Sem range in timetable/admin.php
-     * @param bool $showSemOnly will return sem no only
+     * @param string/int $selectSem '' -- current sem
      * @return string print format of &lt;option&gt; (or return sem no)
      */
-    public static function printSemRange($showSemOnly=false)
+    public static function printSemRange($selectSem='')
     {
-        $curMonth=date('n');
-        $SEM_DIVIDER=6.5;
-
+        $curSem=$selectSem? $selectSem : SchoolTime::getSemYearFromDate();
         $result=array(1, 2);
-
-        $curSem=$curMonth < $SEM_DIVIDER ? 1 : 2;
-        if ($showSemOnly) return $curSem;
 
         return PageConstant::formatOptionInSelect($result, $curSem, TRUE);
     }

@@ -21,7 +21,7 @@ Template::validate();
 <body>
 	<div id="container">
         <h2>
-            Report (<?php echo "Sem " . PageConstant::printSemRange(true) . ", " . PageConstant::printYearRange(true); ?>)
+            Report (<?php echo "Sem {$_GET['sem']}, {$_GET['year']}"; ?>)
             <p style="font-size: 12px">Generated on <?php echo date(PageConstant::DATE_FORMAT_SG); ?></p>
         </h2>        
         <table class="table-info">
@@ -44,7 +44,7 @@ EOD;
             </thead>
             <tbody>
                 <?php
-                    $reportArr=Teacher::overallReport($_GET['type'], $_GET['order'], $_GET['direction']==2 ? SORT_DESC : SORT_ASC);
+                    $reportArr=Teacher::overallReport($_GET['type'], $_GET['order'], $_GET['direction']==2 ? SORT_DESC : SORT_ASC, $_GET['year'], $_GET['sem']);
                     PageConstant::escapeHTMLEntity($reportArr);
 
                     foreach ($reportArr as $value)

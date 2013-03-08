@@ -7,24 +7,37 @@ Template::printHeaderAndDoValidation('Report',
         array('relief.css', 'report.css'), 
         array("teacher-detail.js", 'report.js'), 
         Template::REPORT, 'Report (Overall)', Template::REPORT_OVERALL);
+
+$year=$_POST['year'] ? $_POST['year'] : SchoolTime::getSemYearFromDate(1);
+$sem=$_POST['sem'] ? $_POST['sem'] : SchoolTime::getSemYearFromDate();
 ?>
-<form class="accordion colorbox blue" name="report-overall" method="post">
-    <span class="icon-link"></span>
-    <span class="box-title">
-        Overall
-        <span class="filter-control">
-            <select name="type">
-                <optgroup label="-- Filter --">
-                    <option value="">Any</option>
-                    <?php echo PageConstant::formatOptionInSelect(NameMap::$REPORT['teacherType']['display'], $_POST['type']) ?>
-                </optgroup>                    
-            </select>
-        </span>
-    </span>
-    <div class="control-top"><a href="print.php" target="_blank" id="print">Print</a></div>
+<form class="row" name="report-overall" method="post">
+    <span class="label">Year:</span>
+    <select name="year">
+        <?php echo PageConstant::printYearRange($year); ?>
+    </select>
+    <span class="label">Sem:</span>
+    <select name="sem">
+        <?php echo PageConstant::printSemRange($sem); ?>
+    </select>
+    <span class="label">Type:</span>
+    <select name="type">
+        <optgroup label="-- Filter --">
+            <option value="">Any</option>
+            <?php echo PageConstant::formatOptionInSelect(NameMap::$REPORT['teacherType']['display'], $_POST['type']) ?>
+        </optgroup>                    
+    </select>
+    <input type="submit" class="button button-small" value="Go" style="margin-left: 30px" />
     <input type="hidden" name="order" value="<?php echo $_POST['order'] ?>" />
     <input type="hidden" name="direction" value="<?php echo $_POST['direction'] ?>" />
 </form>
+<div class="accordion colorbox blue">
+    <span class="icon-link"></span>
+    <span class="box-title">
+        Overall        
+    </span>
+    <div class="control-top"><a href="print.php" target="_blank" id="print">Print</a></div>    
+</div>
 <div id="overall">
     <table class="hovered table-info">
         <thead>
@@ -51,7 +64,7 @@ EOD;
         </thead>
         <tbody>
             <?php
-                $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==2 ? SORT_DESC : SORT_ASC);
+                $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==2 ? SORT_DESC : SORT_ASC, $year, $sem);
                 PageConstant::escapeHTMLEntity($reportArr);
 
                 foreach ($reportArr as $value)
