@@ -2,6 +2,8 @@
 class SchoolTime
 {
     private static $SCHOOL_TIME_ARR=null; // interval -- minute
+    
+    private static $SEM_PERIOD=null;
 
     public function __construct()
     {
@@ -14,6 +16,12 @@ class SchoolTime
             {
                 self::$SCHOOL_TIME_ARR[]=$curTime;
             }
+            
+            // Sem period
+            self::$SEM_PERIOD=array(
+                array(new DateTime("2012-01-01"), new DateTime("2012-06-30")),
+                array(new DateTime("2012-07-01"), new DateTime("2012-12-31"))
+            );
         }
     }
 
@@ -70,6 +78,25 @@ class SchoolTime
         }
         return array_map(array('SchoolTime', 'formatTime'), array_slice(self::$SCHOOL_TIME_ARR, $start, $end-$start+1, $isAssociate));
     }
+    
+    /**
+     * 
+     * @param int $year
+     * @param int $semNo 1 or 2
+     * @param int $formatOption 0 (default) -- ISO, 1 -- from SG to ISO, 2 -- from ISO to SG_DAY
+     * @return array [startDate, endDate]. Each element(obj or string based on $formatOption)
+     *      if $semNo out of range, return null
+     */
+    public static function getSemPeriod($year, $semNo, $formatOption=0)
+    {
+        new SchoolTime;
+        if ($semNo < 1 || $semNo > 2) return null;
+        
+        $period=SchoolTime::$SEM_PERIOD[$semNo-1];
+        $period[0]=$period[0]->setDate($year, $period[0]->format('n'), $period[0]->format('j'));
+        
+        return;
+    }
 
     /**
      *
@@ -102,7 +129,6 @@ class SchoolTime
         {
             case 1:
                 return date_format($dateObject, PageConstant::DATE_FORMAT_SG);
-                break;
             default:
                 return date_format($dateObject, PageConstant::DATE_FORMAT_ISO);
         }
