@@ -14,7 +14,7 @@ if ($_SESSION['type'] == 'admin')
     $isAdmin=true;
 }
 ?>
-<form name="switch" class="control" action="" method="post">
+<form name="switch" class="control" method="post">
     <?php
         $class=$_POST['class'];
         $accname=$isAdmin?$_POST['accname']:$_SESSION['accname'];

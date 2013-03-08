@@ -54,6 +54,8 @@ EOD;
                     $keyList=array_keys(NameMap::$RELIEF['teacherOnLeave']['display']);
                     $keyExtraList=NameMap::$RELIEF['teacherOnLeave']['hidden'];
                     $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
+                    
+                    $isScheduleRun=false;
 
                     foreach ($teacherOnLeaveList as $teacher)
                     {
@@ -64,6 +66,7 @@ EOD;
 //                        $leaveID=$teacher[$keyExtraList[1]];
 //                                    $verifiedStr=PageConstant::stateRepresent($teacherVerifiedList[$leaveID]);
                         $scheduledStr=PageConstant::stateRepresent($teacher[$keyList[5]]);
+                        $isScheduleRun |= $teacher[$keyList[5]];
                         echo <<< EOD
 <tr><td class="text-left"><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>$dateFromDisplay, {$datetime[0][1]}<br />$dateToDisplay, {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td class="text-left">{$reasonArr[$teacher[$keyList[4]]]}</td><td>$scheduledStr</td></tr>
 EOD;
@@ -168,8 +171,12 @@ EOD;
 
     <div style="clear: both"></div>
     <div class="bt-control">
-        <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS/img/redo.png" class="icon" />Re-Schedule All</a>
-        <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule the Remaining</a>
+        <?php if ($isScheduleRun) { ?>
+            <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS/img/redo.png" class="icon" />Re-Schedule All</a>
+            <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule the Remaining</a>
+        <?php } else { ?>
+            <a href="" id="btnScheduleAll" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule All</a>
+        <?php } ?>
     </div>
     <div style="clear: both"></div>
 </form>

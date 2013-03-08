@@ -35,7 +35,7 @@ if (!$date)
             Relief Alert
         </span>        
     </div>
-    <div>        
+    <div id="console">        
         <table class="hovered table-info">
             <thead>
                 <tr>
@@ -47,8 +47,13 @@ if (!$date)
                     $i=0;
                     foreach ($tableHeaderList as $key => $value)
                     {
+                        $dir='';
+                        if ($_POST['order'] == $key)
+                        {
+                            $dir=$_POST['direction'];
+                        }
                         echo <<< EOD
-                            <th style="width: $width[$i]" class="sort hovered" search="$key" direction="-1">$value<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>                                            
+                            <th style="width: $width[$i]" class="sort hovered" search="$key" direction="$dir">$value<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>                                            
 EOD;
                         $i++;
                     }
@@ -57,7 +62,7 @@ EOD;
             </thead>
             <tbody>
                 <?php
-                    $smsList=SMSDB::allSMSStatus($date);
+                    $smsList=SMSDB::allSMSStatus($date, $_POST['order'], $_POST['direction']==2 ? SORT_DESC : SORT_ASC);
 //                                array(array('sentTime'=>'12:00', 'fullname'=>'Armstrong Daniel',
 //                                        'phone'=>'98765432', 'status'=>'Invalid serial no', 'repliedTime'=>'23:00',
 //                                        'repliedMsg'=>'OK'));
@@ -76,6 +81,8 @@ EOD;
             </tbody>
         </table>
     </div>
+    <input type="hidden" name="order" value="<?php echo $_POST['order'] ?>" />
+    <input type="hidden" name="direction" value="<?php echo $_POST['direction'] ?>" />
 </form>
 <?php
 Template::printFooter();

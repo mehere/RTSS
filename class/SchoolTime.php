@@ -58,17 +58,17 @@ class SchoolTime
     /**
      * Get an array of time representation
      * @param int $start
-     * @param int $end non-positive means counting from the end
+     * @param int $end negative means counting from the end
      * @return an array of formatted string
      */
-    public static function getTimeArrSub($start, $end)
+    public static function getTimeArrSub($start, $end, $isAssociate=false)
     {
         new SchoolTime;
-        if ($end <= 0)
+        if ($end < 0)
         {
-            $end=count(self::$SCHOOL_TIME_ARR)+$end-1;
+            $end=count(self::$SCHOOL_TIME_ARR)+$end;
         }
-        return array_map(array('SchoolTime', 'formatTime'), array_slice(self::$SCHOOL_TIME_ARR, $start, $end-$start+1));
+        return array_map(array('SchoolTime', 'formatTime'), array_slice(self::$SCHOOL_TIME_ARR, $start, $end-$start+1, $isAssociate));
     }
 
     /**

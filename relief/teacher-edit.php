@@ -112,8 +112,8 @@ EOD;
                         $dateFromDisplay=SchoolTime::convertDate($datetime[0][0]);
                         $dateToDisplay=SchoolTime::convertDate($datetime[1][0]);
 
-                        $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -1), $datetime[0][1], true);
-                        $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, 0), $datetime[1][1], true);                                    
+                        $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -2), $datetime[0][1], true);
+                        $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, -1), $datetime[1][1], true);                                    
                         echo <<< EOD
 <tr>
 <td><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></td>

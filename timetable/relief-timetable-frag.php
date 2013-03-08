@@ -39,7 +39,7 @@ EOD;
             <?php
             // Define $timetableIndividual in the calling function        
 
-            $timeArr=SchoolTime::getTimeArrSub(0, 0);
+            $timeArr=SchoolTime::getTimeArrSub(0, -1);
             for ($i=0; $i < count($timeArr) - 1; $i++)
             {
                 $teaching=$timetableIndividual[$i];
@@ -134,7 +134,7 @@ EOD;
             // Define $timetable in the calling function
             // $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);
 
-            $timeArr=SchoolTime::getTimeArrSub(0, 0);
+            $timeArr=SchoolTime::getTimeArrSub(0, -1);
             for ($i=0; $i < count($timeArr) - 1; $i++)
             {
                 $teachingList=$timetable[$i];
