@@ -757,7 +757,7 @@ class Teacher {
                 $sessionId = session_id();
                 $_SESSION['sms']=$all_input;
                 $absolute_path = dirname(__FILE__);
-                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
                 
                 //email
                 $from = array(
@@ -806,7 +806,7 @@ class Teacher {
                 );
 
                 $_SESSION["email"] = $all_input_email;
-                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
             }
             
             //delete
@@ -902,7 +902,7 @@ class Teacher {
                 $sessionId = session_id();
                 $_SESSION['sms']=$all_input;
                 $absolute_path = dirname(__FILE__);
-                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
                 
                 //email
                 $from = array(
@@ -951,7 +951,7 @@ class Teacher {
                 );
 
                 $_SESSION["email"] = $all_input_email;
-                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
             }
             
             $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";

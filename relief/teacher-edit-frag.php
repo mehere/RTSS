@@ -5,8 +5,8 @@ spl_autoload_register(function($class){
 
 
 
-$timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -2));
-$timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, -1));
+$timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -2), '', true);
+$timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, -1), '', true);
 
 if ($_GET['num']) $numOfTeacher=$_GET['num'];
 

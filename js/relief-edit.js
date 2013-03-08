@@ -2,7 +2,7 @@ $(document).ready(function(){
     var CONFIRM_TEXT=["Confirm to verify selected teachers?", "Confirm to delete selected teachers?",
             "Please select at least one teacher before proceeding."],
         TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
-            "Failed to delete this teacher."],
+            "Failed to delete this teacher.", "Please choose dates within current semester."],
         FADE_DUR=400;
 
     var DATE_WARN_TEXT=["Date should not be empty.", "Date-To should be no smaller than Date-From."];
@@ -208,9 +208,19 @@ $(document).ready(function(){
         // Create button
         var isSaveButton=arguments[2];
         obj.button(SMALL_BT_ARR[isSaveButton?1:0]).click(function(){
+            function changeLook(self)
+            {
+                $(self).parents('tr').first().find('.toggle-edit, .toggle-display').toggle();
+
+                // Focus first element, excluding 'add new ...' row
+                $(self).parents('tr').find('select').first().focus();
+            }
+
             if ($(this).button('option', 'label') == SMALL_BT_ARR[0]['label'])
             {
                 $(this).button('option', SMALL_BT_ARR[1]);
+
+                changeLook(this);
             }
             else
             {
@@ -244,12 +254,21 @@ $(document).ready(function(){
                 if (isSaveButton)
                 {
                     fieldObj['fullname']=formEdit['fullname-'+index];
-                    if (!fieldObj['fullname'].value) return false;
-                    formEdit['fullname-'+index].parentNode.replaceChild(document.createTextNode(fieldObj['fullname'].value), formEdit['fullname-'+index]);
                     fieldObj['accname']=formEdit['accname-'+index];
-                }
+                    if (!fieldObj['fullname'].value) return false;
 
-                $(this).button('option', SMALL_BT_ARR[0]);
+                    if (formEdit['prop'].value == PROP_OPTION[0]) // For Temp
+                    {
+                        formEdit['fullname-'+index].parentNode.replaceChild(document.createTextNode(fieldObj['fullname'].value), formEdit['fullname-'+index]);
+                    }
+                    else
+                    {
+                        var linkObj=$('<a href="_teacher_detail.php?accname=' + fieldObj['accname'].value + '" class="teacher-detail-link">' + fieldObj['fullname'].value + '</a>');
+                        formEdit['fullname-'+index].parentNode.replaceChild(linkObj.get(0), formEdit['fullname-'+index]);
+
+                        GlobalFunction.getTeacherDetail(linkObj);
+                    }
+                }
 
                 // Save locally
                 function saveLocally()
@@ -287,53 +306,64 @@ $(document).ready(function(){
                     dataPost['reason']=fieldObj['reason'].value;
                 }
 
-                if (formEdit['leaveID-'+index].value)
-                {
-                    dataPost['leaveID']=formEdit['leaveID-'+index].value;
-                    dataPost['mode']='edit';
+                var self=this;
+                $.getJSON('/RTSS/relief/_relief_check.php', {
+                    'date-from': fieldObj['datePost'][0].value,
+                    'date-to': fieldObj['datePost'][1].value
+                }, function(data){
+                    if (!data['areDatesWithinSem'])
+                    {
+                        confirm(TEACHER_OP_TEXT[3], function(){});
+                        return;
+                    }
 
-                    $.post(formEdit.action, dataPost, function(data){
-                        if (data['error'] > 0)
-                        {
-                            confirm(TEACHER_OP_TEXT[1], function(){});
-                        }
-                        else
-                        {
-                            saveLocally();
-                        }
-                    }, 'json');
-                }
-                else
-                {
-                    // Check for new row (save)
-                    dataPost['fullname']=fieldObj['fullname'].value;
-                    dataPost['accname']=fieldObj['accname'].value;
-                    dataPost['mode']='add';
+                    if (formEdit['leaveID-'+index].value)
+                    {
+                        dataPost['leaveID']=formEdit['leaveID-'+index].value;
+                        dataPost['mode']='edit';
 
-                    $.post(formEdit.action, dataPost, function(data){
-                        if (data['error'] > 0)
-                        {
-                            confirm(TEACHER_OP_TEXT[0], function(){});
+                        $.post(formEdit.action, dataPost, function(data){
+                            if (data['error'] > 0)
+                            {
+                                confirm(TEACHER_OP_TEXT[1], function(){});
+                            }
+                            else
+                            {
+                                saveLocally();
+                            }
+                        }, 'json');
+                    }
+                    else
+                    {
+                        // Check for new row (save)
+                        dataPost['fullname']=fieldObj['fullname'].value;
+                        dataPost['accname']=fieldObj['accname'].value;
+                        dataPost['mode']='add';
 
-                            $(formEdit['accname-'+index]).parents('tr').first().remove();
-                        }
-                        else
-                        {
-                            formEdit['leaveID-'+index].value=data['leaveID'];
+                        $.post(formEdit.action, dataPost, function(data){
+                            if (data['error'] > 0)
+                            {
+                                confirm(TEACHER_OP_TEXT[0], function(){});
 
-                            saveLocally();
-                        }
-                    }, 'json');
-                }
+                                $(formEdit['accname-'+index]).parents('tr').first().remove();
+                            }
+                            else
+                            {
+                                formEdit['leaveID-'+index].value=data['leaveID'];
 
-                // Clear 'isSaveButton'
-                if (isSaveButton) isSaveButton=null;
+                                saveLocally();
+                            }
+                        }, 'json');
+                    }
+
+                    $(self).button('option', SMALL_BT_ARR[0]);
+
+                    // Clear 'isSaveButton'
+                    if (isSaveButton) isSaveButton=null;
+
+                    changeLook(self);
+                });
             }
-
-            $(this).parents('tr').first().find('.toggle-edit, .toggle-display').toggle();
-
-            // Focus first element, excluding 'add new ...' row
-            $(this).parents('tr').find('select').first().focus();
 
             return false;
         });

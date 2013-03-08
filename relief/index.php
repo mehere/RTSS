@@ -183,5 +183,8 @@ EOD;
 <div id="teacher-detail"></div>
 <div id="dialog-alert"></div>
 <?php
-Template::printFooter();
+    Template::printFooter();
+    
+    unset($_SESSION['scheduleType']);
+    unset($_SESSION['scheduleIndex']);
 ?>

@@ -1052,7 +1052,7 @@ class SchedulerDB
 
         $_SESSION['sms']=$all_input_delete;
         $absolute_path = dirname(__FILE__);
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+//        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
 
         //email
         $from = array(
@@ -1101,7 +1101,7 @@ class SchedulerDB
         );
 
         $_SESSION["email"] = $all_input_email_delete;
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
         
         $sql_clear = "delete from rs_relief_info where DATE(schedule_date) = DATE('" . $date . "');";
         $clear_result = Constant::sql_execute($db_con, $sql_clear);
@@ -1388,7 +1388,7 @@ class SchedulerDB
 //        $all_input_str = serialize($all_input);
 
         $_SESSION['sms']=$all_input;
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
         /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
@@ -1471,7 +1471,7 @@ class SchedulerDB
         );
 //        $all_input_str_email = serialize($all_input_email);
         $_SESSION["email"] = $all_input_email;
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+//        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
 
         /*
         $email_reply = Email::sendMail($from, $to);

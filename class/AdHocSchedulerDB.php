@@ -520,7 +520,7 @@ class AdHocSchedulerDB
 
         $_SESSION['sms']=$all_input;
         $absolute_path = dirname(__FILE__);
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
         /*
         $cancel_sms_reply = SMS::sendSMS($cancel_sms_list, $date);
 
@@ -654,7 +654,7 @@ class AdHocSchedulerDB
         );
 
         $_SESSION['sms']=$relief_all_input;
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
         /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
@@ -728,7 +728,7 @@ class AdHocSchedulerDB
         );
 
         $_SESSION["email"] = $all_input_email;
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
         /*
         $cancel_email_reply = Email::sendMail($from, $cancel_to);
 
@@ -807,7 +807,7 @@ class AdHocSchedulerDB
         );
 
         $_SESSION["email"] = $all_input_email_relief;
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
         /*
         $email_reply = Email::sendMail($from, $to);
 
