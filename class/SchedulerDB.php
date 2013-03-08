@@ -814,6 +814,8 @@ class SchedulerDB
 
     public static function approve($schedule_index, $date)
     {
+        $sessionId = session_id();
+
         //1. move from temp to relief_info and delete temp
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
@@ -918,7 +920,7 @@ class SchedulerDB
         {
             throw new DBException('Fail to clear temporary schedules', __FILE__, __LINE__, 2);
         }
-
+        
         //get list of relief to construct skip reference
         $sql_select_relief = "select * from rs_relief_info where schedule_date = DATE('$date')";
         $select_relief_result = Constant::sql_execute($db_con, $sql_select_relief);
@@ -1106,9 +1108,11 @@ class SchedulerDB
             "date" => $date,
             "input" => $sms_input
         );
-        $all_input_str = serialize($all_input);
+//        $all_input_str = serialize($all_input);
 
-        BackgroundRunner::execInBackground(realpath('../sms/sendSMS.php'), array('string'), array($all_input_str));
+        $_SESSION['sms']=$all_input;
+        $absolute_path = dirname(__FILE__);
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
         /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
@@ -1198,10 +1202,10 @@ class SchedulerDB
             "from" => $from,
             "to" => $to
         );
-        $all_input_str_email = serialize($all_input_email);
+//        $all_input_str_email = serialize($all_input_email);
+        $_SESSION["email"] = $all_input_email;
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
 
-        BackgroundRunner::execInBackground(realpath('../sms/sendEmail.php'), array('string'), array($all_input_str_email));
-        
         /*
         $email_reply = Email::sendMail($from, $to);
 
@@ -1215,7 +1219,7 @@ class SchedulerDB
                 }
             }
         }
-         * 
+         *
          */
 
         //7. return
