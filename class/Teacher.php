@@ -478,7 +478,7 @@ class Teacher {
      * @param string $accname
      * @param type $prop : leave or temp
      * @param type $entry : associative array specified in docs
-     * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me)
+     * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me, -6 conflict time)
      */
     public static function add($accname, $prop, $entry)
     {
@@ -500,7 +500,16 @@ class Teacher {
             $clean_datetime_to = mysql_real_escape_string(trim($entry['datetime-to']));
             $clean_accname = mysql_real_escape_string(trim($accname));
             
-            $sql_check_conflict = "select * from rs_leave_info where teacher_id = '$clean_accname' and start_time ";
+            $sql_check_conflict = "select * from rs_leave_info where teacher_id = '$clean_accname' and (unix_timestamp(start_time) < unix_timestamp('$clean_datetime_to') && unix_timestamp(end_time) > unix_timestamp('$clean_datetime_from'));";
+            $check_conflict = Constant::sql_execute($db_con, $sql_check_conflict);
+            if(is_null($check_conflict))
+            {
+                return -2;
+            }
+            if(!empty($check_conflict))
+            {
+                return -6;
+            }
             
             $reason = empty($entry['reason'])?'':$entry['reason'];
             $remark = empty($entry['remark'])?'':$entry['remark'];
@@ -513,7 +522,7 @@ class Teacher {
 
             $insert_leave_result = Constant::sql_execute($db_con, $sql_insert_leave);
 
-            if(!$insert_leave_result)
+            if(is_null($insert_leave_result))
             {
                 return -4;
             }
@@ -527,6 +536,8 @@ class Teacher {
                 return -3;
             }
 
+            $accname = mysql_real_escape_string(trim($accname));
+            
             if(empty($accname))
             {
                 if(empty($entry['fullname']))
@@ -579,6 +590,21 @@ class Teacher {
                     return -2;
                 }
             }
+            
+            $clean_datetime_from = mysql_real_escape_string(trim($entry['datetime-from']));
+            $clean_datetime_to = mysql_real_escape_string(trim($entry['datetime-to']));
+            
+            $sql_check_conflict = "select * from rs_temp_relief_teacher_availability where teacher_id = '$accname' and (unix_timestamp(start_datetime) < unix_timestamp('$clean_datetime_to') && unix_timestamp(end_datetime) > unix_timestamp('$clean_datetime_from'));";
+            $check_conflict = Constant::sql_execute($db_con, $sql_check_conflict);
+            if(is_null($check_conflict))
+            {
+                return -2;
+            }
+            if(!empty($check_conflict))
+            {
+                return -6;
+            }
+            
             $temp_remark = empty($entry['remark'])?'':$entry['remark'];
 
             $sql_insert_temp_time = "insert into rs_temp_relief_teacher_availability(teacher_id, start_datetime, end_datetime, slot_remark) values
@@ -600,7 +626,7 @@ class Teacher {
         }
     }
 
-    public static function checkHasReliefDeleteLeave($leaveIDList)
+    public static function checkHasRelief($leaveIDList, $prop)
     {
         $db_con = Constant::connect_to_db('ntu');
         if(empty($db_con))
@@ -611,10 +637,18 @@ class Teacher {
         $time_zone = new DateTimeZone('Aisa/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
-        $today_str = $today_obj->format('Y-m-d');
         $now_time_str = $today_obj->format('H:i');
         
-        $sql_check = "select * from rs_relief_info where leave_id_ref in (".  implode(',', $leaveIDList).") and schedule_date >= '$today_str'";
+        $appro_index = SchoolTime::getApproTimeIndex($now_time_str);
+        
+        if(strcmp($prop, "leave") === 0)
+        {
+            $sql_check = "select * from rs_relief_info where leave_id_ref in (".  implode(',', $leaveIDList).") and ((DATE(schedule_date) > DATE(NOW())) || (DATE(schedule_date) = DATE(NOW()) && start_time_index >= $appro_index));";
+        }
+        else
+        {
+            $sql_check = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).") and ((DATE(rs_relief_info.schedule_date) > DATE(NOW())) || (DATE(rs_relief_info.schedule_date) = DATE(NOW()) && rs_relief_info.start_time_index >= $appro_index));";
+        }
         $check_result = Constant::sql_execute($db_con, $sql_check);
         if(is_null($check_result))
         {
@@ -629,7 +663,7 @@ class Teacher {
         return true;
     }
     
-    public static function delete($leaveIDList, $prop)
+    public static function delete($leaveIDList, $prop, $has_relief = false)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -638,13 +672,149 @@ class Teacher {
             return false;
         }
 
+        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $today_obj = new DateTime();
+        $today_obj->setTimezone($time_zone);
+        $now_time_str = $today_obj->format('H:i');
+        
+        $appro_index = SchoolTime::getApproTimeIndex($now_time_str);
+        
         if(strcmp($prop, "leave") === 0)
         {
+            if($has_relief)
+            {
+                $teacher_contact = Teacher::getTeacherContact();
+                
+                $sql_check = "select * from rs_relief_info where leave_id_ref in (".  implode(',', $leaveIDList).") and ((DATE(schedule_date) > DATE(NOW())) || (DATE(schedule_date) = DATE(NOW()) && start_time_index >= $appro_index));";
+                $check_result = Constant::sql_execute($db_con, $sql_check);
+                if(is_null($check_result))
+                {
+                    return false;
+                }
+                //sms input
+                $list = array();
+                foreach($check_result as $row)
+                {
+                    $accname = $row['relief_teacher'];
+                    
+                    if(!array_key_exists($accname, $list))
+                    {
+                        $list[$accname] = array();
+                    }
+                    
+                    $start_time = SchoolTime::getTimeValue($row['start_time_index']);
+                    $end_time = SchoolTime::getTimeValue($row['end_time_index']);
+                    
+                    $list[$accname][] = array($start_time, $end_time, $row['schedule_date']);
+                }
+                //sms input
+                $sms_input = array();
+                foreach($list as $accname => $one)
+                {
+                    if(!array_key_exists($accname, $teacher_contact))
+                    {
+                        continue;
+                    }
+                    
+                    $name = $teacher_contact[$accname]['name'];
+                    $phone = $teacher_contact[$accname]['phone'];
+                    
+                    if(empty($phone))
+                    {
+                        continue;
+                    }
+                    if(empty($name))
+                    {
+                        $name = "Teacher";
+                    }
+                    
+                    $message = "Your relief duties during following period(s) are cancelled : ";
+                    foreach($one as $time_slot)
+                    {
+                        $message .= " $time_slot[0] - $time_slot[1] on $time_slot[2], ";
+                    }
+                    $message = substr($message, 0, -2).". Contact admin or check iScheduler website if you have any questions.";
+                    
+                    $one_sms = array(
+                        "phoneNum" => $phone,
+                        "name" => $name,
+                        "accName" => $accname,
+                        "message" => $message,
+                        "type" => 'C'
+                    );
+                    
+                    $sms_input[] = $one_sms;
+                }
+                
+                $today_obj = new DateTime();
+                $today = $today_obj->format('Y/m/d');
+                
+                $all_input = array(
+                    "date" => $today,
+                    "input" => $sms_input
+                );
+        
+                $sessionId = session_id();
+                $_SESSION['sms']=$all_input;
+                $absolute_path = dirname(__FILE__);
+                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+                
+                //email
+                $from = array(
+                    "email" => Constant::email,
+                    "password" => Constant::email_password,
+                    "name" => Constant::email_name,
+                    "smtp" => Constant::email_smtp,
+                    "port" => Constant::email_port,
+                    "encryption" => Constant::email_encryption
+                );
+                $to = array();
+                foreach($sms_input as $row)
+                {
+                    if(!array_key_exists($accname, $teacher_contact))
+                    {
+                        continue;
+                    }
+                    
+                    $name = $teacher_contact[$accname]['name'];
+                    $email = $teacher_contact[$accname]['email'];
+                    
+                    if(empty($email))
+                    {
+                        continue;
+                    }
+                    if(empty($name))
+                    {
+                        $name = "Teacher";
+                    }
+                    
+                    $recepient = array(
+                        'accname' => $accname,
+                        'subject' => 'Relief cancellation notification',
+                        'email' => $email,
+                        'message' => $row['message'],
+                        'attachment' => "",
+                        'name' => $name
+                    );
+                    
+                    $to[] = $recepient;
+                }
+                
+                $all_input_email = array(
+                    "from" => $from,
+                    "to" => $to
+                );
+
+                $_SESSION["email"] = $all_input_email;
+                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+            }
+            
+            //delete
             $sql_delete_leave = "delete from rs_leave_info where leave_id in (".  implode(', ', $leaveIDList).");";
 
             $delete_leave_result = Constant::sql_execute($db_con, $sql_delete_leave);
 
-            if(!$delete_leave_result)
+            if(is_null($delete_leave_result))
             {
                 return false;
             }
@@ -653,15 +823,168 @@ class Teacher {
         }
         else if(strcmp($prop, "temp") === 0)
         {
+            if($has_relief)
+            {
+                $teacher_contact = Teacher::getTeacherContact();
+                
+                $sql_check = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).") and ((DATE(rs_relief_info.schedule_date) > DATE(NOW())) || (DATE(rs_relief_info.schedule_date) = DATE(NOW()) && rs_relief_info.start_time_index >= $appro_index));";
+                $check_result = Constant::sql_execute($db_con, $sql_check);
+                if(is_null($check_result))
+                {
+                    return false;
+                }
+                //sms input
+                $list = array();
+                $delete_relief_id = array();
+                foreach($check_result as $row)
+                {
+                    $accname = $row['relief_teacher'];
+                    
+                    if(!array_key_exists($accname, $list))
+                    {
+                        $list[$accname] = array();
+                    }
+                    
+                    $start_time = SchoolTime::getTimeValue($row['start_time_index']);
+                    $end_time = SchoolTime::getTimeValue($row['end_time_index']);
+                    
+                    $list[$accname][] = array($start_time, $end_time, $row['schedule_date']);
+                    
+                    $delete_relief_id[] = $row['relief_id'];
+                }
+                //sms input
+                $sms_input = array();
+                foreach($list as $accname => $one)
+                {
+                    if(!array_key_exists($accname, $teacher_contact))
+                    {
+                        continue;
+                    }
+                    
+                    $name = $teacher_contact[$accname]['name'];
+                    $phone = $teacher_contact[$accname]['phone'];
+                    
+                    if(empty($phone))
+                    {
+                        continue;
+                    }
+                    if(empty($name))
+                    {
+                        $name = "Teacher";
+                    }
+                    
+                    $message = "Your relief duties during following period(s) are cancelled : ";
+                    foreach($one as $time_slot)
+                    {
+                        $message .= " $time_slot[0] - $time_slot[1] on $time_slot[2], ";
+                    }
+                    $message = substr($message, 0, -2).". Contact admin or check iScheduler website if you have any questions.";
+                    
+                    $one_sms = array(
+                        "phoneNum" => $phone,
+                        "name" => $name,
+                        "accName" => $accname,
+                        "message" => $message,
+                        "type" => 'C'
+                    );
+                    
+                    $sms_input[] = $one_sms;
+                }
+                
+                $today_obj = new DateTime();
+                $today = $today_obj->format('Y/m/d');
+                
+                $all_input = array(
+                    "date" => $today,
+                    "input" => $sms_input
+                );
+        
+                $sessionId = session_id();
+                $_SESSION['sms']=$all_input;
+                $absolute_path = dirname(__FILE__);
+                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+                
+                //email
+                $from = array(
+                    "email" => Constant::email,
+                    "password" => Constant::email_password,
+                    "name" => Constant::email_name,
+                    "smtp" => Constant::email_smtp,
+                    "port" => Constant::email_port,
+                    "encryption" => Constant::email_encryption
+                );
+                $to = array();
+                foreach($sms_input as $row)
+                {
+                    if(!array_key_exists($accname, $teacher_contact))
+                    {
+                        continue;
+                    }
+                    
+                    $name = $teacher_contact[$accname]['name'];
+                    $email = $teacher_contact[$accname]['email'];
+                    
+                    if(empty($email))
+                    {
+                        continue;
+                    }
+                    if(empty($name))
+                    {
+                        $name = "Teacher";
+                    }
+                    
+                    $recepient = array(
+                        'accname' => $accname,
+                        'subject' => 'Relief cancellation notification',
+                        'email' => $email,
+                        'message' => $row['message'],
+                        'attachment' => "",
+                        'name' => $name
+                    );
+                    
+                    $to[] = $recepient;
+                }
+                
+                $all_input_email = array(
+                    "from" => $from,
+                    "to" => $to
+                );
+
+                $_SESSION["email"] = $all_input_email;
+                BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+            }
+            
             $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";
 
             $delete_temp_result = Constant::sql_execute($db_con, $sql_delete_temp);
 
-            if(!$delete_temp_result)
+            if(is_null($delete_temp_result))
             {
                 return false;
             }
 
+            //delete relief
+            if(!empty($delete_relief_id))
+            {
+                $delete_list = implode(',', $delete_relief_id);
+                
+                //delete is scheduled
+                $sql_delete_leave_scheduled = "delete from rs_leave_scheduled where leave_id in (select distinct leave_id_ref from rs_relief_info where relief_id in ($delete_list));";
+                $delete_scheduled = Constant::sql_execute($db_con, $sql_delete_leave_scheduled);
+                if(is_null($delete_scheduled))
+                {
+                    throw new DBException('Fail to delete relief', __FILE__, __LINE__);
+                }
+                
+                //delete relief
+                $sql_delete_id = "delete from rs_relief_info where relief_id in ($delete_list);";
+                $delete_id = Constant::sql_execute($db_con, $sql_delete_id);
+                if(is_null($delete_id))
+                {
+                    throw new DBException('Fail to delete relief', __FILE__, __LINE__);
+                }
+            }
+            
             return true;
         }
         else
@@ -670,6 +993,135 @@ class Teacher {
         }
     }
 
+    public static function edit($leaveID, $prop, $change, $has_relief)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+
+        if(empty($db_con))
+        {
+            return false;
+        }
+
+        if(empty($change) || count($change)===0)
+        {
+            return false;
+        }
+
+        if(strcmp($prop, "leave") === 0)
+        {
+            $sql_query = "select * from rs_leave_info where leave_id = $leaveID;";
+            $query_result = Constant::sql_execute($db_con, $sql_query);
+            if(is_null($query_result))
+            {
+                return false;
+            }
+            
+            $row = $query_result[0];
+            
+            $reason = empty($change['reason'])?$row['reason']:$change['reason'];
+            $remark = empty($change['remark'])?$row['remark']:$change['remark'];
+            $datetim_from = empty($change['datetime-from'])?$row['start_time']:$change['datetime-from'];
+            $datetim_to = empty($change['datetime-to'])?$row['end_time']:$change['datetime-to'];
+            
+            if(!Teacher::delete(array($leaveID), "leave", $has_relief))
+            {
+                return false;
+            }
+            return Teacher::add($row['teacher_id'], "leave", array("datetime-from" => $datetim_from, "datetime-to" => $datetim_to, "reason" => $reason, "remark" => $remark));
+        }
+        else if(strcmp($prop, "temp") === 0)
+        {
+            $teacher_match_array = Array(
+                'handphone' => 'mobile',
+                'email' => 'email',
+                'MT' => 'mother_tongue'
+            );
+            $temp_match_array = Array(
+                'remark' => 'slot_remark'
+                //'datetime-from' => 'start_datetime',
+                //'datetime-to' => 'end_datetime'
+            );
+
+            $sql_update_teacher = "update rs_temp_relief_teacher set ";
+            $sql_update_temp = "update rs_temp_relief_teacher_availability set ";
+
+            $teacher_change = false;
+            $remark_change = false;
+
+            foreach($change as $key => $value)
+            {
+                if(array_key_exists($key, $teacher_match_array))
+                {
+                    $teacher_change = true;
+                    $sql_update_teacher .= $teacher_match_array[$key]."='".mysql_real_escape_string(trim($value))."',";
+                }
+                else if(array_key_exists($key, $temp_match_array))
+                {
+                    $remark_change = true;
+                    $sql_update_temp .= $temp_match_array[$key]."='".mysql_real_escape_string(trim($value))."',";
+                }
+            }
+
+            $sql_update_temp = substr($sql_update_temp, 0 ,-1)." ";
+            $sql_update_temp .= "where temp_availability_id = ".mysql_real_escape_string(trim($leaveID)).";";
+
+            //query teacher id
+            $sql_get_teacher_id = "select * from rs_temp_relief_teacher_availability where temp_availability_id = ".mysql_real_escape_string(trim($leaveID)).";";
+            $get_teacher_id_result = Constant::sql_execute($db_con, $sql_get_teacher_id);
+            if(is_null($get_teacher_id_result))
+            {
+                return false;
+            }
+            $row = $get_teacher_id_result[0];
+            if(!$row)
+            {
+                return false;
+            }
+            else
+            {
+                $teacher_id = $row['teacher_id'];
+                $remark = $row['slot_remark'];
+            }
+            
+            if($teacher_change)
+            {
+                $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
+                $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
+
+                $update_teacher_result = Constant::sql_execute($db_con, $sql_update_teacher);
+
+                if(!$update_teacher_result)
+                {
+                    return false;
+                }
+            }
+            if($remark_change && empty($change['datetime-from']) && empty($change['datetime-to']))
+            {
+                $update_temp_result = Constant::sql_execute($db_con, $sql_update_temp);
+
+                if(!$update_temp_result)
+                {
+                    return false;
+                }
+            }
+            if(!empty($change['datetime-from']) || !empty($change['datetime-to']))
+            {
+                $remark = empty($change['remark'])?$remark:$change['remark'];
+                $datetime_from_temp = empty($change['datetime-from'])?$row['start_datetime']:$change['datetime-from'];
+                $datetime_to_temp = empty($change['datetime-to'])?$row['end_datetime']:$change['datetime-to'];
+                
+                if(!Teacher::delete($leaveID, "temp", $has_relief))
+                {
+                    return false;
+                }
+                
+                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp));
+            }
+            
+            return true;
+        }
+    }
+    
     /**
      * For prop=leave, only accname, reason, remark, datetime-from, datetime-to can be updated;
      * For prop=temp, only datetime-from, datetime-to, remark, phone, email, MT can be updated;
@@ -678,7 +1130,7 @@ class Teacher {
      * @param type $change
      * @return boolean
      */
-    public static function edit($leaveID, $prop, $change)
+    private static function edit_v2($leaveID, $prop, $change)
     {
         $db_con = Constant::connect_to_db('ntu');
 

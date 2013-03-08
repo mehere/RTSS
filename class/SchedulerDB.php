@@ -628,6 +628,160 @@ class SchedulerDB
         return $result;
     }
 
+    public static function overrideSet($state, $scheduleIndex)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            throw new DBException("fail to set override", __FILE__, __LINE__);
+        }
+        
+        if(strcmp($state, "start") === 0)
+        {
+            $sql_copy = "select * from temp_each_alternative where schedule_id = $scheduleIndex;";
+            $copy = Constant::sql_execute($db_con, $sql_copy);
+            if(is_null($copy))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+            
+            $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
+            foreach($copy as $one)
+            {
+                $lesson_id = $row['lesson_id'];
+                $date = $row['schedule_date'];
+                $start_time = $row['start_time_index'];
+                $end_time = $row['$end_time_index'];
+                $leave_teacher = $row['leave_teacher'];
+                $relief_teacher = $row['relief_teacher'];
+                $num_of_slot = $row['num_of_slot'];
+                
+                $sql_insert_temp .= "(-1, $lesson_id, $date, $start_time, $end_time, $leave_teacher, $relief_teacher, $num_of_slot),";
+            }
+            $sql_insert_temp = substr($sql_insert_temp, 0, -1).';';
+            
+            $insert_temp = Constant::sql_execute($db_con, $sql_insert_temp);
+            if(is_null($insert_temp))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+            
+            //skip
+            $sql_copy_skip = "select * from temp_aed_skip_info where schedule_id = $scheduleIndex;";
+            $copy_skip = Constant::sql_execute($db_con, $sql_copy_skip);
+            if(is_null($copy_skip))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+            
+            $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
+            foreach($copy_skip as $one)
+            {
+                $lesson_id = $row['lesson_id'];
+                $date = $row['schedule_date'];
+                $start_time = $row['start_time_index'];
+                $end_time = $row['$end_time_index'];
+                $accname = $row['accname'];
+                
+                $sql_insert_temp_skip .= "(-1, $lesson_id, $date, $start_time, $end_time, $accname),";
+            }
+            $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
+            
+            $insert_temp_skip = Constant::sql_execute($db_con, $sql_insert_temp_skip);
+            if(is_null($insert_temp_skip))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+        }
+        else if(strcmp($state, "cancel") === 0)
+        {
+            $sql_delete = "delete from temp_each_alternative where schedule_id = -1;";
+            $delete = Constant::sql_execute($db_con, $sql_delete);
+            if(is_null($delete))
+            {
+                throw new DBException("fail to cancel override", __FILE__, __LINE__);
+            }
+            
+            $sql_delete_skip = "delete from temp_aed_skip_info where schedule_id = -1;";
+            $delete_skip = Constant::sql_execute($db_con, $sql_delete_skip);
+            if(is_null($delete_skip))
+            {
+                throw new DBException("fail to cancel override", __FILE__, __LINE__);
+            }
+        }
+        else
+        {
+            $sql_copy = "select * from temp_each_alternative where schedule_id = -1;";
+            $copy = Constant::sql_execute($db_con, $sql_copy);
+            if(is_null($copy))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+            
+            $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
+            foreach($copy as $one)
+            {
+                $lesson_id = $row['lesson_id'];
+                $date = $row['schedule_date'];
+                $start_time = $row['start_time_index'];
+                $end_time = $row['$end_time_index'];
+                $leave_teacher = $row['leave_teacher'];
+                $relief_teacher = $row['relief_teacher'];
+                $num_of_slot = $row['num_of_slot'];
+                
+                $sql_insert_temp .= "($scheduleIndex, $lesson_id, $date, $start_time, $end_time, $leave_teacher, $relief_teacher, $num_of_slot),";
+            }
+            $sql_insert_temp = substr($sql_insert_temp, 0, -1).';';
+            
+            $insert_temp = Constant::sql_execute($db_con, $sql_insert_temp);
+            if(is_null($insert_temp))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+            
+            //skip
+            $sql_copy_skip = "select * from temp_aed_skip_info where schedule_id = -1;";
+            $copy_skip = Constant::sql_execute($db_con, $sql_copy_skip);
+            if(is_null($copy_skip))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+            
+            $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
+            foreach($copy_skip as $one)
+            {
+                $lesson_id = $row['lesson_id'];
+                $date = $row['schedule_date'];
+                $start_time = $row['start_time_index'];
+                $end_time = $row['$end_time_index'];
+                $accname = $row['accname'];
+                
+                $sql_insert_temp_skip .= "($scheduleIndex, $lesson_id, $date, $start_time, $end_time, $accname),";
+            }
+            $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
+            
+            $insert_temp_skip = Constant::sql_execute($db_con, $sql_insert_temp_skip);
+            if(is_null($insert_temp_skip))
+            {
+                throw new DBException("fail to set override", __FILE__, __LINE__);
+            }
+            
+            $sql_delete = "delete from temp_each_alternative where schedule_id = -1;";
+            $delete = Constant::sql_execute($db_con, $sql_delete);
+            if(is_null($delete))
+            {
+                throw new DBException("fail to cancel override", __FILE__, __LINE__);
+            }
+            
+            $sql_delete_skip = "delete from temp_aed_skip_info where schedule_id = -1;";
+            $delete_skip = Constant::sql_execute($db_con, $sql_delete_skip);
+            if(is_null($delete_skip))
+            {
+                throw new DBException("fail to cancel override", __FILE__, __LINE__);
+            }
+        }
+    }
+    
     public static function override($schedule_index, $relief_id, $accname_new)
     {
         $aed_list = Teacher::getTeacherInfo('AED');
@@ -641,7 +795,7 @@ class SchedulerDB
         $accname_new = mysql_real_escape_string(trim($accname_new));
 
         //1. retrieve old relief
-        $sql_old_relief = "select * from temp_each_alternative where schedule_id = $schedule_index and temp_relief_id = $relief_id;";
+        $sql_old_relief = "select * from temp_each_alternative where schedule_id = -1 and temp_relief_id = $relief_id;";
         $old_relief_result = Constant::sql_execute($db_con, $sql_old_relief);
         if(empty($old_relief_result))
         {
@@ -669,7 +823,7 @@ class SchedulerDB
         }
 
         //update
-        $sql_update = "update temp_each_alternative set relief_teacher = '" . $accname_new . "' where schedule_id = " . $schedule_index . " and temp_relief_id = " . $relief_id . ";";
+        $sql_update = "update temp_each_alternative set relief_teacher = '" . $accname_new . "' where schedule_id = -1 and temp_relief_id = " . $relief_id . ";";
         $update_result = Constant::sql_execute($db_con, $sql_update);
         if (is_null($update_result))
         {
@@ -682,7 +836,7 @@ class SchedulerDB
         {
             //2. search skip of old relief
             // 2.1. - search all relief
-            $sql_all_relief = "select start_time_index, end_time_index from temp_each_alternative where schedule_date = DATE('$schedule_date') and relief_teacher = '$old_relief_teacher' and schedule_id = $schedule_index;";
+            $sql_all_relief = "select start_time_index, end_time_index from temp_each_alternative where schedule_date = DATE('$schedule_date') and relief_teacher = '$old_relief_teacher' and schedule_id = -1;";
             $all_relief_result = Constant::sql_execute($db_con, $sql_all_relief);
             if(is_null($all_relief_result))
             {
@@ -702,7 +856,7 @@ class SchedulerDB
             }
 
             // 2.2. - search all rs_aed_skip
-            $sql_all_skip = "select * from temp_aed_skip_info where schedule_date = DATE('$schedule_date') and accname = '$old_relief_teacher' and schedule_id = $schedule_index;";
+            $sql_all_skip = "select * from temp_aed_skip_info where schedule_date = DATE('$schedule_date') and accname = '$old_relief_teacher' and schedule_id = -1;";
             $all_skip_result = Constant::sql_execute($db_con, $sql_all_skip);
             if(is_null($all_skip_result))
             {
@@ -798,7 +952,7 @@ class SchedulerDB
                     $lesson_id = $a_skip['lesson_id'];
                     $start_skip = $a_skip['start_time'];
                     $end_skip = $start_skip + 1;
-                    $sql_insert_new_skip .= "($schedule_index, '$lesson_id', '$schedule_date', $start_skip, $end_skip, '$accname_new'),";
+                    $sql_insert_new_skip .= "(-1, '$lesson_id', '$schedule_date', $start_skip, $end_skip, '$accname_new'),";
                 }
                 $sql_insert_new_skip = substr($sql_insert_new_skip, 0, -1).';';
                 $insert_new = Constant::sql_execute($db_con, $sql_insert_new_skip);
@@ -816,6 +970,8 @@ class SchedulerDB
     {
         $sessionId = session_id();
 
+        $teacher_list = Teacher::getTeacherContact();
+
         //1. move from temp to relief_info and delete temp
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
@@ -824,6 +980,129 @@ class SchedulerDB
         }
 
         //override for the particular day
+        $sql_select_to_delete = "select * from rs_relief_info where DATE(schedule_date) = DATE('" . $date . "');";
+        $select_to_delete = Constant::sql_execute($db_con, $sql_select_to_delete);
+        if(is_null($select_to_delete))
+        {
+            throw new DBException('Fail to clear exist relief record', __FILE__, __LINE__, 2);
+        }
+        
+        //sms input
+        $list_delete = array();
+        foreach($select_to_delete as $row)
+        {
+            $accname = $row['relief_teacher'];
+
+            if(!array_key_exists($accname, $list_delete))
+            {
+                $list_delete[$accname] = array();
+            }
+
+            $start_time = SchoolTime::getTimeValue($row['start_time_index']);
+            $end_time = SchoolTime::getTimeValue($row['end_time_index']);
+
+            $list_delete[$accname][] = array($start_time, $end_time, $row['schedule_date']);
+        }
+        //sms input
+        $sms_input_delete = array();
+        foreach($list_delete as $accname => $one)
+        {
+            if(!array_key_exists($accname, $teacher_list))
+            {
+                continue;
+            }
+
+            $name = $teacher_list[$accname]['name'];
+            $phone = $teacher_list[$accname]['phone'];
+
+            if(empty($phone))
+            {
+                continue;
+            }
+            if(empty($name))
+            {
+                $name = "Teacher";
+            }
+
+            $message = "Your relief duties during following period(s) are cancelled : ";
+            foreach($one as $time_slot)
+            {
+                $message .= " $time_slot[0] - $time_slot[1] on $time_slot[2], ";
+            }
+            $message = substr($message, 0, -2).". Contact admin or check iScheduler website if you have any questions.";
+
+            $one_sms = array(
+                "phoneNum" => $phone,
+                "name" => $name,
+                "accName" => $accname,
+                "message" => $message,
+                "type" => 'C'
+            );
+
+            $sms_input_delete[] = $one_sms;
+        }
+
+        $today_obj = new DateTime();
+        $today = $today_obj->format('Y/m/d');
+
+        $all_input_delete = array(
+            "date" => $today,
+            "input" => $sms_input_delete
+        );
+
+        $_SESSION['sms']=$all_input_delete;
+        $absolute_path = dirname(__FILE__);
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+
+        //email
+        $from = array(
+            "email" => Constant::email,
+            "password" => Constant::email_password,
+            "name" => Constant::email_name,
+            "smtp" => Constant::email_smtp,
+            "port" => Constant::email_port,
+            "encryption" => Constant::email_encryption
+        );
+        $to_delete = array();
+        foreach($sms_input_delete as $row)
+        {
+            if(!array_key_exists($accname, $teacher_list))
+            {
+                continue;
+            }
+
+            $name = $teacher_list[$accname]['name'];
+            $email = $teacher_list[$accname]['email'];
+
+            if(empty($email))
+            {
+                continue;
+            }
+            if(empty($name))
+            {
+                $name = "Teacher";
+            }
+
+            $recepient = array(
+                'accname' => $accname,
+                'subject' => 'Relief cancellation notification',
+                'email' => $email,
+                'message' => $row['message'],
+                'attachment' => "",
+                'name' => $name
+            );
+
+            $to_delete[] = $recepient;
+        }
+
+        $all_input_email_delete = array(
+            "from" => $from,
+            "to" => $to_delete
+        );
+
+        $_SESSION["email"] = $all_input_email_delete;
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+        
         $sql_clear = "delete from rs_relief_info where DATE(schedule_date) = DATE('" . $date . "');";
         $clear_result = Constant::sql_execute($db_con, $sql_clear);
         if (is_null($clear_result))
@@ -1043,8 +1322,6 @@ class SchedulerDB
         }
 
         //4. inform all teachers (Teacher::getTeacherContact)
-        $teacher_list = Teacher::getTeacherContact();
-
         $return_result = array();
 
         $sms_input = Array();
@@ -1092,7 +1369,7 @@ class SchedulerDB
                 $index++;
             }
 
-            $one_teacher = Array(
+            $one_teacher = array(
                 "phoneNum" => $phone,
                 "name" => $name,
                 "accName" => $accname,
@@ -1111,7 +1388,6 @@ class SchedulerDB
 //        $all_input_str = serialize($all_input);
 
         $_SESSION['sms']=$all_input;
-        $absolute_path = dirname(__FILE__);
         BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
         /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
@@ -1134,15 +1410,6 @@ class SchedulerDB
          */
 
         //6. send email and record success/failure
-        $from = array(
-            "email" => Constant::email,
-            "password" => Constant::email_password,
-            "name" => Constant::email_name,
-            "smtp" => Constant::email_smtp,
-            "port" => Constant::email_port,
-            "encryption" => Constant::email_encryption
-        );
-
         $to = array();
         foreach ($list as $key => $one)
         {

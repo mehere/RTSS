@@ -275,6 +275,8 @@ class AdHocSchedulerDB
     
     public static function adHocApprove($schedule_index, $date)
     {
+        $sessionId = session_id();
+        
         $teacher_list = Teacher::getTeacherContact();
         
         $db_con = Constant::connect_to_db("ntu");
@@ -511,6 +513,15 @@ class AdHocSchedulerDB
         }
         
         //4. send cancel sms
+        $all_input = array(
+            "date" => $date,
+            "input" => $cancel_sms_list
+        );
+
+        $_SESSION['sms']=$all_input;
+        $absolute_path = dirname(__FILE__);
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+        /*
         $cancel_sms_reply = SMS::sendSMS($cancel_sms_list, $date);
 
         if (!is_null($cancel_sms_reply))
@@ -527,6 +538,8 @@ class AdHocSchedulerDB
                 }
             }
         }
+         * 
+         */
         
         //5. construct sms relief content
         $sql_selected = "select temp_each_alternative.lesson_id, temp_each_alternative.start_time_index, temp_each_alternative.end_time_index, relief_teacher, subj_code, venue, class_name from ((temp_each_alternative left join ct_lesson on temp_each_alternative.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where DATE(temp_each_alternative.schedule_date) = DATE('".$date."') and temp_each_alternative.schedule_id = $schedule_index;";
@@ -577,7 +590,7 @@ class AdHocSchedulerDB
             }
         }
 
-        $sms_input = Array();
+        $sms_input = array();
         foreach ($list as $key => $one)
         {
             $accname = $key;
@@ -635,6 +648,14 @@ class AdHocSchedulerDB
         }
 
         //6. send relief sms
+        $relief_all_input = array(
+            "date" => $date,
+            "input" => $sms_input
+        );
+
+        $_SESSION['sms']=$relief_all_input;
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+        /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
         if (!is_null($sms_reply))
@@ -651,6 +672,8 @@ class AdHocSchedulerDB
                 }
             }
         }
+         * 
+         */
 
         //7. construct cancel email
         $from = array(
@@ -699,6 +722,13 @@ class AdHocSchedulerDB
         }
         
         //8. send cancel email
+        $all_input_email = array(
+            "from" => $from,
+            "to" => $cancel_to
+        );
+
+        $_SESSION["email"] = $all_input_email;
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
         /*
         $cancel_email_reply = Email::sendMail($from, $cancel_to);
 
@@ -771,6 +801,13 @@ class AdHocSchedulerDB
         }
 
         //10. send relief email
+        $all_input_email_relief = array(
+            "from" => $from,
+            "to" => $to
+        );
+
+        $_SESSION["email"] = $all_input_email_relief;
+        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
         /*
         $email_reply = Email::sendMail($from, $to);
 
@@ -813,6 +850,14 @@ class AdHocSchedulerDB
         if(empty($db_con))
         {
             throw new DBException('Fail to connect to database', __FILE__, __LINE__);
+        }
+        
+        //clear previously not approved relief
+        $sql_clear_cancel = "delete from temp_ah_cancelled_relief;";
+        $clear_cancel = Constant::sql_execute($db_con, $sql_clear_cancel);
+        if(is_null($clear_cancel))
+        {
+            throw new DBException("Fail to clear cancelled relief", __FILE__, __LINE__);
         }
         
         //query
