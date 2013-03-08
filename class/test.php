@@ -498,13 +498,15 @@ foreach($result as $key => $row)
 }
  *
  */
-
+/*
 $result = SchedulerDB::approve(0, '2013-02-06');
 foreach($result as $row)
 {
     print_r($row);
     echo "<br>";
 }
+ * 
+ */
 
 //AdHocSchedulerDB::cancelRelief(821, 2, 5);
 
