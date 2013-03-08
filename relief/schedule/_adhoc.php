@@ -14,5 +14,7 @@ for ($i=0; $i<$_POST['num']; $i++)
     }
 }
 
+$_SESSION['scheduleType']=1;
+
 header("Location: _schedule.php");
 ?>

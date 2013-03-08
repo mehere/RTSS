@@ -30,6 +30,8 @@ $output['display']= <<< EOD
 </table>
 EOD;
 
+unset($_SESSION['scheduleType']);
+
 header('Content-type: application/json');
 echo json_encode($output);
 ?>
