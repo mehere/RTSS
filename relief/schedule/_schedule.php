@@ -82,20 +82,12 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
 }
 
 ///-----------------------------------------------------------------------------
-$dateString = $_POST["date"];
-if (isset($_POST["btnScheduleAll"]))
-{
-    $typeSchedule = 1;
-} else if (isset($_POST["btnScheduleAdhoc"]))
-{
-    $typeSchedule = 2;
-} else
-{
-    header("/RTSS/index.php");
-}
+$dateString = $_SESSION["scheduleDate"];
 
-//To-do: to remove hardcoding
-//$typeSchedule = 2;
+$typeSchedule = 1;
+if (isset($_SESSION["scheduleType"]) && ($_SESSION["scheduleType"] == 1)){
+    $typeSchedule = 2;
+}
 
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
 
