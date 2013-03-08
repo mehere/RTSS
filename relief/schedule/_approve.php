@@ -19,6 +19,7 @@ EOD;
 
 $output=array('error' => 0);
 
+/*
 $output['display']= <<< EOD
 <table class="table-info">
 	<thead>
@@ -29,6 +30,9 @@ $output['display']= <<< EOD
     </tbody>
 </table>
 EOD;
+*/
+
+$output['display']="The system is sending emails and SMSes to teachers affected. You can press 'OK' to leave this page.";
 
 unset($_SESSION['scheduleType']);
 
