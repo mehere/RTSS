@@ -100,7 +100,7 @@ $(document).ready(function(){
             $(this).autocomplete("search");
         }).focusout(function(){
             var curText= $.trim(this.value), isMatch=false;
-            var selfObj=$(this), reliefAccName='', teacherAccName='', lessonID='', time=[];
+            var selfObj=$(this), reliefAccName='', teacherAccName='', lessonID='', reliefID='', time=[];
 
             var trObj=selfObj.parents('tr').first();
             var reliefTeacher=trObj.find('input[name^="relief-teacher-"]'),

@@ -1,9 +1,4 @@
 <?php
-
-var_dump($_POST);
-exit;
-
-
 ini_set("memory_limit", "512M");
 define("NUM_STATES_REQUIRED", 3);
 define("TIME_TO_WAIT", 10);

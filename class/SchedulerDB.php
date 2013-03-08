@@ -1112,7 +1112,7 @@ class SchedulerDB
 
         $_SESSION['sms']=$all_input;
         $absolute_path = dirname(__FILE__);
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
+//        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
         /*
         $sms_reply = SMS::sendSMS($sms_input, $date);
 
@@ -1204,7 +1204,7 @@ class SchedulerDB
         );
 //        $all_input_str_email = serialize($all_input_email);
         $_SESSION["email"] = $all_input_email;
-        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
+//        BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
 
         /*
         $email_reply = Email::sendMail($from, $to);

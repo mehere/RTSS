@@ -7,23 +7,37 @@ Template::printHeaderAndDoValidation('Report',
         array('report.css'), 
         array('report.js'), 
         Template::REPORT, 'Report (Individual)', Template::REPORT_INDIVIDUAL);
+
+$year=$_POST['year'] ? $_POST['year'] : SchoolTime::getSemYearFromDate(1);
+$sem=$_POST['sem'] ? $_POST['sem'] : SchoolTime::getSemYearFromDate();
 ?>
-<form class="accordion colorbox green" name="report-individual" method="post">
+<form class="row" name="report-individual" method="post">
+    <span class="label">Year:</span>
+    <select name="year">
+        <?php echo PageConstant::printYearRange($year); ?>
+    </select>
+    <span class="label">Sem:</span>
+    <select name="sem">
+        <?php echo PageConstant::printSemRange($sem); ?>
+    </select>
+    <span class="label">Name:</span>
+    <span>
+    	<input type="text" name="fullname" value="<?php echo $_POST['fullname']; ?>" class="field" />
+    	<input type="hidden" name="accname" value="<?php echo $_POST['accname']; ?>" />
+    </span>
+    <input type="submit" class="button button-small" value="Go" style="margin-left: 30px" />
+</form>
+<div class="accordion colorbox green">
     <a href="" class="icon-link"></a>
     <span class="box-title">
         Individual
-        <span class="filter-control">
-            <input type="text" name="fullname" value="<?php echo $_POST['fullname']; ?>" class="field" />
-            <input type="hidden" name="accname" value="<?php echo $_POST['accname']; ?>" />
-            <input type="submit" value="Go" class="button button-small" style="margin-left: 10px" />
-        </span>
     </span>
-</form>                
+</div>                
 <div id="individual">
     <table class="hovered table-info" id="individual-summary">
         <tbody>
             <?php           
-                $teacher=Teacher::individualReport($_POST['accname']);                                        
+                $teacher=Teacher::individualReport($_POST['accname'], $year, $sem);                                        
                 $teacher['net']=PageConstant::calculateNet($teacher['numOfMC'], $teacher['numOfRelief']);
                 if (!$_POST['accname'])
                 {

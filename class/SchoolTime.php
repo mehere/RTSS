@@ -19,8 +19,8 @@ class SchoolTime
             
             // Sem period
             self::$SEM_PERIOD=array(
-                array(new DateTime("2012-01-01"), new DateTime("2012-06-30")),
-                array(new DateTime("2012-07-01"), new DateTime("2012-12-31"))
+                array(array(1, 1), array(6, 30)),
+                array(array(7, 1), array(12, 31))
             );
         }
     }
@@ -83,7 +83,7 @@ class SchoolTime
      * 
      * @param int $year
      * @param int $semNo 1 or 2
-     * @param int $formatOption 0 (default) -- ISO, 1 -- from SG to ISO, 2 -- from ISO to SG_DAY
+     * @param int $formatOption 0 (default) -- ISO string, 1 -- obj
      * @return array [startDate, endDate]. Each element(obj or string based on $formatOption)
      *      if $semNo out of range, return null
      */
@@ -93,10 +93,72 @@ class SchoolTime
         if ($semNo < 1 || $semNo > 2) return null;
         
         $period=SchoolTime::$SEM_PERIOD[$semNo-1];
-        $period[0]=$period[0]->setDate($year, $period[0]->format('n'), $period[0]->format('j'));
+        $period[0]="$year/{$period[0][0]}/{$period[0][1]}";
+        $period[1]="$year/{$period[1][0]}/{$period[1][1]}";
         
-        return;
+        switch ($formatOption)
+        {
+            case 1: 
+                $period[0]=new DateTime($period[0]);
+                $period[1]=new DateTime($period[1]);
+                break;
+        }      
+        
+        return $period;
     }
+    
+    /**
+     *      
+     * @param int $option 0 -- sem, 1 -- year
+     * @param DateTime $date use Y/m/d ( null -- current date )
+     * @return string (-1 means out of range)
+     */
+    public static function getSemYearFromDate($option=0, $date=null)
+    {
+        new SchoolTime;
+        
+        $curDate=$date ? $date : new DateTime();
+        $curYear=$curDate->format('Y');
+        $tmpDate=clone $curDate;
+        
+        switch ($option)
+        {
+            case 1:
+                return $curYear;
+            default:
+                $sem1=SchoolTime::$SEM_PERIOD[0];
+                $sem2=SchoolTime::$SEM_PERIOD[1];
+
+                if ($curDate >= $tmpDate->setDate($curYear, $sem1[0][0], $sem1[0][1]) &&
+                        $curDate <= $tmpDate->setDate($curYear, $sem1[1][0], $sem1[1][1]))
+                {
+                    return 1;
+                }
+                
+                if ($curDate >= $tmpDate->setDate($curYear, $sem2[0][0], $sem2[0][1]) &&
+                        $curDate <= $tmpDate->setDate($curYear, $sem2[1][0], $sem2[1][1]))
+                {
+                    return 2;
+                }
+                
+        }
+        return -1;
+    }
+
+    /**
+     * 
+     * @param DateTime $date1
+     * @param DateTime $date2
+     * @return bool if they are within the same sem
+     */
+    public static function checkDatesInSameSem($date1, $date2)
+    {
+        new SchoolTime;
+        
+        return (SchoolTime::getSemYearFromDate(0, $date1) == SchoolTime::getSemYearFromDate(0, $date2))
+                && (SchoolTime::getSemYearFromDate(1, $date1) == SchoolTime::getSemYearFromDate(1, $date2));        
+    }
+    
 
     /**
      *

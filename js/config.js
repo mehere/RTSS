@@ -48,7 +48,7 @@ window.GlobalFunction.constrainTimeSelect=function(selectFromObj, selectToObj /*
             selectToObj.prop('selectedIndex', curIndex);
         }
 
-        extraFunc(selectFromObj, selectToObj, otherFrom, otherTo);
+        if (extraFunc) extraFunc(selectFromObj, selectToObj, otherFrom, otherTo);
     });
 
     selectToObj.change(function(){
@@ -59,6 +59,6 @@ window.GlobalFunction.constrainTimeSelect=function(selectFromObj, selectToObj /*
             selectFromObj.prop('selectedIndex', curIndex);
         }
 
-        extraFunc(selectToObj, selectFromObj, otherFrom, otherTo);
+        if (extraFunc) extraFunc(selectToObj, selectFromObj, otherFrom, otherTo);
     });
 }
