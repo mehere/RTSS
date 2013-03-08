@@ -5,13 +5,13 @@
 	width: 200px;
 }
 
-.box-title .filter-control {
-	position: relative;
-	top: -3px;
-	margin-left: 15px;
-	
-	font-size: 14px;
-	letter-spacing: 0;
+.row {
+	margin-bottom: 15px;
+	margin-left: -10px;
+}
+.row .label {
+	margin-right: 5px;
+	margin-left: 20px;
 }
 
 #overall tr td:first-child {

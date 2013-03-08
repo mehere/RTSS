@@ -34,9 +34,9 @@ $(document).ready(function(){
         });
 
         // Filter type
-        $(formO['type']).change(function(){
-            $(this.form).submit();
-        });
+//        $(formO['type']).change(function(){
+//            $(this.form).submit();
+//        });
 
         // Print
         $("#print").click(function(){

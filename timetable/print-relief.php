@@ -32,7 +32,7 @@ if (!$date)
 	<div id="container">
         <h2>
             Timetable on <em><?php echo SchoolTime::convertDate($date, 2); ?></em>
-            <div style="font-size: 16px"><?php echo "Sem " . PageConstant::printSemRange(true) . ", " . PageConstant::printYearRange(true); ?></div>
+            <div style="font-size: 16px"><?php echo "Sem " . SchoolTime::getSemYearFromDate(0, new DateTime($_GET['date'])) . ", " . SchoolTime::getSemYearFromDate(1, new DateTime($_GET['date'])); ?></div>
         </h2>        
         <div style="color: red; padding-bottom: 5px; margin-top: -10px">Relief classes are highlighted in red.</div>
         <table class="table-info">
