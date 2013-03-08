@@ -30,7 +30,7 @@ class AdHocSchedulerDB
         }
 
         //query
-        $sql_get_relief = "select * from rs_relief_info where schedule_date = DATE('$scheduleDate');";
+        $sql_get_relief = "select * from rs_relief_info where schedule_date = DATE('$scheduleDate') and relief_id not in (select relief_id from temp_ah_cancelled_relief);";
         $relief_result = Constant::sql_execute($db_con, $sql_get_relief);
         if(is_null($relief_result))
         {
