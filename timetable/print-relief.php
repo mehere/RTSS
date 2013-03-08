@@ -58,7 +58,7 @@ EOD;
                 $timetable=TimetableDB::getReliefTimetable('', '', $_GET['date']);
                 PageConstant::escapeHTMLEntity($timetable);
 
-                $timeArr=SchoolTime::getTimeArrSub(0, 0);
+                $timeArr=SchoolTime::getTimeArrSub(0, -1);
                 for ($i=0; $i < count($timeArr) - 1; $i++)
                 {
                     $teachingList=$timetable[$i];
