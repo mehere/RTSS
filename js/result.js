@@ -5,6 +5,8 @@ $(document).ready(function(){
         ALERT_MSG=['Please provide relief teacher for each teacher on leave.',
             'Failed to override the relief teacher due to database error.'];
 
+    var contentToHide=$('#page-turn-wrapper').add('.bt-control');
+
     $('#override').click(function(){
         $(".text-display").hide();
         $(".text-hidden").fadeIn();
@@ -19,6 +21,7 @@ $(document).ready(function(){
         });*/
 
         $('.control-top a[id^="override"]').toggle();
+        contentToHide.hide();
 
         return false;
     });
@@ -32,6 +35,7 @@ $(document).ready(function(){
         $(".text-display").fadeIn();
 
         $('.control-top a[id^="override"]').toggle();
+        contentToHide.show();
 
         return false;
     });
@@ -47,6 +51,7 @@ $(document).ready(function(){
         $(".text-display").fadeIn();
 
         $('.control-top a[id^="override"]').toggle();
+        contentToHide.show();
 
         return false;
     });
