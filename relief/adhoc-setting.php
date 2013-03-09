@@ -9,8 +9,7 @@ Template::printHeaderAndDoValidation('Home',
         Template::HOME, "Adhoc Scheduling", Template::SCHEDULE);
 ?>
 <form class="main" name="schedule" method="post" action="schedule/_adhoc.php">
-    <div class="accordion colorbox blue">
-        <span href="" class="icon-link"></span>
+    <div class="accordion colorbox blue">        
         <span class="box-title">
             Previous Schedule Result
         </span>

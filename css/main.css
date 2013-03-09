@@ -164,7 +164,7 @@ div.wrapper{
     -pie-background: linear-gradient(to bottom, #F7F8F9,#FBFCFD);
     behavior: url("/RTSS/img/lib/PIE.htc");
     
-	box-shadow: 0 3px 6px -4px #B9B9B9;	
+	box-shadow: 0 3px 6px -4px #B9B9B9, inset 0 0 2px 0 #CCC;
 }
 
 div.submenu{
@@ -329,6 +329,7 @@ table.hovered tbody tr:hover{
     /*    margin: 10px 0px;*/
     padding: 10px;
 	padding-left: 0;
+	margin-left: 15px;
     display: inline-block;
 }
 
@@ -356,7 +357,7 @@ table.hovered tbody tr:hover{
 
 .accordion .icon-link {
 	margin-left: 15px;
-	margin-right: 5px;
+	margin-right: -10px;
 	
 	color: white;
 	font-size: 20px;

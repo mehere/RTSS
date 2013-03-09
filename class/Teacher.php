@@ -634,7 +634,7 @@ class Teacher {
             return true;
         }
         
-        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');
@@ -672,7 +672,7 @@ class Teacher {
             return false;
         }
 
-        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');

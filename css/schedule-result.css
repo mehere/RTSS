@@ -6,6 +6,7 @@
 .table-info .text-hidden {
 	display: none;
 	width: 90%;
+	font-size: 14px;
 }
 
 #dialog-alert .table-info {

@@ -5,7 +5,7 @@ spl_autoload_register(function($class){
 
 Template::printHeaderAndDoValidation('Upload Timetable', 
         array('upload.css'), 
-        array(''), 
+        array(), 
         Template::TT_ADMIN, 'Master Timetable', Template::TT_ADMIN_MASTER);
 ?>
 <form class="main" name="timetable" action="_upload.php" method="post" enctype="multipart/form-data">

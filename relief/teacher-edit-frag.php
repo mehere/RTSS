@@ -30,7 +30,7 @@ EOD;
 }
 else
 {    
-    $motherTongueOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['MT']['display']);
+//    $motherTongueOptionStr=PageConstant::formatOptionInSelect(NameMap::$RELIEF['MT']['display']);
 
     $nameTimeInBetweenFrag= <<< EOD
 <td>
@@ -42,13 +42,13 @@ else
         </div>
     </div>
 </td>
-<td>
-    <div class="add-edit">
-        <span class="toggle-display"></span>
-        <select name="MT-$numOfTeacher" class="toggle-edit">$motherTongueOptionStr</select>
-    </div>
-</td>
 EOD;
+//<td>
+//    <div class="add-edit">
+//        <span class="toggle-display"></span>
+//        <select name="MT-$numOfTeacher" class="toggle-edit">$motherTongueOptionStr</select>
+//    </div>
+//</td>
 }
 
 $date=date(PageConstant::DATE_FORMAT_ISO);
