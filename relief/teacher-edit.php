@@ -13,7 +13,6 @@ Template::printHeaderAndDoValidation('Scheduler (Edit)',
 <form class="main" name="edit" action="_teacher_edit.php" method="post">            	
     <input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
     <div class="accordion colorbox blue">
-        <span class="icon-link"></span>
         <span class="box-title">
             <?php echo $isTemp ? "Temporary Relief Teacher:" : "Teacher on Leave:"; ?>
         </span>
@@ -24,7 +23,7 @@ Template::printHeaderAndDoValidation('Scheduler (Edit)',
             <thead>
                 <tr>
                     <?php                                 
-                        $width=$isTemp ? array('45px', '40px', '21%', '33%', '100px',  '245px', '46%') : 
+                        $width=$isTemp ? array('45px', '40px', '21%', '33%',  '245px', '46%') : 
 //                                        array('45px', '40px', '40%', '170px', '235px', '60%', '70px');
                             array('45px', '40px', '40%', '170px', '245px', '60%');
 
@@ -51,11 +50,11 @@ EOD;
                     $keyList=array_keys(NameMap::$RELIEF_EDIT[$teacherKey]['display']);
                     $keyExtraList=NameMap::$RELIEF_EDIT[$teacherKey]['hidden'];
 
-                    $teacherVerifiedList=$_SESSION['teacherVerified'];
+//                    $teacherVerifiedList=$_SESSION['teacherVerified'];
 
                     // construct reason option array and time option array
                     $reasonArr=NameMap::$RELIEF['leaveReason']['display'];
-                    $motherTongueArr=NameMap::$RELIEF['MT']['display'];
+//                    $motherTongueArr=NameMap::$RELIEF['MT']['display'];
 
                     $numOfTeacher=count($teacherList);
                     for ($i=0; $i<$numOfTeacher; $i++)
@@ -90,9 +89,9 @@ EOD;
                             $teacher['leaveID']=$teacher['availability_id'];
                             unset($teacher['availability_id']);
 
-                            $datetime=$teacher[$keyList[4]];                                        
-                            $motherTongueOptionStr=PageConstant::formatOptionInSelect($motherTongueArr, $teacher[$keyList[3]]);
-                            $remarkStr=$teacher[$keyList[5]];
+                            $datetime=$teacher['datetime'];                                        
+//                            $motherTongueOptionStr=PageConstant::formatOptionInSelect($motherTongueArr, $teacher[$keyList[3]]);
+                            $remarkStr=$teacher[$keyList[4]];
 
                             $nameTimeInBetweenFrag= <<< EOD
 <td>
@@ -102,11 +101,11 @@ EOD;
 <div class="time-line"><input type="text" name="email-$i" value="{$teacher['email']}" /></div>
 </div>
 </td>
-<td>
-<span class="toggle-display">{$motherTongueArr[$teacher[$keyList[3]]]}</span>
-<select name="MT-$i" class="toggle-edit">$motherTongueOptionStr</select>
-</td>
 EOD;
+//<td>
+//<span class="toggle-display">{$motherTongueArr[$teacher[$keyList[3]]]}</span>
+//<select name="MT-$i" class="toggle-edit">$motherTongueOptionStr</select>
+//</td>
                         }
 
                         $dateFromDisplay=SchoolTime::convertDate($datetime[0][0]);
