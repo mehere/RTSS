@@ -992,7 +992,7 @@ class SchedulerDB
             throw new DBException('Fail to approve the schedule', __FILE__, __LINE__);
         }
         
-        //1. override old approved result
+        //1. notify override old approved result
         //notify relief
         $sql_override_relief = "select relief_id from rs_relief_info where DATE(schedule_date) = DATE('" . $date . "');";
         $override_relief = Constant::sql_execute($db_con, $sql_override_relief);
@@ -1000,7 +1000,6 @@ class SchedulerDB
         {
             throw new DBException('Fail to clear exist relief record', __FILE__, __LINE__, 2);
         }
-        
         $relief_delete_list = array();
         foreach($override_relief as $row)
         {
@@ -1014,14 +1013,16 @@ class SchedulerDB
         {
             throw new DBException('Fail to clear exist relief record', __FILE__, __LINE__, 2);
         }
-        
         $skip_delete_list = array();
         foreach($override_skip as $row)
         {
             $skip_delete_list[] = $row["skip_id"];
         }
         
-        //clear db
+        //2. notify
+        Notification::sendReliefNotification($schedule_index, $relief_delete_list, $skip_delete_list, $teacher_contact, $date);
+        
+        //3. clear old result
         $sql_clear_relief = "delete from rs_relief_info where DATE(schedule_date) = DATE('" . $date . "');";
         $clear_result = Constant::sql_execute($db_con, $sql_clear_relief);
         if (is_null($clear_result))
@@ -1036,7 +1037,7 @@ class SchedulerDB
             throw new DBException('Fail to clear exist relief record', __FILE__, __LINE__, 2);
         }
         
-        //2. insert new relief
+        //4. insert new relief
         //get leaves
         $sql_select_leave = "select * from rs_leave_info where DATE('$date') between DATE(start_time) and DATE(end_time);";
         $select_leave = Constant::sql_execute($db_con, $sql_select_leave);
@@ -1119,7 +1120,7 @@ class SchedulerDB
             }
         }
 
-        //3. insert new relief
+        //5. insert new skip
         //get list of relief to construct skip reference
         $sql_select_relief = "select * from rs_relief_info where schedule_date = DATE('$date')";
         $select_relief_result = Constant::sql_execute($db_con, $sql_select_relief);
@@ -1176,10 +1177,7 @@ class SchedulerDB
             }
         }
 
-        //4. notify
-        Notification::sendReliefNotification($schedule_index, $relief_delete_list, $skip_delete_list, $teacher_contact, $date);
-        
-        //5. clear temp tables - relief and skip
+        //6. clear temp tables - relief and skip
         $sql_delete = "delete from temp_each_alternative;";
         $delete_result = Constant::sql_execute($db_con, $sql_delete);
         if (is_null($delete_result))
