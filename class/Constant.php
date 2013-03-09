@@ -19,22 +19,23 @@ Class Constant
     const email_smtp = 'smtp.gmail.com';
     const email_port = 465;
     const email_encryption = 'ssl';
-    
-    const php_exe = "D:\\xampp\php\php.exe";
-    
+
+//    const php_exe = "D:\\xampp\php\php.exe";
+    const php_exe = 'C:\Program Files (x86)\PHP\v5.3\php.exe';
+
     //time slot
 //    const num_of_time_slot = 15;
     const num_of_week_day = 5;
 
     const default_recom_num = 10; //in case fail to query from database
-    
+
     public static $teacher_type = array("Teacher"=>"Normal", "AED"=>"Aed", "Temp"=>"Temp", "HOD"=>"Hod", "untrained"=>"Untrained", "ExCo"=>"ExCo");   //key: types in database; value: types in websystem. Due to some reasons, we maintain the two list
 
     // To-do: delete and make it consistent with 'sem date' in 'SchoolTime'
     public static $sem_dates = array('01-01', '06-30', '07-01', '12-31');
-    
+
     public static $SEM_PERIOD;
-    
+
     public static function connect_to_db($db_name)
     {
         if(strcmp($db_name, "ntu")===0)
@@ -78,11 +79,11 @@ Class Constant
             return null;
         }
     }
-    
+
     public static function sql_execute($db_con, $sql)
     {
         $query_result = mysql_query($sql, $db_con);
-        
+
         if(!$query_result)
         {
             return null;
