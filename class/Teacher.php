@@ -631,10 +631,10 @@ class Teacher {
         $db_con = Constant::connect_to_db('ntu');
         if(empty($db_con))
         {
-            return false;
+            return true;
         }
         
-        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');
@@ -652,15 +652,15 @@ class Teacher {
         $check_result = Constant::sql_execute($db_con, $sql_check);
         if(is_null($check_result))
         {
-            return false;
+            return true;
         }
         if(!empty($check_result))
         {
             //has future relief
-            return false;
+            return true;
         }
         
-        return true;
+        return false;
     }
     
     public static function delete($leaveIDList, $prop, $has_relief = false)
@@ -672,7 +672,7 @@ class Teacher {
             return false;
         }
 
-        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');

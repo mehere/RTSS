@@ -33,6 +33,7 @@ $(document).ready(function(){
     }
 
     $(formT['accname']).change(function(){
+        this.form['date'].value=formS['date'].value;
         this.form.submit();
     });
 

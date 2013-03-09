@@ -860,7 +860,7 @@ class TimetableDB
             return 1;
         }
 
-        if($type != 0)
+        if ($type == 1)
         {
             $sql_relief = "select * from rs_relief_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and schedule_date = DATE('".mysql_real_escape_string(trim($schedule_date))."') and ((start_time_index < ".$time_range[1].") and (end_time_index > ".$time_range[0]."));";
             $relief_result = Constant::sql_execute($db_con, $sql_relief);

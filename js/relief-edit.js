@@ -2,7 +2,8 @@ $(document).ready(function(){
     var CONFIRM_TEXT=["Confirm to verify selected teachers?", "Confirm to delete selected teachers?",
             "Please select at least one teacher before proceeding."],
         TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
-            "Failed to delete this teacher.", "Please choose dates within current semester."],
+            "Failed to delete this teacher.", "Please choose dates within current semester.",
+            "Edit/Delete this teacher will affect future relief. Confirm to proceed?"],
         FADE_DUR=400;
 
     var DATE_WARN_TEXT=["Date should not be empty.", "Date-To should be no smaller than Date-From."];
@@ -323,7 +324,11 @@ $(document).ready(function(){
                         dataPost['mode']='edit';
 
                         $.post(formEdit.action, dataPost, function(data){
-                            if (data['error'] > 0)
+                            if (data['error'] == 3)
+                            {
+                                confirm(TEACHER_OP_TEXT[4], function(){ saveLocally(); });
+                            }
+                            else if (data['error'] > 0)
                             {
                                 confirm(TEACHER_OP_TEXT[1], function(){});
                             }
@@ -387,15 +392,24 @@ $(document).ready(function(){
                     var dataPost={'mode': 'delete', 'prop': formEdit['prop'].value, 'num': 1};
                     dataPost['leaveID-0']=formEdit['leaveID-' + index].value;
                     $.post(formEdit.action, dataPost, function(data){
-                        if (data['error'] > 0)
+                        function proceed()
+                        {
+                            curRow.fadeOut(FADE_DUR, function(){
+                                $(this).remove();
+                            });
+                        }
+
+                        if (data['error'] == 3)
+                        {
+                            confirm(TEACHER_OP_TEXT[4], function(){ proceed(); });
+                        }
+                        else if (data['error'] > 0)
                         {
                             confirm(TEACHER_OP_TEXT[2], function(){});
                         }
                         else
                         {
-                            curRow.fadeOut(FADE_DUR, function(){
-                                $(this).remove();
-                            });
+                            proceed();
                         }
                     }, 'json');
                 }
