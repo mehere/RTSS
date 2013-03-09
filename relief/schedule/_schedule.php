@@ -16,6 +16,7 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
     global $startTime;
     while (!($activeStates->isEmpty()))
     {
+        gc_collect_cycles();
         $nowTime = microtime(true);
         if ((($successStates->numberStates > 0) || ($stoppedStates->numberStates > 0)) && (($nowTime - $startTime) > TIME_TO_WAIT))
         {
@@ -89,6 +90,10 @@ if (isset($_SESSION["scheduleType"]) && ($_SESSION["scheduleType"] == 1)){
     $typeSchedule = 2;
 }
 
+//echo "Session Type: {$_SESSION['scheduleType']}.<br>";
+echo "$dateString<br>";
+echo "Type:$typeSchedule";
+die;
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
 
 $typesOfTeachers = array(
@@ -403,6 +408,8 @@ $visitedStates[$startState->toString()] = NULL;
 
 scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 
+error_log("passed 1");
+
 // round 2
 if ($successStates->numberStates == 0)
 {
@@ -423,6 +430,8 @@ if ($successStates->numberStates == 0)
     scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 }
 
+error_log("passed 2");
+
 // round 3
 if ($successStates->numberStates == 0)
 {
@@ -440,6 +449,8 @@ if ($successStates->numberStates == 0)
     $stoppedStates = new ScheduleStateHeapBest(NUM_STATES_REQUIRED);
     scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 }
+
+error_log("passed 3");
 
 if ($successStates->numberStates == 0)
 {

@@ -64,6 +64,44 @@ class SchoolTime
     }
 
     /**
+     * 
+     * @param string $timeValue "hh:mm"
+     * @param type $mode 0 - largest index smaller than or equal to input; temp disabled
+     */
+    public static function getApproTimeIndex($timeValue)
+    {
+        $times = explode(":", $timeValue);
+        $hour = $times[0] - 0;
+        $minute = $times[1] - 0;
+        
+        $appro_hour = 1 + ($hour - 7) * 2;
+        
+        if($appro_hour < 1)
+        {
+            return 1;
+        }
+        if($appro_hour > 15)
+        {
+            return 15;
+        }
+        
+        if($appro_hour === 1 && $minute < 45)
+        {
+            return 1;
+        }
+        if($minute >= 15 && $minute < 45)
+        {
+            return $appro_hour;
+        }
+        else if($minute >=45 && $minute <= 59)
+        {
+            return $appro_hour + 1;
+        }
+        
+        return $appro_hour - 1;
+    }
+    
+    /**
      * Get an array of time representation
      * @param int $start
      * @param int $end negative means counting from the end

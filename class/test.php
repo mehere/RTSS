@@ -353,9 +353,11 @@ foreach($result as $key=>$value)
 
 //print_r(ListGenerator::getTeacherType());
 //print_r(ListGenerator::getClassName('2013-02-06'));
-
-//$result = ListGenerator::getTeacherName('2013/02/06', -1);
-//print_r($result);
+/*
+$result = ListGenerator::getTeacherName('2013/03/27', -1);
+print_r($result);
+ * 
+ */
 /*
 foreach($result as $key => $value)
 {
@@ -396,7 +398,7 @@ foreach($result as $key=>$value)
         //echo $result3;
         //
         //echo Teacher::delete(Array(11, 12, 13), 'leave');
-        //echo Teacher::delete(Array(10), 'temp');
+        //echo Teacher::delete(Array(2), 'leave');
         //Teacher::edit(1, "leave", Array('reason'=>'Ha ha', 'remark'=>'cdddc','datetime-from'=>'2013-02-06 11:15'));//, 'datetime-to'=>'2013-02-11 14:15'
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-02-06 08:15', 'email'=>'dddddddf@adf.com', 'handphone'=>'23232323', 'MT'=>'Malay')); //'datetime-to'=>'2013-01-14 12:15',
         //********xue : testing end
@@ -498,15 +500,8 @@ foreach($result as $key => $row)
 }
  *
  */
-/*
-$result = SchedulerDB::approve(0, '2013-02-06');
-foreach($result as $row)
-{
-    print_r($row);
-    echo "<br>";
-}
- * 
- */
+
+//SchedulerDB::approve(0, '2013-02-06');
 
 //AdHocSchedulerDB::cancelRelief(821, 2, 5);
 
