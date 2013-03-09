@@ -19,50 +19,79 @@ class SMS
         //end of test
 
         $sendingResult = array();
+//        error_log("Number of receipents: ".count($receiverList));
         foreach ($receiverList as $aReceipent)
         {
             $outputCode = NULL;
             $phoneNum = trim($aReceipent["phoneNum"]);
             if (strlen($phoneNum) == 8)
             {
-                $phoneNum = "+65" . $phoneNum;
-            } else
-            {
-                $outputCode = 104;
-            }
-            $accname = $aReceipent["accName"];
-            $name = $aReceipent["name"];
-            $message = $aReceipent["message"];
-            $timeCreated = date('Y-m-d H:i:s');
-            $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $aReceipent["type"]);
-            $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
-            $message = $message . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
-
-
-
-            if ($outputCode == NULL)
-            {
-                $absolutePath = dirname(__FILE__);
-                $absolutePath = realpath($absolutePath . '\..\vigsys');
-                chdir($absolutePath);
-
+                $phoneNum = "+65$phoneNum";
                 $phoneNum = escapeshellarg($phoneNum);
-                $message = escapeshellarg($message);
-                $command = "java -jar vigsyssmscom-ntu.jar 1 $phoneNum $message";
 
-                for ($i = 0; $i < 3; $i++)
+                $accname = $aReceipent["accName"];
+                $name = $aReceipent["name"];
+                $message = $aReceipent["message"];
+                $timeCreated = date('Y-m-d H:i:s');
+                $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $aReceipent["type"]);
+                $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
+                $message = $message . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
+
+                $messageCache = $message;
+                $arrMessage = array();
+
+                $maxBody = 140;
+                while (true)
                 {
-                    //test
-                    $print_command[] = $command;
-                    $outputCode = 100;
-                    //end of test
-                    //$apiOutput = shell_exec($command . "\n");
-                    //$outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
-                    if ($outputCode == 100)
+                    $length = strlen($messageCache);
+                    if ($length > $maxBody)
                     {
+                        $breakIndex = strrpos($messageCache, '~', $maxBody - $length);
+                        $message = substr($messageCache, 0, $breakIndex );
+                        $arrMessage[] = $message;
+                        $messageCache = substr($messageCache, $breakIndex + 1);
+                    } else
+                    {
+                        $arrMessage[] = $messageCache;
+                        $messageCache = "";
                         break;
                     }
                 }
+
+                $noMessage = count($arrMessage);
+                $index = 1;
+                foreach ($arrMessage as $message)
+                {
+
+                    $absolutePath = dirname(__FILE__);
+                    $absolutePath = realpath($absolutePath . '\..\vigsys');
+                    chdir($absolutePath);
+
+                    $message = "<Scheduler>[$index/$noMessage]~$message";
+                    $message = escapeshellarg($message);
+                    $command = "java -jar vigsyssmscom-ntu.jar 1 $phoneNum $message";
+
+                    for ($i = 0; $i < 3; $i++)
+                    {
+                        //test
+
+                        $outputCode = 100;
+                        //end of test
+                        //$apiOutput = shell_exec($command . "\n");
+                        //$outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
+                        if ($outputCode == 100)
+                        {
+                            $print_command[] = $command;
+
+                            break;
+                        }
+                    }
+                    $index++;
+                }
+            } else
+            {
+                $outputCode = 104;
+//                    error_log("Invalid Phone Num");
             }
             $status = SMS::mapCode($outputCode);
             $sendingResult[] = array("phoneNum" => $phoneNum, "name" => $name, "message" => $message, "status" => $status, "accname" => $accname);
@@ -74,7 +103,7 @@ class SMS
         $file = fopen('sms_test.txt', 'w');
         foreach ($print_command as $gem)
         {
-            fwrite($file, $gem.'\r\n');
+            fwrite($file, $gem . "\r\n");
         }
         fclose($file);
         //end of test
