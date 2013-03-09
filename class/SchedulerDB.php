@@ -1021,12 +1021,6 @@ class SchedulerDB
             $skip_delete_list[] = $row["skip_id"];
         }
         
-        //send
-        $today_obj = new DateTime();
-        $today = $today_obj->format('Y/m/d');
-        
-        Notification::sendCancelNotification($relief_delete_list, $skip_delete_list, $teacher_contact, $today);
-        
         //clear db
         $sql_clear_relief = "delete from rs_relief_info where DATE(schedule_date) = DATE('" . $date . "');";
         $clear_result = Constant::sql_execute($db_con, $sql_clear_relief);
@@ -1183,7 +1177,7 @@ class SchedulerDB
         }
 
         //4. notify
-        Notification::sendReliefNotification($schedule_index, $teacher_contact, $today);
+        Notification::sendReliefNotification($schedule_index, $relief_delete_list, $skip_delete_list, $teacher_contact, $date);
         
         //5. clear temp tables - relief and skip
         $sql_delete = "delete from temp_each_alternative;";
