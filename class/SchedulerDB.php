@@ -646,7 +646,7 @@ class SchedulerDB
             }
             
             $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
-            foreach($copy as $one)
+            foreach($copy as $row)
             {
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
@@ -675,7 +675,7 @@ class SchedulerDB
             }
             
             $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
-            foreach($copy_skip as $one)
+            foreach($copy_skip as $row)
             {
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
@@ -711,6 +711,22 @@ class SchedulerDB
         }
         else
         {
+            //clear old
+            $sql_delete_old = "delete from temp_each_alternative where schedule_id = $scheduleIndex;";
+            $delete_old = Constant::sql_execute($db_con, $sql_delete_old);
+            if(is_null($delete_old))
+            {
+                throw new DBException("fail to cancel override", __FILE__, __LINE__);
+            }
+            
+            $sql_delete_skip_old = "delete from temp_aed_skip_info where schedule_id = $scheduleIndex;";
+            $delete_skip_old = Constant::sql_execute($db_con, $sql_delete_skip_old);
+            if(is_null($delete_skip_old))
+            {
+                throw new DBException("fail to cancel override", __FILE__, __LINE__);
+            }
+            
+            //copy new 
             $sql_copy = "select * from temp_each_alternative where schedule_id = -1;";
             $copy = Constant::sql_execute($db_con, $sql_copy);
             if(is_null($copy))
@@ -719,7 +735,7 @@ class SchedulerDB
             }
             
             $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
-            foreach($copy as $one)
+            foreach($copy as $row)
             {
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
@@ -739,7 +755,6 @@ class SchedulerDB
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
             
-            //skip
             $sql_copy_skip = "select * from temp_aed_skip_info where schedule_id = -1;";
             $copy_skip = Constant::sql_execute($db_con, $sql_copy_skip);
             if(is_null($copy_skip))
@@ -748,7 +763,7 @@ class SchedulerDB
             }
             
             $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
-            foreach($copy_skip as $one)
+            foreach($copy_skip as $row)
             {
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
@@ -766,6 +781,7 @@ class SchedulerDB
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
             
+            //clear temp
             $sql_delete = "delete from temp_each_alternative where schedule_id = -1;";
             $delete = Constant::sql_execute($db_con, $sql_delete);
             if(is_null($delete))
