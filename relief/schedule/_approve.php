@@ -5,7 +5,14 @@ spl_autoload_register(function($class){
 
 Template::validate(true, true);
 
-$result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['scheduleDate']);
+if ($_SESSION['scheduleType'] == 1)
+{
+    $result=AdHocSchedulerDB::adHocApprove($_POST['schedule-index'], $_SESSION['scheduleDate']);
+}
+else
+{
+    $result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['scheduleDate']);    
+}
 
 $trStr='';
 foreach ($result as $key => $value)

@@ -26,8 +26,9 @@ $dayArr=PageConstant::$DAY;
                 <?php echo PageConstant::printSemRange(); ?>
             </select>
             <input type="submit" class="button button-small" value="Load" style="margin-left: 30px" />
-            <input type="button" class="button red button-small" name="upload" value="Save" style="margin-left: 30px" />
-        </div>
+            <input type="button" class="button green button-small" name="add" value="Add Class" style="margin-left: 30px; display: none" />
+            <input type="button" class="button red button-small" name="upload" value="Save" style="margin-left: 30px; display: none" />
+        </div>        
     </form>                    
     <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
         <table class="hovered table-info">
@@ -54,7 +55,8 @@ EOD;
                 ?>
             </tbody>
         </table>
-        <input type="hidden" name="accname" /><input type="hidden" name="year" /><input type="hidden" name="sem" />        
+        <input type="hidden" name="accname" /><input type="hidden" name="year" /><input type="hidden" name="sem" />
+        <input type="hidden" name="specialty" />        
     </form>
 </div>
 <div id="dialog-alert"></div>
@@ -63,7 +65,7 @@ EOD;
         <thead>
             <tr>
                 <?php
-                    $width=array("65px", "25%", "55px", "40%", "70px", "35%", "70px");
+                    $width=array("55px", "25%", "55px", "45%", "70px", "30%", "70px");
                     foreach ($width as $value)
                     {
                         echo <<< EOD
@@ -103,17 +105,21 @@ EOD;
                 <input type="hidden" name="period" />
             </td>
             <td class="label">Subject:</td>
-            <td><input type="text" name="subject" class="field" style="width: 90%" /></td>
-            <td></td>
+            <td colspan="2"><input type="text" name="subject" class="field" style="width: 90%" /></td>            
         </tr>
         <tr>
             <td class="label">Venue:</td>
             <td><input type="text" name="venue" class="field" style="width: 100%" /></td>
             <td class="label">Class:</td>
             <td colspan="3"><input type="text" name="class" class="field" style="width: 50%" /> <span class="comment">Use <strong class="punc">;</strong> or <strong class="punc">,</strong> to separate classes</span></td>
-            <td><input type="submit" class="button" value="Add" style="font-size: 14px" /></td>
+            <td><input type="submit" class="button button-small" value="Add" style="font-size: 14px" /></td>
         </tr>
     </table>
+</form>
+<form name="save" id="dialog-save">
+	<div class="row" style="margin-top: 10px">
+        <span class="label">Specialty:</span><input type="text" class="field" name="specialty" style="width: 150px" />
+    </div>
 </form>
 <?php    
     Template::printFooter();
