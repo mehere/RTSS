@@ -87,7 +87,7 @@ EOD;
         </table>
     </div>                
     <div class="bt-control">
-        <input type="submit" value="Go" class="button" />
+        <input type="submit" name="go" value="Go" class="button" />
     </div>
     <div style="clear: both"></div>
     <input type="hidden" name="num" value="<?php echo $i; ?>" />

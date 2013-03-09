@@ -95,8 +95,8 @@ EOD;
                 ?>
             </tbody>
         </table>
-        <div class="page-control">Schedule Result Choice</div>
-        <div class="page-control">                    	
+        <div class="page-control">Schedule Result Choice <?php echo $curPage; ?></div>
+        <div class="page-control" id="page-turn-wrapper">                    	
             <?php
                 $prevPage=max(1, $curPage-1);
                 echo <<< EOD
