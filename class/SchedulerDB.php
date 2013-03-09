@@ -642,7 +642,12 @@ class SchedulerDB
             $copy = Constant::sql_execute($db_con, $sql_copy);
             if(is_null($copy))
             {
-                throw new DBException("fail to set override", __FILE__, __LINE__);
+                throw new DBException("fail to set override".$sql_copy, __FILE__, __LINE__);
+            }
+            
+            if(count($copy) === 0)
+            {
+                return;
             }
             
             $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
@@ -651,12 +656,12 @@ class SchedulerDB
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
                 $start_time = $row['start_time_index'];
-                $end_time = $row['$end_time_index'];
+                $end_time = $row['end_time_index'];
                 $leave_teacher = $row['leave_teacher'];
                 $relief_teacher = $row['relief_teacher'];
                 $num_of_slot = $row['num_of_slot'];
                 
-                $sql_insert_temp .= "(-1, $lesson_id, $date, $start_time, $end_time, $leave_teacher, $relief_teacher, $num_of_slot),";
+                $sql_insert_temp .= "(-1, '$lesson_id', '$date', $start_time, $end_time, '$leave_teacher', '$relief_teacher', $num_of_slot),";
             }
             $sql_insert_temp = substr($sql_insert_temp, 0, -1).';';
             
@@ -680,10 +685,10 @@ class SchedulerDB
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
                 $start_time = $row['start_time_index'];
-                $end_time = $row['$end_time_index'];
+                $end_time = $row['end_time_index'];
                 $accname = $row['accname'];
                 
-                $sql_insert_temp_skip .= "(-1, $lesson_id, $date, $start_time, $end_time, $accname),";
+                $sql_insert_temp_skip .= "(-1, '$lesson_id', '$date', $start_time, $end_time, '$accname'),";
             }
             $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
             
@@ -740,12 +745,12 @@ class SchedulerDB
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
                 $start_time = $row['start_time_index'];
-                $end_time = $row['$end_time_index'];
+                $end_time = $row['end_time_index'];
                 $leave_teacher = $row['leave_teacher'];
                 $relief_teacher = $row['relief_teacher'];
                 $num_of_slot = $row['num_of_slot'];
                 
-                $sql_insert_temp .= "($scheduleIndex, $lesson_id, $date, $start_time, $end_time, $leave_teacher, $relief_teacher, $num_of_slot),";
+                $sql_insert_temp .= "($scheduleIndex, '$lesson_id', '$date', $start_time, $end_time, '$leave_teacher', '$relief_teacher', $num_of_slot),";
             }
             $sql_insert_temp = substr($sql_insert_temp, 0, -1).';';
             
@@ -768,10 +773,10 @@ class SchedulerDB
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
                 $start_time = $row['start_time_index'];
-                $end_time = $row['$end_time_index'];
+                $end_time = $row['end_time_index'];
                 $accname = $row['accname'];
                 
-                $sql_insert_temp_skip .= "($scheduleIndex, $lesson_id, $date, $start_time, $end_time, $accname),";
+                $sql_insert_temp_skip .= "($scheduleIndex, '$lesson_id', '$date', $start_time, $end_time, '$accname'),";
             }
             $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
             
