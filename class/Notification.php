@@ -45,7 +45,7 @@ Class Notification
          */
 
         //1. query new relief
-        $sql_selected = "select temp_relief_id, temp_each_alternative.lesson_id, temp_each_alternative.start_time_index, temp_each_alternative.end_time_index, relief_teacher, subj_code, venue, class_name from ((temp_each_alternative left join ct_lesson on temp_each_alternative.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where schedule_id = $schedule_index;";
+        $sql_selected = "select temp_relief_id, temp_each_alternative.lesson_id, temp_each_alternative.start_time_index, temp_each_alternative.end_time_index, relief_teacher, subj_code, venue, class_name from ((temp_each_alternative left join ct_lesson on temp_each_alternative.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where schedule_id = $schedule_index ORDER BY relief_teacher, temp_each_alternative.start_time_index;";
         $selected_result = Constant::sql_execute($db_con, $sql_selected);
         if (is_null($selected_result))
         {
@@ -98,7 +98,7 @@ Class Notification
         }
 
         //2. query new skip
-        $sql_selected_skip = "select temp_skip_id, temp_aed_skip_info.lesson_id, temp_aed_skip_info.start_time_index, temp_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where schedule_id = $schedule_index;";
+        $sql_selected_skip = "select temp_skip_id, temp_aed_skip_info.lesson_id, temp_aed_skip_info.start_time_index, temp_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where schedule_id = $schedule_index ORDER BY accname, temp_aed_skip_info.start_time_index;";
         $selected_result_skip = Constant::sql_execute($db_con, $sql_selected_skip);
         if (is_null($selected_result_skip))
         {
@@ -151,7 +151,7 @@ Class Notification
         //query cancelled relief
         if (count($old_relief_ids) > 0)
         {
-            $sql_selected = "select relief_id, rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where relief_id in (" . implode(",", $old_relief_ids) . ");";
+            $sql_selected = "select relief_id, rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where relief_id in (" . implode(",", $old_relief_ids) . ") ORDER BY relief_teacher, rs_relief_info.start_time_index;";
             $selected = Constant::sql_execute($db_con, $sql_selected);
             if (is_null($selected))
             {
@@ -285,6 +285,8 @@ Class Notification
 
 
             $lessonsRelief = $aTeacher["relief"];
+//            error_log("Relief Lesson".var_export($lessonsRelief,true));
+
             $lessonsSkipped = $aTeacher["skip"];
             $lessonsReliefOld = $aTeacher["old_relief"];
             $lessonsSkippedOld = $aTeacher["old_skip"];
@@ -294,7 +296,7 @@ Class Notification
             $message = "";
             if (!empty($lessonsReliefOld))
             {
-                $message = "The relief lessons allocated to you for $dateSg have been cancelled.";
+                $message = "The relief lessons allocated to you for $dateSg have been cancelled. ";
 
                 if (empty($lessonsRelief))
                 {
@@ -340,7 +342,7 @@ Class Notification
                     }
                 }
             }
-            $message .= "~~For more information, please check your email to view your latest timetable";
+            $message .= "~~For more information, please check your email to view your latest timetable.";
 
             $one_teacher = array(
                 "phoneNum" => $phone,
@@ -362,7 +364,7 @@ Class Notification
         $_SESSION['sms'] = $all_input;
         $absolute_path = dirname(__FILE__);
         BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
-        error_log ("Notification: sms");
+//        error_log ("Notification: sms");
 
         //5. construct
         $from = array(
@@ -440,8 +442,6 @@ Class Notification
         $_SESSION["email"] = $all_input_email;
         BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendEmail.php'), array('s'), array($sessionId));
     }
-
-    public static
 
     function sendCancelNotification($relief_ids, $skip_ids, $teacher_contact, $date)
     {
