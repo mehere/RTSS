@@ -35,8 +35,12 @@ class SMS
                 $timeCreated = date('Y-m-d H:i:s');
                 $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $aReceipent["type"]);
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
-                $message = $message . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
 
+                $type = $aReceipent["type"];
+                if ($type === 'R')
+                {
+                    $message = $message . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
+                }
                 $messageCache = $message;
                 $arrMessage = array();
 
@@ -47,7 +51,7 @@ class SMS
                     if ($length > $maxBody)
                     {
                         $breakIndex = strrpos($messageCache, '~', $maxBody - $length);
-                        $message = substr($messageCache, 0, $breakIndex );
+                        $message = substr($messageCache, 0, $breakIndex);
                         $arrMessage[] = $message;
                         $messageCache = substr($messageCache, $breakIndex + 1);
                     } else
