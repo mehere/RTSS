@@ -23,7 +23,6 @@ if ($num)
 ?>
 <form class="main" name="edit" action="" method="post">            	
     <div class="accordion colorbox blue">
-        <span class="icon-link"></span>
         <span class="box-title">
             Excluding List
         </span>        

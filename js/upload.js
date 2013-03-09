@@ -3,10 +3,32 @@ $(document).ready(function(){
         autoOpen: false,
         resizable: false,
         draggable: true,
-        width: '700px',
+        width: '750',
         title: 'New Class',
         buttons: null,
-        position: { at: "center bottom" }
+        position: { at: "center bottom" },
+        close: function(event, ui){
+            $(formG['add']).toggle('fast');
+        }
+    });
+
+    $("#dialog-save").dialog({
+        autoOpen: false,
+        resizable: true,
+        draggable: false,
+        modal: true,
+        width: '400',
+        minWidth: '400',
+        title: 'Upload AED Timetable',
+        buttons: {
+            Save: function(){
+                $(this).dialog("close");
+                $(this).data('func')();
+            },
+            Cancel: function(){
+                $(this).dialog("close");
+            }
+        }
     });
 
     var ALERT_TEXT=["Please fill in all fields.",
@@ -150,6 +172,12 @@ $(document).ready(function(){
             return false;
         }
 
+        if (!formAED['specialty'].value)
+        {
+            $("#dialog-alert").html("Please fill in 'specialty' for the AED.").dialog("open");
+            return false;
+        }
+
         var dataPost={"year": this['year'].value, "sem": this['sem'].value}, num=0;
         for (var day in matrixTime)
         {
@@ -189,7 +217,10 @@ $(document).ready(function(){
     });
 
     $(formG['upload']).click(function(){
-        $(formAED).submit();
+        $("#dialog-save").dialog('open').data('func', function(){
+            formAED['specialty'].value=document.forms['save']['specialty'].value;
+            $(formAED).submit();
+        });
 
         return false;
     });
@@ -233,13 +264,24 @@ $(document).ready(function(){
             formAdd['period'].value='';
             formAdd.reset();
 
+            $(formG['upload']).toggle('fast');
+
             $("#dialog-help").parent().css({
                 position: "fixed",
                 boxShadow: "0 0 20px -5px black"
-            }).end().dialog('open');
+            }).find('.ui-dialog-titlebar-close').css('visibility', 'visible');
+            $("#dialog-help").dialog('open');
         });
 
         return false;
+    });
+
+    $(formG['add']).click(function(){
+        if (!$('#dialog-help').dialog('isOpen'))
+        {
+            $('#dialog-help').dialog('open');
+            $(this).toggle('fast');
+        }
     });
 
     // AED name auto complete

@@ -15,6 +15,7 @@
     <?php if ($NO_PREIVEW) { ?>
         <div class="control-top"><a href="print-individual.php" id="print-individual" target="_blank">Print</a></div>
     <?php } ?>
+    <input type="hidden" name="date" />
 </form>
 <div>
     <table class="hovered table-info" style="width: 70%">

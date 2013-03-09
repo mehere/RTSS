@@ -20,27 +20,27 @@ $output=array();
 $output['error']=0;
 switch ($mode)
 {
-    case 'verify':
-    {
-        if (count($leaveIDList) == 0)
-        {
-            $output['error']=1;
-        }
-        else
-        {
-            if (!$_SESSION['teacherVerified'])
-            {
-                $_SESSION['teacherVerified']=array();
-            }
-
-            foreach ($leaveIDList as $value)
-            {
-                $_SESSION['teacherVerified'][$value]=1;
-            }            
-        }
-                
-        break;
-    }
+//    case 'verify':
+//    {
+//        if (count($leaveIDList) == 0)
+//        {
+//            $output['error']=1;
+//        }
+//        else
+//        {
+//            if (!$_SESSION['teacherVerified'])
+//            {
+//                $_SESSION['teacherVerified']=array();
+//            }
+//
+//            foreach ($leaveIDList as $value)
+//            {
+//                $_SESSION['teacherVerified'][$value]=1;
+//            }            
+//        }
+//
+//        break;
+//    }
         
     case 'delete':
     {
@@ -50,10 +50,18 @@ switch ($mode)
             unset($_SESSION['teacherVerified'][$value]);
         }                
         
-        // DB op
-        if (!Teacher::delete($leaveIDList, $_POST['prop']))
+        $hasRelief=Teacher::checkHasRelief($leaveIDList, $_POST['prop']);
+        if ($hasRelief)
         {
-            $output['error']=1;
+            $output['error']=3;
+        }
+        else
+        {
+            // DB op
+            if (!Teacher::delete($leaveIDList, $_POST['prop'], $hasRelief))
+            {
+                $output['error']=1;
+            }            
         }
         
         break;
@@ -65,12 +73,20 @@ switch ($mode)
         foreach (NameMap::$RELIEF_EDIT[$teacherKey]['saveKey'] as $postKey)
         {
             $input[$postKey]=trim($_POST[$postKey]);
-        }                
-
-        if (!Teacher::edit($_POST['leaveID'], $prop, $input))
-        {
-            $output['error']=1;
         }
+        
+        $hasRelief=Teacher::checkHasRelief(array($_POST['leaveID']), $_POST['prop']);
+        if ($hasRelief)
+        {
+            $output['error']=3;
+        }
+        else
+        {
+            if (!Teacher::edit($_POST['leaveID'], $prop, $input, $hasRelief))
+            {
+                $output['error']=1;
+            }
+        }        
         
         break;
     }

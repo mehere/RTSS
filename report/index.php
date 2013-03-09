@@ -31,8 +31,7 @@ $sem=$_POST['sem'] ? $_POST['sem'] : SchoolTime::getSemYearFromDate();
     <input type="hidden" name="order" value="<?php echo $_POST['order'] ?>" />
     <input type="hidden" name="direction" value="<?php echo $_POST['direction'] ?>" />
 </form>
-<div class="accordion colorbox blue">
-    <span class="icon-link"></span>
+<div class="accordion colorbox blue">    
     <span class="box-title">
         Overall        
     </span>

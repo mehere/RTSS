@@ -10,6 +10,7 @@ class SMS
 
     public static function sendSMS($receiverList, $scheduleDate)
     {
+
         date_default_timezone_set('Asia/Singapore');
         set_time_limit(1200);
 
@@ -33,15 +34,16 @@ class SMS
             $name = $aReceipent["name"];
             $message = $aReceipent["message"];
             $timeCreated = date('Y-m-d H:i:s');
-
             $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $aReceipent["type"]);
             $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
             $message = $message . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
 
+
+
             if ($outputCode == NULL)
             {
                 $absolutePath = dirname(__FILE__);
-                $absolutePath = realpath($absolute_path . '\..\vigsys');
+                $absolutePath = realpath($absolutePath . '\..\vigsys');
                 chdir($absolutePath);
 
                 $phoneNum = escapeshellarg($phoneNum);
@@ -69,12 +71,12 @@ class SMS
         }
 
         //test
-//        $file = fopen('sms_test.txt', 'w');
-//        foreach ($print_command as $gem)
-//        {
-//            fwrite($file, $gem.'\r\n');
-//        }
-//        fclose($file);
+        $file = fopen('sms_test.txt', 'w');
+        foreach ($print_command as $gem)
+        {
+            fwrite($file, $gem.'\r\n');
+        }
+        fclose($file);
         //end of test
 
         return $sendingResult;
