@@ -29,8 +29,9 @@
 
 .form-table {
 	margin-bottom: 15px;
+	margin-left: -10px;
 	table-layout: fixed;
-	width: 680px;
+	width: 730px;
 	
 	font-size: 14px;
 }
@@ -48,14 +49,17 @@
 	color: #EC8E0C;
 	margin-left: 10px;
 }
+.form-table select {
+	font-size: 12px;
+}
 
 .row {
 	margin-bottom: 15px;
-	margin-left: -10px;
+	margin-left: -20px;
 }
 .row .label {
 	margin-right: 5px;
-	margin-left: 30px;
+	margin-left: 25px;
 }
 
 .subject {

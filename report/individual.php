@@ -28,7 +28,6 @@ $sem=$_POST['sem'] ? $_POST['sem'] : SchoolTime::getSemYearFromDate();
     <input type="submit" class="button button-small" value="Go" style="margin-left: 30px" />
 </form>
 <div class="accordion colorbox green">
-    <a href="" class="icon-link"></a>
     <span class="box-title">
         Individual
     </span>

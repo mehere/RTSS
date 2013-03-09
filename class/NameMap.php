@@ -50,12 +50,15 @@ class NameMap
             'hidden' => array()
         ),
 
+        /*
         'MT' => array(
             'display' => array(
                 'en' => 'English', 'zh' => 'Chinese', 'ms' => 'Malay', 'ta' => 'Tamil'
             ),
             'hidden' => array()
         )
+         * 
+         */
     );
 
     // For /RTSS/relief/teacher-edit.php
@@ -73,13 +76,15 @@ class NameMap
 
         'tempTeacher' => array(
             'display' => array(
-                'fullname' => 'Name', 'handphone' => 'Contact', 'email' => 'Contact', 'MT' => 'MT',
+                'fullname' => 'Name', 'handphone' => 'Contact', 'email' => 'Contact', 
+//                'MT' => 'MT',
                 'datetime' => 'Time Available', 'remark' => 'Remark'
             ),
             'hidden' => array(
                 'accname', 'leaveID'
             ),
-            'saveKey' => array('datetime-from', 'datetime-to', 'handphone', 'email', 'MT', 'remark', 'accname'),
+            'saveKey' => array('datetime-from', 'datetime-to', 'handphone', 'email', //'MT', 
+                'remark', 'accname'),
             'addKey' => array('fullname')
         ),
         
@@ -96,13 +101,13 @@ class NameMap
 
     // For /RTSS/relief/schedule/ & ~result.php
     public static $SCHEDULE_RESULT=array(
-        'preview' => array(
-            'display' => array(
-                'type' => 'Type', 'minPeriod' => 'Min Period',
-                'MT' => 'Mother Togue'
-            ),
-            'hidden' => array()
-        ),
+//        'preview' => array(
+//            'display' => array(
+//                'type' => 'Type', 'minPeriod' => 'Min Period',
+//                'MT' => 'Mother Togue'
+//            ),
+//            'hidden' => array()
+//        ),
 
         'schedule' => array(
             'display' => array(

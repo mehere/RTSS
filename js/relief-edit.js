@@ -234,7 +234,7 @@ $(document).ready(function(){
                 {
                     fieldObj['handphone']=formEdit['handphone-'+index];
                     fieldObj['email']=formEdit['email-'+index];
-                    fieldObj['MT']=formEdit['MT-'+index];
+//                    fieldObj['MT']=formEdit['MT-'+index];
 
                     if (formEdit['handphone-'+index].value == CONTACT_INFO[0])
                     {
@@ -278,7 +278,7 @@ $(document).ready(function(){
                         $(fieldObj['handphone']).parents('td').first().find('.toggle-display > span').text(function(index){
                             return index == 0 ? fieldObj['handphone'].value : fieldObj['email'].value;
                         });
-                        $(fieldObj['MT']).parents('td').first().find('.toggle-display').text(fieldObj['MT'].options[fieldObj['MT'].selectedIndex].innerHTML);
+//                        $(fieldObj['MT']).parents('td').first().find('.toggle-display').text(fieldObj['MT'].options[fieldObj['MT'].selectedIndex].innerHTML);
                     }
                     else
                     {
@@ -299,7 +299,7 @@ $(document).ready(function(){
                 {
                     dataPost['handphone']=fieldObj['handphone'].value;
                     dataPost['email']=fieldObj['email'].value;
-                    dataPost['MT']=fieldObj['MT'].value;
+//                    dataPost['MT']=fieldObj['MT'].value;
                 }
                 else
                 {
