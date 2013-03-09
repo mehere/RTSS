@@ -444,7 +444,7 @@ foreach($result as $key=>$value)
  *
  */
 
-echo TimetableDB::checkTimetableConflict(0, array(4, 5), "7576699", "2013/2/06", "N1313126HD65");
+//echo TimetableDB::checkTimetableConflict(0, array(4, 5), "7576699", "2013/2/06", "N1313126HD65");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
