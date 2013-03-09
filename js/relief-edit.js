@@ -171,6 +171,11 @@ $(document).ready(function(){
     });
 
     $(formEdit['goback']).click(function(){
+        if ($('input[name^="date-from"]:visible').length == 0)
+        {
+            confirm("Please save records you are editing before leaving this page.", function(){});
+            return false;
+        }
         window.location.href="/RTSS/relief/";
     });
 
