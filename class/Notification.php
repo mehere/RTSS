@@ -11,7 +11,7 @@ Class Notification
      * @param array $$teacher_contact a dictionary of all teachers' contact
      * @param array $$date today, not date of scheduling
      */
-    public static function sendReliefNotification($schedule_index, $teacher_contact, $date)
+    public static function sendReliefNotification($schedule_index, $old_relief_ids, $old_skip_ids, $teacher_contact, $date)
     {
         $sessionId = session_id();
         
@@ -21,7 +21,24 @@ Class Notification
             throw new DBException('Fail to send notification', __FILE__, __LINE__);
         }
         
-        //1. query relief
+        //list : list of relief/skip record /unique_relief_key=>{...}
+        /*
+         * {accname => {
+         *                  "relief" => {
+         *                                  reliedf_id => {... 
+         *                                                }
+         *                              }
+         *                  "skip" => {
+         *                                  skip_id => {...  
+         *                                              }
+         *                              }
+         *                  "old_relief" => ...
+         *                  "old_skip" => ...
+         *              }
+         *  }
+         */
+        
+        //1. query new relief
         $sql_selected = "select temp_relief_id, temp_each_alternative.lesson_id, temp_each_alternative.start_time_index, temp_each_alternative.end_time_index, relief_teacher, subj_code, venue, class_name from ((temp_each_alternative left join ct_lesson on temp_each_alternative.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where schedule_id = $schedule_index;";
         $selected_result = Constant::sql_execute($db_con, $sql_selected);
         if (is_null($selected_result))
@@ -29,40 +46,28 @@ Class Notification
             throw new DBException('Fail to send notification', __FILE__, __LINE__);
         }
 
-        //list : list of relief/skip record /unique_relief_key=>{...}
-        /*
-         * {accname => {
-         *                  "relief" => {
-         *                                  reliedf_id => {... 
-         *                                                        }
-         *                              }
-         *                  "skip" => {
-         *                                  skip_id => {...  
-         *                                                        }
-         *                              }
-         *              }
-         *  }
-         */
-        $list = array(
-            "relief" => array(),
-            "skip" => array()
-        ); // for construct msg content
+        $list = array(); // for construct msg content
         
         foreach ($selected_result as $row)
         {
             $accname = $row['relief_teacher'];
             $relief_id = $row['temp_relief_id'];
 
-            if (!array_key_exists($accname, $list["relief"]))
+            if (!array_key_exists($accname, $list))
             {
-                $list["relief"][$accname] = array();
+                $list[$accname] = array(
+                    "relief" => array(),
+                    "skip" => array(),
+                    "old_relief" => array(),
+                    "old_skip" => array()
+                );
             }
 
-            if (array_key_exists($relief_id, $list["relief"][$accname]))
+            if (array_key_exists($relief_id, $list[$accname]["relief"]))
             {
                 if (!empty($row['class_name']))
                 {
-                    $list["relief"][$accname][$relief_id]['class'][] = $row['class_name'];
+                    $list[$accname]["relief"][$relief_id]['class'][] = $row['class_name'];
                 }
             } 
             else
@@ -83,11 +88,11 @@ Class Notification
                     $one_relief['class'][] = $row['class_name'];
                 }
 
-                $list["relief"][$accname][$relief_id] = $one_relief;
+                $list[$accname]["relief"][$relief_id] = $one_relief;
             }
         }
 
-        //2. query skip
+        //2. query new skip
         $sql_selected_skip = "select temp_skip_id, temp_aed_skip_info.lesson_id, temp_aed_skip_info.start_time_index, temp_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where schedule_id = $schedule_index;";
         $selected_result_skip = Constant::sql_execute($db_con, $sql_selected_skip);
         if (is_null($selected_result_skip))
@@ -100,16 +105,21 @@ Class Notification
             $accname = $row['accname'];
             $skip_id = $row['temp_skip_id'];
 
-            if (!array_key_exists($accname, $list["skip"]))
+            if (!array_key_exists($accname, $list))
             {
-                $list["skip"][$accname] = array();
+                $list[$accname] = array(
+                    "relief" => array(),
+                    "skip" => array(),
+                    "old_relief" => array(),
+                    "old_skip" => array()
+                );
             }
 
-            if (array_key_exists($skip_id, $list["skip"][$accname]))
+            if (array_key_exists($skip_id, $list[$accname]["skip"]))
             {
                 if (!empty($row['class_name']))
                 {
-                    $list["skip"][$accname][$skip_id]['class'][] = $row['class_name'];
+                    $list[$accname]["skip"][$skip_id]['class'][] = $row['class_name'];
                 }
             } 
             else
@@ -130,13 +140,123 @@ Class Notification
                     $one_skip['class'][] = $row['class_name'];
                 }
 
-                $list["skip"][$accname][$skip_id] = $one_skip;
+                $list[$accname]["skip"][$skip_id] = $one_skip;
             }
         }
         
-        //3. construct sms
+        //query cancelled relief
+        if(count($old_relief_ids) > 0)
+        {
+            $sql_selected = "select relief_id, rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where relief_id in (".  implode(",", $old_relief_ids).");";
+            $selected = Constant::sql_execute($db_con, $sql_selected);
+            if(is_null($selected))
+            {
+                throw new DBException('Fail to send notification', __FILE__, __LINE__);
+            }
+
+            foreach ($selected as $row)
+            {
+                $accname = $row['relief_teacher'];
+                $relief_id = $row['relief_id'];
+
+                if (!array_key_exists($accname, $list))
+                {
+                    $list[$accname] = array(
+                        "relief" => array(),
+                        "skip" => array(),
+                        "old_relief" => array(),
+                        "old_skip" => array()
+                    );
+                }
+
+                if (array_key_exists($relief_id, $list[$accname]["old_relief"]))
+                {
+                    if (!empty($row['class_name']))
+                    {
+                        $list[$accname]["old_relief"][$relief_id]['class'][] = $row['class_name'];
+                    }
+                } 
+                else
+                {
+                    $venue = empty($row['venue']) ? "" : $row['venue'];
+                    $subject = empty($row['subj_code']) ? "" : $row['subj_code'];
+
+                    $one_relief = array(
+                        "start_time" => $row['start_time_index'] - 0,
+                        "end_time" => $row['end_time_index'] - 0,
+                        "subject" => $subject,
+                        "venue" => $venue,
+                        "class" => array()
+                    );
+
+                    if (!empty($row['class_name']))
+                    {
+                        $one_relief['class'][] = $row['class_name'];
+                    }
+
+                    $list[$accname]["old_relief"][$relief_id] = $one_relief;
+                }
+            }
+        }
+        
+        //4. query old skip
+        if(count($old_skip_ids) > 0)
+        {
+            $sql_selected_skip = "select rs_aed_skip_info, rs_aed_skip_info.lesson_id, rs_aed_skip_info.start_time_index, rs_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where skip_id in (".  implode(",", $old_skip_ids).");";
+            $selected_result_skip = Constant::sql_execute($db_con, $sql_selected_skip);
+            if (is_null($selected_result_skip))
+            {echo $sql_selected_skip;
+                throw new DBException('Fail to send notification', __FILE__, __LINE__);
+            }
+
+            foreach ($selected_result_skip as $row)
+            {
+                $accname = $row['accname'];
+                $skip_id = $row['skip_id'];
+
+                if (!array_key_exists($accname, $list))
+                {
+                    $list[$accname] = array(
+                        "relief" => array(),
+                        "skip" => array(),
+                        "old_relief" => array(),
+                        "old_skip" => array()
+                    );
+                }
+
+                if (array_key_exists($skip_id, $list[$accname]['old_skip']))
+                {
+                    if (!empty($row['class_name']))
+                    {
+                        $list[$accname]["old_skip"][$skip_id]['class'][] = $row['class_name'];
+                    }
+                } 
+                else
+                {
+                    $venue = empty($row['venue']) ? "" : $row['venue'];
+                    $subject = empty($row['subj_code']) ? "" : $row['subj_code'];
+
+                    $one_skip = array(
+                        "start_time" => $row['start_time_index'] - 0,
+                        "end_time" => $row['end_time_index'] - 0,
+                        "subject" => $subject,
+                        "venue" => $venue,
+                        "class" => array()
+                    );
+
+                    if (!empty($row['class_name']))
+                    {
+                        $one_skip['class'][] = $row['class_name'];
+                    }
+
+                    $list[$accname]["old_skip"][$skip_id] = $one_skip;
+                }
+            }
+        }
+        
+        //5. construct sms
         $sms_input = Array();
-        foreach ($list["relief"] as $key => $one)
+        foreach ($list as $key => $one)
         {
             $accname = $key;
 
@@ -212,7 +332,7 @@ Class Notification
         );
         
         $to = array();
-        foreach ($list["relief"] as $key => $one)
+        foreach ($list as $key => $one)
         {
             $accname = $key;
 
@@ -237,7 +357,7 @@ Class Notification
             }
 
             $email_input = array();
-            foreach ($one as $a_relief)
+            foreach ($one["relief"] as $a_relief)
             {
                 $start_time = $a_relief['start_time'] - 1;
                 $end_time = $a_relief['end_time'] - 1;
@@ -255,6 +375,7 @@ Class Notification
                 }
             }
 
+            //email format - to update
             $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
 
             $recepient = array(
@@ -299,26 +420,26 @@ Class Notification
             }
 
             //$list same as above
-            $list = array(
-                "relief" => array(),
-                "skip" => array()
-            ); // for construct msg content
+            $list = array(); // for construct msg content
 
             foreach ($selected as $row)
             {
                 $accname = $row['relief_teacher'];
                 $relief_id = $row['relief_id'];
 
-                if (!array_key_exists($accname, $list["relief"]))
+                if (!array_key_exists($accname, $list))
                 {
-                    $list["relief"][$accname] = array();
+                    $list[$accname] = array(
+                        "relief" => array(),
+                        "skip" => array()
+                    );
                 }
 
-                if (array_key_exists($relief_id, $list["relief"][$accname]))
+                if (array_key_exists($relief_id, $list[$accname]["relief"]))
                 {
                     if (!empty($row['class_name']))
                     {
-                        $list["relief"][$accname][$relief_id]['class'][] = $row['class_name'];
+                        $list[$accname]["relief"][$relief_id]['class'][] = $row['class_name'];
                     }
                 } 
                 else
@@ -339,7 +460,7 @@ Class Notification
                         $one_relief['class'][] = $row['class_name'];
                     }
 
-                    $list["relief"][$accname][$relief_id] = $one_relief;
+                    $list[$accname]["relief"][$relief_id] = $one_relief;
                 }
             }
         }
@@ -359,16 +480,19 @@ Class Notification
                 $accname = $row['accname'];
                 $skip_id = $row['skip_id'];
 
-                if (!array_key_exists($accname, $list["skip"]))
+                if (!array_key_exists($accname, $list))
                 {
-                    $list["skip"][$accname] = array();
+                    $list[$accname] = array(
+                        "relief" => array(),
+                        "skip" => array()
+                    );
                 }
 
-                if (array_key_exists($skip_id, $list["skip"][$accname]))
+                if (array_key_exists($skip_id, $list[$accname]['skip']))
                 {
                     if (!empty($row['class_name']))
                     {
-                        $list["skip"][$accname][$skip_id]['class'][] = $row['class_name'];
+                        $list[$accname]["skip"][$skip_id]['class'][] = $row['class_name'];
                     }
                 } 
                 else
@@ -389,14 +513,14 @@ Class Notification
                         $one_skip['class'][] = $row['class_name'];
                     }
 
-                    $list["skip"][$accname][$skip_id] = $one_skip;
+                    $list[$accname]["skip"][$skip_id] = $one_skip;
                 }
             }
         }
         
         //3. compose sms
         $sms_input = Array();
-        foreach ($list["relief"] as $key => $one)
+        foreach ($list as $key => $one)
         {
             $accname = $key;
 
@@ -459,7 +583,7 @@ Class Notification
         );
         
         $to = array();
-        foreach ($list["relief"] as $key => $one)
+        foreach ($list as $key => $one)
         {
             $accname = $key;
 
@@ -484,7 +608,7 @@ Class Notification
             }
 
             $email_input = array();
-            foreach ($one as $a_relief)
+            foreach ($one["relief"] as $a_relief)
             {
                 $start_time = $a_relief['start_time'] - 1;
                 $end_time = $a_relief['end_time'] - 1;
