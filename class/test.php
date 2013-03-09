@@ -489,6 +489,8 @@ foreach($result as $key=>$row)
  *
  */
 
+//SchedulerDB::overrideSet("end", 0);
+
 //var_dump(SchedulerDB::override(0,1174, '7832040')); //extreme case : override one AED with another AED
 /*
 $result = Teacher::getTeacherContact();

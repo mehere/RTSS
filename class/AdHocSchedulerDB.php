@@ -178,7 +178,7 @@ class AdHocSchedulerDB
             throw new DBException('Fail to insert cancel relief ', __FILE__, __LINE__, 2);
         }
         
-        //is AED, also need to cancel AED
+        //is AED, also need to cancel skip
         if(array_key_exists($relief_teacher, $AED_list))
         {
             $skip_ids = AdHocSchedulerDB::searchSkipForRelief($reliefID);
