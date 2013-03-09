@@ -809,7 +809,7 @@ class SchedulerDB
 
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
-        {
+        {throw new DBException("asf", __FILE__, __LINE__);
             return false;
         }
 
@@ -820,6 +820,7 @@ class SchedulerDB
         $old_relief_result = Constant::sql_execute($db_con, $sql_old_relief);
         if(empty($old_relief_result))
         {
+            throw new DBException("asf", __FILE__, __LINE__);
             return false;
         }
 
