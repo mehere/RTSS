@@ -91,9 +91,9 @@ if (isset($_SESSION["scheduleType"]) && ($_SESSION["scheduleType"] == 1)){
 }
 
 //echo "Session Type: {$_SESSION['scheduleType']}.<br>";
-echo "$dateString<br>";
-echo "Type:$typeSchedule";
-die;
+//echo "$dateString<br>";
+//echo "Type:$typeSchedule";
+//die;
 $dateScheduled = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $dateString);
 
 $typesOfTeachers = array(
