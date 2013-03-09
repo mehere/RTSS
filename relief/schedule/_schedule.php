@@ -408,7 +408,7 @@ $visitedStates[$startState->toString()] = NULL;
 
 scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 
-error_log("passed 1");
+//error_log("passed 1");
 
 // round 2
 if ($successStates->numberStates == 0)
@@ -430,7 +430,7 @@ if ($successStates->numberStates == 0)
     scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 }
 
-error_log("passed 2");
+//error_log("passed 2");
 
 // round 3
 if ($successStates->numberStates == 0)
@@ -450,7 +450,7 @@ if ($successStates->numberStates == 0)
     scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 }
 
-error_log("passed 3");
+//error_log("passed 3");
 
 if ($successStates->numberStates == 0)
 {
