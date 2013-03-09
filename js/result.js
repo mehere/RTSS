@@ -3,31 +3,44 @@ $(document).ready(function(){
 
     var formEdit=document.forms['edit'],
         ALERT_MSG=['Please provide relief teacher for each teacher on leave.',
-            'Failed to override the relief teacher due to database error.'];
+            'Failed to override the relief teacher due to database error.'],
+        OVERRIDE_URL="/RTSS/relief/schedule/_override.php";
 
     var contentToHide=$('#page-turn-wrapper').add('.bt-control');
 
     $('#override').click(function(){
-        $(".text-display").hide();
-        $(".text-hidden").fadeIn();
+        $.getJSON(OVERRIDE_URL, {
+            'option': 'override-start',
+            "scheduleIndex": formEdit['schedule-index'].value
+        }, function(data){
+            $(".text-display").hide();
+            $(".text-hidden").fadeIn();
 
-        /*$('input[name^="relief-teacher-"]').val(function(index, value){
-            if (!value)
-            {
-                return $(this).parents('tr').first().find(".text-display").text();
-            }
+            /*$('input[name^="relief-teacher-"]').val(function(index, value){
+             if (!value)
+             {
+             return $(this).parents('tr').first().find(".text-display").text();
+             }
 
-            return value;
-        });*/
+             return value;
+             });*/
 
-        $('.control-top a[id^="override"]').toggle();
-        contentToHide.hide();
+            $('.control-top a[id^="override"]').toggle();
+            contentToHide.hide();
+        });
 
         return false;
     });
 
     $('#override-ok').click(function(){
-        $('.relief-col .text-display').text(function(index, value){
+        $.getJSON(OVERRIDE_URL, {
+            'option': 'override-end',
+            "scheduleIndex": formEdit['schedule-index'].value
+        }, function(data){
+            window.location.reload();
+        });
+
+        /*$('.relief-col .text-display').text(function(index, value){
             return $(this).parents('tr').first().find('input[name^="relief-teacher-"]').val();
         });
 
@@ -35,13 +48,20 @@ $(document).ready(function(){
         $(".text-display").fadeIn();
 
         $('.control-top a[id^="override"]').toggle();
-        contentToHide.show();
+        contentToHide.show();*/
 
         return false;
     });
 
     $('#override-cancel').click(function(){
-        formEdit.reset();
+        $.getJSON(OVERRIDE_URL, {
+            'option': 'override-cancel',
+            "scheduleIndex": formEdit['schedule-index'].value
+        }, function(data){
+            window.location.reload();
+        });
+
+        /*formEdit.reset();
 
         $('.relief-col .text-display').text(function(index, value){
             return $(this).parents('tr').first().find('input[name^="relief-teacher-"]').val();
@@ -51,7 +71,7 @@ $(document).ready(function(){
         $(".text-display").fadeIn();
 
         $('.control-top a[id^="override"]').toggle();
-        contentToHide.show();
+        contentToHide.show();*/
 
         return false;
     });
@@ -135,7 +155,7 @@ $(document).ready(function(){
             }
             else
             {
-                $.getJSON("/RTSS/relief/schedule/_override.php", {
+                $.getJSON(OVERRIDE_URL, {
                     "reliefAccName": reliefAccName,
                     "teacherAccName": teacherAccName,
                     "scheduleIndex": formEdit['schedule-index'].value,
