@@ -412,7 +412,7 @@ Class Notification
         //1. get relief to be cancelled
         if(count($relief_ids) > 0)
         {
-            $sql_selected = "select relief_id, rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where relief_id in (".  implode(",", $relief_ids).");";
+            $sql_selected = "select relief_id, schedule_date, rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where relief_id in (".  implode(",", $relief_ids).");";
             $selected = Constant::sql_execute($db_con, $sql_selected);
             if(is_null($selected))
             {
@@ -450,6 +450,7 @@ Class Notification
                     $one_relief = array(
                         "start_time" => $row['start_time_index'] - 0,
                         "end_time" => $row['end_time_index'] - 0,
+                        "date" => $row['schedule_date'],
                         "subject" => $subject,
                         "venue" => $venue,
                         "class" => array()
@@ -468,7 +469,7 @@ Class Notification
         //2. query skip
         if(count($skip_ids) > 0)
         {
-            $sql_selected_skip = "select rs_aed_skip_info, rs_aed_skip_info.lesson_id, rs_aed_skip_info.start_time_index, rs_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where skip_id in (".  implode(",", $skip_ids).");";
+            $sql_selected_skip = "select skip_id, schedule_date, rs_aed_skip_info.lesson_id, rs_aed_skip_info.start_time_index, rs_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where skip_id in (".  implode(",", $skip_ids).");";
             $selected_result_skip = Constant::sql_execute($db_con, $sql_selected_skip);
             if (is_null($selected_result_skip))
             {echo $sql_selected_skip;
@@ -504,6 +505,7 @@ Class Notification
                         "start_time" => $row['start_time_index'] - 0,
                         "end_time" => $row['end_time_index'] - 0,
                         "subject" => $subject,
+                        "date" => $row["schedule_date"],
                         "venue" => $venue,
                         "class" => array()
                     );

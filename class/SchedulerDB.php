@@ -642,7 +642,12 @@ class SchedulerDB
             $copy = Constant::sql_execute($db_con, $sql_copy);
             if(is_null($copy))
             {
-                throw new DBException("fail to set override", __FILE__, __LINE__);
+                throw new DBException("fail to set override".$sql_copy, __FILE__, __LINE__);
+            }
+            
+            if(count($copy) === 0)
+            {
+                return;
             }
             
             $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
@@ -662,7 +667,7 @@ class SchedulerDB
             
             $insert_temp = Constant::sql_execute($db_con, $sql_insert_temp);
             if(is_null($insert_temp))
-            {
+            {echo $sql_insert_temp;
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
             

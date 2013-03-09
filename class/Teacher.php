@@ -634,7 +634,7 @@ class Teacher {
             return true;
         }
         
-        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');
@@ -672,7 +672,7 @@ class Teacher {
             return false;
         }
 
-        $time_zone = new DateTimeZone('Aisa/Singapore');
+        $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');
@@ -684,136 +684,46 @@ class Teacher {
             if($has_relief)
             {
                 $teacher_contact = Teacher::getTeacherContact();
+                $AED_list = Teacher::getTeacherInfo("AED");
                 
-                $sql_check = "select * from rs_relief_info where leave_id_ref in (".  implode(',', $leaveIDList).") and ((DATE(schedule_date) > DATE(NOW())) || (DATE(schedule_date) = DATE(NOW()) && start_time_index >= $appro_index));";
+                $sql_check = "select relief_id, relief_teacher from rs_relief_info where leave_id_ref in (".implode(',', $leaveIDList).") and ((DATE(schedule_date) > DATE(NOW())) || (DATE(schedule_date) = DATE(NOW()) && start_time_index >= $appro_index));";
                 $check_result = Constant::sql_execute($db_con, $sql_check);
                 if(is_null($check_result))
                 {
                     return false;
                 }
-                //sms input
-                $list = array();
+                
+                $affected_relief = array();
+                $affected_skip = array();
                 foreach($check_result as $row)
                 {
-                    $accname = $row['relief_teacher'];
+                    $affected_relief[] = $row["relief_id"];
                     
-                    if(!array_key_exists($accname, $list))
+                    if(array_key_exists($row["relief_teacher"], $AED_list))
                     {
-                        $list[$accname] = array();
+                        $skip_ids = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
+                        
+                        foreach($skip_ids as $one)
+                        {
+                            $affected_skip[] = $one;
+                        }
                     }
-                    
-                    $start_time = SchoolTime::getTimeValue($row['start_time_index']);
-                    $end_time = SchoolTime::getTimeValue($row['end_time_index']);
-                    
-                    $list[$accname][] = array($start_time, $end_time, $row['schedule_date']);
                 }
-                //sms input
-                $sms_input = array();
-                foreach($list as $accname => $one)
+                
+                Notification::sendCancelNotification($affected_relief, $affected_skip, $teacher_contact, "");
+                
+                //delete skip 
+                $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".  implode(', ', $affected_skip).");";
+                $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
+                if(is_null($delete_skip_result))
                 {
-                    if(!array_key_exists($accname, $teacher_contact))
-                    {
-                        continue;
-                    }
-                    
-                    $name = $teacher_contact[$accname]['name'];
-                    $phone = $teacher_contact[$accname]['phone'];
-                    
-                    if(empty($phone))
-                    {
-                        continue;
-                    }
-                    if(empty($name))
-                    {
-                        $name = "Teacher";
-                    }
-                    
-                    $message = "Your relief duties during following period(s) are cancelled : ";
-                    foreach($one as $time_slot)
-                    {
-                        $message .= " $time_slot[0] - $time_slot[1] on $time_slot[2], ";
-                    }
-                    $message = substr($message, 0, -2).". Contact admin or check iScheduler website if you have any questions.";
-                    
-                    $one_sms = array(
-                        "phoneNum" => $phone,
-                        "name" => $name,
-                        "accName" => $accname,
-                        "message" => $message,
-                        "type" => 'C'
-                    );
-                    
-                    $sms_input[] = $one_sms;
+                    return false;
                 }
-                
-                $today_obj = new DateTime();
-                $today = $today_obj->format('Y/m/d');
-                
-                $all_input = array(
-                    "date" => $today,
-                    "input" => $sms_input
-                );
-        
-                $sessionId = session_id();
-                $_SESSION['sms']=$all_input;
-                $absolute_path = dirname(__FILE__);
-                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
-                
-                //email
-                $from = array(
-                    "email" => Constant::email,
-                    "password" => Constant::email_password,
-                    "name" => Constant::email_name,
-                    "smtp" => Constant::email_smtp,
-                    "port" => Constant::email_port,
-                    "encryption" => Constant::email_encryption
-                );
-                $to = array();
-                foreach($sms_input as $row)
-                {
-                    if(!array_key_exists($accname, $teacher_contact))
-                    {
-                        continue;
-                    }
-                    
-                    $name = $teacher_contact[$accname]['name'];
-                    $email = $teacher_contact[$accname]['email'];
-                    
-                    if(empty($email))
-                    {
-                        continue;
-                    }
-                    if(empty($name))
-                    {
-                        $name = "Teacher";
-                    }
-                    
-                    $recepient = array(
-                        'accname' => $accname,
-                        'subject' => 'Relief cancellation notification',
-                        'email' => $email,
-                        'message' => $row['message'],
-                        'attachment' => "",
-                        'name' => $name
-                    );
-                    
-                    $to[] = $recepient;
-                }
-                
-                $all_input_email = array(
-                    "from" => $from,
-                    "to" => $to
-                );
-
-                $_SESSION["email"] = $all_input_email;
-                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
             }
             
-            //delete
+            //delete relief
             $sql_delete_leave = "delete from rs_leave_info where leave_id in (".  implode(', ', $leaveIDList).");";
-
             $delete_leave_result = Constant::sql_execute($db_con, $sql_delete_leave);
-
             if(is_null($delete_leave_result))
             {
                 return false;
@@ -826,6 +736,7 @@ class Teacher {
             if($has_relief)
             {
                 $teacher_contact = Teacher::getTeacherContact();
+                $AED_list = Teacher::getTeacherInfo("AED");
                 
                 $sql_check = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).") and ((DATE(rs_relief_info.schedule_date) > DATE(NOW())) || (DATE(rs_relief_info.schedule_date) = DATE(NOW()) && rs_relief_info.start_time_index >= $appro_index));";
                 $check_result = Constant::sql_execute($db_con, $sql_check);
@@ -833,143 +744,38 @@ class Teacher {
                 {
                     return false;
                 }
-                //sms input
-                $list = array();
-                $delete_relief_id = array();
+                
+                $affected_relief = array();
+                $affected_skip = array();
+                $affected_leave = array();
                 foreach($check_result as $row)
                 {
-                    $accname = $row['relief_teacher'];
+                    $affected_relief[] = $row["relief_id"];
                     
-                    if(!array_key_exists($accname, $list))
+                    $affected_leave[]  = array($row['leave_id_ref'], $row['schedule_date']);
+                    
+                    if(array_key_exists($row["relief_teacher"], $AED_list))
                     {
-                        $list[$accname] = array();
+                        $skip_ids = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
+                        
+                        foreach($skip_ids as $one)
+                        {
+                            $affected_skip[] = $one;
+                        }
                     }
-                    
-                    $start_time = SchoolTime::getTimeValue($row['start_time_index']);
-                    $end_time = SchoolTime::getTimeValue($row['end_time_index']);
-                    
-                    $list[$accname][] = array($start_time, $end_time, $row['schedule_date']);
-                    
-                    $delete_relief_id[] = $row['relief_id'];
-                }
-                //sms input
-                $sms_input = array();
-                foreach($list as $accname => $one)
-                {
-                    if(!array_key_exists($accname, $teacher_contact))
-                    {
-                        continue;
-                    }
-                    
-                    $name = $teacher_contact[$accname]['name'];
-                    $phone = $teacher_contact[$accname]['phone'];
-                    
-                    if(empty($phone))
-                    {
-                        continue;
-                    }
-                    if(empty($name))
-                    {
-                        $name = "Teacher";
-                    }
-                    
-                    $message = "Your relief duties during following period(s) are cancelled : ";
-                    foreach($one as $time_slot)
-                    {
-                        $message .= " $time_slot[0] - $time_slot[1] on $time_slot[2], ";
-                    }
-                    $message = substr($message, 0, -2).". Contact admin or check iScheduler website if you have any questions.";
-                    
-                    $one_sms = array(
-                        "phoneNum" => $phone,
-                        "name" => $name,
-                        "accName" => $accname,
-                        "message" => $message,
-                        "type" => 'C'
-                    );
-                    
-                    $sms_input[] = $one_sms;
                 }
                 
-                $today_obj = new DateTime();
-                $today = $today_obj->format('Y/m/d');
+                Notification::sendCancelNotification($affected_relief, $affected_skip, $teacher_contact, "");
                 
-                $all_input = array(
-                    "date" => $today,
-                    "input" => $sms_input
-                );
-        
-                $sessionId = session_id();
-                $_SESSION['sms']=$all_input;
-                $absolute_path = dirname(__FILE__);
-                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendSMS.php'), array('s'), array($sessionId));
-                
-                //email
-                $from = array(
-                    "email" => Constant::email,
-                    "password" => Constant::email_password,
-                    "name" => Constant::email_name,
-                    "smtp" => Constant::email_smtp,
-                    "port" => Constant::email_port,
-                    "encryption" => Constant::email_encryption
-                );
-                $to = array();
-                foreach($sms_input as $row)
-                {
-                    if(!array_key_exists($accname, $teacher_contact))
-                    {
-                        continue;
-                    }
-                    
-                    $name = $teacher_contact[$accname]['name'];
-                    $email = $teacher_contact[$accname]['email'];
-                    
-                    if(empty($email))
-                    {
-                        continue;
-                    }
-                    if(empty($name))
-                    {
-                        $name = "Teacher";
-                    }
-                    
-                    $recepient = array(
-                        'accname' => $accname,
-                        'subject' => 'Relief cancellation notification',
-                        'email' => $email,
-                        'message' => $row['message'],
-                        'attachment' => "",
-                        'name' => $name
-                    );
-                    
-                    $to[] = $recepient;
-                }
-                
-                $all_input_email = array(
-                    "from" => $from,
-                    "to" => $to
-                );
-
-                $_SESSION["email"] = $all_input_email;
-                //BackgroundRunner::execInBackground(realpath($absolute_path.'\..\sms\sendEmail.php'), array('s'), array($sessionId));
-            }
-            
-            $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";
-
-            $delete_temp_result = Constant::sql_execute($db_con, $sql_delete_temp);
-
-            if(is_null($delete_temp_result))
-            {
-                return false;
-            }
-
-            //delete relief
-            if(!empty($delete_relief_id))
-            {
-                $delete_list = implode(',', $delete_relief_id);
+                $delete_list = implode(',', $affected_relief);
                 
                 //delete is scheduled
-                $sql_delete_leave_scheduled = "delete from rs_leave_scheduled where leave_id in (select distinct leave_id_ref from rs_relief_info where relief_id in ($delete_list));";
+                $sql_delete_leave_scheduled = "delete from rs_leave_scheduled where ";
+                foreach($affected_leave as $a_leave)
+                {
+                    $sql_delete_leave_scheduled .= "(leave_id = $a_leave[0] and schedule_date = DATE($a_leave[1]) or ";
+                }
+                $sql_insert_temp = substr($sql_insert_temp, 0, -4).';';
                 $delete_scheduled = Constant::sql_execute($db_con, $sql_delete_leave_scheduled);
                 if(is_null($delete_scheduled))
                 {
@@ -983,8 +789,23 @@ class Teacher {
                 {
                     throw new DBException('Fail to delete relief', __FILE__, __LINE__);
                 }
+                
+                //delete skip 
+                $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".  implode(', ', $affected_skip).");";
+                $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
+                if(is_null($delete_skip_result))
+                {
+                    return false;
+                }
             }
             
+            $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";
+            $delete_temp_result = Constant::sql_execute($db_con, $sql_delete_temp);
+            if(is_null($delete_temp_result))
+            {
+                return false;
+            }
+
             return true;
         }
         else
