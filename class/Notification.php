@@ -365,7 +365,6 @@ Class Notification
         $absolute_path = dirname(__FILE__);
         BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
 //        error_log ("Notification: sms");
-
         //5. construct
         $from = array(
             "email" => Constant::email,
@@ -456,7 +455,7 @@ Class Notification
         //1. get relief to be cancelled
         if (count($relief_ids) > 0)
         {
-            $sql_selected = "select relief_id, schedule_date, rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where relief_id in (".  implode(",", $relief_ids).");";
+            $sql_selected = "select relief_id, schedule_date, rs_relief_info.lesson_id, rs_relief_info.start_time_index, rs_relief_info.end_time_index, relief_teacher, subj_code, venue, class_name from ((rs_relief_info left join ct_lesson on rs_relief_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where relief_id in (" . implode(",", $relief_ids) . ") ORDER BY relief_teacher, schedule_date, rs_relief_info.start_time_index;";
             $selected = Constant::sql_execute($db_con, $sql_selected);
             if (is_null($selected))
             {
@@ -470,6 +469,7 @@ Class Notification
             {
                 $accname = $row['relief_teacher'];
                 $relief_id = $row['relief_id'];
+                $lessonDate = $row['schedule_date'];
 
                 if (!array_key_exists($accname, $list))
                 {
@@ -479,11 +479,15 @@ Class Notification
                     );
                 }
 
-                if (array_key_exists($relief_id, $list[$accname]["relief"]))
+                if (!isset($list[$accname]["relief"][$lessonDate]))
+                {
+                    $list[$accname]["relief"][$lessonDate] = array();
+                }
+                if (array_key_exists($relief_id, $list[$accname]["relief"][$lessonDate]))
                 {
                     if (!empty($row['class_name']))
                     {
-                        $list[$accname]["relief"][$relief_id]['class'][] = $row['class_name'];
+                        $list[$accname]["relief"][$lessonDate][$relief_id]['class'][] = $row['class_name'];
                     }
                 } else
                 {
@@ -504,7 +508,7 @@ Class Notification
                         $one_relief['class'][] = $row['class_name'];
                     }
 
-                    $list[$accname]["relief"][$relief_id] = $one_relief;
+                    $list[$accname]["relief"][$lessonDate][$relief_id] = $one_relief;
                 }
             }
         }
@@ -512,7 +516,7 @@ Class Notification
         //2. query skip
         if (count($skip_ids) > 0)
         {
-            $sql_selected_skip = "select skip_id, schedule_date, rs_aed_skip_info.lesson_id, rs_aed_skip_info.start_time_index, rs_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where skip_id in (".  implode(",", $skip_ids).");";
+            $sql_selected_skip = "select skip_id, schedule_date, rs_aed_skip_info.lesson_id, rs_aed_skip_info.start_time_index, rs_aed_skip_info.end_time_index, accname, subj_code, venue, class_name from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where skip_id in (" . implode(",", $skip_ids) . ") ORDER BY accname, schedule_date, rs_aed_skip_info.start_time_index;";
             $selected_result_skip = Constant::sql_execute($db_con, $sql_selected_skip);
             if (is_null($selected_result_skip))
             {
@@ -524,6 +528,8 @@ Class Notification
             {
                 $accname = $row['accname'];
                 $skip_id = $row['skip_id'];
+                $lessonDate = $row['schedule_date'];
+
 
                 if (!array_key_exists($accname, $list))
                 {
@@ -532,12 +538,15 @@ Class Notification
                         "skip" => array()
                     );
                 }
-
-                if (array_key_exists($skip_id, $list[$accname]['skip']))
+                if (!isset($list[$accname]["skip"][$lessonDate]))
+                {
+                    $list[$accname]["skip"][$lessonDate] = array();
+                }
+                if (array_key_exists($skip_id, $list[$accname]['skip'][$lessonDate]))
                 {
                     if (!empty($row['class_name']))
                     {
-                        $list[$accname]["skip"][$skip_id]['class'][] = $row['class_name'];
+                        $list[$accname]["skip"][$lessonDate][$skip_id]['class'][] = $row['class_name'];
                     }
                 } else
                 {
@@ -558,17 +567,15 @@ Class Notification
                         $one_skip['class'][] = $row['class_name'];
                     }
 
-                    $list[$accname]["skip"][$skip_id] = $one_skip;
+                    $list[$accname]["skip"][$lessonDate][$skip_id] = $one_skip;
                 }
             }
         }
 
         //3. compose sms
-        $sms_input = Array();
-        foreach ($list as $key => $one)
+        $sms_input = array();
+        foreach ($list as $accname => $aTeacher)
         {
-            $accname = $key;
-
             if (!array_key_exists($accname, $teacher_contact))
             {
                 $phone = "";
@@ -588,12 +595,47 @@ Class Notification
                 }
             }
 
+            $lessonsReliefAll = $aTeacher["relief"];
+            $lessonsSkippedAll = $aTeacher["skip"];
+
             $message = "";
+            foreach ($lessonsReliefAll as $lessonDate => $lessonsRelief)
+            {
+                $lessonsSkipped = isset($lessonsSkippedAll[$lessonDate]) ? $lessonsSkippedAll[$lessonDate] : array();
+                $dateObject = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $lessonDate);
+                $dateSg = $dateObject->format(PageConstant::DATE_FORMAT_SG);
 
-            /* wee : construct sms content using list array
+                $message .= "The following relief lessons on $dateSg have been cancelled:";
+                $i = 1;
+                foreach ($lessonsRelief as $aLesson)
+                {
+                    $start_time = SchoolTime::getTimeValue($aLesson['start_time']);
+                    $end_time = SchoolTime::getTimeValue($aLesson['end_time']);
+                    $classes = implode(",", $aLesson['class']);
+                    $subject = $aLesson['subject'];
+                    $venue = empty($aLesson['venue']) ? "-" : $aLesson['venue'];
+                    $message .= "~$i. [$start_time-$end_time] Class: $classes Subject:$subject Venue: $venue";
+                    $i++;
+                }
 
-             *
-             */
+                if (!empty($lessonsSkipped))
+                {
+                    $message.= "~~You should attend the following lessons on $dateSg:";
+                    $i = 1;
+                    foreach ($lessonsSkipped as $aLesson)
+                    {
+                        $start_time = SchoolTime::getTimeValue($aLesson['start_time']);
+                        $end_time = SchoolTime::getTimeValue($aLesson['end_time']);
+                        $classes = implode(",", $aLesson['class']);
+                        $subject = $aLesson['subject'];
+                        $venue = empty($aLesson['venue']) ? "-" : $aLesson['venue'];
+                        $message .= "~$i. [$start_time-$end_time] Class: $classes Subject:$subject Venue: $venue";
+                        $i++;
+                    }
+                }
+            }
+
+            $message .= "~~For more information, please check your email to view your latest timetable.";
 
             $one_teacher = array(
                 "phoneNum" => $phone,
