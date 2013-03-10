@@ -107,7 +107,7 @@ class SMS
         }
 
         //test
-        $file = fopen('sms_test.txt', 'w');
+        $file = fopen($absolutePath.'\sms_test.txt', 'w');
         foreach ($print_command as $gem)
         {
             fwrite($file, $gem . "\r\n");
