@@ -54,6 +54,10 @@ switch ($mode)
         if ($hasRelief)
         {
             $output['error']=3;
+            if (!Teacher::delete($leaveIDList, $_POST['prop'], $hasRelief))
+            {
+                $output['error']=1;
+            } 
         }
         else
         {
