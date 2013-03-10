@@ -16,25 +16,17 @@ class TimetableDB
      */
     public static function insertTimetable($lesson_list, $teacher_list, $year='2013', $sem=1)
     {
-                error_log("okay");
         //insert semester info
         $sem_id = TimetableDB::checkTimetableExistence(1, array('year'=>$year, 'sem'=>$sem));
 
-        $db_con = Constant::connect_to_db('ntu');
-
-        if (empty($db_con))
-        {
-            throw new DBException("Fail to connect to database", __FILE__, __LINE__);
-        }
-        
         if($sem_id === -1)
         {
-            if($sem === 1)
+            if($sem == 1)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[0];
                 $sem_end_date = "$year-".Constant::$sem_dates[1];
             }
-            else if($sem === 2)
+            else if($sem == 2)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[2];
                 $sem_end_date = "$year-".Constant::$sem_dates[3];
@@ -44,6 +36,13 @@ class TimetableDB
                 throw new DBException('Wrong semester number', __FILE__, __LINE__, 3);
             }
 
+            $db_con = Constant::connect_to_db('ntu');
+
+            if (empty($db_con))
+            {
+                throw new DBException("Fail to connect to database", __FILE__, __LINE__);
+            }
+            
             $sql_insert_sem = "insert into ct_semester_info (start_date, end_date, year, sem_num) values ('$sem_start_date', '$sem_end_date', '$year', $sem);";
             $insert_sem = Constant::sql_execute($db_con, $sql_insert_sem);
             if(is_null($insert_sem))
@@ -53,7 +52,7 @@ class TimetableDB
 
             $sem_id = mysql_insert_id();
         }
-
+        
         //teacher list
         //temp - will delete later
         Teacher::getTeachersAccnameAndFullname($teacher_list);
@@ -145,29 +144,27 @@ class TimetableDB
          *
          */
 
-        /*
         $db_con_new = Constant::connect_to_db('ntu');
 
         if (empty($db_con_new))
         {
             throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
-         * 
-         */
-
+        
         //clear existing data
         $delete_sql_lesson = "delete from ct_lesson where type = 'N' and sem_id = $sem_id;";
 
-        $clear_old_result = Constant::sql_execute($db_con, $delete_sql_lesson);
+        $clear_old_result = Constant::sql_execute($db_con_new, $delete_sql_lesson);
         if (is_null($clear_old_result))
         {
+                        error_log($delete_sql_lesson);
             throw new DBException("Fail to clear old data", __FILE__, __LINE__, 2);
         }
 
         //insert new data
         if($has_lesson)
         {
-            $insert_lesson = Constant::sql_execute($db_con, $sql_insert_lesson);
+            $insert_lesson = Constant::sql_execute($db_con_new, $sql_insert_lesson);
             if(is_null($insert_lesson))
             {
                 throw new DBException("Fail to insert into ct_lesson", __FILE__, __LINE__, 2);
@@ -175,7 +172,7 @@ class TimetableDB
         }
         if($has_class)
         {
-            $insert_class = Constant::sql_execute($db_con, $sql_insert_lesson_class);
+            $insert_class = Constant::sql_execute($db_con_new, $sql_insert_lesson_class);
             if(is_null($insert_class))
             {
                 throw new DBException("Fail to insert into ct_class_matching", __FILE__, __LINE__, 2);
@@ -183,7 +180,7 @@ class TimetableDB
         }
         if($has_teacher)
         {
-            $insert_teacher = Constant::sql_execute($db_con, $sql_insert_lesson_teacher);
+            $insert_teacher = Constant::sql_execute($db_con_new, $sql_insert_lesson_teacher);
             if(is_null($insert_teacher))
             {
                 throw new DBException("Fail to insert into ct_teacher_matching", __FILE__, __LINE__, 2);
