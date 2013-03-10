@@ -665,13 +665,11 @@ class Teacher {
     
     public static function delete($leaveIDList, $prop, $has_relief = false)
     {
-        $db_con = Constant::connect_to_db('ntu');
-
-        if (empty($db_con))
+        if(count($leaveIDList) === 0)
         {
             return false;
         }
-
+        
         $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
@@ -686,7 +684,15 @@ class Teacher {
                 $teacher_contact = Teacher::getTeacherContact();
                 $AED_list = Teacher::getTeacherInfo("AED");
                 
+                $db_con = Constant::connect_to_db('ntu');
+
+                if (empty($db_con))
+                {
+                    return false;
+                }
+                
                 $sql_check = "select relief_id, relief_teacher from rs_relief_info where leave_id_ref in (".implode(',', $leaveIDList).") and ((DATE(schedule_date) > DATE(NOW())) || (DATE(schedule_date) = DATE(NOW()) && start_time_index >= $appro_index));";
+                
                 $check_result = Constant::sql_execute($db_con, $sql_check);
                 if(is_null($check_result))
                 {
@@ -737,6 +743,13 @@ class Teacher {
             {
                 $teacher_contact = Teacher::getTeacherContact();
                 $AED_list = Teacher::getTeacherInfo("AED");
+                
+                $db_con = Constant::connect_to_db('ntu');
+
+                if (empty($db_con))
+                {
+                    return false;
+                }
                 
                 $sql_check = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).") and ((DATE(rs_relief_info.schedule_date) > DATE(NOW())) || (DATE(rs_relief_info.schedule_date) = DATE(NOW()) && rs_relief_info.start_time_index >= $appro_index));";
                 $check_result = Constant::sql_execute($db_con, $sql_check);

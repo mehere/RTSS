@@ -16,7 +16,7 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
     global $startTime;
     while (!($activeStates->isEmpty()))
     {
-        gc_collect_cycles();
+        //gc_collect_cycles();
         $nowTime = microtime(true);
         if ((($successStates->numberStates > 0) || ($stoppedStates->numberStates > 0)) && (($nowTime - $startTime) > TIME_TO_WAIT))
         {
@@ -83,6 +83,7 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
 }
 
 ///-----------------------------------------------------------------------------
+//gc_enable();
 $dateString = $_SESSION["scheduleDate"];
 
 $typeSchedule = 1;
