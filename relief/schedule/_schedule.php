@@ -504,6 +504,7 @@ if ($successStates->numberStates > 0)
     }
     try
     {
+
         $_SESSION['leaveIds'] = $arrLeaveId;
         SchedulerDB::setScheduleResult($dateString, $successResults);
 //        print_r($successResults);
@@ -519,5 +520,8 @@ if ($successStates->numberStates > 0)
     // Failure Case
     $_SESSION['scheduleError'] = "Failed to find a scheduling result.";
 }
+
+//error_log(var_export($_SESSION, TRUE));
+//error_log("_SCHEDULE.php Error " .$_SESSION['scheduleError']);
 header("Location: index.php");
 ?>
