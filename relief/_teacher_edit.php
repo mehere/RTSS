@@ -122,7 +122,11 @@ switch ($mode)
         }
 
         $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input);
-        if ($output['leaveID'] < 0)
+        if ($output['leaveID'] == -6)
+        {
+            $output['error']=4;
+        }
+        elseif ($output['leaveID'] < 0)
         {
             $output['error']=1;
         }

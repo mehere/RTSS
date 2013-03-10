@@ -504,7 +504,8 @@ if ($successStates->numberStates > 0)
     }
     try
     {
-        SchedulerDB::setScheduleResult($typeSchedule, $dateString, $successResults, $arrLeaveId);
+        $_SESSION['leaveIds'] = $arrLeaveId;
+        SchedulerDB::setScheduleResult($dateString, $successResults);
 //        print_r($successResults);
     } catch (DBException $e)
     {
