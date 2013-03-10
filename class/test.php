@@ -444,7 +444,7 @@ foreach($result as $key=>$value)
  *
  */
 
-//echo TimetableDB::checkTimetableConflict(0, Array(4, 5), "TMP4444444", "2013/2/06", "N1313126HD65");
+//echo TimetableDB::checkTimetableConflict(0, array(4, 5), "7576699", "2013/2/06", "N1313126HD65");
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
@@ -491,7 +491,7 @@ foreach($result as $key=>$row)
 
 SchedulerDB::overrideSet('start', 0);
 
-//var_dump(SchedulerDB::override(0,1174, '7832040')); //extreme case : override one AED with another AED
+//var_dump(SchedulerDB::override(0,2374, '8800121')); //extreme case : override one AED with another AED
 /*
 $result = Teacher::getTeacherContact();
 foreach($result as $key => $row)

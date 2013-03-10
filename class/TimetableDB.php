@@ -599,7 +599,7 @@ class TimetableDB
 
                                 if(!empty($row['class_name']))
                                 {
-                                    $a_lesson['class'][] = $row['class_name'];
+                                    $result[$i]['class'][] = $row['class_name'];
                                 }
                             }
                             else
@@ -712,7 +712,7 @@ class TimetableDB
 
                                 if(!empty($row['class_name']))
                                 {
-                                    $a_lesson['class'][] = $row['class_name'];
+                                    $result[$i]['class'][] = $row['class_name'];
                                 }
                             }
                             else
@@ -849,6 +849,23 @@ class TimetableDB
             return -1;
         }
 
+        //check whether on leave
+        $time_start = SchoolTime::getTimeValue($time_range[0]);
+        $time_end = SchoolTime::getTimeValue($time_range[1]);
+        $full_start = $schedule_date." ".$time_start.":00";
+        $full_end = $schedule_date." ".$time_end.":00";
+        $sql_leave = "select * from rs_leave_info where teacher_id = '$accname' and unix_timestamp(start_time) < unix_timestamp('$full_end') and unix_timestamp(end_time) > unix_timestamp('$full_start');";
+        $leave_result = Constant::sql_execute($db_con, $sql_leave);
+        if(is_null($leave_result))
+        {
+            return -1;
+        }
+        else if(count($leave_result) > 0)
+        {
+            return 1;
+        }
+        
+        //check normal timetable
         $sql_normal = "select * from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_teacher_matching.teacher_id = '".mysql_real_escape_string(trim($accname))."' and ct_lesson.weekday = ".$weekday." and highlighted and ((ct_lesson.start_time_index < ".$time_range[1].") and (ct_lesson.end_time_index > ".$time_range[0].")) and ct_lesson.sem_id = $sem_id;";
         $normal_result = Constant::sql_execute($db_con, $sql_normal);
         if(is_null($normal_result))
