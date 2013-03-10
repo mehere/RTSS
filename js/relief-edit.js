@@ -365,6 +365,7 @@ $(document).ready(function(){
                                     confirm(TEACHER_OP_TEXT[4], function(){
                                         dataPost['edit-confirm']=1;
                                         editFunc(dataPost);
+                                        changeIcon();
                                     });
                                 }
                                 else if (data['error'] > 0)
@@ -374,6 +375,7 @@ $(document).ready(function(){
                                 else
                                 {
                                     saveLocally();
+                                    changeIcon();
                                 }
                             }, 'json');
                         }
@@ -401,16 +403,20 @@ $(document).ready(function(){
                                     formEdit['leaveID-'+index].value=data['leaveID'];
 
                                     saveLocally();
+                                    changeIcon();
                                 }
                             }, 'json');
                         }
 
-                        $(self).button('option', SMALL_BT_ARR[0]);
+                        function changeIcon()
+                        {
+                            $(self).button('option', SMALL_BT_ARR[0]);
 
-                        // Clear 'isSaveButton'
-                        if (isSaveButton) isSaveButton=null;
+                            // Clear 'isSaveButton'
+                            if (isSaveButton) isSaveButton=null;
 
-                        changeLook(self);
+                            changeLook(self);
+                        }
                     }
 
                     editFunc(dataPost);
