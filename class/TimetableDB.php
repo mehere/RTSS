@@ -820,6 +820,391 @@ class TimetableDB
         return $result;
     }
 
+    public static function getCollectiveTimetable($date, $accnames, $scheduleIndex = -1, $type = 'normal')
+    {
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to get individual timetable', __FILE__, __LINE__);
+        }
+
+        $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$date));
+        if($sem_id === -1)
+        {
+            throw new DBException('No lesson information on '.$date, __FILE__, __LINE__, 1);
+        }
+
+        if(count($accnames) === 0)
+        {
+            return array();
+        }
+        
+        $teacher_id_list = "(";
+        foreach($accnames as $value)
+        {
+            $teacher_id_list .= "'$value',";
+        }
+        $teacher_id_list = substr($teacher_id_list, 0, -1).')';
+        
+        $result = array();
+
+        //from timetable
+        $date_obj = new DateTime($date);
+        $weekday = $date_obj->format('N');
+
+        $sql_query_timetable = "SELECT * FROM ((ct_lesson LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) LEFT JOIN ct_teacher_matching ON ct_lesson.lesson_id = ct_teacher_matching.lesson_id) WHERE ct_lesson.weekday = ".$weekday." AND ct_lesson.sem_id = $sem_id and ct_teacher_matching.teacher_id in $teacher_id_list;";
+        $query_timetable_result = Constant::sql_execute($db_con, $sql_query_timetable);
+        if(is_null($query_timetable_result))
+        {
+            throw new DBException('Fail to get individual timetable', __FILE__, __LINE__, 2);
+        }
+
+        foreach($query_timetable_result as $row)
+        {
+            $accname = $row["teacher_id"];
+            
+            if(!array_key_exists($accname, $result))
+            {
+                $result[$accname] = array();
+            }
+            
+            $start_time = $row['start_time_index'] - 1;
+            $end_time = $row['end_time_index'] - 1;
+
+            for($i = $start_time; $i<$end_time; $i++)
+            {
+                if(array_key_exists($i, $result[$accname]))
+                {
+                    if(strcmp($result[$accname][$i]['id'], $row['lesson_id']) === 0)
+                    {
+                        if(!empty($row['class_name']))
+                        {
+                            $result[$accname][$i]['class'][] = $row['class_name'];
+                        }
+                    }
+                    else
+                    {
+                        throw new DBException('Overlap lesson at the same time for teacher '.$accname, __FILE__, __LINE__);
+                    }
+                }
+                else
+                {
+                    $venue = empty($row['venue'])?"":$row['venue'];
+                    $attr = $row['highlighted']?0:1;
+
+                    $a_lesson = array(
+                        "id" => $row['lesson_id'],
+                        "subject" => $row['subj_code'],
+                        "venue" => $venue,
+                        "attr" => $attr,
+                        "class" => array()
+                    );
+
+                    if(!empty($row['class_name']))
+                    {
+                        $a_lesson['class'][] = $row['class_name'];
+                    }
+
+                    $result[$accname][$i] = $a_lesson;
+                }
+            }
+        }
+
+        //from relief timetable
+        if($scheduleIndex === -1 || ($scheduleIndex >= 0 && strcmp($type, 'ad_hoc') === 0))
+        {
+            //confirmed
+            $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher in $teacher_id_list and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname in $teacher_id_list);";
+
+            $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+            if(is_null($query_relief_result))
+            {
+                throw new DBException('Fail to query relief timetable for teacher '.$accname, __FILE__, __LINE__);
+            }
+
+            foreach($query_relief_result as $row)
+            {
+                $accname = $row["relief_teacher"];
+            
+                if(!array_key_exists($accname, $result))
+                {
+                    $result[$accname] = array();
+                }
+                
+                $start_time = $row['start_time_index'] - 1;
+                $end_time = $row['end_time_index'] - 1;
+
+                for($i = $start_time; $i<$end_time; $i++)
+                {
+                    if(array_key_exists($i, $result[$accname]))
+                    {
+                        if(strcmp($result[$accname][$i]['id'], $row['lesson_id']) === 0)
+                        {
+                            if(!empty($row['class_name']))
+                            {
+                                $result[$accname][$i]['class'][] = $row['class_name'];
+                            }
+                        }
+                        else
+                        {
+                            if($result[$accname][$i]['attr'] === 1)
+                            {
+                                $temp = $result[$accname][$i];
+                                $venue = empty($row['venue'])?"":$row['venue'];
+
+                                $result[$accname][$i] = array(
+                                    "id" => $row['lesson_id'],
+                                    "subject" => $row['subj_code'],
+                                    "venue" => $venue,
+                                    "attr" => 2,
+                                    "class" => array(),
+                                    "skipped" => $temp
+                                );
+
+                                if(!empty($row['class_name']))
+                                {
+                                    $result[$accname][$i]['class'][] = $row['class_name'];
+                                }
+                            }
+                            else
+                            {
+                                throw new DBException('Duplicate lesson', __FILE__, __LINE__);
+                                //$id = $row['lesson_id'];
+                                //$attr = $result[$i]['attr'];
+                                //$sbj = $row['subj_code'];
+                                //echo "error : $i , $id , $start_time , $end_time , $attr , $sbj <br>";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $venue = empty($row['venue'])?"":$row['venue'];
+
+                        $a_lesson = array(
+                            "id" => $row['lesson_id'],
+                            "subject" => $row['subj_code'],
+                            "venue" => $venue,
+                            "attr" => 2,
+                            "class" => array()
+                        );
+
+                        if(!empty($row['class_name']))
+                        {
+                            $a_lesson['class'][] = $row['class_name'];
+                        }
+
+                        $result[$accname][$i] = $a_lesson;
+                    }
+                }
+            }
+            
+            //get skipped lessons without relief 
+            $sql_skip_no_relief = "select * from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname in $teacher_id_list;";
+            $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
+            if(is_null($skip_no_relief))
+            {
+                throw new DBException('Fail to query timetable', __FILE__, __LINE__);
+            }
+            foreach($skip_no_relief as $row)
+            {
+                $accname = $row["accname"];
+            
+                if(!array_key_exists($accname, $result))
+                {
+                    $result[$accname] = array();
+                }
+                
+                $start_index = $row['start_time_index'] - 1;
+                
+                if(!array_key_exists($start_index, $result[$accname]))
+                {
+                    //it's theoretically impossible as skip lesson must be associated with an optional lesson
+                    continue;
+                }
+                if($result[$accname][$start_index] !== 1)
+                {
+                    //not an optional lesson here
+                    continue;
+                }
+                
+                $temp_optional = array(
+                    "class" => array(),
+                    "subject" => "",
+                    "venue" => "",
+                    "attr" =>2,
+                    "skipped" => $result[$accname][$start_index]
+                );
+                
+                $result[$accname][$start_index] = $temp_optional;
+            }
+        }
+        
+        if($scheduleIndex >= 0)
+        {
+            //not confirmed
+            $sql_query_relief = "select * from ((temp_each_alternative left join ct_lesson on ct_lesson.lesson_id = temp_each_alternative.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$scheduleIndex." AND temp_each_alternative.relief_teacher in $teacher_id_list;";
+            $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+            if(is_null($query_relief_result))
+            {
+                throw new DBException('Fail to query relief timetable for teacher '.$accname, __FILE__, __LINE__);
+            }
+
+            foreach($query_relief_result as $row)
+            {
+                $accname = $row["relief_teacher"];
+            
+                if(!array_key_exists($accname, $result))
+                {
+                    $result[$accname] = array();
+                }
+                
+                $start_time = $row['start_time_index'] - 1;
+                $end_time = $row['end_time_index'] - 1;
+
+                for($i = $start_time; $i<$end_time; $i++)
+                {
+                    if(array_key_exists($i, $result[$accname]))
+                    {
+                        if(strcmp($result[$accname][$i]['id'], $row['lesson_id']) === 0)
+                        {
+                            if(!empty($row['class_name']))
+                            {
+                                $result[$accname][$i]['class'][] = $row['class_name'];
+                            }
+                        }
+                        else
+                        {
+                            if($result[$accname][$i]['attr'] === 1)
+                            {
+                                $temp = $result[$accname][$i];
+                                $venue = empty($row['venue'])?"":$row['venue'];
+
+                                $result[$accname][$i] = array(
+                                    "id" => $row['lesson_id'],
+                                    "subject" => $row['subj_code'],
+                                    "venue" => $venue,
+                                    "attr" => 2,
+                                    "class" => array(),
+                                    "skipped" => $temp
+                                );
+
+                                if(!empty($row['class_name']))
+                                {
+                                    $result[$accname][$i]['class'][] = $row['class_name'];
+                                }
+                            }
+                            else
+                            {
+                                throw new DBException('Duplicate lesson', __FILE__, __LINE__);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $venue = empty($row['venue'])?"":$row['venue'];
+
+                        $a_lesson = array(
+                            "id" => $row['lesson_id'],
+                            "subject" => $row['subj_code'],
+                            "venue" => $venue,
+                            "attr" => 2,
+                            "isRelief" => true,
+                            "class" => array()
+                        );
+
+                        if(!empty($row['class_name']))
+                        {
+                            $a_lesson['class'][] = $row['class_name'];
+                        }
+
+                        $result[$accname][$i] = $a_lesson;
+                    }
+                }
+            }
+            
+            //get skipped lessons without relief 
+            $sql_skip_no_relief = "select * from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_aed_skip_info.schedule_id = $scheduleIndex and temp_aed_skip_info.accname in $teacher_id_list;";
+            $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
+            if(is_null($skip_no_relief))
+            {
+                throw new DBException('Fail to query timetable', __FILE__, __LINE__);
+            }
+            foreach($skip_no_relief as $row)
+            {
+                $accname = $row["accname"];
+            
+                if(!array_key_exists($accname, $result))
+                {
+                    $result[$accname] = array();
+                }
+                
+                $start_index = $row['start_time_index'] - 1;
+                
+                if(!array_key_exists($start_index, $result[$accname]))
+                {
+                    //it's theoretically impossible as skip lesson must be associated with an optional lesson
+                    continue;
+                }
+                if($result[$accname][$start_index] !== 1)
+                {
+                    //not an optional lesson here
+                    continue;
+                }
+                
+                $temp_optional = array(
+                    "class" => array(),
+                    "subject" => "",
+                    "venue" => "",
+                    "attr" =>2,
+                    "skipped" => $result[$accname][$start_index]
+                );
+                
+                $result[$accname][$start_index] = $temp_optional;
+            }
+        }
+        
+        //grey out leave period
+        $sql_leave = "select *, DATE_FORMAT(rs_leave_info.start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_leave_info.end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info where ('$date' between DATE(start_time) and DATE(end_time)) and teacher_id in $teacher_id_list;";
+        $leave_result = Constant::sql_execute($db_con, $sql_leave);
+        if(is_null($leave_result))
+        {
+            throw new DBException('Fail to get leave', __FILE__, __LINE__, 2);
+        }
+
+        $leave_period = array();
+        foreach($leave_result as $row)
+        {
+            $temp_leave_period = SchedulerDB::trimTimePeriod($row['start_date'], $row['end_date'], $row['start_time_point'], $row['end_time_point'], $date, $row['leave_id']);
+            $temp_leave_period[0]--;
+            $temp_leave_period[1]--;
+            $leave_period[] = $temp_leave_period;
+        }
+
+        foreach($result[$accname] as $key => $value)
+        {
+            $within_leave = false;
+            foreach($leave_period as $a_period)
+            {
+                if($key >= $a_period[0] && $key < $a_period[1])
+                {
+                    $within_leave = true;
+                    break;
+                }
+            }
+
+            if(!$within_leave)
+            {
+                continue;
+            }
+
+            $temp_slot = $result[$accname][$key];
+            $temp_slot['attr'] = -1;
+            $result[$accname][$key] = $temp_slot;
+        }
+
+        return $result;
+    }
+    
     /**
      * Can only be used in all-scheduling, but not adhoc scheduling
      * @param type $schedule_index

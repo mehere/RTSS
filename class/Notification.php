@@ -375,6 +375,8 @@ Class Notification
             "encryption" => Constant::email_encryption
         );
 
+        $all_timetables = TimetableDB::getCollectiveTimetable($date, array_keys($list), $schedule_index);
+        
         $to = array();
         foreach ($list as $key => $one)
         {
@@ -399,25 +401,8 @@ Class Notification
                 }
             }
 
-            $email_input = array();
-            foreach ($one["relief"] as $a_relief)
-            {
-                $start_time = $a_relief['start_time'] - 1;
-                $end_time = $a_relief['end_time'] - 1;
-
-                for ($i = $start_time; $i < $end_time; $i++)
-                {
-                    $subject = $a_relief['subject'];
-                    $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
-
-                    $email_input[$i] = array(
-                        "class" => $a_relief['class'],
-                        "subject" => $subject,
-                        "venue" => $venue
-                    );
-                }
-            }
-
+            $email_input = $all_timetables[$accname];
+            
             //email format - to update
             $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
 
@@ -670,6 +655,8 @@ Class Notification
             "encryption" => Constant::email_encryption
         );
 
+        $all_timetables = TimetableDB::getCollectiveTimetable($date, array_keys($list), $schedule_index);
+        
         $to = array();
         foreach ($list as $key => $one)
         {
@@ -694,33 +681,13 @@ Class Notification
                 }
             }
 
-            $email_input = array();
-            foreach ($one["relief"] as $aDate)
-            {
-                foreach ($aDate as $a_relief)
-                {
-
-                    $start_time = $a_relief['start_time'] - 1;
-                    $end_time = $a_relief['end_time'] - 1;
-
-                    for ($i = $start_time; $i < $end_time; $i++)
-                    {
-                        $subject = $a_relief['subject'];
-                        $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
-
-                        $email_input[$i] = array(
-                            "class" => $a_relief['class'],
-                            "subject" => $subject,
-                            "venue" => $venue
-                        );
-                    }
-                }
-            }
+            $email_input = $all_timetables[$accname];
+            
             $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
 
             $recepient = array(
                 'accname' => $accname,
-                'subject' => 'Relief timetable for today',
+                'subject' => 'New timetable after relief duty cancellation',
                 'email' => $email,
                 'message' => $message,
                 'attachment' => "",

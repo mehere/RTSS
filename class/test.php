@@ -444,7 +444,26 @@ foreach($result as $key=>$value)
 }
  *
  */
+/*
+$result = TimetableDB::getCollectiveTimetable('2013-02-06', array("7032095", "6937933"), 0);
+foreach($result as $acc => $subresult)
+{
+    echo $acc." : <br>";
+    foreach($subresult as $key=>$value)
+    {
+        echo $key."<br>";
+        echo $value['subject']."<br>";
+        echo $value['attr']."<br>";
+        echo $value['venue']." hehe<br>";
+        print_r($value['class']);
+        echo "<br>";
+        print_r($value['skipped']);
 
+        echo "<br><br>";
+    }
+}
+ * 
+ */
 //echo TimetableDB::checkTimetableConflict(0, array(4, 5), "7576699", "2013/2/06", "N1313126HD65");
 /*
 $result = SchedulerDB::getScheduleResult(0);
