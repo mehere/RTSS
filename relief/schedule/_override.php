@@ -9,8 +9,9 @@ $output=array('error' => 0);
 
 switch ($_GET['option'])
 {
-    case 'override-start':
+    case 'override-start':        
         SchedulerDB::overrideSet('start', $_GET['scheduleIndex']);
+//        $output['error']=$_GET['scheduleIndex'];
         break;
     case 'override-end':
         SchedulerDB::overrideSet('end', $_GET['scheduleIndex']);
