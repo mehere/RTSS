@@ -453,6 +453,8 @@ Class Notification
             throw new DBException('Fail to send notification', __FILE__, __LINE__);
         }
 
+        $list = array(); // for construct msg content
+
         //1. get relief to be cancelled
         if (count($relief_ids) > 0)
         {
@@ -462,9 +464,6 @@ Class Notification
             {
                 throw new DBException('Fail to send notification', __FILE__, __LINE__);
             }
-
-            //$list same as above
-            $list = array(); // for construct msg content
 
             foreach ($selected as $row)
             {
