@@ -48,24 +48,31 @@ switch ($mode)
         foreach ($leaveIDList as $value)
         {
             unset($_SESSION['teacherVerified'][$value]);
-        }                
+        }
         
-        $hasRelief=Teacher::checkHasRelief($leaveIDList, $_POST['prop']);
-        if ($hasRelief)
+        if ($_POST['delete-confirm'])
         {
-            $output['error']=3;
-            if (!Teacher::delete($leaveIDList, $_POST['prop'], $hasRelief))
+            // DB op            
+            if (!Teacher::delete($leaveIDList, $_POST['prop'], true))
             {
                 $output['error']=1;
-            } 
+            }
         }
         else
         {
-            // DB op
-            if (!Teacher::delete($leaveIDList, $_POST['prop'], $hasRelief))
+            $hasRelief=Teacher::checkHasRelief($leaveIDList, $_POST['prop']);
+            if ($hasRelief)
             {
-                $output['error']=1;
-            }            
+                $output['error']=3;
+            }
+            else
+            {
+                // DB op                
+                if (!Teacher::delete($leaveIDList, $_POST['prop'], false))
+                {
+                    $output['error']=1;
+                }            
+            }
         }
         
         break;
@@ -79,18 +86,28 @@ switch ($mode)
             $input[$postKey]=trim($_POST[$postKey]);
         }
         
-        $hasRelief=Teacher::checkHasRelief(array($_POST['leaveID']), $_POST['prop']);
-        if ($hasRelief)
+        if ($_POST['edit-confirm'])
         {
-            $output['error']=3;
-        }
-        else
-        {
-            if (!Teacher::edit($_POST['leaveID'], $prop, $input, $hasRelief))
+            if (!Teacher::edit($_POST['leaveID'], $prop, $input, true))
             {
                 $output['error']=1;
             }
-        }        
+        }
+        else
+        {
+            $hasRelief=Teacher::checkHasRelief(array($_POST['leaveID']), $_POST['prop']);
+            if ($hasRelief)
+            {
+                $output['error']=3;
+            }
+            else
+            {
+                if (!Teacher::edit($_POST['leaveID'], $prop, $input, false))
+                {
+                    $output['error']=1;
+                }
+            }
+        }       
         
         break;
     }

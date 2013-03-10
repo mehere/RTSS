@@ -5,7 +5,7 @@ spl_autoload_register(function($class){
 
 Template::printHeaderAndDoValidation('View Timetable', 
         array('relief.css', 'timetable.css'), 
-        array('accordion.js', 'timetable.js'), 
+        array('teacher-detail.js', 'accordion.js', 'timetable.js'), 
         Template::TT_VIEW, 'Timetable', '', true);
 
 $isAdmin=false;
@@ -42,6 +42,10 @@ if ($_SESSION['type'] == 'admin')
 
     $NO_PREIVEW=true;
     include 'relief-timetable-frag.php';
+    
+    echo <<< EOD
+<div id="teacher-detail"></div>
+EOD;
     
     Template::printFooter();
 ?>       

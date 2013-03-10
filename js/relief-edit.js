@@ -118,7 +118,7 @@ $(document).ready(function(){
 
     function multipleOp(mode)
     {
-        var dataPost={'prop': formEdit['prop'].value}, numOfAcc= 0, rowList=null;
+        var dataPost={'prop': formEdit['prop'].value, 'delete-confirm': 0}, numOfAcc= 0, rowList=null;
         for (var i=0; i<this.form['num'].value; i++)
         {
             if ($('input[name="select-' + i + '"]', this.form).is(':checked'))
@@ -147,7 +147,7 @@ $(document).ready(function(){
 
         var url=this.form.action;
         confirm(CONFIRM_TEXT[mode=='verify'?0:1], function(){
-            $.post(url, dataPost, function(data){
+            /*$.post(url, dataPost, function(data){
                 if (mode == 'delete')
                 {
                     rowList.fadeOut(FADE_DUR, function(){
@@ -159,7 +159,32 @@ $(document).ready(function(){
                 {
                     window.location.href="index.php";
                 }
-            }, 'json');
+            }, 'json');*/
+
+            function deleteFunc(dataPost)
+            {
+                $.post(url, dataPost, function(data){
+                    if (data['error'] == 3)
+                    {
+                        confirm(TEACHER_OP_TEXT[4], function(){
+                            dataPost['delete-confirm']=1;
+                            deleteFunc(dataPost);
+                        });
+                    }
+                    else if (data['error'] > 0)
+                    {
+                        confirm(TEACHER_OP_TEXT[2], function(){});
+                    }
+                    else
+                    {
+                        rowList.fadeOut(FADE_DUR, function(){
+                            $(this).remove();
+                        });
+                    }
+                }, 'json');
+            }
+
+            deleteFunc(dataPost);
         });
     }
 
@@ -297,7 +322,7 @@ $(document).ready(function(){
                 }
 
                 // Save remotely
-                var dataPost={'prop': formEdit['prop'].value};
+                var dataPost={'prop': formEdit['prop'].value, 'edit-confirm': 0};
                 dataPost['remark']=fieldObj['remark'].value;
                 dataPost['datetime-from']=fieldObj['datePost'][0].value + " " + fieldObj['time'][1].value;
                 dataPost['datetime-to']=fieldObj['datePost'][1].value + " " + fieldObj['time'][3].value;
@@ -323,55 +348,63 @@ $(document).ready(function(){
                         return;
                     }
 
-                    if (formEdit['leaveID-'+index].value)
+                    function editFunc(dataPost)
                     {
-                        dataPost['leaveID']=formEdit['leaveID-'+index].value;
-                        dataPost['mode']='edit';
+                        if (formEdit['leaveID-'+index].value)
+                        {
+                            dataPost['leaveID']=formEdit['leaveID-'+index].value;
+                            dataPost['mode']='edit';
 
-                        $.post(formEdit.action, dataPost, function(data){
-                            if (data['error'] == 3)
-                            {
-                                confirm(TEACHER_OP_TEXT[4], function(){ saveLocally(); });
-                            }
-                            else if (data['error'] > 0)
-                            {
-                                confirm(TEACHER_OP_TEXT[1], function(){});
-                            }
-                            else
-                            {
-                                saveLocally();
-                            }
-                        }, 'json');
+                            $.post(formEdit.action, dataPost, function(data){
+                                if (data['error'] == 3)
+                                {
+                                    confirm(TEACHER_OP_TEXT[4], function(){
+                                        dataPost['edit-confirm']=1;
+                                        editFunc(dataPost);
+                                    });
+                                }
+                                else if (data['error'] > 0)
+                                {
+                                    confirm(TEACHER_OP_TEXT[1], function(){});
+                                }
+                                else
+                                {
+                                    saveLocally();
+                                }
+                            }, 'json');
+                        }
+                        else
+                        {
+                            // Check for new row (save)
+                            dataPost['fullname']=fieldObj['fullname'].value;
+                            dataPost['accname']=fieldObj['accname'].value;
+                            dataPost['mode']='add';
+
+                            $.post(formEdit.action, dataPost, function(data){
+                                if (data['error'] > 0)
+                                {
+                                    confirm(TEACHER_OP_TEXT[0], function(){});
+
+                                    $(formEdit['accname-'+index]).parents('tr').first().remove();
+                                }
+                                else
+                                {
+                                    formEdit['leaveID-'+index].value=data['leaveID'];
+
+                                    saveLocally();
+                                }
+                            }, 'json');
+                        }
+
+                        $(self).button('option', SMALL_BT_ARR[0]);
+
+                        // Clear 'isSaveButton'
+                        if (isSaveButton) isSaveButton=null;
+
+                        changeLook(self);
                     }
-                    else
-                    {
-                        // Check for new row (save)
-                        dataPost['fullname']=fieldObj['fullname'].value;
-                        dataPost['accname']=fieldObj['accname'].value;
-                        dataPost['mode']='add';
 
-                        $.post(formEdit.action, dataPost, function(data){
-                            if (data['error'] > 0)
-                            {
-                                confirm(TEACHER_OP_TEXT[0], function(){});
-
-                                $(formEdit['accname-'+index]).parents('tr').first().remove();
-                            }
-                            else
-                            {
-                                formEdit['leaveID-'+index].value=data['leaveID'];
-
-                                saveLocally();
-                            }
-                        }, 'json');
-                    }
-
-                    $(self).button('option', SMALL_BT_ARR[0]);
-
-                    // Clear 'isSaveButton'
-                    if (isSaveButton) isSaveButton=null;
-
-                    changeLook(self);
+                    editFunc(dataPost);
                 });
             }
 
@@ -394,29 +427,33 @@ $(document).ready(function(){
                 else
                 {
                     // Delete this acc
-                    var dataPost={'mode': 'delete', 'prop': formEdit['prop'].value, 'num': 1};
+                    var dataPost={'mode': 'delete', 'prop': formEdit['prop'].value, 'num': 1, 'delete-confirm': 0};
                     dataPost['leaveID-0']=formEdit['leaveID-' + index].value;
-                    $.post(formEdit.action, dataPost, function(data){
-                        function proceed()
-                        {
-                            curRow.fadeOut(FADE_DUR, function(){
-                                $(this).remove();
-                            });
-                        }
 
-                        if (data['error'] == 3)
-                        {
-                            confirm(TEACHER_OP_TEXT[4], function(){ proceed(); });
-                        }
-                        else if (data['error'] > 0)
-                        {
-                            confirm(TEACHER_OP_TEXT[2], function(){});
-                        }
-                        else
-                        {
-                            proceed();
-                        }
-                    }, 'json');
+                    function deleteFunc(dataPost)
+                    {
+                        $.post(formEdit.action, dataPost, function(data){
+                            if (data['error'] == 3)
+                            {
+                                confirm(TEACHER_OP_TEXT[4], function(){
+                                    dataPost['delete-confirm']=1;
+                                    deleteFunc(dataPost);
+                                });
+                            }
+                            else if (data['error'] > 0)
+                            {
+                                confirm(TEACHER_OP_TEXT[2], function(){});
+                            }
+                            else
+                            {
+                                curRow.fadeOut(FADE_DUR, function(){
+                                    $(this).remove();
+                                });
+                            }
+                        }, 'json');
+                    }
+
+                    deleteFunc(dataPost);
                 }
             });
             return false;
@@ -549,7 +586,10 @@ $(document).ready(function(){
     $("#select-all").click(function(){
         for(var i=0; i<formEdit['num'].value; i++)
         {
-            formEdit['select-'+i].checked=true;
+            if (formEdit['select-'+i])
+            {
+                formEdit['select-'+i].checked=true;
+            }
         }
 
         return false;
@@ -558,7 +598,10 @@ $(document).ready(function(){
     $("#deselect-all").click(function(){
         for(var i=0; i<formEdit['num'].value; i++)
         {
-            formEdit['select-'+i].checked=false;
+            if (formEdit['select-'+i])
+            {
+                formEdit['select-'+i].checked=false;
+            }
         }
 
         return false;

@@ -148,11 +148,18 @@ EOD;
                         $timetableEntry=array();
                         foreach (array_slice($headerKeyList, 1) as $key => $value)
                         {
-                            $timetableEntry[]=$teaching[$key];
+                            $timetableEntry[$key]=$teaching[$key];
                         }
 
-                        // Class name display
-                        $timetableEntry[1]=implode(", ", $timetableEntry[1]);
+                        // Class name display/Account name
+                        $timetableEntry['class']=implode(", ", $timetableEntry['class']);
+                        
+                        $timetableEntry['teacher-fullname']=<<< EOD
+<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['teacher-accname']}" class="teacher-detail-link">{$timetableEntry['teacher-fullname']}</a>
+EOD;
+                        $timetableEntry['relief-teacher-fullname']=<<< EOD
+<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['relief-teacher-accname']}" class="teacher-detail-link">{$timetableEntry['relief-teacher-fullname']}</a>
+EOD;
 
                         echo "<tr>";
                         if ($tInd == 0)

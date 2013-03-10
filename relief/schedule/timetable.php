@@ -5,7 +5,7 @@ spl_autoload_register(function($class){
 
 Template::printHeaderAndDoValidation('Home', 
         array('relief.css', 'page-control.css', 'timetable.css'), 
-        array('accordion.js'), 
+        array('teacher-detail.js', 'accordion.js'), 
         Template::HOME, Template::HOME . "(Timetable Preview)", Template::SCHEDULE, true);
 
 $curPage=$_GET['schedule'];
@@ -71,6 +71,7 @@ EOD;
     <a href="index.php?result=<?php echo $_GET['schedule']; ?>" class="button">Go Back</a>
 </div>
 <div style="clear: both"></div>
+<div id="teacher-detail"></div>
 <?php
 Template::printFooter();
 ?>
