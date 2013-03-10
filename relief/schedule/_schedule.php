@@ -59,7 +59,7 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
                 $aNewStateKey = $aNewState->toString();
                 if (!isset($visitedStates[$aNewStateKey]))
                 {
-                    $visitedStates[$aNewStateKey] = NULL;
+                    $visitedStates[$aNewStateKey] = TRUE;
                     if (!$successStates->isRejected($aNewState))
                     {
                         $activeStates->insert($aNewState);
@@ -405,7 +405,7 @@ $startState = new ScheduleState($arrGroup1, $lessonsNeedRelief);
 $startTime = microtime(true);
 $visitedStates = array();
 $activeStates->insert($startState);
-$visitedStates[$startState->toString()] = NULL;
+$visitedStates[$startState->toString()] = TRUE;
 
 scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 
