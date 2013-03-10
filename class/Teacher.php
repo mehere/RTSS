@@ -679,45 +679,77 @@ class Teacher {
         
         if(strcmp($prop, "leave") === 0)
         {
+            $teacher_contact = Teacher::getTeacherContact();
+            $AED_list = Teacher::getTeacherInfo("AED");
+
+            $db_con = Constant::connect_to_db('ntu');
+
+            if (empty($db_con))
+            {
+                return false;
+            }
+
+            $sql_all_relief = "select relief_id, relief_teacher from rs_relief_info where leave_id_ref in (".implode(',', $leaveIDList).");";
+            $all_relief = Constant::sql_execute($db_con, $sql_all_relief);
+            $all_relief_dict = array();
+            foreach($all_relief as $row)
+            {
+                $all_relief_dict[$row["relief_id"]] = array();
+
+                if(array_key_exists($row["relief_teacher"], $AED_list))
+                {
+                    $all_relief_dict[$row["relief_id"]] = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
+                }
+            }
+
             if($has_relief)
             {
-                $teacher_contact = Teacher::getTeacherContact();
-                $AED_list = Teacher::getTeacherInfo("AED");
-                
-                $db_con = Constant::connect_to_db('ntu');
-
-                if (empty($db_con))
-                {
-                    return false;
-                }
-                
                 $sql_check = "select relief_id, relief_teacher from rs_relief_info where leave_id_ref in (".implode(',', $leaveIDList).") and ((DATE(schedule_date) > DATE(NOW())) || (DATE(schedule_date) = DATE(NOW()) && start_time_index >= $appro_index));";
-                
                 $check_result = Constant::sql_execute($db_con, $sql_check);
                 if(is_null($check_result))
                 {
                     return false;
                 }
-                
-                $affected_relief = array();
-                $affected_skip = array();
+
+                $notified_relief = array();
                 foreach($check_result as $row)
                 {
-                    $affected_relief[] = $row["relief_id"];
-                    
-                    if(array_key_exists($row["relief_teacher"], $AED_list))
+                    $notified_relief[] = $row["relief_id"];
+                }
+                $notified_skip = array();
+                foreach($notified_relief as $row)
+                {
+                    if(array_key_exists($row, $all_relief_dict))
                     {
-                        $skip_ids = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
-                        
-                        foreach($skip_ids as $one)
+                        foreach($all_relief_dict[$row] as $one)
                         {
-                            $affected_skip[] = $one;
+                            $notified_skip[] = $one;
                         }
                     }
                 }
-                
-                Notification::sendCancelNotification($affected_relief, $affected_skip, $teacher_contact, "");
-                
+
+                if(count($notified_relief) > 0 || count($notified_skip) > 0)
+                {
+                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+                }
+            }
+
+            $affected_relief = array_keys($all_relief_dict);
+            $affected_skip = array();
+
+            foreach($affected_relief as $row)
+            {
+                if(array_key_exists($row, $all_relief_dict))
+                {
+                    foreach($all_relief_dict[$row] as $one)
+                    {
+                        $affected_skip[] = $one;
+                    }
+                }
+            }
+
+            if(count($affected_skip) > 0)
+            {
                 //delete skip 
                 $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".  implode(', ', $affected_skip).");";
                 $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
@@ -727,7 +759,7 @@ class Teacher {
                 }
             }
             
-            //delete relief
+            //delete leave
             $sql_delete_leave = "delete from rs_leave_info where leave_id in (".  implode(', ', $leaveIDList).");";
             $delete_leave_result = Constant::sql_execute($db_con, $sql_delete_leave);
             if(is_null($delete_leave_result))
@@ -739,49 +771,84 @@ class Teacher {
         }
         else if(strcmp($prop, "temp") === 0)
         {
+            $teacher_contact = Teacher::getTeacherContact();
+            $AED_list = Teacher::getTeacherInfo("AED");
+
+            $db_con = Constant::connect_to_db('ntu');
+
+            if (empty($db_con))
+            {
+                return false;
+            }
+
+            $sql_all_relief = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).");";
+            $all_relief = Constant::sql_execute($db_con, $sql_all_relief);
+            $all_relief_dict = array();
+            foreach($all_relief as $row)
+            {
+                $all_relief_dict[$row["relief_id"]] = array(
+                    "date" => $row["schedule_date"],
+                    "leave_id_ref" => $row["leave_id_ref"],
+                    "skip" => array()
+                );
+
+                if(array_key_exists($row["relief_teacher"], $AED_list))
+                {
+                    $all_relief_dict[$row["relief_id"]]["skip"] = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
+                }
+            }
+
             if($has_relief)
             {
-                $teacher_contact = Teacher::getTeacherContact();
-                $AED_list = Teacher::getTeacherInfo("AED");
-                
-                $db_con = Constant::connect_to_db('ntu');
-
-                if (empty($db_con))
-                {
-                    return false;
-                }
-                
                 $sql_check = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).") and ((DATE(rs_relief_info.schedule_date) > DATE(NOW())) || (DATE(rs_relief_info.schedule_date) = DATE(NOW()) && rs_relief_info.start_time_index >= $appro_index));";
                 $check_result = Constant::sql_execute($db_con, $sql_check);
                 if(is_null($check_result))
                 {
                     return false;
                 }
-                
-                $affected_relief = array();
-                $affected_skip = array();
-                $affected_leave = array();
+
+                $notified_relief = array();
                 foreach($check_result as $row)
                 {
-                    $affected_relief[] = $row["relief_id"];
-                    
-                    $affected_leave[]  = array($row['leave_id_ref'], $row['schedule_date']);
-                    
-                    if(array_key_exists($row["relief_teacher"], $AED_list))
+                    $notified_relief[] = $row["relief_id"];
+                }
+                $notified_skip = array();
+                foreach($notified_relief as $row)
+                {
+                    if(array_key_exists($row, $all_relief_dict))
                     {
-                        $skip_ids = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
-                        
-                        foreach($skip_ids as $one)
+                        foreach($all_relief_dict[$row]["skip"] as $one)
                         {
-                            $affected_skip[] = $one;
+                            $notified_skip[] = $one;
                         }
                     }
                 }
-                
-                Notification::sendCancelNotification($affected_relief, $affected_skip, $teacher_contact, "");
-                
-                $delete_list = implode(',', $affected_relief);
-                
+
+                if(count($notified_relief) > 0 || count($notified_skip) > 0)
+                {
+                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+                }
+            }
+
+            $affected_relief = array_keys($all_relief_dict);
+            $affected_skip = array();
+            $affected_leave = array();
+
+            foreach($affected_relief as $row)
+            {
+                if(array_key_exists($row, $all_relief_dict))
+                {
+                    foreach($all_relief_dict[$row]["skip"] as $one)
+                    {
+                        $affected_skip[] = $one;
+                    }
+
+                    $affected_leave[]  = array($all_relief_dict[$row]['leave_id_ref'], $all_relief_dict[$row]["date"]);
+                }
+            }
+
+            if(count($affected_leave) > 0)
+            {
                 //delete is scheduled
                 $sql_delete_leave_scheduled = "delete from rs_leave_scheduled where ";
                 foreach($affected_leave as $a_leave)
@@ -794,15 +861,22 @@ class Teacher {
                 {
                     throw new DBException('Fail to delete relief', __FILE__, __LINE__);
                 }
-                
+            }
+
+            if(count($affected_relief) > 0)
+            {
                 //delete relief
+                $delete_list = implode(',', $affected_relief);
                 $sql_delete_id = "delete from rs_relief_info where relief_id in ($delete_list);";
                 $delete_id = Constant::sql_execute($db_con, $sql_delete_id);
                 if(is_null($delete_id))
                 {
                     throw new DBException('Fail to delete relief', __FILE__, __LINE__);
                 }
-                
+            }
+
+            if(count($affected_skip) > 0)
+            {
                 //delete skip 
                 $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".  implode(', ', $affected_skip).");";
                 $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);

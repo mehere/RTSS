@@ -399,7 +399,7 @@ foreach($result as $key=>$value)
         //
         //echo Teacher::delete(Array(11, 12, 13), 'leave');
         //echo Teacher::delete(Array(2), 'leave');
-        //Teacher::delete(array(8), "leave", true);
+        //Teacher::delete(array(8), "leave", false);
         //Teacher::edit(1, "leave", Array('reason'=>'Ha ha', 'remark'=>'cdddc','datetime-from'=>'2013-02-06 11:15'));//, 'datetime-to'=>'2013-02-11 14:15'
         //Teacher::edit(1, "temp", Array('remark'=>'Hello world','datetime-from'=>'2013-02-06 08:15', 'email'=>'dddddddf@adf.com', 'handphone'=>'23232323', 'MT'=>'Malay')); //'datetime-to'=>'2013-01-14 12:15',
         //********xue : testing end
