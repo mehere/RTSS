@@ -5,7 +5,7 @@ spl_autoload_register(function($class){
 
 Template::printHeaderAndDoValidation('Schedule Result', 
         array('relief.css', 'page-control.css', 'schedule-result.css'),
-        array('result.js'), 
+        array("teacher-detail.js", 'result.js'), 
         Template::HOME, Template::HOME . " (Result)", Template::SCHEDULE);
 
 $scheduleIndexArr=$_SESSION['scheduleIndex'];
@@ -74,9 +74,9 @@ EOD;
 <input type="hidden" name="time-start-$key" value="{$value['time'][0]}" />
 <input type="hidden" name="time-end-$key" value="{$value['time'][1]}" />
 </td>
-<td>{$value['teacherOnLeave']}<input type="hidden" name="teacher-accname-$key" value="{$value['teacherAccName']}" /></td>
+<td><a href="../_teacher_detail.php?accname={$value['teacherAccName']}" class="teacher-detail-link" >{$value['teacherOnLeave']}</a><input type="hidden" name="teacher-accname-$key" value="{$value['teacherAccName']}" /></td>
 <td class="relief-col">
-<span class="text-display">{$value['reliefTeacher']}</span>
+<span class="text-display"><a href="../_teacher_detail.php?accname={$value['reliefAccName']}" class="teacher-detail-link" >{$value['reliefTeacher']}</a></span>
 <input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" /><input type="text" style="width: 0; opacity: 0" />
 <input type="hidden" name="relief-accname-$key" value="{$value['reliefAccName']}" />
 </td>
@@ -140,6 +140,7 @@ EOD;
     <input type="hidden" name="schedule-index" value="<?php echo $curScheduleIndex; ?>" />
 </form>
 <div id="dialog-alert"><?php echo $_SESSION['scheduleError']; ?></div>
+<div id="teacher-detail"></div>
 <?php
 Template::printFooter();
 

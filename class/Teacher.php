@@ -663,7 +663,7 @@ class Teacher {
         return false;
     }
     
-    public static function delete($leaveIDList, $prop, $has_relief = false)
+    public static function delete($leaveIDList, $prop, $has_relief = true)
     {
         if(count($leaveIDList) === 0)
         {
