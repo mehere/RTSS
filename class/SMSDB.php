@@ -35,21 +35,24 @@ class SMSDB
         {
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
-        
+
         $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date, type) values ";
-        
+
         $phone = mysql_real_escape_string(trim($msg['phoneNum']));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
 
         $type = mysql_real_escape_string(trim($msg['type']));
-        
+
         $sql_insert .= "('".$phone."','".$time_created."','".$accname."',false, '$date', '$type');";
 
 
         $insert_result = Constant::sql_execute($db_con, $sql_insert);
         if(empty($insert_result))
         {
+            error_log(__CLASS__." ".__LINE__);
+            error_log(var_export($date, true));
+            error_log(mysql_error());
             throw new DBException('Fail to insert out messages', __FILE__, __LINE__);
         }
 
@@ -143,7 +146,7 @@ class SMSDB
         {
             throw new DBException('Fail to query sms sent', __FILE__, __LINE__);
         }
-        
+
         $sql_sms = "select phone_num, sms_id from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK';";
 
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
@@ -151,7 +154,7 @@ class SMSDB
         {
             throw new DBException("Fail to query sms sent", __FILE__, __LINE__);
         }
-        
+
         $sms_id_set = array();
         $sms_phone_set = array();
 
@@ -175,7 +178,7 @@ class SMSDB
                 $sql_set .= "'".$a_phone."',";
             }
             $sql_set = substr($sql_set, 0, -1).");";
-            
+
             //query reply
             $db_con_ifins = Constant::connect_to_db("ifins");
             if(empty($db_con_ifins))
@@ -196,7 +199,7 @@ class SMSDB
             return array();
             //throw new DBException($sql_set, __FILE__, __LINE__);
         }
-        
+
         $result = array();
 
         foreach($reply_result as $a_reply)
@@ -251,9 +254,9 @@ class SMSDB
             Constant::sql_execute($db_con, $sql_update);
         }
     }
-    
+
     /**
-     * 
+     *
      * @param type $date
      * @param type $order
      * @param type $direction
@@ -264,7 +267,7 @@ class SMSDB
     public static function allSMSStatus($date, $order = 'fullname', $direction = SORT_ASC, $type = 'R')
     {
         SMS::readSMS($date);
-        
+
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
 
@@ -285,10 +288,10 @@ class SMSDB
             'repliedTime' => 'time_replied',
             'repliedMsg' => 'response'
         );
-        
+
         $type_trimed = mysql_real_escape_string(trim($type));
         $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record where type = '$type_trimed' and schedule_date = DATE('$date');";
-        
+
         if(array_key_exists($order, $order_db))
         {
             $sql_query_sms .= " order by ".$order_db[$order]." ".$direction_db[$direction].";";

@@ -86,7 +86,7 @@ switch ($mode)
             $input[$postKey]=trim($_POST[$postKey]);
         }
         
-        if ($_POST['delete-confirm'])
+        if ($_POST['edit-confirm'])
         {
             if (!Teacher::edit($_POST['leaveID'], $prop, $input, true))
             {
