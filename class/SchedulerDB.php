@@ -428,7 +428,7 @@ class SchedulerDB
         return $num;
     }
 
-    static function setScheduleResult($typeSchedule, $date, $scheduleResults, $arrLeaveId)
+    static function setScheduleResult($date, $scheduleResults)
     {
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
@@ -499,22 +499,7 @@ class SchedulerDB
             {
                 throw new DBException("Fail to insert scheduling result", __FILE__, __LINE__, 2);
             }
-        }
-
-        if(!empty($arrLeaveId))
-        {
-            $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
-            foreach($arrLeaveId as $a_leave)
-            {
-                $sql_mark_scheduled .= "($a_leave, '$date'),";
-            }
-            $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
-            $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
-            if (is_null($mark_schedule_result))
-            {
-                throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
-            }
-        }
+        }    
     }
 
     /**
@@ -996,6 +981,23 @@ class SchedulerDB
         {
             throw new DBException('Fail to approve the schedule', __FILE__, __LINE__);
         }
+        
+        //0. mark leave
+        $arrLeaveId = $_SESSION["leaveIds"];
+        
+        $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
+        foreach($arrLeaveId as $a_leave)
+        {
+            $sql_mark_scheduled .= "($a_leave, '$date'),";
+        }
+        $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
+        $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
+        if (is_null($mark_schedule_result))
+        {
+            throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
+        }
+        
+        unset($_SESSION["leaveIds"]);
         
         //1. notify override old approved result
         //notify relief
