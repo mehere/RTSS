@@ -3,7 +3,7 @@ $(document).ready(function(){
             "Please select at least one teacher before proceeding."],
         TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
             "Failed to delete this teacher.", "Please choose dates within current semester.",
-            "Edit/Delete this teacher will affect future relief. Confirm to proceed?"],
+            "Edit/Delete this teacher will affect future relief. Confirm to proceed?", 'There is another record conflicting with this one.'],
         FADE_DUR=400;
 
     var DATE_WARN_TEXT=["Date should not be empty.", "Date-To should be no smaller than Date-From."];
@@ -198,7 +198,9 @@ $(document).ready(function(){
     $(formEdit['goback']).click(function(){
         if ($('input[name^="date-from"]:visible').length > 0)
         {
-            confirm("Please save records you are editing before leaving this page.", function(){});
+            confirm("Please save records you are editing before leaving this page. Press 'OK' to proceed without saving.", function(){
+                window.location.href="/RTSS/relief/";
+            });
             return false;
         }
         window.location.href="/RTSS/relief/";
@@ -383,7 +385,12 @@ $(document).ready(function(){
                             $.post(formEdit.action, dataPost, function(data){
                                 if (data['error'] > 0)
                                 {
-                                    confirm(TEACHER_OP_TEXT[0], function(){});
+                                    var msg=TEACHER_OP_TEXT[0];
+                                    if (data['error'] == 4)
+                                    {
+                                        msg += "<br />" + TEACHER_OP_TEXT[5];
+                                    }
+                                    confirm(msg, function(){});
 
                                     $(formEdit['accname-'+index]).parents('tr').first().remove();
                                 }
