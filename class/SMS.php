@@ -10,18 +10,23 @@ class SMS
 
     public static function sendSMS($receiverList, $scheduleDate)
     {
-
+        error_log("Send Mesage");
         date_default_timezone_set('Asia/Singapore');
         set_time_limit(1200);
+
+        $absolutePath = dirname(__FILE__);
+        $absolutePath = realpath($absolutePath . '\..\vigsys');
+        chdir($absolutePath);
 
         //test
         $print_command = array();
         //end of test
 
         $sendingResult = array();
-//        error_log("Number of receipents: ".count($receiverList));
+        error_log("Number of receipents: ".count($receiverList));
         foreach ($receiverList as $aReceipent)
         {
+
             $outputCode = NULL;
             $phoneNum = trim($aReceipent["phoneNum"]);
             if (strlen($phoneNum) == 8)
@@ -32,6 +37,7 @@ class SMS
                 $accname = $aReceipent["accName"];
                 $name = $aReceipent["name"];
                 $message = $aReceipent["message"];
+                error_log("$message");
                 $timeCreated = date('Y-m-d H:i:s');
                 $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $aReceipent["type"]);
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
@@ -45,6 +51,7 @@ class SMS
                 $arrMessage = array();
 
                 $maxBody = 140;
+
                 while (true)
                 {
                     $length = strlen($messageCache);
@@ -66,14 +73,10 @@ class SMS
                 $index = 1;
                 foreach ($arrMessage as $message)
                 {
-
-                    $absolutePath = dirname(__FILE__);
-                    $absolutePath = realpath($absolutePath . '\..\vigsys');
-                    chdir($absolutePath);
-
                     $message = "<Scheduler>[$index/$noMessage]~$message";
                     $message = escapeshellarg($message);
                     $command = "java -jar vigsyssmscom-ntu.jar 1 $phoneNum $message";
+                    error_log($command);
 
                     for ($i = 0; $i < 3; $i++)
                     {

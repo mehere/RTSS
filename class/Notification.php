@@ -652,7 +652,7 @@ Class Notification
 
         //4. send sms
         $all_input = array(
-            "date" => $date,
+            "date" => date(PageConstant::DATE_FORMAT_ISO),
             "input" => $sms_input
         );
 
