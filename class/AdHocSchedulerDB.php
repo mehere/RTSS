@@ -299,6 +299,23 @@ class AdHocSchedulerDB
             throw new DBException('Fail to approve the schedule', __FILE__, __LINE__);
         }
         
+        //0. mark leave
+        $arrLeaveId = $_SESSION["leaveIds"];
+        
+        $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
+        foreach($arrLeaveId as $a_leave)
+        {
+            $sql_mark_scheduled .= "($a_leave, '$date'),";
+        }
+        $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
+        $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
+        if (is_null($mark_schedule_result))
+        {
+            throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
+        }
+        
+        unset($_SESSION["leaveIds"]);
+        
         //1. override old aproved result
         //notify relief
         $sql_old_relief = "select relief_id from temp_ah_cancelled_relief;";

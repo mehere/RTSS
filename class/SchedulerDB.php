@@ -428,7 +428,7 @@ class SchedulerDB
         return $num;
     }
 
-    static function setScheduleResult($typeSchedule, $date, $scheduleResults, $arrLeaveId)
+    static function setScheduleResult($date, $scheduleResults)
     {
         $db_con = Constant::connect_to_db("ntu");
         if (empty($db_con))
@@ -499,22 +499,7 @@ class SchedulerDB
             {
                 throw new DBException("Fail to insert scheduling result", __FILE__, __LINE__, 2);
             }
-        }
-
-        if(!empty($arrLeaveId))
-        {
-            $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
-            foreach($arrLeaveId as $a_leave)
-            {
-                $sql_mark_scheduled .= "($a_leave, '$date'),";
-            }
-            $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
-            $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
-            if (is_null($mark_schedule_result))
-            {
-                throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
-            }
-        }
+        }    
     }
 
     /**
@@ -650,9 +635,10 @@ class SchedulerDB
                 return;
             }
             
-            $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
+            $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, leave_id_ref, num_of_slot) values ";
             foreach($copy as $row)
             {
+                $relief_id_ref = $row['temp_relief_id'];
                 $lesson_id = $row['lesson_id'];
                 $date = $row['schedule_date'];
                 $start_time = $row['start_time_index'];
@@ -661,13 +647,13 @@ class SchedulerDB
                 $relief_teacher = $row['relief_teacher'];
                 $num_of_slot = $row['num_of_slot'];
                 
-                $sql_insert_temp .= "(-1, '$lesson_id', '$date', $start_time, $end_time, '$leave_teacher', '$relief_teacher', $num_of_slot),";
+                $sql_insert_temp .= "(-1, '$lesson_id', '$date', $start_time, $end_time, '$leave_teacher', '$relief_teacher',$relief_id_ref ,$num_of_slot),";
             }
             $sql_insert_temp = substr($sql_insert_temp, 0, -1).';';
             
             $insert_temp = Constant::sql_execute($db_con, $sql_insert_temp);
             if(is_null($insert_temp))
-            {
+            {echo $sql_insert_temp;
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
             
@@ -803,7 +789,7 @@ class SchedulerDB
         }
     }
     
-    public static function override($schedule_index, $relief_id, $accname_new)
+    public static function override($temp_relief_id, $accname_new)
     {
         $aed_list = Teacher::getTeacherInfo('AED');
 
@@ -816,7 +802,7 @@ class SchedulerDB
         $accname_new = mysql_real_escape_string(trim($accname_new));
 
         //1. retrieve old relief
-        $sql_old_relief = "select * from temp_each_alternative where schedule_id = -1 and temp_relief_id = $relief_id;";
+        $sql_old_relief = "select * from temp_each_alternative where schedule_id = -1 and leave_id_ref = $temp_relief_id;";
         $old_relief_result = Constant::sql_execute($db_con, $sql_old_relief);
         if(empty($old_relief_result))
         {
@@ -825,6 +811,7 @@ class SchedulerDB
 
         $old_relief = $old_relief_result[0];
 
+        $relief_id = $old_relief["temp_relief_id"];
         $old_relief_teacher = $old_relief['relief_teacher'];
         $start_time_index = $old_relief['start_time_index'];
         $end_time_index = $old_relief['end_time_index'];
@@ -914,7 +901,7 @@ class SchedulerDB
                     $recover_list[] = $id;
                 }
             }
-
+            
              //delete old old skip
             if(count($recover_list) > 0)
             {
@@ -996,6 +983,23 @@ class SchedulerDB
         {
             throw new DBException('Fail to approve the schedule', __FILE__, __LINE__);
         }
+        
+        //0. mark leave
+        $arrLeaveId = $_SESSION["leaveIds"];
+        
+        $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
+        foreach($arrLeaveId as $a_leave)
+        {
+            $sql_mark_scheduled .= "($a_leave, '$date'),";
+        }
+        $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
+        $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
+        if (is_null($mark_schedule_result))
+        {
+            throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
+        }
+        
+        unset($_SESSION["leaveIds"]);
         
         //1. notify override old approved result
         //notify relief
