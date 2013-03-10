@@ -14,15 +14,15 @@ else
     $result=SchedulerDB::approve($_POST['schedule-index'], $_SESSION['scheduleDate']);    
 }
 
-$trStr='';
-foreach ($result as $key => $value)
-{
-    $smsSent=PageConstant::stateRepresent($value['smsSent']);
-    $emailSent=PageConstant::stateRepresent($value['emailSent']);
-    $trStr .= <<< EOD
-<tr><td>{$value['fullname']}</td><td>$smsSent</td><td>$emailSent</td></tr>   
-EOD;
-}
+//$trStr='';
+//foreach ($result as $key => $value)
+//{
+//    $smsSent=PageConstant::stateRepresent($value['smsSent']);
+//    $emailSent=PageConstant::stateRepresent($value['emailSent']);
+//    $trStr .= <<< EOD
+//<tr><td>{$value['fullname']}</td><td>$smsSent</td><td>$emailSent</td></tr>   
+//EOD;
+//}
 
 $output=array('error' => 0);
 
