@@ -442,8 +442,9 @@ Class Notification
         BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendEmail.php'), array('s'), array($sessionId));
     }
 
-    function sendCancelNotification($relief_ids, $skip_ids, $teacher_contact, $date)
+    public static function sendCancelNotification($relief_ids, $skip_ids, $teacher_contact, $date)
     {
+        error_log("send cancel notification");
         $sessionId = session_id();
 
         $db_con = Constant::connect_to_db('ntu');
@@ -451,6 +452,8 @@ Class Notification
         {
             throw new DBException('Fail to send notification', __FILE__, __LINE__);
         }
+
+        $list = array(); // for construct msg content
 
         //1. get relief to be cancelled
         if (count($relief_ids) > 0)
@@ -461,9 +464,6 @@ Class Notification
             {
                 throw new DBException('Fail to send notification', __FILE__, __LINE__);
             }
-
-            //$list same as above
-            $list = array(); // for construct msg content
 
             foreach ($selected as $row)
             {
@@ -602,7 +602,9 @@ Class Notification
             foreach ($lessonsReliefAll as $lessonDate => $lessonsRelief)
             {
                 $lessonsSkipped = isset($lessonsSkippedAll[$lessonDate]) ? $lessonsSkippedAll[$lessonDate] : array();
-                $dateObject = DateTime::createFromFormat(PageConstant::DATE_FORMAT_ISO, $lessonDate);
+
+//                echo "$lessonDate<br>";
+                $dateObject = DateTime::createFromFormat('Y-m-d', $lessonDate);
                 $dateSg = $dateObject->format(PageConstant::DATE_FORMAT_SG);
 
                 $message .= "The following relief lessons on $dateSg have been cancelled:";
@@ -650,7 +652,7 @@ Class Notification
 
         //4. send sms
         $all_input = array(
-            "date" => $date,
+            "date" => date(PageConstant::DATE_FORMAT_ISO),
             "input" => $sms_input
         );
 
@@ -693,24 +695,27 @@ Class Notification
             }
 
             $email_input = array();
-            foreach ($one["relief"] as $a_relief)
+            foreach ($one["relief"] as $aDate)
             {
-                $start_time = $a_relief['start_time'] - 1;
-                $end_time = $a_relief['end_time'] - 1;
-
-                for ($i = $start_time; $i < $end_time; $i++)
+                foreach ($aDate as $a_relief)
                 {
-                    $subject = $a_relief['subject'];
-                    $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
 
-                    $email_input[$i] = array(
-                        "class" => $a_relief['class'],
-                        "subject" => $subject,
-                        "venue" => $venue
-                    );
+                    $start_time = $a_relief['start_time'] - 1;
+                    $end_time = $a_relief['end_time'] - 1;
+
+                    for ($i = $start_time; $i < $end_time; $i++)
+                    {
+                        $subject = $a_relief['subject'];
+                        $venue = empty($a_relief['venue']) ? "in classroom" : $a_relief['venue'];
+
+                        $email_input[$i] = array(
+                            "class" => $a_relief['class'],
+                            "subject" => $subject,
+                            "venue" => $venue
+                        );
+                    }
                 }
             }
-
             $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
 
             $recepient = array(

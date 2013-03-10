@@ -356,7 +356,7 @@ foreach($result as $key=>$value)
 /*
 $result = ListGenerator::getTeacherName('2013/03/27', -1);
 print_r($result);
- * 
+ *
  */
 /*
 foreach($result as $key => $value)
