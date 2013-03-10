@@ -89,6 +89,11 @@ class SMSDB
             throw new DBException('Fail to insert sms sent', __FILE__, __LINE__);
         }
 
+        if(count($msgs) === 0)
+        {
+            return;
+        }
+        
         $sql_insert = "insert into cm_sms_record(sms_id, phone_num, message, time_created, time_sent, status, accname, is_replied) values ";
         foreach($msgs as $msg)
         {

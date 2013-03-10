@@ -183,17 +183,20 @@ class AdHocSchedulerDB
         {
             $skip_ids = AdHocSchedulerDB::searchSkipForRelief($reliefID);
             
-            $sql_insert = "insert into temp_ah cancelled_skip values ";
-            foreach($skip_ids as $a_id)
+            if(count($skip_ids) > 0)
             {
-                $sql_insert .= "($a_id, $relief_teacher, $schedule_date),";
-            }
-            $sql_insert = substr($sql_insert, 0, -1).';';
-            
-            $cancel_skip = Constant::sql_execute($db_con, $sql_insert);
-            if(is_null($cancel_skip))
-            {
-                throw new DBException('Fail to insert cancel relief ', __FILE__, __LINE__, 2);
+                $sql_insert = "insert into temp_ah_cancelled_skip values ";
+                foreach($skip_ids as $a_id)
+                {
+                    $sql_insert .= "($a_id, $relief_teacher, $schedule_date),";
+                }
+                $sql_insert = substr($sql_insert, 0, -1).';';
+
+                $cancel_skip = Constant::sql_execute($db_con, $sql_insert);
+                if(is_null($cancel_skip))
+                {
+                    throw new DBException('Fail to insert cancel relief ', __FILE__, __LINE__, 2);
+                }
             }
         }
     }
@@ -302,16 +305,19 @@ class AdHocSchedulerDB
         //0. mark leave
         $arrLeaveId = $_SESSION["leaveIds"];
         
-        $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
-        foreach($arrLeaveId as $a_leave)
+        if(count($arrLeaveId) > 0)
         {
-            $sql_mark_scheduled .= "($a_leave, '$date'),";
-        }
-        $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
-        $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
-        if (is_null($mark_schedule_result))
-        {
-            throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
+            $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
+            foreach($arrLeaveId as $a_leave)
+            {
+                $sql_mark_scheduled .= "($a_leave, '$date'),";
+            }
+            $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
+            $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
+            if (is_null($mark_schedule_result))
+            {
+                throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
+            }
         }
         
         unset($_SESSION["leaveIds"]);

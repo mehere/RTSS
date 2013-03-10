@@ -780,8 +780,8 @@ class Teacher {
             {
                 return false;
             }
-
-            $sql_all_relief = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).");";
+            
+            $sql_all_relief = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".implode(',', $leaveIDList).");";
             $all_relief = Constant::sql_execute($db_con, $sql_all_relief);
             $all_relief_dict = array();
             foreach($all_relief as $row)
@@ -853,12 +853,13 @@ class Teacher {
                 $sql_delete_leave_scheduled = "delete from rs_leave_scheduled where ";
                 foreach($affected_leave as $a_leave)
                 {
-                    $sql_delete_leave_scheduled .= "(leave_id = $a_leave[0] and schedule_date = DATE($a_leave[1]) or ";
+                    $sql_delete_leave_scheduled .= "(leave_id = $a_leave[0] and schedule_date = DATE('$a_leave[1]')) or ";
                 }
-                $sql_insert_temp = substr($sql_insert_temp, 0, -4).';';
+                $sql_delete_leave_scheduled = substr($sql_delete_leave_scheduled, 0, -4).';';
                 $delete_scheduled = Constant::sql_execute($db_con, $sql_delete_leave_scheduled);
                 if(is_null($delete_scheduled))
                 {
+                                        error_log($sql_delete_leave_scheduled);
                     throw new DBException('Fail to delete relief', __FILE__, __LINE__);
                 }
             }
@@ -1018,7 +1019,7 @@ class Teacher {
                 $datetime_from_temp = empty($change['datetime-from'])?$row['start_datetime']:$change['datetime-from'];
                 $datetime_to_temp = empty($change['datetime-to'])?$row['end_datetime']:$change['datetime-to'];
                 
-                if(!Teacher::delete($leaveID, "temp", $has_relief))
+                if(!Teacher::delete(array($leaveID), "temp", $has_relief))
                 {
                     return false;
                 }

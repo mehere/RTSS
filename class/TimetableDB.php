@@ -55,7 +55,7 @@ class TimetableDB
         
         //teacher list
         //temp - will delete later
-        Teacher::getTeachersAccnameAndFullname($teacher_list);
+        //Teacher::getTeachersAccnameAndFullname($teacher_list);
 
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time_index, end_time_index, subj_code, venue, type, highlighted, sem_id) values ";
