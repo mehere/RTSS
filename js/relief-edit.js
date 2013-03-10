@@ -12,6 +12,7 @@ $(document).ready(function(){
         var curDate1=altTarget1.value?new Date(altTarget1.value):new Date(),
             curDate2=altTarget2.value?new Date(altTarget2.value):new Date();
         target1.datepicker({
+            beforeShowDay: $.datepicker.noWeekends,
             dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
@@ -32,6 +33,7 @@ $(document).ready(function(){
         }).datepicker('setDate', curDate1);
 
         target2.datepicker({
+            beforeShowDay: $.datepicker.noWeekends,
             dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
@@ -551,7 +553,7 @@ $(document).ready(function(){
             textfieldDefault($(formEdit['email-' + numOfTeacher]), CONTACT_INFO[1], CONTACT_STYLE[0], CONTACT_STYLE[1], EMAIL_CHECK);
         }
 
-        setDatePicker($(formEdit['date-from-' + numOfTeacher]), $(formEdit['date-to-' + numOfTeacher]), $(formEdit['server-date-from-' + numOfTeacher]), $(formEdit['server-date-to-' + numOfTeacher]));
+        setDatePicker($(formEdit['date-from-' + numOfTeacher]), $(formEdit['date-to-' + numOfTeacher]), formEdit['server-date-from-' + numOfTeacher], formEdit['server-date-to-' + numOfTeacher]);
         formEdit['time-to-' + numOfTeacher].selectedIndex=formEdit['time-to-' + numOfTeacher].options.length-1;
         $(formEdit['fullname-' + numOfTeacher]).val(FIELD_TIP).css('color', 'gray').css('font-style', 'italic');
 

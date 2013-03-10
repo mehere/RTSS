@@ -3,7 +3,7 @@ spl_autoload_register(function($class){
     require_once "../class/$class.php";
 });
 
-
+session_start();
 
 $timeFromOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(0, -2), '', true);
 $timeToOptionStr=PageConstant::formatOptionInSelect(SchoolTime::getTimeArrSub(1, -1), '', true);
@@ -51,7 +51,7 @@ EOD;
 //</td>
 }
 
-$date=date(PageConstant::DATE_FORMAT_ISO);
+$date=$_SESSION['scheduleDate'];
 echo <<< EOD
 <tr id="last-row">
     <td><div class="add-edit"><a href="" class="edit-bt small-bt"></a><a href="" class="delete-bt small-bt"></a></div></td>
