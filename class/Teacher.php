@@ -1265,7 +1265,7 @@ class Teacher {
         }
 
         $sql_insert_match = substr($sql_insert_match, 0, -1).';';
-
+        
         $insert_result = Constant::sql_execute($db_con, $sql_insert_match);
         if(is_null($insert_result))
         {
@@ -1789,18 +1789,6 @@ class Teacher {
         }
 
         return $result;
-    }
-    
-    /**
-     * used by add/edit leave/temp teacher. time should only within current sem
-     * @param array $time_range [$start_time, $end_time]
-     * @param string $year normally useless
-     * @param int $sem normally useless
-     * @return null if not in current sem. 
-     */
-    private static function checkTimeInSemester($time_range, $year = "2013", $sem = 1)
-    {
-        
     }
 }
 
