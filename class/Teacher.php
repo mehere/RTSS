@@ -1307,15 +1307,22 @@ class Teacher {
 
         if(empty($db_con))
         {
-            return false;
+            return 0;
         }
 
         $have_exist = false;
         $sql_delete_exist = "delete from ct_name_abbre_matching where teacher_id in (";
         $sql_insert_match = "insert into ct_name_abbre_matching values ";
 
+        $acc_list = array();
+        
         foreach($all_matches as $abbre=>$accname)
         {
+            if(in_array($accname, $acc_list))
+            {
+                return -1;
+            }
+            
             if(array_key_exists($accname, $abbre_dict))
             {
                 $have_exist = true;
@@ -1323,6 +1330,7 @@ class Teacher {
             }
 
             $sql_insert_match .= "('".$accname."', '".$abbre."'),";
+            $acc_list[] = $abbre;
         }
 
         if($have_exist)
@@ -1332,7 +1340,7 @@ class Teacher {
             $delete_exist_result = Constant::sql_execute($db_con, $sql_delete_exist);
             if(is_null($delete_exist_result))
             {
-                return false;
+                return 0;
             }
         }
 
@@ -1341,10 +1349,10 @@ class Teacher {
         $insert_result = Constant::sql_execute($db_con, $sql_insert_match);
         if(is_null($insert_result))
         {
-            return false;
+            return 0;
         }
 
-        return true;
+        return 1;
     }
 
     /**
