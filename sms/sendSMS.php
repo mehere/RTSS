@@ -23,6 +23,7 @@ session_start();
 
 $input = $_SESSION["sms"];
 unset($_SESSION['sms']);
+session_write_close();
 
 $sms_input = $input['input'];
 $date = $input['date'];
