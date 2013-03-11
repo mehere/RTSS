@@ -916,25 +916,62 @@ class Teacher {
 
         if(strcmp($prop, "leave") === 0)
         {
-            $sql_query = "select * from rs_leave_info where leave_id = $leaveID;";
-            $query_result = Constant::sql_execute($db_con, $sql_query);
-            if(is_null($query_result))
+            if(empty($change['datetime-from']) && empty($change['datetime-to']))
             {
-                return false;
+                 $match_array = Array(
+                    'reason' => 'reason',
+                    'remark' => 'remark',
+                );
+                
+                $sql_update_leave = "update rs_leave_info set ";
+                $has_change = false;
+                
+                foreach($change as $key => $value)
+                {
+                    if(array_key_exists($key, $match_array))
+                    {
+                        $has_change = true;
+                        $sql_update_leave .= $match_array[$key]."='".mysql_real_escape_string($value)."',";
+                    }
+                }
+                
+                if($has_change)
+                {
+                    $sql_update_leave = substr($sql_update_leave, 0 ,-1)." ";
+                    $sql_update_leave .= "where leave_id = ".$leaveID.";";
+
+                    $update_leave_result = Constant::sql_execute($db_con, $sql_update_leave);
+
+                    if(!$update_leave_result)
+                    {
+                        return false;
+                    }
+                }
+                
+                return true;
             }
-            
-            $row = $query_result[0];
-            
-            $reason = empty($change['reason'])?$row['reason']:$change['reason'];
-            $remark = empty($change['remark'])?$row['remark']:$change['remark'];
-            $datetim_from = empty($change['datetime-from'])?$row['start_time']:$change['datetime-from'];
-            $datetim_to = empty($change['datetime-to'])?$row['end_time']:$change['datetime-to'];
-            
-            if(!Teacher::delete(array($leaveID), "leave", $has_relief))
+            else
             {
-                return false;
+                $sql_query = "select * from rs_leave_info where leave_id = $leaveID;";
+                $query_result = Constant::sql_execute($db_con, $sql_query);
+                if(is_null($query_result))
+                {
+                    return false;
+                }
+
+                $row = $query_result[0];
+
+                $reason = empty($change['reason'])?$row['reason']:$change['reason'];
+                $remark = empty($change['remark'])?$row['remark']:$change['remark'];
+                $datetim_from = empty($change['datetime-from'])?$row['start_time']:$change['datetime-from'];
+                $datetim_to = empty($change['datetime-to'])?$row['end_time']:$change['datetime-to'];
+
+                if(!Teacher::delete(array($leaveID), "leave", $has_relief))
+                {
+                    return false;
+                }
+                return Teacher::add($row['teacher_id'], "leave", array("datetime-from" => $datetim_from, "datetime-to" => $datetim_to, "reason" => $reason, "remark" => $remark));
             }
-            return Teacher::add($row['teacher_id'], "leave", array("datetime-from" => $datetim_from, "datetime-to" => $datetim_to, "reason" => $reason, "remark" => $remark));
         }
         else if(strcmp($prop, "temp") === 0)
         {
@@ -990,29 +1027,46 @@ class Teacher {
                 $remark = $row['slot_remark'];
             }
             
-            if($teacher_change)
+            if(empty($change['datetime-from']) && empty($change['datetime-to']))
             {
-                $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
-                $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
+                if($teacher_change)
+                {
+                    $sql_update_teacher = substr($sql_update_teacher, 0 ,-1)." ";
+                    $sql_update_teacher .= "where teacher_id = '".$teacher_id."';";
 
-                $update_teacher_result = Constant::sql_execute($db_con, $sql_update_teacher);
+                    $update_teacher_result = Constant::sql_execute($db_con, $sql_update_teacher);
 
-                if(!$update_teacher_result)
+                    if(!$update_teacher_result)
+                    {
+                        return false;
+                    }
+                }
+                
+                if($remark_change)
+                {
+                    $update_temp_result = Constant::sql_execute($db_con, $sql_update_temp);
+
+                    if(!$update_temp_result)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                $sql_old_teacher = "select * from rs_temp_relief_teacher where teacher_id = '$teacher_id';";
+                $old_teacher = Constant::sql_execute($db_con, $sql_old_teacher);
+                if(empty($old_teacher))
                 {
                     return false;
                 }
-            }
-            if($remark_change && empty($change['datetime-from']) && empty($change['datetime-to']))
-            {
-                $update_temp_result = Constant::sql_execute($db_con, $sql_update_temp);
-
-                if(!$update_temp_result)
-                {
-                    return false;
-                }
-            }
-            if(!empty($change['datetime-from']) || !empty($change['datetime-to']))
-            {
+                
+                $row_old = $old_teacher[0];
+                
+                $name = empty($change['fullname'])?$row_old['name']:$change['fullname'];
+                $email = empty($change['email'])?$row_old['email']:$change['email'];
+                $MT = empty($change['MT'])?$row_old['mother_tongue']:$change['MT'];
+                $phone = empty($change['handphone'])?$row_old['mobile']:$change['handphone'];
                 $remark = empty($change['remark'])?$remark:$change['remark'];
                 $datetime_from_temp = empty($change['datetime-from'])?$row['start_datetime']:$change['datetime-from'];
                 $datetime_to_temp = empty($change['datetime-to'])?$row['end_datetime']:$change['datetime-to'];
@@ -1022,7 +1076,7 @@ class Teacher {
                     return false;
                 }
                 
-                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp));
+                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name));
             }
             
             return true;

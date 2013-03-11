@@ -1109,7 +1109,6 @@ class TimetableDB
                             "subject" => $row['subj_code'],
                             "venue" => $venue,
                             "attr" => 2,
-                            "isRelief" => true,
                             "class" => array()
                         );
 
