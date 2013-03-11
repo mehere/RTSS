@@ -439,6 +439,11 @@ class Teacher {
 
         $_SESSION['excluded'][$date] = implode(",", $list);
 
+        if(count($list) === 0)
+        {
+            $_SESSION['excluded'][$date] = "emp";
+        }
+        
         return true;
     }
 
@@ -466,6 +471,10 @@ class Teacher {
             }
 
             return $result;
+        }
+        else if(strcmp($_SESSION['excluded'][$date], "emp") === 0)
+        {
+            return array();
         }
         else
         {
