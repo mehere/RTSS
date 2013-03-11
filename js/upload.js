@@ -148,7 +148,7 @@ $(document).ready(function(){
             if (!dayEntry[time]['isHighlighted'])
             {
                 dayEntry[time]['isHighlighted']=true;
-                subjectBox.css('background-color', '#a9a9a9');
+                subjectBox.css('background-color', '#77afea');
             }
             else
             {

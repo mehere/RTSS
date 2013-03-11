@@ -10,7 +10,6 @@ Template::printHeaderAndDoValidation('Upload Timetable',
 ?>
 <form class="main" name="match" action="_namematch.php" method="post">
     <div class="accordion colorbox blue">
-        <span class="icon-link">&#x25CB;</span>
         <span class="box-title">
             Unknown Name List
         </span>        

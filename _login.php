@@ -23,7 +23,7 @@ if ($_SESSION['type'])
 {
     //store user name
     $_SESSION['username'] = $userInfo['fullname'];
-    $_SESSION['accname'] = $userInfo['accname'];
+    $_SESSION['accname'] = $userInfo['accname'];    
     if ($_SESSION['type'] == "admin")
         $destination = "/RTSS/relief/index.php";
     else
