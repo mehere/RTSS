@@ -160,6 +160,11 @@ $(document).ready(function(){
             return false;
         });
 
+        if (dayEntry[time]['isHighlighted'])
+        {
+            subjectBox.css('background-color', '#77afea');
+        }
+
         subjectBox.hover(function(){
             $(".subject-close", this).toggle();
             $(".subject-highlight", this).toggle();
