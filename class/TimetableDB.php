@@ -392,7 +392,7 @@ class TimetableDB
         $sql_insert_speciality = "insert into ct_aed_speciality values ";
         $has_spec = false;
         //$spec_array = explode(';', $info["speciality"]);
-        $spec_array = $info["speciality"];
+        $spec_array = $info["specialty"];
         foreach($spec_array as $spec)
         {
             $spec = mysql_real_escape_string(trim($spec));
@@ -1398,7 +1398,7 @@ class TimetableDB
             $spec_array[] = $row;
         }
         
-        $result["speciality"] = $spec_array;
+        $result["specialty"] = $spec_array;
         
         return $result;
     }
