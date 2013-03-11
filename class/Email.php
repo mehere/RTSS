@@ -42,7 +42,7 @@ class Email {
     }
     
     public static function formatEmail($name, $date, $content, $sender_name)
-    {                
+    {            
         $width=array('110px', '30%', '40%', '30%');
 
         $headerKeyList=NameMap::$TIMETABLE['individual']['display'];

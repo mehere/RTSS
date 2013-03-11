@@ -10,7 +10,7 @@ class User
     //output : array as specified in docs. empty($output['type']) if no such user or password wrong. 
     public static function login($username, $password)
     {
-        $result = Array(
+        $result = array(
             'accname' => '',
             'type' => '',
         );
@@ -30,7 +30,7 @@ class User
         {
             $row = $ifins_login_result[0];
             
-            //$teacher_id = User::queryTeacherID($username, $row['accfullname']);
+            $teacher_id = User::queryTeacherID($row['accfullname']);
             
             //if(empty($teacher_id))
             //{
@@ -52,7 +52,7 @@ class User
         {
             $row_pri = $ifins_login_result_pri[0];
             
-            //$teacher_id = User::queryTeacherID($username, $row_pri['accfullname']);
+            $teacher_id = User::queryTeacherID($row_pri['accfullname']);
             
             //if(empty($teacher_id))
             //{
@@ -74,7 +74,7 @@ class User
         {
             $row_sec = $ifins_login_result_sec[0];
             
-            //$teacher_id = User::queryTeacherID($username, $row_sec['accfullname']);
+            $teacher_id = User::queryTeacherID($row_sec['accfullname']);
             
             //if(empty($teacher_id))
             //{
@@ -194,7 +194,7 @@ class User
      * 
      */
     
-    private static function queryTeacherID($accname, $fullname)
+    private static function queryTeacherID($fullname)
     {
         $ifins_db_con = Constant::connect_to_db('ifins');
         
@@ -202,7 +202,7 @@ class User
         {
             return "";
         }
-        
+        /*
         if(preg_match("/^S-[0-9]{7}-[A-Z]{1}$/", $accname))
         {
             $teacher_id = substr($accname, 1, 7);
@@ -220,7 +220,8 @@ class User
                 return $teacher_id;
             }
         }
-
+         * 
+         */
         $sql_query_teacher_id_via_name = "select * from actatek_user where user_name = '".mysql_real_escape_string(trim($fullname))."';";
         $query_teacher_id_via_name_result = Constant::sql_execute($ifins_db_con, $sql_query_teacher_id_via_name);
 
