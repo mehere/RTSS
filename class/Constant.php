@@ -5,13 +5,13 @@ Class Constant
     //database configuration
     const db_url = "localhost";
     const db_username = "root";
-    const db_password = "passw0rd";
+    const db_password = "";
     const db_name = "ntu";
 
     const ifins_db_url = "localhost";
     const ifins_db_username = "root";
-    const ifins_db_password = "passw0rd";
-    const ifins_db_name = "fake_ifins";
+    const ifins_db_password = "";
+    const ifins_db_name = "ifins";
 
     const email = 'chij.ischeduler@gmail.com';
     const email_password = 'kwngkngk';
