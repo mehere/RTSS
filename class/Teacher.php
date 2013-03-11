@@ -781,9 +781,10 @@ class Teacher {
                 return false;
             }
             
-            $sql_all_relief = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".implode(',', $leaveIDList).");";
+            $sql_all_relief = "select * from rs_temp_relief_teacher_availability, rs_relief_info where rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher and rs_temp_relief_teacher_availability.temp_availability_id in (".implode(',', $leaveIDList).");";
             $all_relief = Constant::sql_execute($db_con, $sql_all_relief);
             $all_relief_dict = array();
+            $affected_relief = array();
             foreach($all_relief as $row)
             {
                 $all_relief_dict[$row["relief_id"]] = array(
@@ -796,11 +797,13 @@ class Teacher {
                 {
                     $all_relief_dict[$row["relief_id"]]["skip"] = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
                 }
+                
+                $affected_relief[] = $row["relief_id"];
             }
 
             if($has_relief)
             {
-                $sql_check = "select * from (rs_temp_relief_teacher_availability left join rs_relief_info on rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher) where rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).") and ((DATE(rs_relief_info.schedule_date) > DATE(NOW())) || (DATE(rs_relief_info.schedule_date) = DATE(NOW()) && rs_relief_info.start_time_index >= $appro_index));";
+                $sql_check = "select * from rs_temp_relief_teacher_availability, rs_relief_info where rs_temp_relief_teacher_availability.teacher_id = rs_relief_info.relief_teacher and rs_temp_relief_teacher_availability.temp_availability_id in (".  implode(',', $leaveIDList).") and ((DATE(rs_relief_info.schedule_date) > DATE(NOW())) || (DATE(rs_relief_info.schedule_date) = DATE(NOW()) && rs_relief_info.start_time_index >= $appro_index));";
                 $check_result = Constant::sql_execute($db_con, $sql_check);
                 if(is_null($check_result))
                 {
@@ -830,21 +833,17 @@ class Teacher {
                 }
             }
 
-            $affected_relief = array_keys($all_relief_dict);
             $affected_skip = array();
             $affected_leave = array();
 
             foreach($affected_relief as $row)
             {
-                if(array_key_exists($row, $all_relief_dict))
+                foreach($all_relief_dict[$row]["skip"] as $one)
                 {
-                    foreach($all_relief_dict[$row]["skip"] as $one)
-                    {
-                        $affected_skip[] = $one;
-                    }
-
-                    $affected_leave[]  = array($all_relief_dict[$row]['leave_id_ref'], $all_relief_dict[$row]["date"]);
+                    $affected_skip[] = $one;
                 }
+
+                $affected_leave[]  = array($all_relief_dict[$row]['leave_id_ref'], $all_relief_dict[$row]["date"]);
             }
 
             if(count($affected_leave) > 0)
@@ -859,7 +858,6 @@ class Teacher {
                 $delete_scheduled = Constant::sql_execute($db_con, $sql_delete_leave_scheduled);
                 if(is_null($delete_scheduled))
                 {
-                                        error_log($sql_delete_leave_scheduled);
                     throw new DBException('Fail to delete relief', __FILE__, __LINE__);
                 }
             }
