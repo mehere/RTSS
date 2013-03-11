@@ -557,7 +557,7 @@ class Teacher {
 
             $accname = mysql_real_escape_string(trim($accname));
             
-            if(empty($accname))
+            if(empty($accname) || (!empty($accname) && $leaveID != -1))
             {
                 if(empty($entry['fullname']))
                 {
@@ -565,35 +565,38 @@ class Teacher {
                 }
 
                 $fullname = $entry['fullname'];
-
-                $name_array = explode(" ", $fullname);
-                if(count($name_array)>0)
+                
+                if(empty($accname))
                 {
-                    if(strlen($name_array[0])>2)
+                    $name_array = explode(" ", $fullname);
+                    if(count($name_array)>0)
                     {
-                        $name_short = substr($name_array[0], 0, 3);
-                    }
-                    else if(strlen($name_array[0])==2)
-                    {
-                        $name_short = $name_array[0].rand(0, 9);
-                    }
-                    else if(strlen($name_array[0])==1)
-                    {
-                        $name_short = $name_array[0].rand(11, 99);
+                        if(strlen($name_array[0])>2)
+                        {
+                            $name_short = substr($name_array[0], 0, 3);
+                        }
+                        else if(strlen($name_array[0])==2)
+                        {
+                            $name_short = $name_array[0].rand(0, 9);
+                        }
+                        else if(strlen($name_array[0])==1)
+                        {
+                            $name_short = $name_array[0].rand(11, 99);
+                        }
+                        else
+                        {
+                            return -5;
+                        }
                     }
                     else
                     {
-                        return -5;
+                        return -3;
                     }
-                }
-                else
-                {
-                    return -3;
-                }
 
-                //time since 2010-1-1 00:00:00
-                $accname = "TMP".(time() - 1261440000).$name_short;
-
+                    //time since 2010-1-1 00:00:00
+                    $accname = "TMP".(time() - 1261440000).$name_short;
+                }
+                
                 $handphone = empty($entry['handphone'])?'':$entry['handphone'];
                 $email = empty($entry['email'])?'':$entry['email'];
                 $MT = empty($entry['MT'])?'':$entry['MT'];
@@ -873,7 +876,7 @@ class Teacher {
 
                 $affected_leave[]  = array($all_relief_dict[$row]['leave_id_ref'], $all_relief_dict[$row]["date"]);
             }
-
+            
             if(count($affected_leave) > 0)
             {
                 //delete is scheduled
@@ -1041,12 +1044,12 @@ class Teacher {
             $sql_get_teacher_id = "select * from rs_temp_relief_teacher_availability where temp_availability_id = ".mysql_real_escape_string(trim($leaveID)).";";
             $get_teacher_id_result = Constant::sql_execute($db_con, $sql_get_teacher_id);
             if(is_null($get_teacher_id_result))
-            {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
+            {
                 return false;
             }
             $row = $get_teacher_id_result[0];
             if(!$row)
-            {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
+            {
                 return false;
             }
             else
@@ -1099,8 +1102,18 @@ class Teacher {
                 $datetime_from_temp = empty($change['datetime-from'])?$row['start_datetime']:$change['datetime-from'];
                 $datetime_to_temp = empty($change['datetime-to'])?$row['end_datetime']:$change['datetime-to'];
                 
+                /*
                 if(!Teacher::delete(array($leaveID), "temp", $has_relief))
-                {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
+                {
+                    return false;
+                }
+                 * 
+                 */
+                //delete old teacher
+                $sql_delete_teacher = "delete from rs_temp_relief_teacher where teacher_id = '$teacher_id';";
+                $delete_teacher = Constant::sql_execute($db_con, $sql_delete_teacher);
+                if(is_null($delete_teacher))
+                {
                     return false;
                 }
                 
@@ -1310,6 +1323,11 @@ class Teacher {
 
     public static function insertAbbrMatch($all_matches)
     {
+        if(count($all_matches) === 0)
+        {
+            return 0;
+        }
+        
         $abbre_dict = Teacher::getAbbreMatch();
         
         $db_con = Constant::connect_to_db("ntu");
@@ -1339,7 +1357,7 @@ class Teacher {
             }
 
             $sql_insert_match .= "('".$accname."', '".$abbre."'),";
-            $acc_list[] = $abbre;
+            $acc_list[] = $accname;
         }
 
         if($have_exist)
@@ -1353,8 +1371,7 @@ class Teacher {
             }
         }
 
-        $sql_insert_match = substr($sql_insert_match, 0, -1).';';
-        
+        $sql_insert_match = substr($sql_insert_match, 0, -1).';';       
         $insert_result = Constant::sql_execute($db_con, $sql_insert_match);
         if(is_null($insert_result))
         {
@@ -1453,8 +1470,15 @@ class Teacher {
             }
         }
         
-        $relief_dic = Array();
-        $sql_query_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from (select rs_relief_info.* from rs_relief_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date)) AS temp_relief group by relief_teacher;";
+        $relief_dic = array();
+        if($future_leave)
+        {
+            $sql_query_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from (select rs_relief_info.* from rs_relief_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date)) AS temp_relief group by relief_teacher;";
+        }
+        else
+        {
+            $sql_query_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from (select rs_relief_info.* from rs_relief_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date) and DATE(rs_relief_info.schedule_date) < DATE(NOW())) AS temp_relief group by relief_teacher;";
+        }
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
         if(is_null($query_relief_result))
         {
@@ -1583,7 +1607,14 @@ class Teacher {
         }
         
         //relief
-        $sql_query_relief = "select *, DATE_FORMAT(schedule_date, '%Y/%m/%d') as date from rs_relief_info, ct_semester_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date);";
+        if($future_leave)
+        {
+            $sql_query_relief = "select *, DATE_FORMAT(schedule_date, '%Y/%m/%d') as date from rs_relief_info, ct_semester_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date);";
+        }
+        else
+        {
+            $sql_query_relief = "select *, DATE_FORMAT(schedule_date, '%Y/%m/%d') as date from rs_relief_info, ct_semester_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date) and DATE(rs_relief_info.schedule_date) < DATE(NOW());";
+        }
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
         if(is_null($query_relief_result))
         {

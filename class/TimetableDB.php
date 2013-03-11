@@ -391,7 +391,8 @@ class TimetableDB
         $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname';";
         $sql_insert_speciality = "insert into ct_aed_speciality values ";
         $has_spec = false;
-        $spec_array = explode(';', $info["speciality"]);
+        //$spec_array = explode(';', $info["speciality"]);
+        $spec_array = $info["speciality"];
         foreach($spec_array as $spec)
         {
             $spec = mysql_real_escape_string(trim($spec));
@@ -1298,6 +1299,22 @@ class TimetableDB
             return 1;
         }
 
+        //check temp teacher time availability
+        if(substr($accname, 0, 3) === 'TMP')
+        {
+            $sql_avail = "select * from rs_temp_relief_teacher_availability where teacher_id = '$accname' and unix_timestamp($full_start) < unix_timestamp(start_datetime) and unix_timestamp($full_end) > unix_timestamp(end_datetime)";
+            $avail_result = Constant::sql_execute($db_con, $sql_avail);
+
+            if(is_null($avail_result))
+            {
+                return -1;
+            }
+            else if(count($avail_result) > 0)
+            {
+                return 1;
+            }
+        }
+        
         return 0;
     }
 
@@ -1381,7 +1398,7 @@ class TimetableDB
             $spec_array[] = $row;
         }
         
-        $spec_string = implode(";", $spec_array);
+        $result["speciality"] = $spec_array;
         
         return $result;
     }
