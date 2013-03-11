@@ -665,23 +665,26 @@ class SchedulerDB
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
             
-            $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
-            foreach($copy_skip as $row)
+            if(count($copy_skip) > 0)
             {
-                $lesson_id = $row['lesson_id'];
-                $date = $row['schedule_date'];
-                $start_time = $row['start_time_index'];
-                $end_time = $row['end_time_index'];
-                $accname = $row['accname'];
-                
-                $sql_insert_temp_skip .= "(-1, '$lesson_id', '$date', $start_time, $end_time, '$accname'),";
-            }
-            $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
-            
-            $insert_temp_skip = Constant::sql_execute($db_con, $sql_insert_temp_skip);
-            if(is_null($insert_temp_skip))
-            {
-                throw new DBException("fail to set override", __FILE__, __LINE__);
+                $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
+                foreach($copy_skip as $row)
+                {
+                    $lesson_id = $row['lesson_id'];
+                    $date = $row['schedule_date'];
+                    $start_time = $row['start_time_index'];
+                    $end_time = $row['end_time_index'];
+                    $accname = $row['accname'];
+
+                    $sql_insert_temp_skip .= "(-1, '$lesson_id', '$date', $start_time, $end_time, '$accname'),";
+                }
+                $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
+
+                $insert_temp_skip = Constant::sql_execute($db_con, $sql_insert_temp_skip);
+                if(is_null($insert_temp_skip))
+                {
+                    throw new DBException("fail to set override", __FILE__, __LINE__);
+                }
             }
         }
         else if(strcmp($state, "cancel") === 0)
@@ -724,26 +727,28 @@ class SchedulerDB
             {
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
-            
-            $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
-            foreach($copy as $row)
+            if(count($copy) > 0)
             {
-                $lesson_id = $row['lesson_id'];
-                $date = $row['schedule_date'];
-                $start_time = $row['start_time_index'];
-                $end_time = $row['end_time_index'];
-                $leave_teacher = $row['leave_teacher'];
-                $relief_teacher = $row['relief_teacher'];
-                $num_of_slot = $row['num_of_slot'];
-                
-                $sql_insert_temp .= "($scheduleIndex, '$lesson_id', '$date', $start_time, $end_time, '$leave_teacher', '$relief_teacher', $num_of_slot),";
-            }
-            $sql_insert_temp = substr($sql_insert_temp, 0, -1).';';
-            
-            $insert_temp = Constant::sql_execute($db_con, $sql_insert_temp);
-            if(is_null($insert_temp))
-            {
-                throw new DBException("fail to set override", __FILE__, __LINE__);
+                $sql_insert_temp = "insert into temp_each_alternative (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, leave_teacher, relief_teacher, num_of_slot) values ";
+                foreach($copy as $row)
+                {
+                    $lesson_id = $row['lesson_id'];
+                    $date = $row['schedule_date'];
+                    $start_time = $row['start_time_index'];
+                    $end_time = $row['end_time_index'];
+                    $leave_teacher = $row['leave_teacher'];
+                    $relief_teacher = $row['relief_teacher'];
+                    $num_of_slot = $row['num_of_slot'];
+
+                    $sql_insert_temp .= "($scheduleIndex, '$lesson_id', '$date', $start_time, $end_time, '$leave_teacher', '$relief_teacher', $num_of_slot),";
+                }
+                $sql_insert_temp = substr($sql_insert_temp, 0, -1).';';
+
+                $insert_temp = Constant::sql_execute($db_con, $sql_insert_temp);
+                if(is_null($insert_temp))
+                {
+                    throw new DBException("fail to set override", __FILE__, __LINE__);
+                }
             }
             
             $sql_copy_skip = "select * from temp_aed_skip_info where schedule_id = -1;";
@@ -752,26 +757,27 @@ class SchedulerDB
             {
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
-            
-            $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
-            foreach($copy_skip as $row)
+            if(count($copy_skip) > 0)
             {
-                $lesson_id = $row['lesson_id'];
-                $date = $row['schedule_date'];
-                $start_time = $row['start_time_index'];
-                $end_time = $row['end_time_index'];
-                $accname = $row['accname'];
-                
-                $sql_insert_temp_skip .= "($scheduleIndex, '$lesson_id', '$date', $start_time, $end_time, '$accname'),";
+                $sql_insert_temp_skip = "insert into temp_aed_skip_info (schedule_id, lesson_id, schedule_date, start_time_index, end_time_index, accname) values ";
+                foreach($copy_skip as $row)
+                {
+                    $lesson_id = $row['lesson_id'];
+                    $date = $row['schedule_date'];
+                    $start_time = $row['start_time_index'];
+                    $end_time = $row['end_time_index'];
+                    $accname = $row['accname'];
+
+                    $sql_insert_temp_skip .= "($scheduleIndex, '$lesson_id', '$date', $start_time, $end_time, '$accname'),";
+                }
+                $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
+
+                $insert_temp_skip = Constant::sql_execute($db_con, $sql_insert_temp_skip);
+                if(is_null($insert_temp_skip))
+                {
+                    throw new DBException("fail to set override", __FILE__, __LINE__);
+                }
             }
-            $sql_insert_temp_skip = substr($sql_insert_temp_skip, 0, -1).';';
-            
-            $insert_temp_skip = Constant::sql_execute($db_con, $sql_insert_temp_skip);
-            if(is_null($insert_temp_skip))
-            {
-                throw new DBException("fail to set override", __FILE__, __LINE__);
-            }
-            
             //clear temp
             $sql_delete = "delete from temp_each_alternative where schedule_id = -1;";
             $delete = Constant::sql_execute($db_con, $sql_delete);
@@ -987,18 +993,20 @@ class SchedulerDB
         //0. mark leave
         $arrLeaveId = $_SESSION["leaveIds"];
         
-        $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
-        foreach($arrLeaveId as $a_leave)
+        if(count($arrLeaveId) > 0)
         {
-            $sql_mark_scheduled .= "($a_leave, '$date'),";
+            $sql_mark_scheduled = "insert ignore into rs_leave_scheduled values ";
+            foreach($arrLeaveId as $a_leave)
+            {
+                $sql_mark_scheduled .= "($a_leave, '$date'),";
+            }
+            $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
+            $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
+            if (is_null($mark_schedule_result))
+            {
+                throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
+            }
         }
-        $sql_mark_scheduled = substr($sql_mark_scheduled, 0, -1) . ';';
-        $mark_schedule_result = Constant::sql_execute($db_con, $sql_mark_scheduled);
-        if (is_null($mark_schedule_result))
-        {
-            throw new DBException("Fail to mark scheduled leave", __FILE__, __LINE__, 2);
-        }
-        
         unset($_SESSION["leaveIds"]);
         
         //1. notify override old approved result

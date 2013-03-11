@@ -21,12 +21,12 @@ class TimetableDB
 
         if($sem_id === -1)
         {
-            if($sem === 1)
+            if($sem == 1)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[0];
                 $sem_end_date = "$year-".Constant::$sem_dates[1];
             }
-            else if($sem === 2)
+            else if($sem == 2)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[2];
                 $sem_end_date = "$year-".Constant::$sem_dates[3];
@@ -42,7 +42,7 @@ class TimetableDB
             {
                 throw new DBException("Fail to connect to database", __FILE__, __LINE__);
             }
-
+            
             $sql_insert_sem = "insert into ct_semester_info (start_date, end_date, year, sem_num) values ('$sem_start_date', '$sem_end_date', '$year', $sem);";
             $insert_sem = Constant::sql_execute($db_con, $sql_insert_sem);
             if(is_null($insert_sem))
@@ -52,10 +52,10 @@ class TimetableDB
 
             $sem_id = mysql_insert_id();
         }
-
+        
         //teacher list
         //temp - will delete later
-        Teacher::getTeachersAccnameAndFullname($teacher_list);
+        //Teacher::getTeachersAccnameAndFullname($teacher_list);
 
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time_index, end_time_index, subj_code, venue, type, highlighted, sem_id) values ";
@@ -150,13 +150,14 @@ class TimetableDB
         {
             throw new DBException("Fail to connect to database", __FILE__, __LINE__);
         }
-
+        
         //clear existing data
         $delete_sql_lesson = "delete from ct_lesson where type = 'N' and sem_id = $sem_id;";
 
         $clear_old_result = Constant::sql_execute($db_con_new, $delete_sql_lesson);
         if (is_null($clear_old_result))
         {
+                        error_log($delete_sql_lesson);
             throw new DBException("Fail to clear old data", __FILE__, __LINE__, 2);
         }
 
@@ -495,7 +496,7 @@ class TimetableDB
         $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$date));
         if($sem_id === -1)
         {
-            throw new DBException('No lesson information on '.$date, __FILE__, __LINE__, 1);
+            return $result;
         }
 
         //from timetable
@@ -831,7 +832,7 @@ class TimetableDB
         $sem_id = TimetableDB::checkTimetableExistence(0, array('date'=>$date));
         if($sem_id === -1)
         {
-            throw new DBException('No lesson information on '.$date, __FILE__, __LINE__, 1);
+            return array();
         }
 
         if(count($accnames) === 0)
@@ -1222,7 +1223,7 @@ class TimetableDB
 
         if($sem_id === -1)
         {
-            throw new DBException('No lesson info for '.$schedule_date, __FILE__, __LINE__, 1);
+            return -1;
         }
 
         $date_obj = new DateTime($schedule_date);
@@ -1309,7 +1310,7 @@ class TimetableDB
 
         if($sem_id === -1)
         {
-            throw new DBException("No lesson info for $year-$sem", __FILE__, __LINE__, 1);
+            return array();
         }
 
         $db_con = Constant::connect_to_db('ntu');
@@ -1327,7 +1328,7 @@ class TimetableDB
             throw new DBException('Fail to query timetable for accname '.$accname, __FILE__, __LINE__);
         }
 
-        $result = Array();
+        $result = array();
 
         foreach($table_result as $row)
         {
@@ -1335,7 +1336,7 @@ class TimetableDB
 
             if(!array_key_exists($day_index, $result))
             {
-                $result[$day_index] = Array();
+                $result[$day_index] = array();
             }
 
             $start_time = $row['start_time_index'] - 1;
@@ -1353,8 +1354,8 @@ class TimetableDB
                 $subject = empty($row['subj_code'])?"":$row['subj_code'];
                 $venue = empty($row['venue'])?"":$row['venue'];
 
-                $result[$day_index][$start_time] = Array(
-                    "class" => Array(),
+                $result[$day_index][$start_time] = array(
+                    "class" => array(),
                     "subject" => $subject,
                     "venue" => $venue,
                     "period" => $period

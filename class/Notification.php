@@ -424,7 +424,7 @@ Class Notification
         );
 
         $_SESSION["email"] = $all_input_email;
-        BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendEmail.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendEmail.php'), array('s'), array($sessionId));
     }
 
     public static function sendCancelNotification($relief_ids, $skip_ids, $teacher_contact, $date)
@@ -703,7 +703,7 @@ Class Notification
         );
 
         $_SESSION["email"] = $all_input_email;
-        BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendEmail.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendEmail.php'), array('s'), array($sessionId));
     }
 
 }

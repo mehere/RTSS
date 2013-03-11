@@ -10,12 +10,13 @@ $input_str_trim = substr($input_str, 1, strlen($input_str) - 2);
 
 session_id($input_str_trim);
 session_start();
-
 $input = $_SESSION['email'];
 unset($_SESSION['email']);
+session_write_close();
 
 $from = $input['from'];
 $to = $input['to'];
 
+$email = new Email();
 Email::sendMail($from, $to);
 ?>

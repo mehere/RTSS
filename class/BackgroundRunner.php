@@ -9,14 +9,16 @@ class BackgroundRunner
 
     const PHP_EXE = Constant::php_exe;
 
-    static function execInBackground($scriptPath,$argumentType, $argumentValue)
+    public static function execInBackground($scriptPath,$argumentType, $argumentValue)
     {
-        $phpExec = '"' . self::PHP_EXE . '"';
-        $cmd = "start \"bla\" $phpExec \"$scriptPath\" ";
+        $phpExec = escapeshellarg(Constant::php_exe);
+        $scriptPath = escapeshellarg($scriptPath);
+//        $cmd = "start \"bla\" $phpExec \"$scriptPath\"";
+        $cmd = "start /B \"bg\" $phpExec $scriptPath";
         for ($i=0; $i<count($argumentType); $i++){
-            $cmd.= "-{$argumentType[$i]}='{$argumentValue[$i]}' ";
+            $cmd.= " -{$argumentType[$i]}='{$argumentValue[$i]}'";
         }
-        $cmd .= "&";
+//        $cmd .= "&";
         error_log($cmd);
         pclose(popen($cmd, 'w'));
     }
