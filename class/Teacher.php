@@ -271,7 +271,7 @@ class Teacher {
                 }
                 if(strcmp($type, "all_normal_except_aed")===0)
                 {
-                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name != $db_type[1] order by user_name;";
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name != '$db_type[1]' order by user_name;";
                 }
             }
 
