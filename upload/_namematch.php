@@ -35,9 +35,19 @@ $semester = $analyzer->semester;
 
 try
 {
-    Teacher::insertAbbrMatch($newMatches);
+    switch (Teacher::insertAbbrMatch($newMatches))
+    {
+        case -1:
+            $output['error']="Error: one full name is mapped to different abbrevations.";
+            break;
+        case 0:
+            throw new DBException('local throw');
+            break;
+    }
+    
     TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);    
-} catch (DBException $e)
+} 
+catch (DBException $e)
 {
     // To-Do: Handle Exception Handling
     $output['error']="An error has occured when updating the database.";

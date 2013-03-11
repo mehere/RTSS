@@ -27,7 +27,7 @@ $(document).ready(function(){
         }
     });
 
-    if (!formT['accname'].value)
+    if (formT['accname'] && !formT['accname'].value)
     {
         GlobalFunction.toggleAccordion($('.icon-link', document.forms['teacher-select']), 0);
     }
