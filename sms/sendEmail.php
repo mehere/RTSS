@@ -17,6 +17,5 @@ session_write_close();
 $from = $input['from'];
 $to = $input['to'];
 
-$email = new Email();
 Email::sendMail($from, $to);
 ?>

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'email_lib/swift_required.php';
-
 class Email {
 
     public static function sendMail($from, $to) {
@@ -16,7 +14,7 @@ class Email {
         $transport->setPassword($fromPassword);
         $mailer = Swift_Mailer::newInstance($transport);
         $result = array();
-        for ($i = 0; $i < sizeof($to); $i++) {         
+        for ($i = 0; $i < sizeof($to); $i++) {
             $subject = $to[$i]["subject"];
             $toEmail = $to[$i]["email"];
             $toName = $to[$i]["name"];
@@ -40,7 +38,7 @@ class Email {
         }
         return $result;
     }
-    
+
     public static function formatEmail($name, $date, $content, $sender_name)
     {            
         $width=array('110px', '30%', '40%', '30%');
@@ -71,7 +69,7 @@ EOD;
                 if ($teaching['skipped'])
                 {
                     $teaching['skipped']['class']=implode(", ", $teaching['skipped']['class']);
-                }                
+                }
 
                 $style='';
                 switch ($teaching['attr'])
@@ -89,12 +87,12 @@ EOD;
 
                 $timetableEntry=array();
                 foreach (array_slice($headerKeyList, 1) as $key => $value)
-                {                    
+                {
                     $skippedPart=$teaching['skipped'][$key];
                     if ($skippedPart)
-                    {                       
+                    {
                         $skippedPart= <<< EOD
-<div style="color: black;">(<span style="text-decoration: line-through;">$skippedPart</span>)</div>   
+<div style="color: black;">(<span style="text-decoration: line-through;">$skippedPart</span>)</div>
 EOD;
                     }
                     $timetableEntry[]= <<< EOD
@@ -115,7 +113,7 @@ EOD;
 EOD;
             }
         }
-        
+
         $table= <<< EOD
 <table cellspacing="0" cellpadding="0" border="1" width="100%">
     <thead>
@@ -126,9 +124,9 @@ EOD;
     <tbody>
         $tableBody
     </tbody>
-</table>   
+</table>
 EOD;
-        
+
         return <<< EOD
 <html>
 <body>
