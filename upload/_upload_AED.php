@@ -28,12 +28,14 @@ else
     }
     
     $info=array('accname'=>trim($_POST['accname']));
-    $info['speicalty']=explode(',', $_POST['specialty']);
+    $info['specialty']=explode(',', $_POST['specialty']);
     
     if (!TimetableDB::uploadAEDTimetable($timetable, $info, $_POST['year'], $_POST['sem']))
     {
         $output['error']=1;
     }
+    
+    $output['errorXXX']=var_export($info, true);
 }
 
 header('Content-type: application/json');
