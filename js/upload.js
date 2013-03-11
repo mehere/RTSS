@@ -146,7 +146,7 @@ $(document).ready(function(){
             text: false,
             label: 'Highlight/Unhighlight'
         }).hide().click(function(){
-            if (!dayEntry[time]['isHighlighted'])
+            if (!(dayEntry[time]['isHighlighted']-0))
             {
                 dayEntry[time]['isHighlighted']=true;
                 subjectBox.css('background-color', '#77afea');
@@ -160,7 +160,7 @@ $(document).ready(function(){
             return false;
         });
 
-        if (dayEntry[time]['isHighlighted'])
+        if (dayEntry[time]['isHighlighted']-0)
         {
             subjectBox.css('background-color', '#77afea');
         }
