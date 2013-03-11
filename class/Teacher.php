@@ -216,7 +216,7 @@ class Teacher {
     }
     /**
      *
-     * @param string $type : "", "temp", "all_normal", "normal", "AED", "untrained", "HOD", "ExCo", "executive", "non-executive"
+     * @param string $type : "", "temp", "all_normal", "normal", "AED", "untrained", "HOD", "ExCo", "executive", "non-executive", "all_normal_except_aed"
      * @return array
      */
     public static function getTeacherName($type)
@@ -268,6 +268,10 @@ class Teacher {
                 if(strcmp($type, "executive")===0)
                 {
                     $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name in ('".$db_type[3]."', '".$db_type[5]."') order by user_name;";
+                }
+                if(strcmp($type, "all_normal_except_aed")===0)
+                {
+                    $sql_query_normal = "select user_id, user_name, dept_name from student_details where user_position = 'Teacher' and dept_name != $db_type[1] order by user_name;";
                 }
             }
 
