@@ -253,6 +253,8 @@ $(document).ready(function(){
 
             // Add new table
             var timetable=data['timetable'];
+            formSave['specialty'].value=timetable['specialty'].join(',');
+            delete timetable['specialty'];
             for (var day in timetable)
             {
                 for (var timeFrom in timetable[day])
@@ -275,7 +277,6 @@ $(document).ready(function(){
             formAdd['period'].value='';
             formAdd.reset();
 
-            formSave['specialty'].value=timetable['specialty'].join(',');
             $(formG['upload']).toggle('fast');
 
             $("#dialog-help").parent().css({
