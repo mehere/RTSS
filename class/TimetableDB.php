@@ -1335,7 +1335,7 @@ class TimetableDB
         }
 
         $accname = mysql_real_escape_string(trim($accname));
-        $sql_table = "select * from ((ct_lesson left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) left join ct_teacher_matching on ct_lesson.lesson_id = ct_teacher_matching.lesson_id) where ct_teacher_matching.teacher_id ='".$accname."' and ct_lesson.sem_id = $sem_id;";
+        $sql_table = "select * from ((ct_lesson left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) left join ct_teacher_matching on ct_lesson.lesson_id = ct_teacher_matching.lesson_id) where ct_teacher_matching.teacher_id ='".$accname."' and ct_lesson.sem_id = $sem_id and type = 'A';";
 
         $table_result = Constant::sql_execute($db_con, $sql_table);
         if(is_null($table_result))
