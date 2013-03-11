@@ -179,7 +179,16 @@ $(document).ready(function(){
             return false;
         }
 
-        var dataPost={"year": this['year'].value, "sem": this['sem'].value}, num=0;
+        var specialty=formAED['specialty'].value;
+        specialty=$.map(specialty.split(/[,;]/), function(ele, index){
+            ele=$.trim(ele);
+            if (!ele) return null;
+            return ele;
+        });
+        formAED['specialty'].value=specialty.join(',');
+
+        var dataPost={"year": this['year'].value, "sem": this['sem'].value, "specialty": this['specialty'].value},
+            num=0;
         for (var day in matrixTime)
         {
             for (var time in matrixTime[day])
@@ -219,13 +228,7 @@ $(document).ready(function(){
 
     $(formG['upload']).click(function(){
         $("#dialog-save").dialog('open').data('func', function(){
-            var specialty=formSave['specialty'].value;
-            specialty=$.map(specialty.split(/[,;]/), function(ele, index){
-                ele=$.trim(ele);
-                if (!ele) return null;
-                return ele;
-            });
-            formAED['specialty'].value=specialty.join(',');
+            formAED['specialty'].value=formSave['specialty'].value;
             $(formAED).submit();
         });
 
