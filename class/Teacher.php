@@ -28,7 +28,7 @@ class Teacher {
         $this->leave = array();
         $this->availability = array();
         $this->isHighlighted = true;
-        $this->speciality = null;
+        $this->speciality = array();
         $this->classes = null;
     }
 

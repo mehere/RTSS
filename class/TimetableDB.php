@@ -440,12 +440,20 @@ class TimetableDB
 
         $delete_result = Constant::sql_execute($db_con, $sql_delete_lesson);
         if(is_null($delete_result))
-        {
+        {          
             return false;
         }
         
         if($has_spec)
         {
+            //delete previous ones
+            $sql_delete_spec = "delete from ct_aed_speciality where teacher_id = '$accname';";
+            $delete_spec = Constant::sql_execute($db_con, $sql_delete_spec);
+            if(is_null($delete_spec))
+            {
+                return false;
+            }
+            
             $speciality_insert = Constant::sql_execute($db_con, $sql_insert_speciality);
             if(is_null($speciality_insert))
             {
