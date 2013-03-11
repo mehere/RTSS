@@ -480,7 +480,7 @@ class Teacher {
      * @param type $entry : associative array specified in docs
      * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me, -6 conflict time)
      */
-    public static function add($accname, $prop, $entry)
+    public static function add($accname, $prop, $entry, $leaveID = -1)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -516,9 +516,19 @@ class Teacher {
 
             $num_of_slot = Teacher::calculateLeaveSlot($clean_accname, $clean_datetime_from, $clean_datetime_to);
 
-            $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified, num_of_slot) values
-                ('".$clean_accname."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
-                    '".$clean_datetime_from."', '".$clean_datetime_to."', 'NO', ".$num_of_slot.");";
+            if($leaveID === -1)
+            {
+                $sql_insert_leave = "insert into rs_leave_info(teacher_id, reason, remark, start_time, end_time, verified, num_of_slot) values
+                    ('".$clean_accname."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
+                        '".$clean_datetime_from."', '".$clean_datetime_to."', 'NO', ".$num_of_slot.");";
+            }
+            else
+            {
+                $sql_insert_leave = "insert into rs_leave_info(leave_id, teacher_id, reason, remark, start_time, end_time, verified, num_of_slot) values
+                    ($leaveID, '".$clean_accname."', '".mysql_real_escape_string(trim($reason))."', '".mysql_real_escape_string(trim($remark))."',
+                        '".$clean_datetime_from."', '".$clean_datetime_to."', 'NO', ".$num_of_slot.");";
+            }
+            
 
             $insert_leave_result = Constant::sql_execute($db_con, $sql_insert_leave);
 
@@ -607,9 +617,18 @@ class Teacher {
             
             $temp_remark = empty($entry['remark'])?'':$entry['remark'];
 
-            $sql_insert_temp_time = "insert into rs_temp_relief_teacher_availability(teacher_id, start_datetime, end_datetime, slot_remark) values
+            if($leaveID === -1)
+            {
+                $sql_insert_temp_time = "insert into rs_temp_relief_teacher_availability(teacher_id, start_datetime, end_datetime, slot_remark) values
                 ('".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($entry['datetime-from']))."',
                     '".mysql_real_escape_string(trim($entry['datetime-to']))."', '".mysql_real_escape_string(trim($temp_remark))."');";
+            }
+            else
+            {
+                $sql_insert_temp_time = "insert into rs_temp_relief_teacher_availability(temp_availability_id, teacher_id, start_datetime, end_datetime, slot_remark) values
+                ($leaveID, '".mysql_real_escape_string(trim($accname))."', '".mysql_real_escape_string(trim($entry['datetime-from']))."',
+                    '".mysql_real_escape_string(trim($entry['datetime-to']))."', '".mysql_real_escape_string(trim($temp_remark))."');";
+            }
 
             $insert_temp_time_result = Constant::sql_execute($db_con, $sql_insert_temp_time);
 
@@ -970,7 +989,7 @@ class Teacher {
                 {
                     return false;
                 }
-                return Teacher::add($row['teacher_id'], "leave", array("datetime-from" => $datetim_from, "datetime-to" => $datetim_to, "reason" => $reason, "remark" => $remark));
+                return Teacher::add($row['teacher_id'], "leave", array("datetime-from" => $datetim_from, "datetime-to" => $datetim_to, "reason" => $reason, "remark" => $remark), $leaveID);
             }
         }
         else if(strcmp($prop, "temp") === 0)
@@ -1013,12 +1032,12 @@ class Teacher {
             $sql_get_teacher_id = "select * from rs_temp_relief_teacher_availability where temp_availability_id = ".mysql_real_escape_string(trim($leaveID)).";";
             $get_teacher_id_result = Constant::sql_execute($db_con, $sql_get_teacher_id);
             if(is_null($get_teacher_id_result))
-            {
+            {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
                 return false;
             }
             $row = $get_teacher_id_result[0];
             if(!$row)
-            {
+            {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
                 return false;
             }
             else
@@ -1037,7 +1056,7 @@ class Teacher {
                     $update_teacher_result = Constant::sql_execute($db_con, $sql_update_teacher);
 
                     if(!$update_teacher_result)
-                    {
+                    {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
                         return false;
                     }
                 }
@@ -1047,7 +1066,7 @@ class Teacher {
                     $update_temp_result = Constant::sql_execute($db_con, $sql_update_temp);
 
                     if(!$update_temp_result)
-                    {
+                    {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
                         return false;
                     }
                 }
@@ -1057,7 +1076,7 @@ class Teacher {
                 $sql_old_teacher = "select * from rs_temp_relief_teacher where teacher_id = '$teacher_id';";
                 $old_teacher = Constant::sql_execute($db_con, $sql_old_teacher);
                 if(empty($old_teacher))
-                {
+                {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
                     return false;
                 }
                 
@@ -1072,11 +1091,11 @@ class Teacher {
                 $datetime_to_temp = empty($change['datetime-to'])?$row['end_datetime']:$change['datetime-to'];
                 
                 if(!Teacher::delete(array($leaveID), "temp", $has_relief))
-                {
+                {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
                     return false;
                 }
                 
-                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name));
+                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name), $leaveID);
             }
             
             return true;

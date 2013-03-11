@@ -157,7 +157,6 @@ class TimetableDB
         $clear_old_result = Constant::sql_execute($db_con_new, $delete_sql_lesson);
         if (is_null($clear_old_result))
         {
-                        error_log($delete_sql_lesson);
             throw new DBException("Fail to clear old data", __FILE__, __LINE__, 2);
         }
 
@@ -214,38 +213,38 @@ class TimetableDB
         {
             if(empty($accname) && empty($class))
             {
-                $sql_query_relief = "SELECT * FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."');";
+                $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."');";
             }
             else if(empty($accname) && !empty($class))
             {
-                $sql_query_relief = "SELECT * FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
+                $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
             }
             else if(!empty($accname) && empty($class))
             {
-                $sql_query_relief = "SELECT * FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+                $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
             }
             else
             {
-                $sql_query_relief = "SELECT * FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+                $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and rs_relief_info.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
             }
         }
         else
         {
             if(empty($accname) && empty($class))
             {
-                $sql_query_relief = "SELECT * FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex.";";
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time_index as start_time, temp_each_alternative.end_time_index as end_time FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex.";";
             }
             else if(empty($accname) && !empty($class))
             {
-                $sql_query_relief = "SELECT * FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time_index as start_time, temp_each_alternative.end_time_index as end_time FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."';";
             }
             else if(!empty($accname) && empty($class))
             {
-                $sql_query_relief = "SELECT * FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and temp_each_alternative.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time_index as start_time, temp_each_alternative.end_time_index as end_time FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and temp_each_alternative.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
             }
             else
             {
-                $sql_query_relief = "SELECT * FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and temp_each_alternative.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
+                $sql_query_relief = "SELECT *, temp_each_alternative.start_time_index as start_time, temp_each_alternative.end_time_index as end_time FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex." and ct_class_matching.class_name = '".mysql_real_escape_string(trim($class))."' and temp_each_alternative.leave_teacher = '".mysql_real_escape_string(trim($accname))."';";
             }
         }
 
@@ -558,7 +557,7 @@ class TimetableDB
         if($scheduleIndex === -1 || ($scheduleIndex >= 0 && strcmp($type, 'ad_hoc') === 0))
         {
             //confirmed
-            $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher = '".$accname."' and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname = '$accname');";
+            $sql_query_relief = "select *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher = '".$accname."' and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname = '$accname');";
 
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
@@ -568,8 +567,8 @@ class TimetableDB
 
             foreach($query_relief_result as $row)
             {
-                $start_time = $row['start_time_index'] - 1;
-                $end_time = $row['end_time_index'] - 1;
+                $start_time = $row['start_time'] - 1;
+                $end_time = $row['end_time'] - 1;
 
                 for($i = $start_time; $i<$end_time; $i++)
                 {
@@ -636,7 +635,7 @@ class TimetableDB
             }
             
             //get skipped lessons without relief 
-            $sql_skip_no_relief = "select * from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname = '$accname';";
+            $sql_skip_no_relief = "select *, rs_aed_skip_info.start_time_index as start_time from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname = '$accname';";
             $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
             if(is_null($skip_no_relief))
             {
@@ -644,7 +643,7 @@ class TimetableDB
             }
             foreach($skip_no_relief as $row)
             {
-                $start_index = $row['start_time_index'] - 1;
+                $start_index = $row['start_time'] - 1;
                 
                 if(!array_key_exists($start_index, $result))
                 {
@@ -672,17 +671,17 @@ class TimetableDB
         if($scheduleIndex >= 0)
         {
             //not confirmed
-            $sql_query_relief = "select * from ((temp_each_alternative left join ct_lesson on ct_lesson.lesson_id = temp_each_alternative.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$scheduleIndex." AND temp_each_alternative.relief_teacher = '".$accname."';";
+            $sql_query_relief = "select *, temp_each_alternative.start_time_index as start_time, temp_each_alternative.end_time_index as end_time from ((temp_each_alternative left join ct_lesson on ct_lesson.lesson_id = temp_each_alternative.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$scheduleIndex." AND temp_each_alternative.relief_teacher = '".$accname."';";
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
             {
                 throw new DBException('Fail to query relief timetable for teacher '.$accname, __FILE__, __LINE__);
             }
-
+            
             foreach($query_relief_result as $row)
             {
-                $start_time = $row['start_time_index'] - 1;
-                $end_time = $row['end_time_index'] - 1;
+                $start_time = $row['start_time'] - 1;
+                $end_time = $row['end_time'] - 1;
 
                 for($i = $start_time; $i<$end_time; $i++)
                 {
@@ -746,7 +745,7 @@ class TimetableDB
             }
             
             //get skipped lessons without relief 
-            $sql_skip_no_relief = "select * from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_aed_skip_info.schedule_id = $scheduleIndex and temp_aed_skip_info.accname = '$accname';";
+            $sql_skip_no_relief = "select *, temp_aed_skip_info.start_time_index as start_time from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_aed_skip_info.schedule_id = $scheduleIndex and temp_aed_skip_info.accname = '$accname';";
             $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
             if(is_null($skip_no_relief))
             {
@@ -754,7 +753,7 @@ class TimetableDB
             }
             foreach($skip_no_relief as $row)
             {
-                $start_index = $row['start_time_index'] - 1;
+                $start_index = $row['start_time'] - 1;
                 
                 if(!array_key_exists($start_index, $result))
                 {
@@ -915,7 +914,7 @@ class TimetableDB
         if($scheduleIndex === -1 || ($scheduleIndex >= 0 && strcmp($type, 'ad_hoc') === 0))
         {
             //confirmed
-            $sql_query_relief = "select * from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher in $teacher_id_list and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname in $teacher_id_list);";
+            $sql_query_relief = "select *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher in $teacher_id_list and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname in $teacher_id_list);";
 
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
@@ -932,8 +931,8 @@ class TimetableDB
                     $result[$accname] = array();
                 }
                 
-                $start_time = $row['start_time_index'] - 1;
-                $end_time = $row['end_time_index'] - 1;
+                $start_time = $row['start_time'] - 1;
+                $end_time = $row['end_time'] - 1;
 
                 for($i = $start_time; $i<$end_time; $i++)
                 {
@@ -1000,7 +999,7 @@ class TimetableDB
             }
             
             //get skipped lessons without relief 
-            $sql_skip_no_relief = "select * from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname in $teacher_id_list;";
+            $sql_skip_no_relief = "select *, rs_aed_skip_info.start_time_index as start_time, rs_aed_skip_info.end_time_index as end_time from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname in $teacher_id_list;";
             $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
             if(is_null($skip_no_relief))
             {
@@ -1015,7 +1014,7 @@ class TimetableDB
                     $result[$accname] = array();
                 }
                 
-                $start_index = $row['start_time_index'] - 1;
+                $start_index = $row['start_time'] - 1;
                 
                 if(!array_key_exists($start_index, $result[$accname]))
                 {
@@ -1043,7 +1042,7 @@ class TimetableDB
         if($scheduleIndex >= 0)
         {
             //not confirmed
-            $sql_query_relief = "select * from ((temp_each_alternative left join ct_lesson on ct_lesson.lesson_id = temp_each_alternative.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$scheduleIndex." AND temp_each_alternative.relief_teacher in $teacher_id_list;";
+            $sql_query_relief = "select *, temp_each_alternative.start_time_index as start_time, temp_each_alternative.end_time_index as end_time from ((temp_each_alternative left join ct_lesson on ct_lesson.lesson_id = temp_each_alternative.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = ".$scheduleIndex." AND temp_each_alternative.relief_teacher in $teacher_id_list;";
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
             {
@@ -1059,8 +1058,8 @@ class TimetableDB
                     $result[$accname] = array();
                 }
                 
-                $start_time = $row['start_time_index'] - 1;
-                $end_time = $row['end_time_index'] - 1;
+                $start_time = $row['start_time'] - 1;
+                $end_time = $row['end_time'] - 1;
 
                 for($i = $start_time; $i<$end_time; $i++)
                 {
@@ -1123,7 +1122,7 @@ class TimetableDB
             }
             
             //get skipped lessons without relief 
-            $sql_skip_no_relief = "select * from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_aed_skip_info.schedule_id = $scheduleIndex and temp_aed_skip_info.accname in $teacher_id_list;";
+            $sql_skip_no_relief = "select *, temp_aed_skip_info.start_time_index as start_time from ((temp_aed_skip_info left join ct_lesson on temp_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where temp_aed_skip_info.schedule_id = $scheduleIndex and temp_aed_skip_info.accname in $teacher_id_list;";
             $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
             if(is_null($skip_no_relief))
             {
@@ -1138,7 +1137,7 @@ class TimetableDB
                     $result[$accname] = array();
                 }
                 
-                $start_index = $row['start_time_index'] - 1;
+                $start_index = $row['start_time'] - 1;
                 
                 if(!array_key_exists($start_index, $result[$accname]))
                 {
