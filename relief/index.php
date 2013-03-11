@@ -68,7 +68,7 @@ EOD;
                         $scheduledStr=PageConstant::stateRepresent($teacher[$keyList[5]]);
                         $isScheduleRun |= $teacher[$keyList[5]];
                         echo <<< EOD
-<tr><td class="text-left"><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>$dateFromDisplay, {$datetime[0][1]}<br />$dateToDisplay, {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td class="text-left">{$reasonArr[$teacher[$keyList[4]]]}</td><td>$scheduledStr</td></tr>
+<tr><td class="text-left"><a class="teacher-detail-link" href="_teacher_detail.php?accname={$teacher[$keyExtraList[0]]}">{$teacher[$keyList[0]]}</a></td><td>{$teacher[$keyList[1]]}</td><td>$dateFromDisplay, {$datetime[0][1]}<br />$dateToDisplay, {$datetime[1][1]}</td><td>{$teacher[$keyList[3]]}</td><td>{$reasonArr[$teacher[$keyList[4]]]}</td><td>$scheduledStr</td></tr>
 EOD;
                     }
                     if (empty($teacherOnLeaveList))
