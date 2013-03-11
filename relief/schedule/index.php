@@ -77,7 +77,7 @@ EOD;
 <td><a href="../_teacher_detail.php?accname={$value['teacherAccName']}" class="teacher-detail-link" >{$value['teacherOnLeave']}</a><input type="hidden" name="teacher-accname-$key" value="{$value['teacherAccName']}" /></td>
 <td class="relief-col">
 <span class="text-display"><a href="../_teacher_detail.php?accname={$value['reliefAccName']}" class="teacher-detail-link" >{$value['reliefTeacher']}</a></span>
-<input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" /><input type="text" style="width: 0; opacity: 0" />
+<input type="text" name="relief-teacher-$key" value="{$value['reliefTeacher']}" class="text-hidden" /><input type="text" style="width: 0; opacity: 0; filter: alpha(opacity=0);" />
 <input type="hidden" name="relief-accname-$key" value="{$value['reliefAccName']}" />
 </td>
 </tr>

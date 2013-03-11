@@ -20,6 +20,13 @@ $(document).ready(function(){
         }
     });
 
-    var passwordField=document.forms[0]['password'];
-    passwordField.type='text';
+    var formL=document.forms['login'];
+    try
+    {
+        formL['password'].type='text';
+    }
+    catch(e)
+    {
+        console.log('IE 8 and below problem');
+    }
 });

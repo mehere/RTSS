@@ -32,7 +32,10 @@
 	cursor: pointer;
 }
 .hovered.table-info tr th.sort:hover {
-	box-shadow: inset 0 5px 10px 0 #AAAAAA;
+	box-shadow: inset 0 5px 5px 0 #AAAAAA;
+    behavior: url("/RTSS/img/PIE.htc");
+    
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#AAAAAA', endColorstr='#F4F5F6',GradientType=0 );
 }
 .hovered.table-info tr th .ui-icon {
 	float: right;
