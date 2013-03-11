@@ -33,7 +33,7 @@ $dayArr=PageConstant::$DAY;
     <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
         <table class="hovered table-info">
             <thead>
-                <th class="hovered" style="width: 90px"></th>
+                <th class="hovered" style="width: 110px"></th>
                 <?php
                     foreach($dayArr as $day)
                     {

@@ -16,11 +16,11 @@ session_start();
 <script src="/RTSS/js/index.js"></script>
 </head>
 <body>
-<div id="container">  	
+<div id="container">
     <div id="content-wrapper">
     	<div id="content">
         	<img src="/RTSS/img/school-logo-name.png" alt="<?php echo PageConstant::SCH_NAME ?>" class="logo-name" />
-            <form method="post" action="_login.php" class="login-form">
+            <form method="post" action="_login.php" class="login-form" name="login">
                 <div>Log in to <?php echo PageConstant::PRODUCT_NAME ?></div>
                 <input type="text" name="username" value="User Name" class="textfield" />
                 <input type="password" name="password" value="Password" class="textfield" />

@@ -56,7 +56,7 @@ class Email {
 EOD;
         }
         
-        $content=PageConstant::escapeHTMLEntity($content);
+        PageConstant::escapeHTMLEntity($content);
         
         $tableBody='';
         $timeArr=SchoolTime::getTimeArrSub(0, -1);

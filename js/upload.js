@@ -268,7 +268,8 @@ $(document).ready(function(){
 
             $("#dialog-help").parent().css({
                 position: "fixed",
-                boxShadow: "0 0 20px -5px black"
+                boxShadow: "0 0 20px -5px black",
+                behavior: 'url("/RTSS/img/PIE.htc")'
             }).find('.ui-dialog-titlebar-close').css('visibility', 'visible');
             $("#dialog-help").dialog('open');
         });

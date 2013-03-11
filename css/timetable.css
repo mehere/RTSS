@@ -12,12 +12,12 @@ select.dropdown {
 	border-left: 1px solid #DDDDDD;
 }
 
-.table-info .time-col {
-	background-color: #F1F2F3;	
+.hovered.table-info .time-col {
+	background-color: #EEEFF0;
 	background: -ms-linear-gradient(top, #F1F2F3 0%,#EAEBEC 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F1F2F3), color-stop(100%,#EAEBEC));
 	background: linear-gradient(to bottom, #F1F2F3 0%,#EAEBEC 100%);
 	-pie-background: linear-gradient(to bottom, #F1F2F3, #EAEBEC);
 	
-	behavior: url(../img/PIE.htc);
+	behavior: url(/RTSS/img/PIE.htc);
 }
