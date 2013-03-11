@@ -29,7 +29,7 @@ switch ($_GET['option'])
 
         if ($output['hasConflict'] == 0)
         {    
-            if (!SchedulerDB::override($_GET['scheduleIndex'], $_GET['reliefID'], $_GET['reliefAccName']))
+            if (!SchedulerDB::override($_GET['reliefID'], $_GET['reliefAccName']))
             {
                 $output['overridenFail']=1;
             }

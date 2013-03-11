@@ -653,7 +653,7 @@ class SchedulerDB
             
             $insert_temp = Constant::sql_execute($db_con, $sql_insert_temp);
             if(is_null($insert_temp))
-            {echo $sql_insert_temp;
+            {
                 throw new DBException("fail to set override", __FILE__, __LINE__);
             }
             

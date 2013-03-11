@@ -352,6 +352,16 @@ $(document).ready(function(){
                         return;
                     }
 
+                    function changeIcon()
+                    {
+                        $(self).button('option', SMALL_BT_ARR[0]);
+
+                        // Clear 'isSaveButton'
+                        if (isSaveButton) isSaveButton=null;
+
+                        changeLook(self);
+                    }
+
                     function editFunc(dataPost)
                     {
                         if (formEdit['leaveID-'+index].value)
@@ -406,16 +416,6 @@ $(document).ready(function(){
                                     changeIcon();
                                 }
                             }, 'json');
-                        }
-
-                        function changeIcon()
-                        {
-                            $(self).button('option', SMALL_BT_ARR[0]);
-
-                            // Clear 'isSaveButton'
-                            if (isSaveButton) isSaveButton=null;
-
-                            changeLook(self);
                         }
                     }
 
