@@ -391,16 +391,19 @@ class TimetableDB
         $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname';";
         $sql_insert_speciality = "insert into ct_aed_speciality values ";
         $has_spec = false;
-        //$spec_array = explode(';', $info["speciality"]);
-        $spec_array = $info["specialty"];
-        foreach($spec_array as $spec)
-        {
-            $spec = mysql_real_escape_string(trim($spec));
-            $sql_insert_speciality .= "('$accname', '$spec'),";
-            $has_spec = true;
-        }
-        $sql_insert_speciality = substr($sql_insert_speciality, 0, -1).';';
 
+        if(!empty($info["specialty"]))
+        {
+            $spec_array = $info["specialty"];
+            foreach($spec_array as $spec)
+            {
+                $spec = mysql_real_escape_string(trim($spec));
+                $sql_insert_speciality .= "('$accname', '$spec'),";
+                $has_spec = true;
+            }
+            $sql_insert_speciality = substr($sql_insert_speciality, 0, -1).';';
+        }
+        
         $has_lesson = false;
         $has_class = false;
         $has_teacher = false;
@@ -441,10 +444,13 @@ class TimetableDB
             return false;
         }
         
-        $speciality_insert = Constant::sql_execute($db_con, $sql_insert_speciality);
-        if(is_null($speciality_insert))
+        if($has_spec)
         {
-            return false;
+            $speciality_insert = Constant::sql_execute($db_con, $sql_insert_speciality);
+            if(is_null($speciality_insert))
+            {
+                return false;
+            }
         }
         
         if($has_lesson)
