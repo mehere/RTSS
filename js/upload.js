@@ -272,7 +272,7 @@ $(document).ready(function(){
             formAdd['period'].value='';
             formAdd.reset();
 
-            formSave['specialty'].value=timetable['specialty'];
+            formSave['specialty'].value=timetable['specialty'].join(',');
             $(formG['upload']).toggle('fast');
 
             $("#dialog-help").parent().css({
