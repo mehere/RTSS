@@ -41,7 +41,7 @@ try
             $output['error']="Error: one full name is mapped to different abbrevations.";
             break;
         case 0:
-            throw new DBException('local throw');
+            throw new DBException('local throw', null, null);
             break;
     }
     
