@@ -376,7 +376,7 @@ Class Notification
         );
 
         $all_timetables = TimetableDB::getCollectiveTimetable($date, array_keys($list), $schedule_index);
-        
+
         $to = array();
         foreach ($list as $key => $one)
         {
@@ -402,7 +402,7 @@ Class Notification
             }
 
             $email_input = $all_timetables[$accname];
-            
+
             //email format - to update
             $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
 
@@ -429,7 +429,7 @@ Class Notification
 
     public static function sendCancelNotification($relief_ids, $skip_ids, $teacher_contact, $date)
     {
-        error_log("send cancel notification");
+//        error_log("send cancel notification");
         $sessionId = session_id();
 
         $db_con = Constant::connect_to_db('ntu');
@@ -682,7 +682,7 @@ Class Notification
             }
 
             $email_input = $all_timetables[$accname];
-            
+
             $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
 
             $recepient = array(
