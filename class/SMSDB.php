@@ -38,7 +38,7 @@ class SMSDB
 
         $sql_insert = "insert into cm_sms_record(phone_num, time_created, accname, is_replied, schedule_date, type) values ";
 
-        $phone = mysql_real_escape_string(trim($msg['phoneNum']));
+        $phone = mysql_real_escape_string(trim($msg['phoneNum'], " \t\n\r\0\x0B\""));
         $time_created = mysql_real_escape_string(trim($msg['timeCreated']));
         $accname = mysql_real_escape_string(trim($msg['accName']));
 
@@ -295,7 +295,7 @@ class SMSDB
         );
 
         $type_trimed = mysql_real_escape_string(trim($type));
-        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record where type = '$type_trimed' and schedule_date = DATE('$date');";
+        $sql_query_sms = "select *, DATE_FORMAT(time_sent, '%H:%i') as sent_time,DATE_FORMAT(time_replied, '%H:%i') as replied_time  from cm_sms_record where type = '$type_trimed' and schedule_date = DATE('$date')";
 
         if(array_key_exists($order, $order_db))
         {
@@ -309,7 +309,7 @@ class SMSDB
         $query_result = Constant::sql_execute($db_con, $sql_query_sms);
         if(is_null($query_result))
         {
-            throw new DBException('Fail to query SMS reply status', __FILE__, __LINE__);
+            throw new DBException('Fail to query SMS reply status '.$sql_query_sms, __FILE__, __LINE__);
         }
 
         $result = Array();

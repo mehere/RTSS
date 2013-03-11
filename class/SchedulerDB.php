@@ -272,7 +272,11 @@ class SchedulerDB
         {
             if (array_key_exists($row['teacher_id'], $result))
             {
-                $result[$row['teacher_id']]->speciality = $row['speciality'];
+                if(is_null($result[$row['teacher_id']]->speciality))
+                {
+                    $result[$row['teacher_id']]->speciality = array();
+                }
+                $result[$row['teacher_id']]->speciality[] = $row['speciality'];
             }
         }
 

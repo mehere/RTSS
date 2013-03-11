@@ -122,9 +122,12 @@ class ScheduleState
         // subject cost
         $subjectCost = 0;
         $fullLesson = TeacherCompact::$arrLesson[$aLesson->lessonId];
-        if ($fullLesson->subject != $fullTeacher->speciality)
+        foreach ($fullTeacher->speciality as $aSpeciality)
         {
-            $subjectCost = ScheduleState::COST_SUBJECT_UNFAMILAR;
+            if ($fullLesson->subject != $aSpeciality)
+            {
+                $subjectCost = ScheduleState::COST_SUBJECT_UNFAMILAR;
+            }
         }
 
         // class cost
@@ -213,10 +216,12 @@ class ScheduleState
         $this->expectedTotalCost = $this->actualIncurredCost + $this->estimatedFutureCost;
     }
 
-    public function beautify(){
-        /* @var $aLesson ReliefLesson*/
+    public function beautify()
+    {
+        /* @var $aLesson ReliefLesson */
         $resultsRelief = array();
-        foreach ($this->lessonsAllocated as $aLesson){
+        foreach ($this->lessonsAllocated as $aLesson)
+        {
             $aNewLesson = clone $aLesson;
             $aNewLesson->teacherOriginal = TeacherCompact::getAccName($aLesson->teacherOriginal);
             $aNewLesson->teacherRelief = TeacherCompact::getAccName($aLesson->teacherRelief);
@@ -228,18 +233,20 @@ class ScheduleState
         $lastLesson = NULL;
         $lastTeacher = NULL;
         $lastIndex = -1;
-        foreach ($this->lessonsSkipped as $aSkippedLesson){
-            /* @var $aSkippedLesson SkippedLesson*/
-            /*@var $fullTeacher Teacher */
+        foreach ($this->lessonsSkipped as $aSkippedLesson)
+        {
+            /* @var $aSkippedLesson SkippedLesson */
+            /* @var $fullTeacher Teacher */
             $teacherId = $aSkippedLesson->teacherId;
             $fullTeacher = TeacherCompact::$arrTeachers[$teacherId];
             $aLesson = $fullTeacher->timetable[$aSkippedLesson->startTimeIndex];
             $timeIndex = $aSkippedLesson->startTimeIndex;
-            if (($fullTeacher === $lastTeacher) && ($aLesson == $lastLesson) && (($timeIndex - $lastIndex) == 1)){
+            if (($fullTeacher === $lastTeacher) && ($aLesson == $lastLesson) && (($timeIndex - $lastIndex) == 1))
+            {
                 $aNewLesson->incrementEndTime();
                 $lastIndex = $timeIndex;
-            }
-            else {
+            } else
+            {
                 $aNewLesson = new ReliefLesson($fullTeacher->accname, $aLesson->lessonId, $aSkippedLesson->startTimeIndex);
                 $resultsSkipped[] = $aNewLesson;
                 $lastLesson = $aLesson;
@@ -251,6 +258,7 @@ class ScheduleState
         $totalResults = array("relievedLessons" => $resultsRelief, "skippedLessons" => $resultsSkipped);
         return $totalResults;
     }
+
 }
 
 ?>

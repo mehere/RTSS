@@ -343,7 +343,7 @@ class TimetableDB
         return $result;
     }
 
-    public static function uploadAEDTimetable($timetable, $year='2013', $sem=1)
+    public static function uploadAEDTimetable($timetable, $info, $year='2013', $sem=1)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -382,15 +382,24 @@ class TimetableDB
             $sem_id = mysql_insert_id();
         }
 
+        $accname = mysql_real_escape_string(trim($info["accname"]));
+        
         //sql statement construction
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time_index, end_time_index, subj_code, venue, type, highlighted, sem_id) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
-        $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id in (";
+        $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname';";
+        $sql_insert_speciality = "insert into ct_aed_speciality values ";
+        $has_spec = false;
+        $spec_array = explode(';', $info["speciality"]);
+        foreach($spec_array as $spec)
+        {
+            $spec = mysql_real_escape_string(trim($spec));
+            $sql_insert_speciality .= "('$accname', '$spec'),";
+            $has_spec = true;
+        }
+        $sql_insert_speciality = substr($sql_insert_speciality, 0, -1).';';
 
-        $delete_array = Array();
-
-        $has_delete = false;
         $has_lesson = false;
         $has_class = false;
         $has_teacher = false;
@@ -410,7 +419,7 @@ class TimetableDB
             $has_lesson = true;
 
             //teacher
-            $sql_insert_lesson_teacher .= "('".mysql_real_escape_string(trim($a_table['accname']))."', '".mysql_real_escape_string($lesson_id)."'), ";
+            $sql_insert_lesson_teacher .= "('$accname', '".mysql_real_escape_string($lesson_id)."'), ";
             $has_teacher = true;
 
             //class
@@ -419,33 +428,24 @@ class TimetableDB
                 $sql_insert_lesson_class .= "('".mysql_real_escape_string($lesson_id)."', '".mysql_real_escape_string(trim($class_name))."'), ";
                 $has_class = true;
             }
-
-            //delete
-            if(!in_array($a_table['accname'], $delete_array))
-            {
-                $delete_array[] = $a_table['accname'];
-            }
-        }
-
-        foreach($delete_array as $a_delete)
-        {
-            $sql_delete_lesson .= "'".$a_delete."', ";
-            $has_delete = true;
         }
 
         $sql_insert_lesson = substr($sql_insert_lesson, 0, -2).';';
         $sql_insert_lesson_class = substr($sql_insert_lesson_class, 0, -2).';';
         $sql_insert_lesson_teacher = substr($sql_insert_lesson_teacher, 0, -2).';';
-        $sql_delete_lesson = substr($sql_delete_lesson, 0, -2).'));';
 
-        if($has_delete)
+        $delete_result = Constant::sql_execute($db_con, $sql_delete_lesson);
+        if(is_null($delete_result))
         {
-            $delete_result = Constant::sql_execute($db_con, $sql_delete_lesson);
-            if(is_null($delete_result))
-            {
-                return false;
-            }
+            return false;
         }
+        
+        $speciality_insert = Constant::sql_execute($db_con, $sql_insert_speciality);
+        if(is_null($speciality_insert))
+        {
+            return false;
+        }
+        
         if($has_lesson)
         {
             $lesson_result = Constant::sql_execute($db_con, $sql_insert_lesson);
@@ -1351,12 +1351,14 @@ class TimetableDB
                 $period = $row['end_time_index'] - $row['start_time_index'];
                 $subject = empty($row['subj_code'])?"":$row['subj_code'];
                 $venue = empty($row['venue'])?"":$row['venue'];
-
+                
+                
                 $result[$day_index][$start_time] = array(
                     "class" => array(),
                     "subject" => $subject,
                     "venue" => $venue,
-                    "period" => $period
+                    "period" => $period,
+                    "isHighlighted" => $row['highlighted']
                 );
 
                 if(!empty($row['class_name']))
@@ -1366,6 +1368,21 @@ class TimetableDB
             }
         }
 
+        $sql_query_spec = "select * from ct_aed_speciality where teacher_id = '$accname';";
+        $query_spec = Constant::sql_execute($db_con, $sql_query_spec);
+        if(is_null($query_spec))
+        {
+            return $result;
+        }
+        
+        $spec_array = array();
+        foreach($query_spec as $row)
+        {
+            $spec_array[] = $row;
+        }
+        
+        $spec_string = implode(";", $spec_array);
+        
         return $result;
     }
 

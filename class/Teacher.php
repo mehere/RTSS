@@ -28,7 +28,7 @@ class Teacher {
         $this->leave = array();
         $this->availability = array();
         $this->isHighlighted = true;
-        $this->speciality = null;
+        $this->speciality = array();
         $this->classes = null;
     }
 
@@ -113,7 +113,7 @@ class Teacher {
                 $leave_id_array[] = $one_leave_id;
             }
         }
-         
+
         //query leave
         $sql_query_leave = "select *, DATE_FORMAT(rs_leave_info.start_time, '%Y/%m/%d') as start_date, DATE_FORMAT(rs_leave_info.end_time, '%Y/%m/%d') as end_date, TIME_FORMAT(rs_leave_info.start_time, '%H:%i') as start_time_point, TIME_FORMAT(rs_leave_info.end_time, '%H:%i') as end_time_point from rs_leave_info
             where DATE('".mysql_real_escape_string(trim($query_date))."') between date(rs_leave_info.start_time) and date(rs_leave_info.end_time);";
@@ -139,7 +139,7 @@ class Teacher {
             {
                 $each_record['isScheduled'] = true;
             }
-            
+
             $each_record['fullname'] = empty($teacher_dict[$row['teacher_id']])?"":$teacher_dict[$row['teacher_id']]['name'];
             if(strcmp(substr($each_record['accname'], 0, 3), "TMP") === 0)
             {
@@ -277,7 +277,7 @@ class Teacher {
             {
                 throw new DBException("Fail to query teachers", __FILE__, __LINE__, 2);
             }
-            
+
             foreach($query_normal_result as $row)
             {
                 $normal_list[] = Array(
@@ -303,7 +303,7 @@ class Teacher {
             {
                 throw new DBException("Fail to query teachers", __FILE__, __LINE__, 2);
             }
-            
+
             foreach($query_temp_result as $row)
             {
                 $temp_list[] = Array(
@@ -394,7 +394,7 @@ class Teacher {
         else
         {
             $ifins_db_con = Constant::connect_to_db('ifins');
-            
+
             if (empty($ifins_db_con))
             {
                 return $result;
@@ -439,6 +439,11 @@ class Teacher {
 
         $_SESSION['excluded'][$date] = implode(",", $list);
 
+        if(count($list) === 0)
+        {
+            $_SESSION['excluded'][$date] = "emp";
+        }
+        
         return true;
     }
 
@@ -466,6 +471,10 @@ class Teacher {
             }
 
             return $result;
+        }
+        else if(strcmp($_SESSION['excluded'][$date], "emp") === 0)
+        {
+            return array();
         }
         else
         {
@@ -499,7 +508,7 @@ class Teacher {
             $clean_datetime_from = mysql_real_escape_string(trim($entry['datetime-from']));
             $clean_datetime_to = mysql_real_escape_string(trim($entry['datetime-to']));
             $clean_accname = mysql_real_escape_string(trim($accname));
-            
+
             $sql_check_conflict = "select * from rs_leave_info where teacher_id = '$clean_accname' and (unix_timestamp(start_time) < unix_timestamp('$clean_datetime_to') && unix_timestamp(end_time) > unix_timestamp('$clean_datetime_from'));";
             $check_conflict = Constant::sql_execute($db_con, $sql_check_conflict);
             if(is_null($check_conflict))
@@ -510,7 +519,7 @@ class Teacher {
             {
                 return -6;
             }
-            
+
             $reason = empty($entry['reason'])?'':$entry['reason'];
             $remark = empty($entry['remark'])?'':$entry['remark'];
 
@@ -547,7 +556,7 @@ class Teacher {
             }
 
             $accname = mysql_real_escape_string(trim($accname));
-            
+
             if(empty($accname))
             {
                 if(empty($entry['fullname']))
@@ -600,10 +609,10 @@ class Teacher {
                     return -2;
                 }
             }
-            
+
             $clean_datetime_from = mysql_real_escape_string(trim($entry['datetime-from']));
             $clean_datetime_to = mysql_real_escape_string(trim($entry['datetime-to']));
-            
+
             $sql_check_conflict = "select * from rs_temp_relief_teacher_availability where teacher_id = '$accname' and (unix_timestamp(start_datetime) < unix_timestamp('$clean_datetime_to') && unix_timestamp(end_datetime) > unix_timestamp('$clean_datetime_from'));";
             $check_conflict = Constant::sql_execute($db_con, $sql_check_conflict);
             if(is_null($check_conflict))
@@ -614,7 +623,7 @@ class Teacher {
             {
                 return -6;
             }
-            
+
             $temp_remark = empty($entry['remark'])?'':$entry['remark'];
 
             if($leaveID === -1)
@@ -652,14 +661,14 @@ class Teacher {
         {
             return true;
         }
-        
+
         $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');
-        
+
         $appro_index = SchoolTime::getApproTimeIndex($now_time_str);
-        
+
         if(strcmp($prop, "leave") === 0)
         {
             $sql_check = "select * from rs_relief_info where leave_id_ref in (".  implode(',', $leaveIDList).") and ((DATE(schedule_date) > DATE(NOW())) || (DATE(schedule_date) = DATE(NOW()) && start_time_index >= $appro_index));";
@@ -678,24 +687,24 @@ class Teacher {
             //has future relief
             return true;
         }
-        
+
         return false;
     }
-    
+
     public static function delete($leaveIDList, $prop, $has_relief = true)
     {
         if(count($leaveIDList) === 0)
         {
             return false;
         }
-        
+
         $time_zone = new DateTimeZone('Asia/Singapore');
         $today_obj = new DateTime();
         $today_obj->setTimezone($time_zone);
         $now_time_str = $today_obj->format('H:i');
-        
+
         $appro_index = SchoolTime::getApproTimeIndex($now_time_str);
-        
+
         if(strcmp($prop, "leave") === 0)
         {
             $teacher_contact = Teacher::getTeacherContact();
@@ -769,7 +778,7 @@ class Teacher {
 
             if(count($affected_skip) > 0)
             {
-                //delete skip 
+                //delete skip
                 $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".  implode(', ', $affected_skip).");";
                 $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
                 if(is_null($delete_skip_result))
@@ -777,7 +786,7 @@ class Teacher {
                     return false;
                 }
             }
-            
+
             //delete leave
             $sql_delete_leave = "delete from rs_leave_info where leave_id in (".  implode(', ', $leaveIDList).");";
             $delete_leave_result = Constant::sql_execute($db_con, $sql_delete_leave);
@@ -895,7 +904,7 @@ class Teacher {
 
             if(count($affected_skip) > 0)
             {
-                //delete skip 
+                //delete skip
                 $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".  implode(', ', $affected_skip).");";
                 $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
                 if(is_null($delete_skip_result))
@@ -903,7 +912,7 @@ class Teacher {
                     return false;
                 }
             }
-            
+
             $sql_delete_temp = "delete from rs_temp_relief_teacher_availability where temp_availability_id in (".  implode(', ', $leaveIDList).");";
             $delete_temp_result = Constant::sql_execute($db_con, $sql_delete_temp);
             if(is_null($delete_temp_result))
@@ -1089,7 +1098,7 @@ class Teacher {
                 $remark = empty($change['remark'])?$remark:$change['remark'];
                 $datetime_from_temp = empty($change['datetime-from'])?$row['start_datetime']:$change['datetime-from'];
                 $datetime_to_temp = empty($change['datetime-to'])?$row['end_datetime']:$change['datetime-to'];
-                
+
                 if(!Teacher::delete(array($leaveID), "temp", $has_relief))
                 {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
                     return false;
@@ -1097,11 +1106,11 @@ class Teacher {
                 
                 return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name), $leaveID);
             }
-            
+
             return true;
         }
     }
-    
+
     /**
      * For prop=leave, only accname, reason, remark, datetime-from, datetime-to can be updated;
      * For prop=temp, only datetime-from, datetime-to, remark, phone, email, MT can be updated;
@@ -1302,7 +1311,7 @@ class Teacher {
     public static function insertAbbrMatch($all_matches)
     {
         $abbre_dict = Teacher::getAbbreMatch();
-        
+
         $db_con = Constant::connect_to_db("ntu");
 
         if(empty($db_con))
@@ -1336,7 +1345,7 @@ class Teacher {
         if($have_exist)
         {
             $sql_delete_exist = substr($sql_delete_exist, 0, -1).');';
-            
+
             $delete_exist_result = Constant::sql_execute($db_con, $sql_delete_exist);
             if(is_null($delete_exist_result))
             {
@@ -1345,7 +1354,7 @@ class Teacher {
         }
 
         $sql_insert_match = substr($sql_insert_match, 0, -1).';';
-        
+
         $insert_result = Constant::sql_execute($db_con, $sql_insert_match);
         if(is_null($insert_result))
         {
@@ -1356,7 +1365,7 @@ class Teacher {
     }
 
     /**
-     * 
+     *
      * @param type $type
      * @param type $order
      * @param type $direction
@@ -1377,7 +1386,7 @@ class Teacher {
         }
 
         $mc_dic = array();
-        
+
         if($future_leave)
         {
             $sql_query_mc = "select teacher_id, sum(num_of_slot) as num_of_leave from (select rs_leave_info.* from rs_leave_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_leave_info.start_time) between ct_semester_info.start_date and ct_semester_info.end_date)) AS temp_leave group by teacher_id;";
@@ -1386,7 +1395,7 @@ class Teacher {
             {
                 throw new DBException('Fail to query report', __FILE__, __LINE__, 2);
             }
-            
+
             foreach($query_mc_result as $row)
             {
                 $mc_dic[$row["teacher_id"]] = $row["num_of_leave"];
@@ -1401,12 +1410,12 @@ class Teacher {
             {
                 throw new DBException('Fail to query report', __FILE__, __LINE__, 2);
             }
-            
+
             $today = new DateTime();
             $asia_timezone = new DateTimeZone("Asia/Singapore");
             $today->setTimezone($asia_timezone);
             $today_stamp = $today->getTimestamp();
-            
+
             foreach($query_mc_result as $row)
             {
                 $start_datetime_str = $row['start_datetime'];
@@ -1417,23 +1426,23 @@ class Teacher {
                 {
                     continue;
                 }
-             
+
                 $accname = $row['teacher_id'];
                 if(!array_key_exists($accname, $mc_dic))
                 {
                     $mc_dic[$accname] = 0;
                 }
-                
+
                 $end_date_str = $row['end_datetime'];
                 $end_date = new DateTime($end_date_str);
                 $end_date_stamp = $end_date->getTimestamp();
-                
+
                 if($end_date_stamp > $today_stamp)
                 {
                     //need to trim
                     $start_date_str = $row['start_datetime'];
                     $trimed_slot = Teacher::calculateLeaveSlot($accname, $start_date_str, $end_date_str);
-                    
+
                     $mc_dic[$accname] += $trimed_slot;
                 }
                 else
@@ -1443,7 +1452,7 @@ class Teacher {
                 }
             }
         }
-        
+
         $relief_dic = Array();
         $sql_query_relief = "select relief_teacher, sum(num_of_slot) as num_of_relief from (select rs_relief_info.* from rs_relief_info, ct_semester_info where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date)) AS temp_relief group by relief_teacher;";
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
@@ -1541,22 +1550,22 @@ class Teacher {
             $asia_timezone = new DateTimeZone("Asia/Singapore");
             $today->setTimezone($asia_timezone);
             $today_stamp = $today->getTimestamp();
-            
+
             foreach($query_leave_result as $row)
             {
                 $start_datetime_str = $row['start_date_point']." ".$row['start_time_point'];
                 $start_date = new DateTime($start_datetime_str);
                 $start_stamp = $start_date->getTimestamp();
-                
+
                 if($start_stamp > $today_stamp)
                 {
                     continue;
                 }
-                
+
                 $end_datetime_str = $row['end_date_point']." ".$row['end_time_point'];
                 $end_date = new DateTime($end_datetime_str);
                 $end_stamp = $end_date->getTimestamp();
-                
+
                 if($end_stamp > $today_stamp)
                 {
                     $trimed_slot = Teacher::calculateLeaveSlot($accname, $start_datetime_str, $end_datetime_str);
@@ -1568,11 +1577,11 @@ class Teacher {
                     $one_leave = Array(Array($row['start_date_point'], $row['start_time_point']), Array($row['end_date_point'], $row['end_time_point']));
                     $result['numOfMC'] += $row['num_of_slot'] - 0;
                 }
-                
+
                 $result['mc'][] = $one_leave;
             }
         }
-        
+
         //relief
         $sql_query_relief = "select *, DATE_FORMAT(schedule_date, '%Y/%m/%d') as date from rs_relief_info, ct_semester_info where relief_teacher = '".mysql_real_escape_string(trim($accname))."' and ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem and (DATE(rs_relief_info.schedule_date) between ct_semester_info.start_date and ct_semester_info.end_date);";
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
@@ -1600,64 +1609,64 @@ class Teacher {
     public static function getTeacherContact()
     {
         $result = Array();
-        
+
         //normal teacher
         $db_con_ifins = Constant::connect_to_db("ifins");
         if(empty($db_con_ifins))
         {
             throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
         }
-        
+
         $sql_ifins_contact = "select user_id, user_name, user_mobile, user_email from student_details where user_position = 'Teacher';";
         $ifins_result = Constant::sql_execute($db_con_ifins, $sql_ifins_contact);
         if(is_null($ifins_result))
         {
             throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
         }
-        
+
         foreach($ifins_result as $row)
         {
             $phone = empty($row['user_mobile'])?"":$row['user_mobile'];
             $email = empty($row['user_email'])?"":$row['user_email'];
             $name = empty($row['user_name'])?"":$row['user_name'];
-            
+
             $result[$row['user_id']] = Array(
                 "phone" => $phone,
                 "email" => $email,
                 "name" => $name
             );
         }
-        
+
         //temp teacher
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
             throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
         }
-        
+
         $sql_ntu_contact = "select teacher_id, name, mobile, email from rs_temp_relief_teacher;";
         $ntu_result = Constant::sql_execute($db_con, $sql_ntu_contact);
         if(is_null($ntu_result))
         {
             throw new DBException("Fail to get teachers' contact", __FILE__, __LINE__);
         }
-        
+
         foreach($ntu_result as $row)
         {
             $phone = empty($row['mobile'])?"":$row['mobile'];
             $email = empty($row['email'])?"":$row['email'];
             $name = empty($row['name'])?"":$row['name'];
-            
+
             $result[$row['teacher_id']] = Array(
                 "phone" => $phone,
                 "email" => $email,
                 "name" => $name
             );
         }
-        
+
         return $result;
     }
-    
+
     private static function getAbbreMatch()
     {
         $result = Array();
@@ -1706,7 +1715,7 @@ class Teacher {
 
         $start_time_index = SchoolTime::getTimeIndex($readable_time_from);
         $end_time_index = SchoolTime::getTimeIndex($readable_time_to);
-        
+
         if($start_time_index === -1)
         {
             $start_time_index = $first_index;
@@ -1715,12 +1724,12 @@ class Teacher {
         {
             $end_time_index = $last_index;
         }
-        
+
         $interval = $end_date->diff($start_date);
 
         $num_of_slot = 0;
         $slot_dict = Teacher::getLessonSlotsOfTeacher($teacher_id);
-        
+
         $start_end = Array();
 
         //put start and end time of each day into $start_end
@@ -1850,7 +1859,7 @@ class Teacher {
         );
 
         $db_con = Constant::connect_to_db('ntu');
-        
+
         if (empty($db_con))
         {
             throw new DBException('Fail to query lesson slot for teacher', __FILE__, __LINE__);

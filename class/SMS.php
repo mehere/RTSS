@@ -10,7 +10,7 @@ class SMS
 
     public static function sendSMS($receiverList, $scheduleDate)
     {
-        error_log("Send Mesage");
+//        error_log("Send Mesage");
         date_default_timezone_set('Asia/Singapore');
         set_time_limit(1200);
 
@@ -23,7 +23,7 @@ class SMS
         //end of test
 
         $sendingResult = array();
-        error_log("Number of receipents: ".count($receiverList));
+//        error_log("Number of receipents: ".count($receiverList));
         foreach ($receiverList as $aReceipent)
         {
 
@@ -37,7 +37,7 @@ class SMS
                 $accname = $aReceipent["accName"];
                 $name = $aReceipent["name"];
                 $message = $aReceipent["message"];
-                error_log("$message");
+//                error_log("$message");
                 $timeCreated = date('Y-m-d H:i:s');
                 $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $aReceipent["type"]);
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
@@ -76,7 +76,7 @@ class SMS
                     $message = "<Scheduler>[$index/$noMessage]~$message";
                     $message = escapeshellarg($message);
                     $command = "java -jar vigsyssmscom-ntu.jar 1 $phoneNum $message";
-                    error_log($command);
+//                    error_log($command);
 
                     for ($i = 0; $i < 3; $i++)
                     {
