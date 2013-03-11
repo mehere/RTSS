@@ -391,7 +391,7 @@ class TimetableDB
         $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname');";
         $sql_insert_speciality = "insert into ct_aed_speciality values ";
         $has_spec = false;
-
+        error_log(print_r($info["specialty"], true));
         if(!empty($info["specialty"]))
         {
             $spec_array = $info["specialty"];
@@ -441,7 +441,6 @@ class TimetableDB
         $delete_result = Constant::sql_execute($db_con, $sql_delete_lesson);
         if(is_null($delete_result))
         {
-                        error_log($sql_delete_lesson);
             return false;
         }
         
@@ -449,7 +448,7 @@ class TimetableDB
         {
             $speciality_insert = Constant::sql_execute($db_con, $sql_insert_speciality);
             if(is_null($speciality_insert))
-            {error_log($sql_insert_speciality);
+            {
                 return false;
             }
         }
@@ -1402,7 +1401,7 @@ class TimetableDB
         $spec_array = array();
         foreach($query_spec as $row)
         {
-            $spec_array[] = $row;
+            $spec_array[] = $row["speciality"];
         }
         
         $result["specialty"] = $spec_array;
