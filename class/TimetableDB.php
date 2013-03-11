@@ -1351,12 +1351,14 @@ class TimetableDB
                 $period = $row['end_time_index'] - $row['start_time_index'];
                 $subject = empty($row['subj_code'])?"":$row['subj_code'];
                 $venue = empty($row['venue'])?"":$row['venue'];
-
+                
+                
                 $result[$day_index][$start_time] = array(
                     "class" => array(),
                     "subject" => $subject,
                     "venue" => $venue,
-                    "period" => $period
+                    "period" => $period,
+                    "isHighlighted" => $row['highlighted']
                 );
 
                 if(!empty($row['class_name']))
