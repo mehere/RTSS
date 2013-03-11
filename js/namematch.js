@@ -4,7 +4,7 @@ $(document).ready(function(){
 
     // AED name auto complete
     var nameList=[], nameAccMap={};
-    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "all_normal"}, function(data){
+    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "all_normal_except_aed"}, function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){
