@@ -16,6 +16,12 @@ if (!$accname)
 else
 {
     $output['timetable']=TimetableDB::timetableForSem($accname, $_GET['year'], $_GET['sem']);
+    
+    $specialty=$output['timetable']['specialty'];
+    if ($specialty)
+    {
+        $output['timetable']['specialty']=implode(', ', $specialty);
+    }
     PageConstant::escapeHTMLEntity($output['timetable']);
 }
 

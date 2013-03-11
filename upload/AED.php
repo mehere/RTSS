@@ -103,6 +103,7 @@ EOD;
                     ?>
                 </select>
                 <input type="hidden" name="period" />
+                <input type="hidden" name="isHighlighted" />
             </td>
             <td class="label">Subject:</td>
             <td colspan="2"><input type="text" name="subject" class="field" style="width: 90%" /></td>            
@@ -114,7 +115,7 @@ EOD;
             <td colspan="3"><input type="text" name="class" class="field" style="width: 50%" /> <span class="comment">Use <strong class="punc">;</strong> or <strong class="punc">,</strong> to separate classes</span></td>
             <td><input type="submit" class="button button-small" value="Add" style="font-size: 14px" /></td>
         </tr>
-    </table>
+    </table>    
 </form>
 <form name="save" id="dialog-save">
 	<div class="row" style="margin-top: 10px">

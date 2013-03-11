@@ -19,15 +19,18 @@ else
     $keyArr=array('day', 'time-from', 'time-to', 'subject', 'venue', 'isHighlighted');
     for ($i=0; $i<$num; $i++)
     {
-        $classInfo=array('accname'=>$_POST['accname'], 'class'=>explode(';', $_POST["class-$i"]));
+        $classInfo=array('class'=>explode(';', $_POST["class-$i"]));
         foreach ($keyArr as $keyEntry)
         {
             $classInfo[$keyEntry]=trim($_POST[$keyEntry."-$i"]);
         }
         $timetable[]=$classInfo;
-    }    
+    }
     
-    if (!TimetableDB::uploadAEDTimetable($timetable, $_POST['year'], $_POST['sem']))
+    $info=array('accname'=>trim($_POST['accname']));
+    $info['speicalty']=explode(',', $_POST['specialty']);
+    
+    if (!TimetableDB::uploadAEDTimetable($timetable, $info, $_POST['year'], $_POST['sem']))
     {
         $output['error']=1;
     }

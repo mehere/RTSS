@@ -38,6 +38,7 @@ $(document).ready(function(){
 
     // Add AED
     var formAdd=document.forms['add-class'], formAED=document.forms['AED'], formG=document.forms['AED-get'],
+        formSave=document.forms['save'],
         matrixTime=[]; // [day][time]={subject, class[], venue, period, boxObj, isHighlighted};
 
 
@@ -73,7 +74,7 @@ $(document).ready(function(){
             "class": this['class'].value.split(/[,;]/),
             "venue": $.trim(this['venue'].value),
             "period": period,
-            "isHighlighted": false
+            "isHighlighted": this['isHighlighted'].value
         };
         matrixTime[day][time]["class"]=$.map(matrixTime[day][time]["class"], function(ele, index){
             ele=$.trim(ele);
@@ -218,7 +219,13 @@ $(document).ready(function(){
 
     $(formG['upload']).click(function(){
         $("#dialog-save").dialog('open').data('func', function(){
-            formAED['specialty'].value=document.forms['save']['specialty'].value;
+            var specialty=formSave['specialty'].value;
+            specialty=$.map(specialty.split(/[,;]/), function(ele, index){
+                ele=$.trim(ele);
+                if (!ele) return null;
+                return ele;
+            });
+            formAED['specialty'].value=specialty.join(',');
             $(formAED).submit();
         });
 
@@ -255,6 +262,7 @@ $(document).ready(function(){
                     formAdd['subject'].value=lesson['subject'];
                     formAdd['venue'].value=lesson['venue'];
                     formAdd['class'].value=lesson['class'].join(',');
+                    formAdd['isHighlighted'].value=lesson['isHighlighted'];
 
                     $(formAdd).submit();
                 }
@@ -264,6 +272,7 @@ $(document).ready(function(){
             formAdd['period'].value='';
             formAdd.reset();
 
+            formSave['specialty'].value=timetable['specialty'];
             $(formG['upload']).toggle('fast');
 
             $("#dialog-help").parent().css({
@@ -303,21 +312,21 @@ $(document).ready(function(){
         autoFocus: true,
         minLength: 0
     }).focusout(function(){
-            var curText= $.trim(this.value), isMatch=false;
-            $.each(nameList, function(index, value){
-                if (curText.toLowerCase() == value.toLowerCase())
-                {
-                    isMatch=true;
-                    formG["accname"].value=nameAccMap[value];
-
-                    return false;
-                }
-            });
-            if (!isMatch)
+        var curText= $.trim(this.value), isMatch=false;
+        $.each(nameList, function(index, value){
+            if (curText.toLowerCase() == value.toLowerCase())
             {
-                this.value="";
+                isMatch=true;
+                formG["accname"].value=nameAccMap[value];
+
+                return false;
             }
-        }).focusin(function(){
-            $(this).autocomplete("search", '');
         });
+        if (!isMatch)
+        {
+            this.value="";
+        }
+    }).focusin(function(){
+        $(this).autocomplete("search", '');
+    });
 });

@@ -35,7 +35,7 @@ $(document).ready(function(){
         }
     }).focusin(function(){
         $(this).autocomplete("search", "");
-    });;
+    });
 
     $(formM).submit(function(){
         var failSubmit=false;
