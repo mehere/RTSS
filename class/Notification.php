@@ -656,7 +656,7 @@ Class Notification
         );
 
         $all_timetables = TimetableDB::getCollectiveTimetable($date, array_keys($list), -1);
-        
+
         $to = array();
         foreach ($list as $key => $one)
         {
