@@ -35,7 +35,7 @@ else
         $output['error']=1;
     }
     
-    $output['errorXXX']=var_export($info, true);
+//    $output['errorXXX']=var_export($info, true);
 }
 
 header('Content-type: application/json');
