@@ -429,7 +429,7 @@ Class Notification
 
     public static function sendCancelNotification($relief_ids, $skip_ids, $teacher_contact, $date)
     {
-        error_log("send cancel notification");
+//        error_log("send cancel notification");
         $sessionId = session_id();
 
         $db_con = Constant::connect_to_db('ntu');

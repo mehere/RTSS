@@ -16,11 +16,10 @@ class BackgroundRunner
         for ($i=0; $i<count($argumentType); $i++){
             $cmd.= " -{$argumentType[$i]}='{$argumentValue[$i]}'";
         }
-//        $cmd .= "&";
-        error_log($cmd);
+//        error_log($cmd);
 
         pclose(popen($cmd, 'w'));
-        error_log("end");
+//        error_log("end");
     }
 }
 
