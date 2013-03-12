@@ -102,7 +102,6 @@ $(document).ready(function(){
     {
         $('.table-info tr td:nth-child(4)').css('word-wrap', 'break-word');
     }
-    $('.table-info tr td:last-child').css('text-align', 'left');
 
     // For verify and delete
     $("#dialog-alert").dialog("option", {
@@ -200,7 +199,8 @@ $(document).ready(function(){
     $(formEdit['goback']).click(function(){
         if ($('input[name^="date-from"]:visible').length > 0)
         {
-            confirm("Please save records you are editing before leaving this page. Press 'OK' to proceed without saving.", function(){
+            confirm("Please save records you are editing before leaving this page.<br />" +
+                "Press <strong>'OK'</strong> to proceed <strong>without saving</strong>.", function(){
                 window.location.href="/RTSS/relief/";
             });
             return false;
@@ -499,17 +499,23 @@ $(document).ready(function(){
 
     // Auto complete
     var nameList=[], nameAccMap={};
-    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "all_normal"}, function(data){
-        if (data['error']) return;
 
-        $.each(data, function(key, value){
-            value['fullname']= $.trim(value['fullname']);
-            nameList.push(value['fullname']);
-            nameAccMap[value['fullname']]=value['accname'];
-        });
+    function fillNameList(type)
+    {
+        $.getJSON("/RTSS/relief/_teacher_name.php", {"type": type}, function(data){
+            if (data['error']) return;
+
+            $.each(data, function(key, value){
+                value['fullname']= $.trim(value['fullname']);
+                nameList.push(value['fullname']);
+                nameAccMap[value['fullname']]=value['accname'];
+            });
 
 //        $("#last-row .fullname-server").autocomplete('option', 'source', nameList);
-    });
+        });
+    }
+    fillNameList("all_normal");
+
     function addAutoComplete(obj)
     {
         obj.autocomplete({
@@ -570,9 +576,8 @@ $(document).ready(function(){
 
         if (formEdit['prop'].value == PROP_OPTION[0])
         {
-            $("#last-row .fullname-server").focusout(function(){
-                prevTextfield=this;
-            });
+            fillNameList("temp");
+            addAutoComplete($("#last-row .fullname-server"));
         }
         else
         {

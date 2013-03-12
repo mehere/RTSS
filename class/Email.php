@@ -41,7 +41,7 @@ class Email {
 
     public static function formatEmail($name, $date, $content, $sender_name)
     {            
-        $width=array('110px', '30%', '40%', '30%');
+        $width=array('110', '30%', '40%', '30%');
 
         $headerKeyList=NameMap::$TIMETABLE['individual']['display'];
         $tableHeaderList=array_values($headerKeyList);
@@ -50,7 +50,7 @@ class Email {
         for ($i=0; $i < count($tableHeaderList); $i++)
         {
             $tableHead .= <<< EOD
-                <th style="width: {$width[$i]}">{$tableHeaderList[$i]}</th>
+                <th width="{$width[$i]}">{$tableHeaderList[$i]}</th>
 EOD;
         }
         
@@ -81,7 +81,7 @@ EOD;
                         $style='style="text-decoraction: underline"';
                         break;
                     case 2:
-                        $style='style="font-weight: bold"';
+                        $style='style="font-weight: bold; color: red"';
                         break;
                 }
 
@@ -102,20 +102,20 @@ EOD;
 
                 $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry));
                 $tableBody .= <<< EOD
-<tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
+<tr><td>{$timeArr[$i]} - {$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
             }
             else
             {
                 $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
                 $tableBody .= <<< EOD
-<tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
+<tr><td>{$timeArr[$i]} - {$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
             }
         }
 
         $table= <<< EOD
-<table cellspacing="0" cellpadding="0" border="1" width="100%">
+<table cellspacing="0" cellpadding="10" border="1" width="100%" style="text-align: center">
     <thead>
         <tr>
             $tableHead
