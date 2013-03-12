@@ -41,7 +41,7 @@ class Email {
 
     public static function formatEmail($name, $date, $content, $sender_name)
     {            
-        $width=array('110', '30%', '40%', '30%');
+        $width=array('20%', '26%', '28%', '26%');
 
         $headerKeyList=NameMap::$TIMETABLE['individual']['display'];
         $tableHeaderList=array_values($headerKeyList);
@@ -78,7 +78,7 @@ EOD;
                         $style='style="text-decoration: line-through"';
                         break;
                     case 1:
-                        $style='style="text-decoraction: underline"';
+                        $style='style="text-decoration: underline"';
                         break;
                     case 2:
                         $style='style="font-weight: bold; color: red"';
@@ -96,7 +96,7 @@ EOD;
 EOD;
                     }
                     $timetableEntry[]= <<< EOD
-<span $style>{$teaching[$key]}{$skippedPart}</span>
+<span $style>&nbsp;{$teaching[$key]}&nbsp;{$skippedPart}</span>
 EOD;
                 }
 
@@ -107,7 +107,7 @@ EOD;
             }
             else
             {
-                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
+                $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display'])-1, '&nbsp;')));
                 $tableBody .= <<< EOD
 <tr><td>{$timeArr[$i]} - {$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
@@ -115,7 +115,7 @@ EOD;
         }
 
         $table= <<< EOD
-<table cellspacing="0" cellpadding="10" border="1" width="100%" style="text-align: center">
+<table cellspacing="0" cellpadding="10" border="1" width="100%" style="text-align: center; font-size: 14px; font-family: Arial">
     <thead>
         <tr>
             $tableHead
