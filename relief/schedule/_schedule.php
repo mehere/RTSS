@@ -110,6 +110,7 @@ $typesOfTeachers = array(
 try
 {
     $scheduler = new SchedulerDB($dateScheduled);
+    $scheduler->cleanForAlgo();
     TeacherCompact::$recommendedNoOfLessons = $scheduler->getRecommendedNoOfLessons();
     $arrLeaves = $scheduler->getLeave();
     $arrLeaveId = $scheduler->getLeaveIds();
