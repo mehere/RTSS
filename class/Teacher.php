@@ -221,8 +221,8 @@ class Teacher {
      */
     public static function getTeacherName($type)
     {
-        $normal_list = Array();
-        $temp_list = Array();
+        $normal_list = array();
+        $temp_list = array();
 
         $db_type = array_keys(Constant::$teacher_type);
 
@@ -486,9 +486,50 @@ class Teacher {
         }
     }
 
-    public static function checkAddingLeave($accname, $entry)
+    public static function leaveHasRelief($accname, $entry)
     {
+        $start_datetime = $entry['datetime-from'];
+        $end_datetime = $entry['datetime-to'];
         
+        $start_arr = explode(" ", $start_datetime);
+        $start_date = $start_arr[0];
+        $start_time = $start_arr[1];
+        $start_index = SchoolTime::getApproTimeIndex($start_time);
+        $end_arr = explode(" ", $end_datetime);
+        $end_date = $end_arr[0];
+        $end_time = $end_arr[1];
+        $end_index = SchoolTime::getApproTimeIndex($end_time);
+        
+        $start_obj = new DateTime($start_date);
+        $end_obj = new DateTime($end_date);
+        $diff = $start_obj->diff($end_obj);
+        
+        if($diff->d + $diff->m + $diff->y === 0)
+        {
+            $sql_check = "select * from rs_relief_info where DATE(schedule_date) = DATE('$start_datetime') and start_time_index < $end_index and end_time_index > $start_index and relief_teacher = '$accname';";
+        }
+        else
+        {
+            $sql_check = "select * from rs_relief_info where ((DATE(schedule_date) > DATE('$start_datetime') and DATE(schedule_date) < DATE('$end_datetime')) or (DATE(schedule_date) = DATE('$start_datetime') and end_time_index > $start_index) or (DATE(schedule_date) = DATE('$end_datetime') and start_time_index < $end_index)) and relief_teacher = '$accname';";
+        }
+        
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            return true;
+        }
+        
+        $check = Constant::sql_execute($db_con, $sql_check);
+        if(is_null($check))
+        {
+            return true;
+        }
+        if(count($check) > 0)
+        {
+            return true;
+        }
+        
+        return false;
     }
     
     /**
@@ -498,7 +539,7 @@ class Teacher {
      * @param type $entry : associative array specified in docs
      * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me, -6 conflict time)
      */
-    public static function add($accname, $prop, $entry, $leaveID = -1)
+    public static function add($accname, $prop, $entry, $leaveID = -1, $has_relief = true)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -514,6 +555,7 @@ class Teacher {
                 return -3;
             }
 
+            //check conflict
             $clean_datetime_from = mysql_real_escape_string(trim($entry['datetime-from']));
             $clean_datetime_to = mysql_real_escape_string(trim($entry['datetime-to']));
             $clean_accname = mysql_real_escape_string(trim($accname));
@@ -529,6 +571,122 @@ class Teacher {
                 return -6;
             }
             
+            //delete linked relief if any
+            if($has_relief)
+            {
+                $teacher_contact = Teacher::getTeacherContact();
+                $AED_list = Teacher::getTeacherName("AED");
+                $is_AED = false;
+                if(array_key_exists($accname, $AED_list))
+                {
+                    $is_AED = true;
+                }
+                
+                $db_con = Constant::connect_to_db('ntu');
+
+                if (empty($db_con))
+                {
+                    return -2;
+                }
+                
+                $start_datetime = $entry['datetime-from'];
+                $end_datetime = $entry['datetime-to'];
+
+                $start_arr = explode(" ", $start_datetime);
+                $start_date = $start_arr[0];
+                $start_time = $start_arr[1];
+                $start_index = SchoolTime::getApproTimeIndex($start_time);
+                $end_arr = explode(" ", $end_datetime);
+                $end_date = $end_arr[0];
+                $end_time = $end_arr[1];
+                $end_index = SchoolTime::getApproTimeIndex($end_time);
+
+                $start_obj = new DateTime($start_date);
+                $end_obj = new DateTime($end_date);
+                $diff = $start_obj->diff($end_obj);
+
+                if($diff->d + $diff->m + $diff->y === 0)
+                {
+                    $sql_check = "select * from rs_relief_info where DATE(schedule_date) = DATE('$start_datetime') and start_time_index < $end_index and end_time_index > $start_index and relief_teacher = '$accname';";
+                }
+                else
+                {
+                    $sql_check = "select * from rs_relief_info where ((DATE(schedule_date) > DATE('$start_datetime') and DATE(schedule_date) < DATE('$end_datetime')) or (DATE(schedule_date) = DATE('$start_datetime') and end_time_index > $start_index) or (DATE(schedule_date) = DATE('$end_datetime') and start_time_index < $end_index)) and relief_teacher = '$accname';";
+                }
+
+                $check = Constant::sql_execute($db_con, $sql_check);
+                if(is_null($check))
+                {
+                    return false;
+                }
+                
+                $time_zone = new DateTimeZone('Asia/Singapore');
+                $today_obj = new DateTime();
+                $today_obj->setTimezone($time_zone);
+                $today_str = $today_obj->format("Y-m-d");
+                $today = strtotime($today_str);
+                $now_time_str = $today_obj->format('H:i');
+                $now_index = SchoolTime::getApproTimeIndex($now_time_str);
+                
+                $affected_relief = array();
+                $affected_skip = array();
+                $notified_relief = array();
+                $notified_skip = array();
+                foreach($check as $row)
+                {
+                    $affected_relief[] = $row["relief_id"];
+                    $relief_date = strtotime($row["schedule_date"]);
+                    
+                    if($relief_date > $today || ($relief_date === $today && $start_relief > $now_index))
+                    {
+                        $notified_relief[] = $row["relief_id"];
+                    }
+                    
+                    if($is_AED)
+                    {
+                        $skips = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
+                        $start_relief = $row["start_time_index"] - 0;
+                        
+                        foreach($skips as $one_skip)
+                        {
+                            $affected_skip[] = $one_skip;
+                            if($relief_date > $today || ($relief_date === $today && $start_relief > $now_index))
+                            {
+                                $notified_skip[] = $one_skip;
+                            }
+                        }
+                    }
+                }
+                
+                if(count($notified_relief) > 0 || count($notified_skip) > 0)
+                {
+                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+                }
+                
+                if(count($affected_relief) > 0)
+                {
+                    //delete skip 
+                    $sql_delete_relief = "delete from rs_relief_info where relief_id in (".  implode(', ', $affected_relief).");";
+                    $delete_relief_result = Constant::sql_execute($db_con, $sql_delete_relief);
+                    if(is_null($delete_relief_result))
+                    {
+                        return false;
+                    }
+                }
+                
+                if(count($affected_skip) > 0)
+                {
+                    //delete skip 
+                    $sql_delete_skip = "delete from rs_aed_skip_info where skip_id in (".  implode(', ', $affected_skip).");";
+                    $delete_skip_result = Constant::sql_execute($db_con, $sql_delete_skip);
+                    if(is_null($delete_skip_result))
+                    {
+                        return false;
+                    }
+                }
+            }
+            
+            //insert
             $reason = empty($entry['reason'])?'':$entry['reason'];
             $remark = empty($entry['remark'])?'':$entry['remark'];
 
