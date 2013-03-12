@@ -404,7 +404,7 @@ Class Notification
             $email_input = $all_timetables[$accname];
 
             //email format - to update
-            $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
+            $message = Email::formatEmail($name, array($date=>$email_input), Constant::email_name);
 
             $recepient = array(
                 'accname' => $accname,
@@ -440,6 +440,8 @@ Class Notification
 
         $list = array(); // for construct msg content
 
+        $date_list = array();
+        
         //1. get relief to be cancelled
         if (count($relief_ids) > 0)
         {
@@ -479,10 +481,18 @@ Class Notification
                     $venue = empty($row['venue']) ? "" : $row['venue'];
                     $subject = empty($row['subj_code']) ? "" : $row['subj_code'];
 
+                    $temp_date = $row['schedule_date'];
+                    if(!array_key_exists($temp_date, $date_list))
+                    {
+                        $date_list[$temp_date] = array();
+                    }
+                    
+                    $date_list[$temp_date][] = $accname;
+                    
                     $one_relief = array(
                         "start_time" => $row['start_time_index'] - 0,
                         "end_time" => $row['end_time_index'] - 0,
-                        "date" => $row['schedule_date'],
+                        "date" => $temp_date,
                         "subject" => $subject,
                         "venue" => $venue,
                         "class" => array()
@@ -655,8 +665,11 @@ Class Notification
             "encryption" => Constant::email_encryption
         );
 
-        $all_timetables = TimetableDB::getCollectiveTimetable($date, array_keys($list), -1);
-
+        foreach($date_list as $one_date=>$value)
+        {
+            $all_timetables[$one_date] = TimetableDB::getCollectiveTimetable($one_date, $value, -1);
+        }
+        
         $to = array();
         foreach ($list as $key => $one)
         {
@@ -681,10 +694,24 @@ Class Notification
                 }
             }
 
-            $email_input = $all_timetables[$accname];
+            $all_dates = array();
+            foreach($date_list as $day => $acc_list)
+            {
+                if(in_array($accname, $acc_list))
+                {
+                    $all_dates[] = $day;
+                }
+            }
+            
+            $email_input = array();
+            
+            foreach($all_dates as $the_date)
+            {
+                $email_input[$the_date] = $all_timetables[$the_date][$accname];
+            }
 
-            $message = Email::formatEmail($name, $date, $email_input, Constant::email_name);
-
+            $message = Email::formatEmail($name, $email_input, Constant::email_name);
+            
             $recepient = array(
                 'accname' => $accname,
                 'subject' => 'New timetable after relief duty cancellation',
