@@ -363,8 +363,8 @@ Class Notification
 
         $_SESSION['sms'] = $all_input;
         $absolute_path = dirname(__FILE__);
-        //BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
-//        error_log ("Notification: sms");
+        BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
+
         //5. construct
         $from = array(
             "email" => Constant::email,
