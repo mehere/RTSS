@@ -432,6 +432,31 @@ class SchedulerDB
         return $num;
     }
 
+    public function cleanForAlgo()
+    {
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
+        {
+            return false;
+        }
+        
+        $sql_clear_temp_relief = "delete from temp_each_alternative;";
+        $clear_temp_relief = Constant::sql_execute($db_con, $sql_clear_temp_relief);
+        if(is_null($clear_temp_relief))
+        {
+            return false;
+        }
+        
+        $sql_clear_temp_skip = "delete from temp_aed_skip_info;";
+        $clear_temp_skip = Constant::sql_execute($db_con, $sql_clear_temp_skip);
+        if(is_null($clear_temp_skip))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
     static function setScheduleResult($date, $scheduleResults)
     {
         $db_con = Constant::connect_to_db("ntu");

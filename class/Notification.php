@@ -364,7 +364,7 @@ Class Notification
         $_SESSION['sms'] = $all_input;
         $absolute_path = dirname(__FILE__);
         BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
-//        error_log ("Notification: sms");
+
         //5. construct
         $from = array(
             "email" => Constant::email,
@@ -643,7 +643,7 @@ Class Notification
 
         $_SESSION['sms'] = $all_input;
         $absolute_path = dirname(__FILE__);
-        BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
+        //BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
 
         //5. construct
         $from = array(
@@ -656,7 +656,7 @@ Class Notification
         );
 
         $all_timetables = TimetableDB::getCollectiveTimetable($date, array_keys($list), -1);
-        
+
         $to = array();
         foreach ($list as $key => $one)
         {
