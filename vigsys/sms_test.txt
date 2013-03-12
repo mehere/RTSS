@@ -1,8 +1,0 @@
-java -jar vigsyssmscom-ntu.jar 1 "+6584523083" "<Scheduler>[1/4]~The relief lessons allocated to you for 13/03/2013 have been cancelled. The new relief plan is as below.~"
-java -jar vigsyssmscom-ntu.jar 1 "+6584523083" "<Scheduler>[2/4]~The following relief lessons on 13/03/2013 have been allocated to you:~1. [11:45-13:15] Class: STEM MA Subject:MENT 2 Venue: -~"
-java -jar vigsyssmscom-ntu.jar 1 "+6584523083" "<Scheduler>[3/4]~For more information, please check your email to view your latest timetable."
-java -jar vigsyssmscom-ntu.jar 1 "+6584523083" "<Scheduler>[4/4]~Please reply in the following format: '79-Yes' to accept or '79-no' to decline."
-java -jar vigsyssmscom-ntu.jar 1 "+6591591928" "<Scheduler>[1/4]~The relief lessons allocated to you for 13/03/2013 have been cancelled. The new relief plan is as below.~"
-java -jar vigsyssmscom-ntu.jar 1 "+6591591928" "<Scheduler>[2/4]~The following relief lessons on 13/03/2013 have been allocated to you:~1. [07:45-08:15] Class: 2H Subject:MU Venue: -~"
-java -jar vigsyssmscom-ntu.jar 1 "+6591591928" "<Scheduler>[3/4]~For more information, please check your email to view your latest timetable."
-java -jar vigsyssmscom-ntu.jar 1 "+6591591928" "<Scheduler>[4/4]~Please reply in the following format: '80-Yes' to accept or '80-no' to decline."

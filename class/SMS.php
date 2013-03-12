@@ -1,32 +1,29 @@
 <?php
 
-spl_autoload_register(function($class)
-        {
-            require_once "$class.php";
-        });
-
 class SMS
 {
+    public static $jarDir;
+    public static $jarPath;
+
+    public static function init(){
+        $path = dirname(__FILE__);
+
+        SMS::$jarPath = realpath($path.'\..\vigsys\vigsyssmscom-ntu.jar');
+        SMS::$jarDir = dirname(SMS::$jarPath);
+        SMS::$jarPath = escapeshellarg(SMS::$jarPath);
+    }
 
     public static function sendSMS($receiverList, $scheduleDate)
     {
-//        error_log("Send Mesage");
         date_default_timezone_set('Asia/Singapore');
         set_time_limit(1200);
 
-        $absolutePath = dirname(__FILE__);
-        $absolutePath = realpath($absolutePath . '\..\vigsys');
-        chdir($absolutePath);
-
-        //test
-        $print_command = array();
-        //end of test
+//        test
+//        $print_command = array();
 
         $sendingResult = array();
-//        error_log("Number of receipents: ".count($receiverList));
         foreach ($receiverList as $aReceipent)
         {
-
             $outputCode = NULL;
             $phoneNum = trim($aReceipent["phoneNum"]);
             if (strlen($phoneNum) == 8)
@@ -36,8 +33,7 @@ class SMS
 
                 $accname = $aReceipent["accName"];
                 $name = $aReceipent["name"];
-                $message = $aReceipent["message"];
-//                error_log("$message");
+                $messageFull = $aReceipent["message"];
                 $timeCreated = date('Y-m-d H:i:s');
                 $msgRecord = array("phoneNum" => $phoneNum, "timeCreated" => $timeCreated, "accName" => $accname, "type" => $aReceipent["type"]);
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
@@ -45,9 +41,9 @@ class SMS
                 $type = $aReceipent["type"];
                 if ($type === 'R')
                 {
-                    $message = $message . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
+                    $messageFull = $messageFull . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
                 }
-                $messageCache = $message;
+                $messageCache = $messageFull;
                 $arrMessage = array();
 
                 $maxBody = 140;
@@ -71,25 +67,25 @@ class SMS
 
                 $noMessage = count($arrMessage);
                 $index = 1;
+                $overallOutput = -1;
                 foreach ($arrMessage as $message)
                 {
+                    $jarPath = SMS::$jarPath;
                     $message = "<Scheduler>[$index/$noMessage]~$message";
                     $message = escapeshellarg($message);
-                    $command = "java -jar vigsyssmscom-ntu.jar 1 $phoneNum $message";
-//                    error_log($command);
+                    $command = "java -jar $jarPath 1 $phoneNum $message\n";
 
-                    for ($i = 0; $i < 3; $i++)
+                    for ($i = 0; $i < 10; $i++)
                     {
-                        //test
-
-                        $outputCode = 100;
-                        //end of test
-                        //$apiOutput = shell_exec($command . "\n");
-                        //$outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
-                        if ($outputCode == 100)
-                        {
-                            $print_command[] = $command;
-
+                        chdir(SMS::$jarDir);
+                        $apiOutput = shell_exec($command);
+                        $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
+                        $overallOutput = $outputCode > $overallOutput ? $outputCode : $overallOutput;
+//                        $print_command[] = $command;
+                        if ($outputCode == 106){
+                            usleep(rand(0, 1000));
+                        }
+                        else {
                             break;
                         }
                     }
@@ -98,22 +94,22 @@ class SMS
             } else
             {
                 $outputCode = 104;
-//                    error_log("Invalid Phone Num");
+                $overallOutput = $outputCode;
             }
-            $status = SMS::mapCode($outputCode);
-            $sendingResult[] = array("phoneNum" => $phoneNum, "name" => $name, "message" => $message, "status" => $status, "accname" => $accname);
-            $updateComponent = array("smsId" => $smsId, "message" => $message, "timeSent" => $timeCreated, "status" => $status);
+            $status = SMS::mapCode($overallOutput);
+            $sendingResult[] = array("phoneNum" => $phoneNum, "name" => $name, "message" => $messageFull, "status" => $status, "accname" => $accname);
+            $updateComponent = array("smsId" => $smsId, "message" => $messageFull, "timeSent" => $timeCreated, "status" => $status);
             SMSDB::updateSMSout($updateComponent);
         }
 
-        //test
-        $file = fopen($absolutePath.'\sms_test.txt', 'w');
-        foreach ($print_command as $gem)
-        {
-            fwrite($file, $gem . "\r\n");
-        }
-        fclose($file);
-        //end of test
+//        test
+//        $file = fopen(SMS::$jarDir.'\sms_test.txt', 'w');
+//        foreach ($print_command as $gem)
+//        {
+//            fwrite($file, $gem . "\r\n");
+//        }
+//        fclose($file);
+//        end of test
 
         return $sendingResult;
     }
@@ -156,9 +152,11 @@ class SMS
         set_time_limit(1200);
         $msgSent = SMSDB::getSMSsent($scheduleDate);
 
-        //chdir('C:\xampp\htdocs\fscan\sms');
-        //$command = 'java -jar vigsyssmscom4.jar "2"';
-        //$output = shell_exec($command);
+//        chdir('C:\xampp\htdocs\fscan\sms');
+        $command = "java -jar $jarPath 2\n";
+//        $command = 'java -jar vigsyssmscom4.jar "2"';
+        chdir(SMS::$jarDir);
+        $output = shell_exec($command);
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
         if ($startPos > 20)
         {
@@ -188,6 +186,7 @@ class SMS
 
         $ifinsMsg = SMSDB::getIfinsSMSin($scheduleDate);
 
+        $replied = array();
         for ($f = 0; $f < sizeof($ifinsMsg); $f++)
         {
             $phoneNum = $ifinsMsg[$f]["phoneNum"];
@@ -203,7 +202,7 @@ class SMS
             }
         }
 
-        if (sizeof($replied) > 0)
+        if (count($replied) > 0)
         {
             SMSDB::markReplied($replied);
         }
@@ -283,7 +282,6 @@ class SMS
             return true;
         }
     }
-
 }
-
+SMS::init();
 ?>
