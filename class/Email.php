@@ -133,7 +133,7 @@ EOD;
             
         }
             
-        $para=$is_cancel?"Ypur lessons have been cancelled.":"You have been allocated relief lessons.";
+        $para=$is_cancel?"Your lessons have been cancelled.":"You have been allocated relief lessons.";
 
         return <<< EOD
 <html>
