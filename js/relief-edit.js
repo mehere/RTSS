@@ -500,18 +500,20 @@ $(document).ready(function(){
     // Auto complete
     var nameList=[], nameAccMap={};
 
-    function fillNameList(type)
+    function fillNameList(type, func)
     {
         $.getJSON("/RTSS/relief/_teacher_name.php", {"type": type}, function(data){
             if (data['error']) return;
 
+            nameList=[];
+            nameAccMap={};
             $.each(data, function(key, value){
                 value['fullname']= $.trim(value['fullname']);
                 nameList.push(value['fullname']);
                 nameAccMap[value['fullname']]=value['accname'];
             });
 
-//        $("#last-row .fullname-server").autocomplete('option', 'source', nameList);
+            if (func) func();
         });
     }
     fillNameList("all_normal");
@@ -576,8 +578,7 @@ $(document).ready(function(){
 
         if (formEdit['prop'].value == PROP_OPTION[0])
         {
-            fillNameList("temp");
-            addAutoComplete($("#last-row .fullname-server"));
+            fillNameList("temp", function(){ addAutoComplete($("#last-row .fullname-server")); });
         }
         else
         {
