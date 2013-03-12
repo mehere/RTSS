@@ -44,13 +44,14 @@
 	margin-left: 10px;
 	text-align: right;
 }
-.form-table .comment {
+.form-table select {
+	font-size: 12px;
+}
+
+.comment {
 	font-size: .8em;
 	color: #EC8E0C;
 	margin-left: 10px;
-}
-.form-table select {
-	font-size: 12px;
 }
 
 .row {

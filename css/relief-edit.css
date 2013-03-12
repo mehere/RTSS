@@ -32,6 +32,10 @@
     width: 95%;	
 }
 
+.table-info tr td:last-child {
+	text-align: left;
+}
+
 /*
 #last-row .toggle-edit {
 	display: inline;

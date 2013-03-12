@@ -120,6 +120,7 @@ EOD;
 <form name="save" id="dialog-save">
 	<div class="row" style="margin-top: 10px">
         <span class="label">Specialty:</span><input type="text" class="field" name="specialty" style="width: 150px" />
+        <div class="comment" style="margin-left: 30px; padding-top: 5px;">Use <strong class="punc">;</strong> or <strong class="punc">,</strong> to separate classes</div>
     </div>
 </form>
 <?php    
