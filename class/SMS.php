@@ -77,6 +77,7 @@ class SMS
 
                     for ($i = 0; $i < 10; $i++)
                     {
+                        chdir(SMS::$jarDir);
                         $apiOutput = shell_exec($command);
                         $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
                         $overallOutput = $outputCode > $overallOutput ? $outputCode : $overallOutput;
@@ -154,6 +155,7 @@ class SMS
 //        chdir('C:\xampp\htdocs\fscan\sms');
         $command = "java -jar $jarPath 2\n";
 //        $command = 'java -jar vigsyssmscom4.jar "2"';
+        chdir(SMS::$jarDir);
         $output = shell_exec($command);
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
         if ($startPos > 20)
