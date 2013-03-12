@@ -64,7 +64,7 @@ echo $test;
  */
 //********xue : testing
 //$scheduling = new SchedulerDB(new DateTime("2013-02-06"));
-
+//$scheduling->cleanForAlgo();
 /*
 $result = $scheduling->getLeave();
 foreach($result as $key=>$value)

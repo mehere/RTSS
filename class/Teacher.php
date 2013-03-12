@@ -486,6 +486,11 @@ class Teacher {
         }
     }
 
+    public static function checkAddingLeave($accname, $entry)
+    {
+        
+    }
+    
     /**
      * add leave and temp teacher
      * @param string $accname
