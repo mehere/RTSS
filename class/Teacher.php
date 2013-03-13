@@ -512,7 +512,7 @@ class Teacher {
         {
             $sql_check = "select * from rs_relief_info where ((DATE(schedule_date) > DATE('$start_datetime') and DATE(schedule_date) < DATE('$end_datetime')) or (DATE(schedule_date) = DATE('$start_datetime') and end_time_index > $start_index) or (DATE(schedule_date) = DATE('$end_datetime') and start_time_index < $end_index)) and relief_teacher = '$accname';";
         }
-        
+
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))
         {
@@ -539,7 +539,7 @@ class Teacher {
      * @param type $entry : associative array specified in docs
      * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me, -6 conflict time)
      */
-    public static function add($accname, $prop, $entry, $has_relief = true, $leaveID = -1)
+    public static function add($accname, $prop, $entry, $has_relief, $leaveID = -1)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -632,20 +632,23 @@ class Teacher {
                 $affected_skip = array();
                 $notified_relief = array();
                 $notified_skip = array();
+                $affected_leave = array();
                 foreach($check as $row)
                 {
                     $affected_relief[] = $row["relief_id"];
                     $relief_date = strtotime($row["schedule_date"]);
+                    $start_relief = $row["start_time_index"] - 0;
                     
                     if($relief_date > $today || ($relief_date === $today && $start_relief > $now_index))
                     {
                         $notified_relief[] = $row["relief_id"];
                     }
                     
+                    $affected_leave = array($row["leave_id_ref"], $row["schedule_date"]);
+                    
                     if($is_AED)
                     {
                         $skips = AdHocSchedulerDB::searchSkipForRelief($row["relief_id"]);
-                        $start_relief = $row["start_time_index"] - 0;
                         
                         foreach($skips as $one_skip)
                         {
@@ -656,11 +659,6 @@ class Teacher {
                             }
                         }
                     }
-                }
-                
-                if(count($notified_relief) > 0 || count($notified_skip) > 0)
-                {
-                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
                 }
                 
                 if(count($affected_relief) > 0)
@@ -683,6 +681,27 @@ class Teacher {
                     {
                         return false;
                     }
+                }
+                
+                if(count($affected_leave) > 0)
+                {
+                    //delete is scheduled
+                    $sql_delete_leave_scheduled = "delete from rs_leave_scheduled where ";
+                    foreach($affected_leave as $a_leave)
+                    {
+                        $sql_delete_leave_scheduled .= "(leave_id = $a_leave[0] and schedule_date = DATE('$a_leave[1]')) or ";
+                    }
+                    $sql_delete_leave_scheduled = substr($sql_delete_leave_scheduled, 0, -4).';';
+                    $delete_scheduled = Constant::sql_execute($db_con, $sql_delete_leave_scheduled);
+                    if(is_null($delete_scheduled))
+                    {
+                        throw new DBException('Fail to delete relief', __FILE__, __LINE__);
+                    }
+                }
+                
+                if(count($notified_relief) > 0 || count($notified_skip) > 0)
+                {
+                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
                 }
             }
             
@@ -925,11 +944,6 @@ class Teacher {
                         }
                     }
                 }
-
-                if(count($notified_relief) > 0 || count($notified_skip) > 0)
-                {
-                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
-                }
             }
 
             $affected_relief = array_keys($all_relief_dict);
@@ -965,6 +979,11 @@ class Teacher {
                 return false;
             }
 
+            if(count($notified_relief) > 0 || count($notified_skip) > 0)
+            {
+                Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+            }
+            
             return true;
         }
         else if(strcmp($prop, "temp") === 0)
@@ -1023,11 +1042,6 @@ class Teacher {
                             $notified_skip[] = $one;
                         }
                     }
-                }
-
-                if(count($notified_relief) > 0 || count($notified_skip) > 0)
-                {
-                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
                 }
             }
 
@@ -1090,6 +1104,11 @@ class Teacher {
                 return false;
             }
 
+            if(count($notified_relief) > 0 || count($notified_skip) > 0)
+            {
+                Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+            }
+            
             return true;
         }
         else
