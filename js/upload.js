@@ -8,7 +8,7 @@ $(document).ready(function(){
         buttons: null,
         position: { at: "center bottom" },
         close: function(event, ui){
-            $(formG['add']).toggle('fast');
+            $(formG['add']).show('fast');
         }
     });
 
@@ -282,7 +282,8 @@ $(document).ready(function(){
             formAdd['period'].value='';
             formAdd.reset();
 
-            $(formG['upload']).toggle('fast');
+            $(formG['upload']).show('fast');
+            $(formG['add']).hide('fast');
 
             $("#dialog-help").parent().css({
                 position: "fixed",
@@ -299,7 +300,7 @@ $(document).ready(function(){
         if (!$('#dialog-help').dialog('isOpen'))
         {
             $('#dialog-help').dialog('open');
-            $(this).toggle('fast');
+            $(this).hide('fast');
         }
     });
 

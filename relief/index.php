@@ -25,7 +25,9 @@ $_SESSION['scheduleDate']=$date;
         <span class="box-title">
             Leave Status
         </span>
-        <div class="control-top"><a href="teacher-edit.php">Edit/Add</a></div>
+        <?php if (new DateTime($date) > new DateTime('yesterday')) { ?>
+            <div class="control-top"><a href="teacher-edit.php">Edit/Add</a></div>
+        <?php } ?>
     </div>    
     <div>
         <table class="hovered table-info">
@@ -89,7 +91,9 @@ EOD;
         <span class="box-title">
             Temporary Relief
         </span>
-        <div class="control-top"><a href="teacher-edit.php?teacher=temp">Edit/Add</a></div>
+        <?php if (new DateTime($date) > new DateTime('yesterday')) { ?>
+            <div class="control-top"><a href="teacher-edit.php?teacher=temp">Edit/Add</a></div>
+        <?php } ?>
     </div>    
     <div>
         <table class="hovered table-info">
@@ -140,7 +144,9 @@ EOD;
         <span class="box-title">
             Excluding List
         </span>
-        <div class="control-top"><a href="exclude-list.php">Edit/Add</a></div>        
+        <?php if (new DateTime($date) > new DateTime('yesterday')) { ?>
+            <div class="control-top"><a href="exclude-list.php">Edit/Add</a></div>
+        <?php } ?>
     </div>    
     <div>
         <table class="hovered table-info">
@@ -174,7 +180,7 @@ EOD;
         <?php if ($isScheduleRun) { ?>
             <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS/img/redo.png" class="icon" />Re-Schedule All</a>
             <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule the Remaining</a>
-        <?php } else { ?>
+        <?php } else { // if (new DateTime($date) > new DateTime('yesterday')) { ?>
             <a href="" id="btnScheduleAll" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule All</a>
         <?php } ?>
     </div>
