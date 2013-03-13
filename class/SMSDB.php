@@ -185,7 +185,7 @@ class SMSDB
             $sql_set = substr($sql_set, 0, -1).");";
 
             //query reply
-            $db_con_ifins = Constant::connect_to_db("ifins");
+            $db_con_ifins = Constant::connect_to_db("ifins_real");
             if(empty($db_con_ifins))
             {
                 throw new DBException('Fail to query sms reply', __FILE__, __LINE__);

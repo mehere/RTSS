@@ -76,6 +76,24 @@ Class Constant
 
             return $ifins_db_con;
         }
+        else if(strcmp($db_name, "ifins_real")===0)
+        {
+            $ifins_db_url = Constant::ifins_db_url;
+            $ifins_db_username = Constant::ifins_db_username;
+            $ifins_db_password = Constant::ifins_db_password;
+            $ifins_db_name = "ifins";
+
+            $ifins_db_con = mysql_connect($ifins_db_url, $ifins_db_username, $ifins_db_password);
+
+            if (!$ifins_db_con)
+            {
+                return null;
+            }
+
+            mysql_select_db($ifins_db_name, $ifins_db_con);
+
+            return $ifins_db_con;
+        }
         else
         {
             return null;
