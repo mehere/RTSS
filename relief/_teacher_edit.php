@@ -120,9 +120,9 @@ switch ($mode)
         {
             $input[$postKey]=trim($_POST[$postKey]);
         }        
-        
-        $hasRelief=Teacher::leaveHasRelief($input['accname'], $input);
-        if ($_POST['add-confirm'] || !$hasRelief)
+                
+        $hasRelief=true;
+        if ($_POST['add-confirm'] || !($hasRelief=Teacher::leaveHasRelief($input['accname'], $input)))
         {
             $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input, $hasRelief);
             if ($output['leaveID'] == -6)
