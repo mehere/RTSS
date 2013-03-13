@@ -2,22 +2,43 @@
 
 class SMS
 {
+
     public static $jarDir;
     public static $jarPath;
+    public static $lockPath;
 
-    public static function init(){
+    public static function init()
+    {
         $path = dirname(__FILE__);
 
-        SMS::$jarPath = realpath($path.'\..\vigsys\vigsyssmscom-ntu.jar');
+        SMS::$jarPath = realpath($path . '\..\vigsys\vigsyssmscom-ntu.jar');
         SMS::$jarDir = dirname(SMS::$jarPath);
+        SMS::$lockPath = SMS::$jarDir.'\Lock';
         SMS::$jarPath = escapeshellarg(SMS::$jarPath);
     }
 
     public static function sendSMS($receiverList, $scheduleDate)
     {
-        date_default_timezone_set('Asia/Singapore');
-        set_time_limit(1200);
+        set_time_limit(0);
+        $fp = fopen(SMS::$lockPath, "w+");
+        $gotLock = FALSE;
+        for ($attempt = 0; $attempt < 100; $attempt++)
+        {
+            if (flock($fp, LOCK_EX))
+            {
+                $gotLock = TRUE;
+                break;
+            } else
+            {
+                sleep(rand(5, 30));
+            }
+        }
+        if (!gotLock)
+        {
+            error_log("ERROR: Cannot get lock");
+        }
 
+        date_default_timezone_set('Asia/Singapore');
 //        test
 //        $print_command = array();
 
@@ -75,18 +96,19 @@ class SMS
                     $message = escapeshellarg($message);
                     $command = "java -jar $jarPath 1 $phoneNum $message\n";
 
-                    for ($i = 0; $i < 5; $i++)
+                    for ($i = 0; $i < 10; $i++)
                     {
                         chdir(SMS::$jarDir);
                         $apiOutput = shell_exec($command);
                         $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
 
 //                        $print_command[] = $command;
-                        if ($outputCode == 100){
-                           usleep(5000);
-                           break;
-                        }
-                        else {
+                        if ($outputCode == 100)
+                        {
+                            usleep(5000);
+                            break;
+                        } else
+                        {
                             usleep(rand(10000, 20000));
                         }
                     }
@@ -113,6 +135,8 @@ class SMS
 //        fclose($file);
 //        end of test
 
+        flock($fp, LOCK_UN);
+        fclose($fp);
         return $sendingResult;
     }
 
@@ -284,6 +308,8 @@ class SMS
             return true;
         }
     }
+
 }
+
 SMS::init();
 ?>
