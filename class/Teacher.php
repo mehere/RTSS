@@ -730,7 +730,7 @@ class Teacher {
                 {
                     return -3;
                 }
-
+                
                 $fullname = $entry['fullname'];
                 
                 if(empty($accname))

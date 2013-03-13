@@ -1337,10 +1337,16 @@ class TimetableDB
     {
         $sem_id = TimetableDB::checkTimetableExistence(1, array('year'=>$year, 'sem'=>$sem));
 
+        $result = array(
+            "specialty" => array()
+        );
+        /*
         if($sem_id === -1)
         {
-            return array();
+            return $result;
         }
+         * 
+         */
 
         $db_con = Constant::connect_to_db('ntu');
         if(empty($db_con))
@@ -1356,8 +1362,6 @@ class TimetableDB
         {
             throw new DBException('Fail to query timetable for accname '.$accname, __FILE__, __LINE__);
         }
-
-        $result = array();
 
         foreach($table_result as $row)
         {
