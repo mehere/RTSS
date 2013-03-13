@@ -322,7 +322,7 @@ Class Notification
                     $classes = implode(",", $aLesson['class']);
                     $subject = $aLesson['subject'];
                     $venue = empty($aLesson['venue']) ? "-" : $aLesson['venue'];
-                    $message .= "~$i. [$start_time-$end_time] Class: $classes Subject:$subject Venue: $venue";
+                    $message .= "~$i. $start_time-$end_time Class: $classes Subject:$subject Venue: $venue";
                     $i++;
                 }
 
@@ -337,7 +337,7 @@ Class Notification
                         $classes = implode(",", $aLesson['class']);
                         $subject = $aLesson['subject'];
                         $venue = empty($aLesson['venue']) ? "-" : $aLesson['venue'];
-                        $message .= "~$i. [$start_time-$end_time] Class: $classes Subject:$subject Venue: $venue";
+                        $message .= "~$i. $start_time-$end_time Class: $classes Subject:$subject Venue: $venue";
                         $i++;
                     }
                 }
@@ -441,7 +441,7 @@ Class Notification
         $list = array(); // for construct msg content
 
         $date_list = array();
-        
+
         //1. get relief to be cancelled
         if (count($relief_ids) > 0)
         {
@@ -486,9 +486,9 @@ Class Notification
                     {
                         $date_list[$temp_date] = array();
                     }
-                    
+
                     $date_list[$temp_date][] = $accname;
-                    
+
                     $one_relief = array(
                         "start_time" => $row['start_time_index'] - 0,
                         "end_time" => $row['end_time_index'] - 0,
@@ -611,7 +611,7 @@ Class Notification
                     $classes = implode(",", $aLesson['class']);
                     $subject = $aLesson['subject'];
                     $venue = empty($aLesson['venue']) ? "-" : $aLesson['venue'];
-                    $message .= "~$i. [$start_time-$end_time] Class: $classes Subject:$subject Venue: $venue";
+                    $message .= "~$i. $start_time-$end_time Class: $classes Subject:$subject Venue: $venue";
                     $i++;
                 }
 
@@ -626,7 +626,7 @@ Class Notification
                         $classes = implode(",", $aLesson['class']);
                         $subject = $aLesson['subject'];
                         $venue = empty($aLesson['venue']) ? "-" : $aLesson['venue'];
-                        $message .= "~$i. [$start_time-$end_time] Class: $classes Subject:$subject Venue: $venue";
+                        $message .= "~$i. $start_time-$end_time Class: $classes Subject:$subject Venue: $venue";
                         $i++;
                     }
                 }
@@ -669,7 +669,7 @@ Class Notification
         {
             $all_timetables[$one_date] = TimetableDB::getCollectiveTimetable($one_date, $value, -1, 'normal', $relief_ids, $skip_ids);
         }
-        
+
         $to = array();
         foreach ($list as $key => $one)
         {
@@ -702,16 +702,16 @@ Class Notification
                     $all_dates[] = $day;
                 }
             }
-            
+
             $email_input = array();
-            
+
             foreach($all_dates as $the_date)
             {
                 $email_input[$the_date] = $all_timetables[$the_date][$accname];
             }
 
             $message = Email::formatEmail($name, $email_input, Constant::email_name);
-            
+
             $recepient = array(
                 'accname' => $accname,
                 'subject' => 'New timetable after relief duty cancellation',
