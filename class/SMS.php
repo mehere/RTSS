@@ -71,24 +71,26 @@ class SMS
                 foreach ($arrMessage as $message)
                 {
                     $jarPath = SMS::$jarPath;
-                    $message = "<Scheduler>[$index/$noMessage]~$message";
+                    $message = "<Scheduler>($index/$noMessage)~~$message";
                     $message = escapeshellarg($message);
                     $command = "java -jar $jarPath 1 $phoneNum $message\n";
 
-                    for ($i = 0; $i < 10; $i++)
+                    for ($i = 0; $i < 5; $i++)
                     {
                         chdir(SMS::$jarDir);
                         $apiOutput = shell_exec($command);
                         $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
-                        $overallOutput = $outputCode > $overallOutput ? $outputCode : $overallOutput;
+
 //                        $print_command[] = $command;
-                        if ($outputCode == 106){
-                            usleep(rand(0, 1000));
+                        if ($outputCode == 100){
+                           usleep(5000);
+                           break;
                         }
                         else {
-                            break;
+                            usleep(rand(10000, 20000));
                         }
                     }
+                    $overallOutput = $outputCode > $overallOutput ? $outputCode : $overallOutput;
                     $index++;
                 }
             } else
