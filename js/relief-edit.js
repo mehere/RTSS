@@ -3,7 +3,7 @@ $(document).ready(function(){
             "Please select at least one teacher before proceeding."],
         TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
             "Failed to delete this teacher.", "Please choose dates within current semester.",
-            "Edit/Delete this teacher will affect future relief. Confirm to proceed?", 'There is another record conflicting with this one.'],
+            "Modify this teacher will affect future relief. Confirm to proceed?", 'There is another record conflicting with this one.'],
         FADE_DUR=400;
 
     var DATE_WARN_TEXT=["Date should not be empty.", "Date-To should be no smaller than Date-From."];
@@ -397,7 +397,15 @@ $(document).ready(function(){
                             dataPost['mode']='add';
 
                             $.post(formEdit.action, dataPost, function(data){
-                                if (data['error'] > 0)
+                                if (data['error'] == 3)
+                                {
+                                    confirm(TEACHER_OP_TEXT[4], function(){
+                                        dataPost['add-confirm']=1;
+                                        editFunc(dataPost);
+                                        changeIcon();
+                                    });
+                                }
+                                else if (data['error'] > 0)
                                 {
                                     var msg=TEACHER_OP_TEXT[0];
                                     if (data['error'] == 4)
@@ -500,21 +508,23 @@ $(document).ready(function(){
     // Auto complete
     var nameList=[], nameAccMap={};
 
-    function fillNameList(type)
+    function fillNameList(type, func)
     {
         $.getJSON("/RTSS/relief/_teacher_name.php", {"type": type}, function(data){
             if (data['error']) return;
 
+            nameList=[];
+            nameAccMap={};
             $.each(data, function(key, value){
                 value['fullname']= $.trim(value['fullname']);
                 nameList.push(value['fullname']);
                 nameAccMap[value['fullname']]=value['accname'];
             });
 
-//        $("#last-row .fullname-server").autocomplete('option', 'source', nameList);
+            if (func) func();
         });
     }
-    fillNameList("all_normal");
+//    fillNameList("all_normal");
 
     function addAutoComplete(obj)
     {
@@ -576,12 +586,12 @@ $(document).ready(function(){
 
         if (formEdit['prop'].value == PROP_OPTION[0])
         {
-            fillNameList("temp");
-            addAutoComplete($("#last-row .fullname-server"));
+            fillNameList("temp", function(){ addAutoComplete($("#last-row .fullname-server")); });
         }
         else
         {
-            addAutoComplete($("#last-row .fullname-server"));
+            fillNameList("all_normal", function(){ addAutoComplete($("#last-row .fullname-server")); });
+//            addAutoComplete($("#last-row .fullname-server"));
         }
     }
 

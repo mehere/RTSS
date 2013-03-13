@@ -13,7 +13,7 @@
         <?php } ?>
     </span>
     <?php if ($NO_PREIVEW) { ?>
-        <div class="control-top"><a href="print-individual.php" id="print-individual" target="_blank">Print</a></div>
+        <div class="control-top"><a href="" id="print-individual" target="_blank">Print</a></div>
     <?php } ?>
     <input type="hidden" name="date" />
 </form>
@@ -108,7 +108,7 @@ EOD;
         Relief Timetable
     </span>
     <?php if ($NO_PREIVEW) { ?>
-        <div class="control-top"><a href="print-relief.php" id="print-relief" target="_blank">Print</a></div>
+        <div class="control-top"><a href="" id="print-relief" target="_blank">Print</a></div>
     <?php } ?>
 </div>
 <div>

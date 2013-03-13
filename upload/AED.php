@@ -19,11 +19,11 @@ $dayArr=PageConstant::$DAY;
             <span class="label">AED Name:</span><input type="text" name="fullname" class="field" style="width: 150px" /><input type="hidden" name="accname" />
             <span class="label">Year:</span>
             <select name="year">
-                <?php echo PageConstant::printYearRange(); ?>
+                <?php echo PageConstant::printYearRange($_POST['year']); ?>
             </select>
             <span class="label">Sem:</span>
             <select name="sem">
-                <?php echo PageConstant::printSemRange(); ?>
+                <?php echo PageConstant::printSemRange($_POST['sem']); ?>
             </select>
             <input type="submit" class="button button-small" value="Load" style="margin-left: 30px" />
             <input type="button" class="button green button-small" name="add" value="Add Class" style="margin-left: 30px; display: none" />

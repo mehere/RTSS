@@ -713,7 +713,7 @@ class Test
  */
 
 $content=array('subject'=>'test', 'email'=>'ya0002ei@e.ntu.edu.sg', 
-            'message'=>Email::formatEmail('$name', '$date', array(
+            'message'=>Email::formatEmail('$name', array('$date' => array(
                 3 => 
 array('id' =>'N1313356HL', 'subject' =>'EL', 'venue' =>'', 'class'=>array('A1', 'B1'), 'attr' =>'2',
     'skipped'=>array('class' => array('6H'), 'subject'=>'Cool')
@@ -724,25 +724,13 @@ array('id' =>'N1313356HLx', 'subject' =>'EL', 'venue' =>'KKK', 'class'=>array('A
                 10 => 
 array('id' =>'N1313356HLy', 'subject' =>'ELX', 'venue' =>'Ya', 'class'=>array('A1', 'B1'), 'attr' =>'1'    
 )
-            ), '$sender_name'));
+            )), '$sender_name'));
 
-$content2=$content;
-$content2['email']='youngyw8@gmail.com';
+//$content2=$content;
+//$content2['email']='youngyw8@gmail.com';
 
 //var_dump(Email::sendMail(array('email'=>Constant::email, 'password'=>Constant::email_password, 'name'=>Constant::email_name,
 //        'smtp'=>Constant::email_smtp, 'port'=>Constant::email_port, 'encryption'=>Constant::email_encryption), 
-//        array($content, $content2)));
+//        array($content)));
 
-echo Email::formatEmail('$name', '$date', array(
-                3 => 
-array('id' =>'N1313356HL', 'subject' =>'EL', 'venue' =>'', 'class'=>array('A1', 'B1'), 'attr' =>'2',
-    'skipped'=>array('class' => array('6H'), 'subject'=>'Cool')
-),
-                5 => 
-array('id' =>'N1313356HLx', 'subject' =>'EL', 'venue' =>'KKK', 'class'=>array('A1', 'B1'), 'attr' =>'-1'    
-),
-                10 => 
-array('id' =>'N1313356HLy', 'subject' =>'ELX', 'venue' =>'Ya', 'class'=>array('A1', 'B1'), 'attr' =>'1'    
-)
-            ), '$sender_name');
 ?>
