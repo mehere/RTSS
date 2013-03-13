@@ -56,7 +56,7 @@ EOD;
                             {
                                 $rowNum=count($allocation['lesson']);
                                 $firstRowSpanName=<<< EOD
-<td rowspan="$rowNum">{$allocation['reliefTeacher']}</td>
+<td rowspan="$rowNum"><a href="/RTSS/relief/_teacher_detail.php?accname=$reliefAccname" class="teacher-detail-link">{$allocation['reliefTeacher']}</a></td>
 EOD;
 
                                 $isFirstRow=false;
@@ -92,6 +92,7 @@ EOD;
     <input type="hidden" name="num" value="<?php echo $i; ?>" />
 </form>
 <div id="dialog-alert"></div>
+<div id="teacher-detail"></div>
 <?php
 Template::printFooter();
 ?>
