@@ -375,7 +375,7 @@ $(document).ready(function(){
                                     confirm(TEACHER_OP_TEXT[4], function(){
                                         dataPost['edit-confirm']=1;
                                         editFunc(dataPost);
-                                        changeIcon();
+//                                        changeIcon();
                                     });
                                 }
                                 else if (data['error'] > 0)
@@ -402,7 +402,7 @@ $(document).ready(function(){
                                     confirm(TEACHER_OP_TEXT[4], function(){
                                         dataPost['add-confirm']=1;
                                         editFunc(dataPost);
-                                        changeIcon();
+//                                        changeIcon();
                                     });
                                 }
                                 else if (data['error'] > 0)
@@ -526,7 +526,7 @@ $(document).ready(function(){
     }
 //    fillNameList("all_normal");
 
-    function addAutoComplete(obj)
+    function addAutoComplete(obj, noClear)
     {
         obj.autocomplete({
             source: nameList,
@@ -543,7 +543,7 @@ $(document).ready(function(){
                     return false;
                 }
             });
-            if (!isMatch)
+            if (!isMatch && !noClear)
             {
                 this.value="";
             }
@@ -586,7 +586,7 @@ $(document).ready(function(){
 
         if (formEdit['prop'].value == PROP_OPTION[0])
         {
-            fillNameList("temp", function(){ addAutoComplete($("#last-row .fullname-server")); });
+            fillNameList("temp", function(){ addAutoComplete($("#last-row .fullname-server"), true); });
         }
         else
         {
