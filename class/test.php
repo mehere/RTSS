@@ -711,7 +711,7 @@ class Test
 }
  *
  */
-
+/*
 $content=array('subject'=>'test', 'email'=>'ya0002ei@e.ntu.edu.sg', 
             'message'=>Email::formatEmail('$name', array('$date' => array(
                 3 => 
@@ -725,6 +725,8 @@ array('id' =>'N1313356HLx', 'subject' =>'EL', 'venue' =>'KKK', 'class'=>array('A
 array('id' =>'N1313356HLy', 'subject' =>'ELX', 'venue' =>'Ya', 'class'=>array('A1', 'B1'), 'attr' =>'1'    
 )
             )), '$sender_name'));
+ * 
+ */
 
 //$content2=$content;
 //$content2['email']='youngyw8@gmail.com';
