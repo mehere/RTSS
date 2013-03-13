@@ -147,26 +147,11 @@ class SMS
             case 100:
                 return "OK";
                 break;
-            case 101:
-                return "Invalid serial no (Not a VigSys VM10 model)";
-                break;
-            case 102:
-                return "Corrupted ccyk file";
-                break;
-            case 103:
-                return "Invalid parameter";
-                break;
             case 104:
                 return "Invalid Phone number";
                 break;
             case 105:
                 return "Invalid message length";
-                break;
-            case 106:
-                return "Communication problem";
-                break;
-            case 107:
-                return "Invalid option";
                 break;
             default:
                 return "Unable to connect to SMS server";
