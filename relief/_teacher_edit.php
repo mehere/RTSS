@@ -119,16 +119,24 @@ switch ($mode)
         foreach ($postKeyArr as $postKey)
         {
             $input[$postKey]=trim($_POST[$postKey]);
-        }
-
-        $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input);
-        if ($output['leaveID'] == -6)
+        }        
+                
+        $hasRelief=true;
+        if ($_POST['add-confirm'] || !($hasRelief=Teacher::leaveHasRelief($input['accname'], $input)))
         {
-            $output['error']=4;
+            $output['leaveID']=Teacher::add($input['accname'], $_POST['prop'], $input, $hasRelief);
+            if ($output['leaveID'] == -6)
+            {
+                $output['error']=4;
+            }
+            elseif ($output['leaveID'] < 0)
+            {
+                $output['error']=1;
+            }            
         }
-        elseif ($output['leaveID'] < 0)
+        else
         {
-            $output['error']=1;
+            $output['error']=3;
         }
         
         break;

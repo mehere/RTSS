@@ -8,7 +8,7 @@ $(document).ready(function(){
         buttons: null,
         position: { at: "center bottom" },
         close: function(event, ui){
-            $(formG['add']).toggle('fast');
+            $(formG['add']).show('fast');
         }
     });
 
@@ -146,7 +146,7 @@ $(document).ready(function(){
             text: false,
             label: 'Highlight/Unhighlight'
         }).hide().click(function(){
-            if (!dayEntry[time]['isHighlighted'])
+            if (!(dayEntry[time]['isHighlighted']-0))
             {
                 dayEntry[time]['isHighlighted']=true;
                 subjectBox.css('background-color', '#77afea');
@@ -159,6 +159,11 @@ $(document).ready(function(){
 
             return false;
         });
+
+        if (dayEntry[time]['isHighlighted']-0)
+        {
+            subjectBox.css('background-color', '#77afea');
+        }
 
         subjectBox.hover(function(){
             $(".subject-close", this).toggle();
@@ -277,7 +282,8 @@ $(document).ready(function(){
             formAdd['period'].value='';
             formAdd.reset();
 
-            $(formG['upload']).toggle('fast');
+            $(formG['upload']).show('fast');
+            $(formG['add']).hide('fast');
 
             $("#dialog-help").parent().css({
                 position: "fixed",
@@ -294,7 +300,7 @@ $(document).ready(function(){
         if (!$('#dialog-help').dialog('isOpen'))
         {
             $('#dialog-help').dialog('open');
-            $(this).toggle('fast');
+            $(this).hide('fast');
         }
     });
 

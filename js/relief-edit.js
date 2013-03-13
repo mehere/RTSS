@@ -3,7 +3,7 @@ $(document).ready(function(){
             "Please select at least one teacher before proceeding."],
         TEACHER_OP_TEXT=["Failed to add this teacher.", "Failed to update information of this teacher.",
             "Failed to delete this teacher.", "Please choose dates within current semester.",
-            "Edit/Delete this teacher will affect future relief. Confirm to proceed?", 'There is another record conflicting with this one.'],
+            "Modify this teacher will affect future relief. Confirm to proceed?", 'There is another record conflicting with this one.'],
         FADE_DUR=400;
 
     var DATE_WARN_TEXT=["Date should not be empty.", "Date-To should be no smaller than Date-From."];
@@ -102,7 +102,6 @@ $(document).ready(function(){
     {
         $('.table-info tr td:nth-child(4)').css('word-wrap', 'break-word');
     }
-    $('.table-info tr td:last-child').css('text-align', 'left');
 
     // For verify and delete
     $("#dialog-alert").dialog("option", {
@@ -200,7 +199,8 @@ $(document).ready(function(){
     $(formEdit['goback']).click(function(){
         if ($('input[name^="date-from"]:visible').length > 0)
         {
-            confirm("Please save records you are editing before leaving this page. Press 'OK' to proceed without saving.", function(){
+            confirm("Please save records you are editing before leaving this page.<br />" +
+                "Press <strong>'OK'</strong> to proceed <strong>without saving</strong>.", function(){
                 window.location.href="/RTSS/relief/";
             });
             return false;
@@ -375,7 +375,7 @@ $(document).ready(function(){
                                     confirm(TEACHER_OP_TEXT[4], function(){
                                         dataPost['edit-confirm']=1;
                                         editFunc(dataPost);
-                                        changeIcon();
+//                                        changeIcon();
                                     });
                                 }
                                 else if (data['error'] > 0)
@@ -397,7 +397,15 @@ $(document).ready(function(){
                             dataPost['mode']='add';
 
                             $.post(formEdit.action, dataPost, function(data){
-                                if (data['error'] > 0)
+                                if (data['error'] == 3)
+                                {
+                                    confirm(TEACHER_OP_TEXT[4], function(){
+                                        dataPost['add-confirm']=1;
+                                        editFunc(dataPost);
+//                                        changeIcon();
+                                    });
+                                }
+                                else if (data['error'] > 0)
                                 {
                                     var msg=TEACHER_OP_TEXT[0];
                                     if (data['error'] == 4)
@@ -499,18 +507,26 @@ $(document).ready(function(){
 
     // Auto complete
     var nameList=[], nameAccMap={};
-    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "all_normal"}, function(data){
-        if (data['error']) return;
 
-        $.each(data, function(key, value){
-            value['fullname']= $.trim(value['fullname']);
-            nameList.push(value['fullname']);
-            nameAccMap[value['fullname']]=value['accname'];
+    function fillNameList(type, func)
+    {
+        $.getJSON("/RTSS/relief/_teacher_name.php", {"type": type}, function(data){
+            if (data['error']) return;
+
+            nameList=[];
+            nameAccMap={};
+            $.each(data, function(key, value){
+                value['fullname']= $.trim(value['fullname']);
+                nameList.push(value['fullname']);
+                nameAccMap[value['fullname']]=value['accname'];
+            });
+
+            if (func) func();
         });
+    }
+//    fillNameList("all_normal");
 
-//        $("#last-row .fullname-server").autocomplete('option', 'source', nameList);
-    });
-    function addAutoComplete(obj)
+    function addAutoComplete(obj, noClear)
     {
         obj.autocomplete({
             source: nameList,
@@ -527,7 +543,7 @@ $(document).ready(function(){
                     return false;
                 }
             });
-            if (!isMatch)
+            if (!isMatch && !noClear)
             {
                 this.value="";
             }
@@ -570,13 +586,12 @@ $(document).ready(function(){
 
         if (formEdit['prop'].value == PROP_OPTION[0])
         {
-            $("#last-row .fullname-server").focusout(function(){
-                prevTextfield=this;
-            });
+            fillNameList("temp", function(){ addAutoComplete($("#last-row .fullname-server"), true); });
         }
         else
         {
-            addAutoComplete($("#last-row .fullname-server"));
+            fillNameList("all_normal", function(){ addAutoComplete($("#last-row .fullname-server")); });
+//            addAutoComplete($("#last-row .fullname-server"));
         }
     }
 

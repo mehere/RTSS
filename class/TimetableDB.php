@@ -357,12 +357,12 @@ class TimetableDB
 
         if($sem_id === -1)
         {
-            if($sem === 1)
+            if($sem == 1)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[0];
                 $sem_end_date = "$year-".Constant::$sem_dates[1];
             }
-            else if($sem === 2)
+            else if($sem == 2)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[2];
                 $sem_end_date = "$year-".Constant::$sem_dates[3];
@@ -388,7 +388,7 @@ class TimetableDB
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time_index, end_time_index, subj_code, venue, type, highlighted, sem_id) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
-        $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname');";
+        $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname' and sem_id = $sem_id);";
         $sql_insert_speciality = "insert into ct_aed_speciality values ";
         $has_spec = false;
         error_log(print_r($info["specialty"], true));
@@ -835,7 +835,7 @@ class TimetableDB
         return $result;
     }
 
-    public static function getCollectiveTimetable($date, $accnames, $scheduleIndex = -1, $type = 'normal')
+    public static function getCollectiveTimetable($date, $accnames, $scheduleIndex = -1, $type = 'normal', $excluded_relief = array(), $excluded_skip = array())
     {
         $db_con = Constant::connect_to_db('ntu');
         if(empty($db_con))
@@ -929,8 +929,14 @@ class TimetableDB
         if($scheduleIndex === -1 || ($scheduleIndex >= 0 && strcmp($type, 'ad_hoc') === 0))
         {
             //confirmed
-            $sql_query_relief = "select *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher in $teacher_id_list and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname in $teacher_id_list);";
-
+            if(count($excluded_relief) === 0)
+            {
+                $sql_query_relief = "select *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher in $teacher_id_list and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname in $teacher_id_list);";
+            }
+            else
+            {
+                $sql_query_relief = "select *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time from ((rs_relief_info left join ct_lesson on ct_lesson.lesson_id = rs_relief_info.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_relief_info.schedule_date = DATE('".$date."') AND rs_relief_info.relief_teacher in $teacher_id_list and rs_relief_info.relief_id not in (select relief_id from temp_ah_cancelled_relief where schedule_date = DATE('$date') and accname in $teacher_id_list) and rs_relief_info.relief_id not in (".  implode(",", $excluded_relief).");";
+            }
             $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
             if(is_null($query_relief_result))
             {
@@ -1014,7 +1020,14 @@ class TimetableDB
             }
             
             //get skipped lessons without relief 
-            $sql_skip_no_relief = "select *, rs_aed_skip_info.start_time_index as start_time, rs_aed_skip_info.end_time_index as end_time from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname in $teacher_id_list;";
+            if(count($excluded_skip) === 0)
+            {
+                $sql_skip_no_relief = "select *, rs_aed_skip_info.start_time_index as start_time, rs_aed_skip_info.end_time_index as end_time from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname in $teacher_id_list;";
+            }
+            else
+            {
+                $sql_skip_no_relief = "select *, rs_aed_skip_info.start_time_index as start_time, rs_aed_skip_info.end_time_index as end_time from ((rs_aed_skip_info left join ct_lesson on rs_aed_skip_info.lesson_id = ct_lesson.lesson_id) left join ct_class_matching on ct_lesson.lesson_id = ct_class_matching.lesson_id) where rs_aed_skip_info.schedule_date = DATE('$date') and rs_aed_skip_info.accname in $teacher_id_list and rs_aed_skip_info.skip_id not in (".  implode(",", $excluded_skip).");";
+            }
             $skip_no_relief = Constant::sql_execute($db_con, $sql_skip_no_relief);
             if(is_null($skip_no_relief))
             {
@@ -1337,10 +1350,16 @@ class TimetableDB
     {
         $sem_id = TimetableDB::checkTimetableExistence(1, array('year'=>$year, 'sem'=>$sem));
 
+        $result = array(
+            "specialty" => array()
+        );
+        /*
         if($sem_id === -1)
         {
-            return array();
+            return $result;
         }
+         * 
+         */
 
         $db_con = Constant::connect_to_db('ntu');
         if(empty($db_con))
@@ -1356,8 +1375,6 @@ class TimetableDB
         {
             throw new DBException('Fail to query timetable for accname '.$accname, __FILE__, __LINE__);
         }
-
-        $result = array();
 
         foreach($table_result as $row)
         {

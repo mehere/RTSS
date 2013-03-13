@@ -93,7 +93,7 @@ EOD;
                                 $style='style="text-decoration: line-through"';
                                 break;
                             case 1:
-                                $style='style="text-decoraction: underline"';
+                                $style='style="text-decoration: underline"';
                                 break;
                             case 2:
                                 $style='style="font-weight: bold"';
@@ -122,7 +122,7 @@ EOD;
                     }
                     else
                     {
-                        $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display']), '')));
+                        $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['individual']['display'])-1, '')));
                         echo <<< EOD
         <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;

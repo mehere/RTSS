@@ -126,7 +126,7 @@ try
 } catch (DBException $e)
 {
     $_SESSION['scheduleError'] = "Database error.";
-    header("Location: result.php");
+    header("Location: index.php");
 }
 
 // ADHOC SCHEDULING PROCESSING
@@ -140,7 +140,7 @@ if ($typeSchedule == 2)
     } catch (DBException $e)
     {
         $_SESSION['scheduleError'] = "Database error.";
-        header("Location: result.php");
+        header("Location: index.php");
     }
 
     foreach ($skippingPlan as $aReliefLesson)
@@ -330,7 +330,7 @@ if (empty($lessonsNeedRelief))
 {
     //To-Do: No Scheduling
     $_SESSION['scheduleError'] = "No relief required";
-    header("Location: result.php");
+    header("Location: index.php");
 }
 
 // initialization of groups ----------------------------------------------------

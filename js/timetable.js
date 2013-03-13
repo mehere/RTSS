@@ -39,15 +39,11 @@ $(document).ready(function(){
 
     $("#print-individual").click(function(){
         var dataGet={"date": formS['date'].value, 'accname': formT['accname'].value};
-        this.href += "?" + $.param(dataGet);
-
-        window.location.reload();
+        this.href = "print-individual.php?" + $.param(dataGet);
     });
 
     $("#print-relief").click(function(){
         var dataGet={"date": formS['date'].value};
-        this.href += "?" + $.param(dataGet);
-
-        window.location.reload();
+        this.href = "print-relief.php?" + $.param(dataGet);
     });
 });

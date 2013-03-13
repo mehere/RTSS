@@ -97,8 +97,8 @@ EOD;
 <td>
 <div class="toggle-display"><span>{$teacher[$keyList[1]]}</span><br /><span>{$teacher[$keyList[2]]}</span></div>
 <div class="toggle-edit">
-<div class="time-line"><input type="text" name="handphone-$i" value="{$teacher['handphone']}" /></div>
-<div class="time-line"><input type="text" name="email-$i" value="{$teacher['email']}" /></div>
+<div class="time-line"><input type="text" name="handphone-$i" value="{$teacher['handphone']}" class="textfield" /></div>
+<div class="time-line"><input type="text" name="email-$i" value="{$teacher['email']}" class="textfield" /></div>
 </div>
 </td>
 EOD;
@@ -130,7 +130,7 @@ $nameTimeInBetweenFrag
 </div>
 </div>
 </td>
-<td><div class="toggle-display">$remarkStr</div><textarea name="remark-$i" class="toggle-edit">$remarkStr</textarea></td>
+<td><div class="toggle-display">$remarkStr</div><div><textarea name="remark-$i" class="toggle-edit">$remarkStr</textarea></div></td>
 $verifiedFrag
 </tr>
 EOD;

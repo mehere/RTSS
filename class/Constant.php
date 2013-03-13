@@ -20,8 +20,10 @@ Class Constant
     const email_port = 465;
     const email_encryption = 'ssl';
 
-   const php_exe = "C:\\xampp\php\php.exe";
-   // const php_exe = 'C:\Program Files (x86)\PHP\v5.3\php.exe';
+//    const php_exe = 'C:\xampp\php\php.exe';
+    const php_exe = 'D:\xampp\php\php.exe';
+    //const php_exe = '/Applications/MAMP/bin/php/php5.4.4/bin/php';   
+// const php_exe = 'C:\Program Files (x86)\PHP\v5.3\php.exe';
 
     //time slot
 //    const num_of_time_slot = 15;
