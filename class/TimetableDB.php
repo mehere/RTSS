@@ -357,12 +357,12 @@ class TimetableDB
 
         if($sem_id === -1)
         {
-            if($sem === 1)
+            if($sem == 1)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[0];
                 $sem_end_date = "$year-".Constant::$sem_dates[1];
             }
-            else if($sem === 2)
+            else if($sem == 2)
             {
                 $sem_start_date = "$year-".Constant::$sem_dates[2];
                 $sem_end_date = "$year-".Constant::$sem_dates[3];
