@@ -539,7 +539,7 @@ class Teacher {
      * @param type $entry : associative array specified in docs
      * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me, -6 conflict time)
      */
-    public static function add($accname, $prop, $entry, $leaveID = -1, $has_relief = true)
+    public static function add($accname, $prop, $entry, $has_relief = true, $leaveID = -1)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -1168,7 +1168,7 @@ class Teacher {
                 {
                     return false;
                 }
-                return Teacher::add($row['teacher_id'], "leave", array("datetime-from" => $datetim_from, "datetime-to" => $datetim_to, "reason" => $reason, "remark" => $remark), $leaveID);
+                return Teacher::add($row['teacher_id'], "leave", array("datetime-from" => $datetim_from, "datetime-to" => $datetim_to, "reason" => $reason, "remark" => $remark), false ,$leaveID);
             }
         }
         else if(strcmp($prop, "temp") === 0)
@@ -1284,7 +1284,7 @@ class Teacher {
                     return false;
                 }
                 
-                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name), $leaveID);
+                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name), false, $leaveID);
             }
             
             return true;
