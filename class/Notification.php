@@ -667,7 +667,7 @@ Class Notification
 
         foreach($date_list as $one_date=>$value)
         {
-            $all_timetables[$one_date] = TimetableDB::getCollectiveTimetable($one_date, $value, -1);
+            $all_timetables[$one_date] = TimetableDB::getCollectiveTimetable($one_date, $value, -1, 'normal', $relief_ids, $skip_ids);
         }
         
         $to = array();

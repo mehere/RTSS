@@ -540,7 +540,7 @@ class Teacher {
      * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me, -6 conflict time)
      */
     public static function add($accname, $prop, $entry, $has_relief, $leaveID = -1)
-    {
+    { 
         $db_con = Constant::connect_to_db('ntu');
 
         if (empty($db_con))
@@ -661,6 +661,11 @@ class Teacher {
                     }
                 }
                 
+                if(count($notified_relief) > 0 || count($notified_skip) > 0)
+                {
+                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+                }
+                
                 if(count($affected_relief) > 0)
                 {
                     //delete skip 
@@ -682,7 +687,7 @@ class Teacher {
                         return false;
                     }
                 }
-                
+                error_log(print_r($affected_leave, true));
                 if(count($affected_leave) > 0)
                 {
                     //delete is scheduled
@@ -697,11 +702,6 @@ class Teacher {
                     {
                         throw new DBException('Fail to delete relief', __FILE__, __LINE__);
                     }
-                }
-                
-                if(count($notified_relief) > 0 || count($notified_skip) > 0)
-                {
-                    Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
                 }
             }
             
@@ -960,6 +960,11 @@ class Teacher {
                 }
             }
 
+            if(count($notified_relief) > 0 || count($notified_skip) > 0)
+            {
+                Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+            }
+            
             if(count($affected_skip) > 0)
             {
                 //delete skip 
@@ -979,11 +984,6 @@ class Teacher {
                 return false;
             }
 
-            if(count($notified_relief) > 0 || count($notified_skip) > 0)
-            {
-                Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
-            }
-            
             return true;
         }
         else if(strcmp($prop, "temp") === 0)
@@ -1058,6 +1058,11 @@ class Teacher {
                 $affected_leave[]  = array($all_relief_dict[$row]['leave_id_ref'], $all_relief_dict[$row]["date"]);
             }
             
+            if(count($notified_relief) > 0 || count($notified_skip) > 0)
+            {
+                Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
+            }
+            
             if(count($affected_leave) > 0)
             {
                 //delete is scheduled
@@ -1104,11 +1109,6 @@ class Teacher {
                 return false;
             }
 
-            if(count($notified_relief) > 0 || count($notified_skip) > 0)
-            {
-                Notification::sendCancelNotification($notified_relief, $notified_skip, $teacher_contact, "");
-            }
-            
             return true;
         }
         else
