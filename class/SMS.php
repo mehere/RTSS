@@ -148,12 +148,15 @@ class SMS
                 return "OK";
                 break;
             case 104:
+                error_log("SMS.php: Error $code");
                 return "Invalid Phone number";
                 break;
             case 105:
+                error_log("SMS.php: Error $code");
                 return "Invalid message length";
                 break;
             default:
+                error_log("SMS.php: Error $code");
                 return "Unable to connect to SMS server";
         }
     }
