@@ -310,7 +310,7 @@ echo "id : ".$result;
                 echo $one_teacher['type']."<br>";
                 echo $one_teacher['fullname']."<br><br>";
           }
-         *
+         * 
          */
 /*
         $result = Teacher::getTeacherInfo('temp');

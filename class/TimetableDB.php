@@ -388,7 +388,7 @@ class TimetableDB
         $sql_insert_lesson = "insert into ct_lesson (lesson_id, weekday, start_time_index, end_time_index, subj_code, venue, type, highlighted, sem_id) values ";
         $sql_insert_lesson_class = "insert into ct_class_matching values ";
         $sql_insert_lesson_teacher = "insert into ct_teacher_matching values ";
-        $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname');";
+        $sql_delete_lesson = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname' and sem_id = $sem_id);";
         $sql_insert_speciality = "insert into ct_aed_speciality values ";
         $has_spec = false;
         error_log(print_r($info["specialty"], true));
