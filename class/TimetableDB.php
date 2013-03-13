@@ -1329,7 +1329,7 @@ class TimetableDB
         //check temp teacher time availability
         if(substr($accname, 0, 3) === 'TMP')
         {
-            $sql_avail = "select * from rs_temp_relief_teacher_availability where teacher_id = '$accname' and unix_timestamp($full_start) < unix_timestamp(start_datetime) and unix_timestamp($full_end) > unix_timestamp(end_datetime)";
+            $sql_avail = "select * from rs_temp_relief_teacher_availability where teacher_id = '$accname' and unix_timestamp('$full_start') < unix_timestamp(start_datetime) and unix_timestamp('$full_end') > unix_timestamp(end_datetime)";
             $avail_result = Constant::sql_execute($db_con, $sql_avail);
 
             if(is_null($avail_result))
