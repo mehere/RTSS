@@ -209,7 +209,7 @@ class SMS
             $message = trim($message, " '");
             if (SMS::checkResponseRelevance($timeReceived, $scheduleDate))
             {
-                if (examineMsg($smsId, $phoneNum, $msgSent) != -1)
+                if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1)
                 {
                     $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);
                 }
