@@ -13,7 +13,7 @@ class SMS
 
         SMS::$jarPath = realpath($path . '\..\vigsys\vigsyssmscom-ntu.jar');
         SMS::$jarDir = dirname(SMS::$jarPath);
-        SMS::$lockPath = SMS::$jarDir.'\Lock';
+        SMS::$lockPath = SMS::$jarDir . '\Lock';
         SMS::$jarPath = escapeshellarg(SMS::$jarPath);
     }
 
@@ -75,13 +75,24 @@ class SMS
                     if ($length > $maxBody)
                     {
                         $breakIndex = strrpos($messageCache, '~', $maxBody - $length);
-                        $message = substr($messageCache, 0, $breakIndex);
-                        $arrMessage[] = $message;
-                        $messageCache = substr($messageCache, $breakIndex + 1);
+                        if ($breakIndex != FALSE)
+                        {
+                            $message = substr($messageCache, 0, $breakIndex);
+                            $arrMessage[] = $message;
+                            $messageCache = substr($messageCache, $breakIndex + 1);
+                        } else
+                        {
+                            $message = substr($messageCache, 0, $maxBody);
+                            $arrMessage[] = $message;
+                            $messageCache = substr($messageCache, $maxBody);
+                        }
                     } else
                     {
-                        $arrMessage[] = $messageCache;
-                        $messageCache = "";
+                        if (!empty($messageCache))
+                        {
+                            $arrMessage[] = $messageCache;
+                            $messageCache = "";
+                        }
                         break;
                     }
                 }
@@ -92,7 +103,7 @@ class SMS
                 foreach ($arrMessage as $message)
                 {
                     $jarPath = SMS::$jarPath;
-                    $message = "<Scheduler>($index/$noMessage)~~$message";
+                    $message = "<CHIJ(Pri)>($index/$noMessage)~$message";
                     $message = escapeshellarg($message);
                     $command = "java -jar $jarPath 1 $phoneNum $message\n";
 
