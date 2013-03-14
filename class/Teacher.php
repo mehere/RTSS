@@ -540,7 +540,7 @@ class Teacher {
      * @return type int >=0: leaveID or availabilityID, <0: error (desc: -2 db connect error; -3 lack of necessary value; -4 db insert error; -5 rarely returned. but if return, email me, -6 conflict time)
      */
     public static function add($accname, $prop, $entry, $has_relief, $leaveID = -1)
-    { 
+    {        
         $db_con = Constant::connect_to_db('ntu');
 
         if (empty($db_con))
@@ -782,6 +782,15 @@ class Teacher {
                     //time since 2010-1-1 00:00:00
                     $accname = "TMP".(time() - 1261440000).$name_short;
                 }
+                else
+                {
+                    $sql_clear_temp = "delete from rs_temp_relief_teacher where teacher_id = '$accname';";
+                    $clear_temp = Constant::sql_execute($db_con, $sql_clear_temp);
+                    if(is_null($clear_temp))
+                    {
+                        return -2;
+                    }
+                }
                 
                 $handphone = empty($entry['handphone'])?'':$entry['handphone'];
                 $email = empty($entry['email'])?'':$entry['email'];
@@ -834,7 +843,7 @@ class Teacher {
             {
                 return -4;
             }
-
+            
             return mysql_insert_id();
         }
         else
@@ -1274,7 +1283,7 @@ class Teacher {
                 $sql_old_teacher = "select * from rs_temp_relief_teacher where teacher_id = '$teacher_id';";
                 $old_teacher = Constant::sql_execute($db_con, $sql_old_teacher);
                 if(empty($old_teacher))
-                {throw new DBException($sql_get_teacher_id, __FILE__, __LINE__);
+                {
                     return false;
                 }
                 
@@ -1296,14 +1305,28 @@ class Teacher {
                  * 
                  */
                 //delete old teacher
+                /*
                 $sql_delete_teacher = "delete from rs_temp_relief_teacher where teacher_id = '$teacher_id';";
                 $delete_teacher = Constant::sql_execute($db_con, $sql_delete_teacher);
                 if(is_null($delete_teacher))
                 {
                     return false;
                 }
-                
-                return Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name), false, $leaveID);
+                 * 
+                 */
+                if(!Teacher::delete(array($leaveID), "temp", $has_relief))
+                {
+                    return false;
+                }
+
+                if(Teacher::add($teacher_id, "temp", array("remark" => $remark, "datetime-from" => $datetime_from_temp, "datetime-to" => $datetime_to_temp, "MT" => $MT, "handphone" => $phone, "email" => $email, "fullname" => $name), $has_relief, $leaveID) < 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
             
             return true;
