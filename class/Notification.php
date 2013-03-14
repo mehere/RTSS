@@ -404,7 +404,9 @@ Class Notification
             $email_input = $all_timetables[$accname];
 
             //email format - to update
-            $message = Email::formatEmail($name, array($date=>$email_input), Constant::email_name);
+            $date_obj = new DateTime($date);
+            $new_date = $date_obj->format("d/m/Y");
+            $message = Email::formatEmail($name, array($new_date=>$email_input), Constant::email_name);
 
             $recepient = array(
                 'accname' => $accname,
@@ -707,7 +709,9 @@ Class Notification
 
             foreach($all_dates as $the_date)
             {
-                $email_input[$the_date] = $all_timetables[$the_date][$accname];
+                $date_obj = new DateTime($the_date);
+                $new_date = $date_obj->format("d/m/Y");
+                $email_input[$new_date] = $all_timetables[$the_date][$accname];
             }
 
             $message = Email::formatEmail($name, $email_input, Constant::email_name);
