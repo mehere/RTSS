@@ -27,6 +27,8 @@ $(document).ready(function(){
 
             $('.control-top a[id^="override"]').toggle();
             contentToHide.hide();
+
+            formEdit['approve'].disabled=true;
         });
 
         return false;
@@ -50,6 +52,8 @@ $(document).ready(function(){
         $('.control-top a[id^="override"]').toggle();
         contentToHide.show();*/
 
+        formEdit['approve'].disabled=false;
+
         return false;
     });
 
@@ -72,6 +76,8 @@ $(document).ready(function(){
 
         $('.control-top a[id^="override"]').toggle();
         contentToHide.show();*/
+
+        formEdit['approve'].disabled=false;
 
         return false;
     });
