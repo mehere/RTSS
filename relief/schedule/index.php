@@ -130,7 +130,7 @@ EOD;
             {
                 echo <<< EOD
 <a class="button green" href="timetable.php?schedule=$curPage">Preview Timetable</a>
-<input type="submit" value="Approve" class="button" />
+<input type="submit" name="approve" value="Approve" class="button" />
 EOD;
             }
         ?>
