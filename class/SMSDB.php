@@ -253,9 +253,9 @@ class SMSDB
             throw new DBException('Fail to mark reply', __FILE__, __LINE__);
         }
 
-        foreach($replied as $reply)
+        foreach($replied as $id => $reply)
         {
-            $sql_update = "update cm_sms_record set is_replied = true, time_replied = '".mysql_real_escape_string(trim($reply['timeReceived']))."', response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
+            $sql_update = "update cm_sms_record set is_replied = true, time_replied = '".mysql_real_escape_string(trim($reply['timeReceived']))."', response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($id)).";";
             Constant::sql_execute($db_con, $sql_update);
         }
     }
