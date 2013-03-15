@@ -130,7 +130,7 @@ class SMSDB
         }
 
         //$sql_sms = "select sms_id as smsId, phone_num as phoneNum, message, DATE_FORMAT(time_created, '%Y/%m/%d %M:%i') as timeCreated, DATE_FORMAT(time_sent, '%Y/%m/%d %M:%i') as timeSent, status, accname as accName, is_replied as replied, DATE_FORMAT(time_replied, '%Y/%m/%d %M:%i') as timeReplied schedule_date as scheduleDate from cm_sms_record where scheduleDate = DATE(".$schedule_date.") and status = 'OK' order by smsId;";
-        $sql_sms = "select sms_id as smsId, phone_num as phoneNum from cm_sms_record where schedule_date = DATE(".$schedule_date.") and status = 'OK' order by sms_id;";
+        $sql_sms = "select sms_id as smsId, phone_num as phoneNum from cm_sms_record where schedule_date = DATE('".$schedule_date."') and status = 'OK' order by sms_id;";
         $sms_result = Constant::sql_execute($db_con, $sql_sms);
         if(is_null($sms_result))
         {
@@ -191,7 +191,7 @@ class SMSDB
                 throw new DBException('Fail to query sms reply', __FILE__, __LINE__);
             }
 
-            $sql_reply = "select DATE_FORMAT(date, '%Y/%m/%d %H:%i') as time_received from fs_msgs where num in ".$sql_set;
+            $sql_reply = "select *, DATE_FORMAT(date, '%Y/%m/%d %H:%i') as time_received from fs_msgs where num in ".$sql_set;
             $reply_result = Constant::sql_execute($db_con_ifins, $sql_reply);
             if(is_null($reply_result))
             {
@@ -205,14 +205,14 @@ class SMSDB
             //throw new DBException($sql_set, __FILE__, __LINE__);
         }
 
-        $result = array();
+        $result = array(); 
 
         foreach($reply_result as $a_reply)
         {
             $reply_msg = $a_reply['msg'];
 
             //reply format : 1232,YES, or 43,NO, or 34, in this case, assume the teacher accept the arrangement
-            $break_reply = explode(",", $reply_msg);
+            $break_reply = explode("-", $reply_msg);
             if(count($break_reply) === 0)
             {
                 continue;
@@ -220,23 +220,23 @@ class SMSDB
             if(count($break_reply) === 1)
             {
                 $sms_id = trim($break_reply[0]);
-                $content = "YES";
+                $content = "yes";
             }
             else
             {
                 $sms_id = trim($break_reply[0]);
                 $content = trim($break_reply[1]);
             }
-
+            
             if(!in_array($sms_id, $sms_id_set))
             {
                 continue;
             }
 
             $a_sms = Array(
-                "phoneNum" => $row['num'],
-                "timeReceived" => $row['time_received'],
-                "message" => $row['msg']
+                "phoneNum" => $a_reply['num'],
+                "timeReceived" => $a_reply['time_received'],
+                "message" => $a_reply['msg']
             );
 
             $result[] = $a_sms;
@@ -253,9 +253,9 @@ class SMSDB
             throw new DBException('Fail to mark reply', __FILE__, __LINE__);
         }
 
-        foreach($replied as $reply)
+        foreach($replied as $id => $reply)
         {
-            $sql_update = "update cm_sms_record set is_replied = true, time_replied = ".mysql_real_escape_string(trim($reply['timeReceived'])).", response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($reply['smsId'])).";";
+            $sql_update = "update cm_sms_record set is_replied = true, time_replied = '".mysql_real_escape_string(trim($reply['timeReceived']))."', response = '".mysql_real_escape_string(trim($reply['response']))."' where sms_id = ".mysql_real_escape_string(trim($id)).";";
             Constant::sql_execute($db_con, $sql_update);
         }
     }

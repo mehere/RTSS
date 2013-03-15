@@ -177,12 +177,17 @@ EOD;
 
     <div style="clear: both"></div>
     <div class="bt-control">
-        <?php if ($isScheduleRun) { ?>
+        <?php 
+            if (new DateTime($date) > new DateTime('yesterday')) { 
+                if ($isScheduleRun) {                    
+        ?>
             <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS/img/redo.png" class="icon" />Re-Schedule All</a>
             <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule the Remaining</a>
-        <?php } else { // if (new DateTime($date) > new DateTime('yesterday')) { ?>
+        <?php } else { ?>
             <a href="" id="btnScheduleAll" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule All</a>
-        <?php } ?>
+        <?php } 
+            }
+        ?>
     </div>
     <div style="clear: both"></div>
 </form>
