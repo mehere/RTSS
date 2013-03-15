@@ -161,6 +161,8 @@ class SMS {
         $output = shell_exec($command);
         chdir('C:\xampp\htdocs\RTSS\class');
 
+        $replied = array();
+        
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
         if ($startPos > 20) {
             $msgString = substr($output, $startPos);
@@ -180,7 +182,8 @@ class SMS {
                     if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1) {
                         if (array_key_exists($smsId, $replied)) {
                             if (SMS::compareTime($timeReceived, $replied[$smsId]["timeReceived"])) {
-                                $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
+                                $replied[$smsId]["timeReceived"] = $timeReceived;
+                                $replied[$smsId]["response"] = $message;
                             }
                         } else {
                             $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
@@ -200,7 +203,8 @@ class SMS {
                 if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1) {
                     if (array_key_exists($smsId, $replied)) {
                         if (SMS::compareTime($timeReceived, $replied[$smsId]["timeReceived"])) {
-                            $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
+                            $replied[$smsId]["timeReceived"] = $timeReceived;
+                            $replied[$smsId]["response"] = $message;
                         }
                     } else {
                         $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
@@ -264,7 +268,7 @@ class SMS {
         $scheduleDateObj = date_create($scheduleDate . " 00:00:00");
         $timeDiff = date_diff($timeRepliedObj, $scheduleDateObj)->format("%R %d %h");
         list($sign, $dayDiff, $hourDiff) = explode(" ", $timeDiff);
-        if ($sign == "-" && ($hourDiff >= 24 || $dayDiff >= 1)) {
+        if ($sign == "-" && ($hourDiff >= 15 || $dayDiff >= 1)) {
             return false;
         } else {
             return true;
