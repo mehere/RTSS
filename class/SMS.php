@@ -177,11 +177,14 @@ class SMS
         set_time_limit(1200);
         $msgSent = SMSDB::getSMSsent($scheduleDate);
 
-//        chdir('C:\xampp\htdocs\fscan\sms');
-        $command = "java -jar $jarPath 2\n";
-//        $command = 'java -jar vigsyssmscom4.jar "2"';
-        chdir(SMS::$jarDir);
+        chdir('C:\xampp\htdocs\fscan\sms');
+        //$command = "java -jar $jarPath 2\n";
+          $command = 'java -jar vigsyssmscom4.jar "2"';
+          
+        //chdir(SMS::$jarDir);
         $output = shell_exec($command);
+        chdir('C:\xampp\htdocs\RTSS\class');
+        
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
         if ($startPos > 20)
         {
@@ -201,17 +204,15 @@ class SMS
                 $timeReceived = "$date $time";
                 if (SMS::checkResponseRelevance($timeReceived, $scheduleDate))
                 {
-                    if (examineMsg($smsId, $phoneNum, $msgSent) != -1)
+                    if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1)
                     {
                         $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);
                     }
                 }
             }
         }
-
         $ifinsMsg = SMSDB::getIfinsSMSin($scheduleDate);
 
-        $replied = array();
         for ($f = 0; $f < sizeof($ifinsMsg); $f++)
         {
             $phoneNum = $ifinsMsg[$f]["phoneNum"];
@@ -299,7 +300,7 @@ class SMS
         $scheduleDateObj = date_create($scheduleDate . " 00:00:00");
         $timeDiff = date_diff($timeRepliedObj, $scheduleDateObj)->format("%R %d %h");
         list($sign, $dayDiff, $hourDiff) = explode(" ", $timeDiff);
-        if ($sign == "-" && ($hourDiff >= 18 || $dayDiff >= 1))
+        if ($sign == "-" && ($hourDiff >= 24 || $dayDiff >= 1))
         {
             return false;
         } else
