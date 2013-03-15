@@ -72,6 +72,13 @@ class TeacherCompact
                 $this->timetable[$i] = TeacherCompact::TYPE_LEAVE;
             }
         }
+        for ($i = 1; $i <= self::MAX_LESSONS; $i++)
+        {
+            if (isset($fullTeacher->timetable[$i]))
+            {
+                $this->timetable[$i] = TeacherCompact::TYPE_LESSON;
+            }
+        }
     }
 
     private function constructTeacher($fullTeacher)

@@ -1,11 +1,13 @@
 <?php
+
 ini_set("memory_limit", "512M");
 define("NUM_STATES_REQUIRED", 3);
 define("TIME_TO_WAIT", 10);
 
-spl_autoload_register(function($class){
-    require_once "../../class/$class.php";
-});
+spl_autoload_register(function($class)
+        {
+            require_once "../../class/$class.php";
+        });
 
 Template::validate(true);
 
@@ -87,7 +89,8 @@ function scheduling(&$visitedStates, ScheduleStateHeap $activeStates, ScheduleSt
 $dateString = $_SESSION["scheduleDate"];
 
 $typeSchedule = 1;
-if (isset($_SESSION["scheduleType"]) && ($_SESSION["scheduleType"] == 1)){
+if (isset($_SESSION["scheduleType"]) && ($_SESSION["scheduleType"] == 1))
+{
     $typeSchedule = 2;
 }
 
@@ -162,6 +165,7 @@ if ($typeSchedule == 2)
         }
     }
 
+
     foreach ($reliefPlans as $aReliefLesson)
     {
         /* @var $aReliefLesson ReliefLesson */
@@ -192,7 +196,6 @@ if ($typeSchedule == 2)
         /* @var $teacherRelief Teacher */
         /* @var $originalLesson Lesson */
         $originalLesson = $teacherOriginal->timetable[$aReliefLesson->startTimeSlot];
-
         if ($aReliefLesson->startTimeSlot != $originalLesson->startTimeSlot)
         {
             $replacementLesson = clone $originalLesson;
@@ -248,12 +251,11 @@ if ($typeSchedule == 2)
                 break;
             }
         }
-
         for ($i = $aBlockLesson->startTimeSlot; $i < $aBlockLesson->endTimeSlot; $i++)
         {
-            if (isset($originalTeacherTimetable[$i]))
+            if (isset($teacherOriginal->timetable[$i]))
             {
-                $aLesson = clone $originalTeacherTimetable[$i];
+                $aLesson = clone $teacherOriginal->timetable[$i];
                 $aLesson->isMandatory = TRUE;
                 $teacherOriginal->timetable[$i] = $aLesson;
             } else
@@ -263,11 +265,6 @@ if ($typeSchedule == 2)
         }
     }
 }
-
-
-
-
-
 
 // initialization
 $lessonsNeedRelief = array();
@@ -411,7 +408,6 @@ $visitedStates[$startState->toString()] = TRUE;
 scheduling($visitedStates, $activeStates, $successStates, $stoppedStates);
 
 //error_log("passed 1");
-
 // round 2
 if ($successStates->numberStates == 0)
 {
@@ -433,7 +429,6 @@ if ($successStates->numberStates == 0)
 }
 
 //error_log("passed 2");
-
 // round 3
 if ($successStates->numberStates == 0)
 {
