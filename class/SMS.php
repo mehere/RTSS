@@ -1,14 +1,12 @@
 <?php
 
-class SMS
-{
+class SMS {
 
     public static $jarDir;
     public static $jarPath;
     public static $lockPath;
 
-    public static function init()
-    {
+    public static function init() {
         $path = dirname(__FILE__);
 
         SMS::$jarPath = realpath($path . '\..\vigsys\vigsyssmscom-ntu.jar');
@@ -17,24 +15,19 @@ class SMS
         SMS::$jarPath = escapeshellarg(SMS::$jarPath);
     }
 
-    public static function sendSMS($receiverList, $scheduleDate)
-    {
+    public static function sendSMS($receiverList, $scheduleDate) {
         set_time_limit(0);
         $fp = fopen(SMS::$lockPath, "w+");
         $gotLock = FALSE;
-        for ($attempt = 0; $attempt < 100; $attempt++)
-        {
-            if (flock($fp, LOCK_EX))
-            {
+        for ($attempt = 0; $attempt < 100; $attempt++) {
+            if (flock($fp, LOCK_EX)) {
                 $gotLock = TRUE;
                 break;
-            } else
-            {
+            } else {
                 sleep(rand(5, 30));
             }
         }
-        if (!gotLock)
-        {
+        if (!gotLock) {
             error_log("ERROR: Cannot get lock");
         }
 
@@ -43,12 +36,10 @@ class SMS
 //        $print_command = array();
 
         $sendingResult = array();
-        foreach ($receiverList as $aReceipent)
-        {
+        foreach ($receiverList as $aReceipent) {
             $outputCode = NULL;
             $phoneNum = trim($aReceipent["phoneNum"]);
-            if (strlen($phoneNum) == 8)
-            {
+            if (strlen($phoneNum) == 8) {
                 $phoneNum = "+65$phoneNum";
                 $phoneNum = escapeshellarg($phoneNum);
 
@@ -60,8 +51,7 @@ class SMS
                 $smsId = SMSDB::storeSMSout($msgRecord, $scheduleDate);
 
                 $type = $aReceipent["type"];
-                if ($type === 'R')
-                {
+                if ($type === 'R') {
                     $messageFull = $messageFull . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
                 }
                 $messageCache = $messageFull;
@@ -69,27 +59,21 @@ class SMS
 
                 $maxBody = 140;
 
-                while (true)
-                {
+                while (true) {
                     $length = strlen($messageCache);
-                    if ($length > $maxBody)
-                    {
+                    if ($length > $maxBody) {
                         $breakIndex = strrpos($messageCache, '~', $maxBody - $length);
-                        if ($breakIndex != FALSE)
-                        {
+                        if ($breakIndex != FALSE) {
                             $message = substr($messageCache, 0, $breakIndex);
                             $arrMessage[] = $message;
                             $messageCache = substr($messageCache, $breakIndex + 1);
-                        } else
-                        {
+                        } else {
                             $message = substr($messageCache, 0, $maxBody);
                             $arrMessage[] = $message;
                             $messageCache = substr($messageCache, $maxBody);
                         }
-                    } else
-                    {
-                        if (!empty($messageCache))
-                        {
+                    } else {
+                        if (!empty($messageCache)) {
                             $arrMessage[] = $messageCache;
                             $messageCache = "";
                         }
@@ -100,34 +84,29 @@ class SMS
                 $noMessage = count($arrMessage);
                 $index = 1;
                 $overallOutput = -1;
-                foreach ($arrMessage as $message)
-                {
+                foreach ($arrMessage as $message) {
                     $jarPath = SMS::$jarPath;
                     $message = "<CHIJ(Pri)>($index/$noMessage)~$message";
                     $message = escapeshellarg($message);
                     $command = "java -jar $jarPath 1 $phoneNum $message\n";
 
-                    for ($i = 0; $i < 10; $i++)
-                    {
+                    for ($i = 0; $i < 10; $i++) {
                         chdir(SMS::$jarDir);
                         $apiOutput = shell_exec($command);
                         $outputCode = substr($apiOutput, strlen($apiOutput) - 3, 3);
 
 //                        $print_command[] = $command;
-                        if ($outputCode == 100)
-                        {
+                        if ($outputCode == 100) {
                             usleep(5000);
                             break;
-                        } else
-                        {
+                        } else {
                             usleep(rand(10000, 20000));
                         }
                     }
                     $overallOutput = $outputCode > $overallOutput ? $outputCode : $overallOutput;
                     $index++;
                 }
-            } else
-            {
+            } else {
                 $outputCode = 104;
                 $overallOutput = $outputCode;
             }
@@ -151,10 +130,8 @@ class SMS
         return $sendingResult;
     }
 
-    public static function mapCode($code)
-    {
-        switch ($code)
-        {
+    public static function mapCode($code) {
+        switch ($code) {
             case 100:
                 return "OK";
                 break;
@@ -172,26 +149,23 @@ class SMS
         }
     }
 
-    public static function readSMS($scheduleDate)
-    {
+    public static function readSMS($scheduleDate) {
         set_time_limit(1200);
         $msgSent = SMSDB::getSMSsent($scheduleDate);
 
         chdir('C:\xampp\htdocs\fscan\sms');
         //$command = "java -jar $jarPath 2\n";
-          $command = 'java -jar vigsyssmscom4.jar "2"';
-          
+        $command = 'java -jar vigsyssmscom4.jar "2"';
+
         //chdir(SMS::$jarDir);
         $output = shell_exec($command);
         chdir('C:\xampp\htdocs\RTSS\class');
-        
+
         $startPos = strpos($output, 'VigSysSms v1.0-100:') + strlen('VigSysSms v1.0-100:');
-        if ($startPos > 20)
-        {
+        if ($startPos > 20) {
             $msgString = substr($output, $startPos);
             $parts = explode("###", $msgString);
-            for ($i = 0; $i < sizeof($parts) - 3; $i += 4)
-            {
+            for ($i = 0; $i < sizeof($parts) - 3; $i += 4) {
                 $phoneNum = $parts[$i + 1];
                 $timeReceived = $parts[$i + 2];
                 $response = $parts[$i + 3];
@@ -202,89 +176,80 @@ class SMS
                 $year = "20" . $year;
                 $date = "$year-$month-$day";
                 $timeReceived = "$date $time";
-                if (SMS::checkResponseRelevance($timeReceived, $scheduleDate))
-                {
-                    if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1)
-                    {
-                        $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);
+                if (SMS::checkResponseRelevance($timeReceived, $scheduleDate)) {
+                    if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1) {
+                        if (array_key_exists($smsId, $replied)) {
+                            if (SMS::compareTime($timeReceived, $replied[$smsId]["timeReceived"])) {
+                                $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
+                            }
+                        } else {
+                            $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
+                        }
                     }
                 }
             }
         }
         $ifinsMsg = SMSDB::getIfinsSMSin($scheduleDate);
 
-        for ($f = 0; $f < sizeof($ifinsMsg); $f++)
-        {
+        for ($f = 0; $f < sizeof($ifinsMsg); $f++) {
             $phoneNum = $ifinsMsg[$f]["phoneNum"];
             $timeReceived = $ifinsMsg[$f]["timeReceived"];
             list($smsId, $message) = explode("-", $ifinsMsg[$f]["message"]);
             $message = trim($message, " '");
-            if (SMS::checkResponseRelevance($timeReceived, $scheduleDate))
-            {
-                if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1)
-                {
-                    $replied[] = array("smsId" => $smsId, "timeReceived" => $timeReceived, "response" => $message);
+            if (SMS::checkResponseRelevance($timeReceived, $scheduleDate)) {
+                if (SMS::examineMsg($smsId, $phoneNum, $msgSent) != -1) {
+                    if (array_key_exists($smsId, $replied)) {
+                        if (SMS::compareTime($timeReceived, $replied[$smsId]["timeReceived"])) {
+                            $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
+                        }
+                    } else {
+                        $replied[$smsId] = array("timeReceived" => $timeReceived, "response" => $message);
+                    }
                 }
             }
         }
 
-        if (count($replied) > 0)
-        {
+        if (count($replied) > 0) {
             SMSDB::markReplied($replied);
         }
     }
 
-    public static function examineMsg($smsId, $phoneNum, $msgSent)
-    {
+    public static function examineMsg($smsId, $phoneNum, $msgSent) {
         return SMS::searchMsgSent($smsId, $phoneNum, $msgSent, 0, sizeof($msgSent) - 1);
     }
 
-    public static function searchMsgSent($smsId, $phoneNum, $msgSent, $start, $end)
-    {
-        if ($start > $end)
-        {
+    public static function searchMsgSent($smsId, $phoneNum, $msgSent, $start, $end) {
+        if ($start > $end) {
             return -1;
-        } else
-        {
+        } else {
             $mid = intval(($start + $end) / 2);
             $compare = strcmp($msgSent[$mid]["smsId"], $smsId);
-            if ($compare < 0)
-            {
+            if ($compare < 0) {
                 return SMS::searchMsgSent($smsId, $phoneNum, $msgSent, $mid + 1, $end);
-            } else if ($compare > 0)
-            {
+            } else if ($compare > 0) {
                 return SMS::searchMsgSent($smsId, $phoneNum, $msgSent, $start, $mid - 1);
-            } else
-            {
+            } else {
                 $interval = 0;
-                while ($mid < sizeof($msgSent) - $interval || $mid >= $interval)
-                {
+                while ($mid < sizeof($msgSent) - $interval || $mid >= $interval) {
                     $leftBoundOut = false;
                     $rightBoundOut = false;
-                    if ($mid < sizeof($msgSent) - $interval)
-                    {
-                        if ($smsId == $msgSent[$mid + $interval]["smsId"] && $msgSent[$mid + $interval]["phoneNum"] == $phoneNum)
-                        {
+                    if ($mid < sizeof($msgSent) - $interval) {
+                        if ($smsId == $msgSent[$mid + $interval]["smsId"] && $msgSent[$mid + $interval]["phoneNum"] == $phoneNum) {
                             return $mid + $interval;
                         }
-                        if ($smsId != $msgSent[$mid + $interval]["smsId"])
-                        {
+                        if ($smsId != $msgSent[$mid + $interval]["smsId"]) {
                             $rightBoundOut = true;
                         }
                     }
-                    if ($mid >= $interval)
-                    {
-                        if ($smsId == $msgSent[$mid - $interval]["smsId"] && $msgSent[$mid - $interval]["phoneNum"] == $phoneNum)
-                        {
+                    if ($mid >= $interval) {
+                        if ($smsId == $msgSent[$mid - $interval]["smsId"] && $msgSent[$mid - $interval]["phoneNum"] == $phoneNum) {
                             return $mid - $interval;
                         }
-                        if ($smsId != $msgSent[$mid - $interval]["smsId"])
-                        {
+                        if ($smsId != $msgSent[$mid - $interval]["smsId"]) {
                             $leftBoundOut = true;
                         }
                     }
-                    if ($rightBoundOut && $leftBoundOut)
-                    {
+                    if ($rightBoundOut && $leftBoundOut) {
                         return -1;
                     }
                     $interval++;
@@ -294,18 +259,26 @@ class SMS
         }
     }
 
-    public static function checkResponseRelevance($timeReplied, $scheduleDate)
-    {
+    public static function checkResponseRelevance($timeReplied, $scheduleDate) {
         $timeRepliedObj = date_create($timeReplied);
         $scheduleDateObj = date_create($scheduleDate . " 00:00:00");
         $timeDiff = date_diff($timeRepliedObj, $scheduleDateObj)->format("%R %d %h");
         list($sign, $dayDiff, $hourDiff) = explode(" ", $timeDiff);
-        if ($sign == "-" && ($hourDiff >= 24 || $dayDiff >= 1))
-        {
+        if ($sign == "-" && ($hourDiff >= 24 || $dayDiff >= 1)) {
             return false;
-        } else
-        {
+        } else {
             return true;
+        }
+    }
+
+    public static function compareTime($timeOne, $timeTwo) {
+        $timeOneObj = date_create($timeOne);
+        $timeTwoObj = date_create($timeTwo);
+        $timeDiff = date_diff($timeOneObj, $timeTwoObj)->format("%R");
+        if ($timeDiff == "-") {
+            return true;
+        } else {
+            return false;
         }
     }
 
