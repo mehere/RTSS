@@ -557,8 +557,38 @@ class AdHocSchedulerDB
             throw new DBException("Fail to clear cancelled relief", __FILE__, __LINE__);
         }
         
+        //get SMS reply
+        $clean_date = mysql_real_escape_string(trim($scheduleDate));
+        
+        $sql_reply = "select *, unix_timestamp(time_replied) as replied_timestamp from cm_sms_record where schedule_date = DATE('$clean_date') and type = 'R';";
+        $reply_result = Constant::sql_execute($db_con, $sql_reply);
+        if(is_null($reply_result))
+        {
+            throw new DBException("Fail to clear cancelled relief", __FILE__, __LINE__);
+        }
+        
+        $reply_dic = array();
+        foreach($reply_result as $row)
+        {
+            $accname = $row['accname'];
+            $timestamp = $row['replied_timestamp'] - 0;
+            
+            if(!array_key_exists($accname, $reply_dic))
+            {
+                $reply_dic[$accname] = array($row['response'], $timestamp);
+            }
+            else
+            {
+                //newer reply
+                if($reply_dic[$accname][1] < $timestamp)
+                {
+                    $reply_dic[$accname] = array($row['response'], $timestamp);
+                }
+            }
+        }
+        
         //query
-        $sql_query_relief = "SELECT rs_relief_info.*, ct_class_matching.* FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($scheduleDate))."') order by rs_relief_info.start_time_index, rs_relief_info.end_time_index ASC;";
+        $sql_query_relief = "SELECT rs_relief_info.*, ct_class_matching.* FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('$clean_date') order by rs_relief_info.start_time_index, rs_relief_info.end_time_index ASC;";
         
         $relief_result = Constant::sql_execute($db_con, $sql_query_relief);
         if(is_null($relief_result))
@@ -602,12 +632,19 @@ class AdHocSchedulerDB
                 $start_time_index = $row['start_time_index'];
                 $end_time_index = $row['end_time_index'];
                 
+                $reply = "";
+                if(array_key_exists($relief_teacher, $reply_dic))
+                {
+                    $reply = $reply_dic[$relief_teacher][0];
+                }
+                
                 //relief not created
                 $result[$relief_teacher]['lesson'][$relief_id] = array(
                     'class' => array(),
                     'time' => array($start_time_index, $end_time_index),
                     'lessonID' => $lesson_id,
-                    'reliefID' => $relief_id
+                    'reliefID' => $relief_id,
+                    'reply' => $reply
                 );
                 
                 if(!empty($row['class_name']))
