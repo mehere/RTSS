@@ -434,7 +434,6 @@ Class Notification
 
     public static function sendCancelNotification($relief_ids, $skip_ids, $teacher_contact, $date)
     {
-        error_log(print_r($relief_ids, true));
         $sessionId = session_id();
 
         $db_con = Constant::connect_to_db('ntu');
@@ -658,7 +657,7 @@ Class Notification
 
         $_SESSION['sms'] = $all_input;
         $absolute_path = dirname(__FILE__);
-        //BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
+        BackgroundRunner::execInBackground(realpath($absolute_path . '\..\sms\sendSMS.php'), array('s'), array($sessionId));
 
         //5. construct
         $from = array(

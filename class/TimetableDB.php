@@ -1201,32 +1201,48 @@ class TimetableDB
         $leave_period = array();
         foreach($leave_result as $row)
         {
+            $accname = $row['teacher_id'];
+            
+            if(!array_key_exists($accname, $leave_period))
+            {
+                $leave_period[$accname] = array();
+            }
+            
             $temp_leave_period = SchedulerDB::trimTimePeriod($row['start_date'], $row['end_date'], $row['start_time_point'], $row['end_time_point'], $date, $row['leave_id']);
             $temp_leave_period[0]--;
             $temp_leave_period[1]--;
-            $leave_period[] = $temp_leave_period;
+            $leave_period[$accname][] = $temp_leave_period;
         }
 
-        foreach($result[$accname] as $key => $value)
+        foreach($result as $accname => $table)
         {
-            $within_leave = false;
-            foreach($leave_period as $a_period)
+            foreach($table as $key => $value)
             {
-                if($key >= $a_period[0] && $key < $a_period[1])
+                $within_leave = false;
+                
+                if(!array_key_exists($accname, $leave_period))
                 {
-                    $within_leave = true;
-                    break;
+                    continue;
                 }
-            }
+                
+                foreach($leave_period[$accname] as $a_period)
+                {
+                    if($key >= $a_period[0] && $key < $a_period[1])
+                    {
+                        $within_leave = true;
+                        break;
+                    }
+                }
 
-            if(!$within_leave)
-            {
-                continue;
-            }
+                if(!$within_leave)
+                {
+                    continue;
+                }
 
-            $temp_slot = $result[$accname][$key];
-            $temp_slot['attr'] = -1;
-            $result[$accname][$key] = $temp_slot;
+                $temp_slot = $result[$accname][$key];
+                $temp_slot['attr'] = -1;
+                $result[$accname][$key] = $temp_slot;
+            }
         }
 
         return $result;
