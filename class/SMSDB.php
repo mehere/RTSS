@@ -340,7 +340,17 @@ class SMSDB
             $result[] = $a_sms;
         }
 
+        if(strcmp($order, "fullname") === 0)
+        {
+             uasort($result, 'SMSDB::compareName');
+        }
+        
         return $result;
+    }
+    
+    private static function compareName($a, $b)
+    {
+        return strcasecmp($a['fullname'], $b['fullname']);
     }
 }
 
