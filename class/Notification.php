@@ -402,7 +402,10 @@ Class Notification
             }
 
             $email_input = $all_timetables[$accname];
-
+            if(is_null($email_input))
+            {
+                $email_input = array();
+            }
             //email format - to update
             $date_obj = new DateTime($date);
             $new_date = $date_obj->format("d/m/Y");
@@ -706,12 +709,17 @@ Class Notification
             }
 
             $email_input = array();
-
+            
             foreach($all_dates as $the_date)
             {
                 $date_obj = new DateTime($the_date);
                 $new_date = $date_obj->format("d/m/Y");
                 $email_input[$new_date] = $all_timetables[$the_date][$accname];
+                
+                if(is_null($email_input[$new_date]))
+                {
+                    $email_input[$new_date] = array();
+                }
             }
 
             $message = Email::formatEmail($name, $email_input, Constant::email_name);
