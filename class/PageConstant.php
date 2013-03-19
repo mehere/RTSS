@@ -3,7 +3,7 @@ class PageConstant
 {
     const PRODUCT_NAME="iScheduler";
     const SCH_NAME_ABBR="CHIJ";
-    const SCH_NAME="CHIJ St Nicholas Girl's School";
+    const SCH_NAME="CHIJ St Nicholas Girls' School";
 
     const DATE_FORMAT_ISO='Y/m/d';
     const DATE_FORMAT_SG='d/m/Y';
