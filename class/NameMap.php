@@ -168,7 +168,7 @@ class NameMap
     public static $REPORT=array(
         'overall' => array(
             'display' => array(
-                'fullname' => 'Name', 'type' => 'Type', 'numOfMC' => 'MC', 'numOfRelief' => 'Relief', 'net' => 'Net'
+                'fullname' => 'Name', 'type' => 'Type', 'numOfMC' => 'MC(#)', 'numOfRelief' => 'Relief(#)', 'net' => 'Net'
             ),
             'hidden' => array(
                 'accname'
@@ -177,7 +177,7 @@ class NameMap
 
         'individual' => array(
             'display' => array(
-                'numOfMC' => 'MC', 'numOfRelief' => 'Relief', 'net' => 'Net',
+                'numOfMC' => 'MC(#)', 'numOfRelief' => 'Relief(#)', 'net' => 'Net',
                 'mc' => 'MC Period', 'relief' => 'Relief Period'
             ),
             'hidden' => array(

@@ -12,7 +12,7 @@ class Template
     const SMS="SMS Console";
     
     const TT_ADMIN_MASTER="Upload Master Timetable";
-    const TT_ADMIN_AED="Upload AED Timetable";
+    const TT_ADMIN_AED="Upload AED/Relief Timetable";
     
     const REPORT_OVERALL='Overall';
     const REPORT_INDIVIDUAL='Indivudal';

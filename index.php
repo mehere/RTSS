@@ -21,7 +21,7 @@ session_start();
     	<div id="content">
         	<img src="/RTSS/img/school-logo-name.png" alt="<?php echo PageConstant::SCH_NAME ?>" class="logo-name" />
             <form method="post" action="_login.php" class="login-form" name="login">
-                <div>Log in to <?php echo PageConstant::PRODUCT_NAME ?></div>
+                <div>Log in to <?php echo PageConstant::PRODUCT_NAME ?><span style="color: #969696; font-size: .9em; margin-left: 10px">(Please use <em>ifins account</em> to log in)</span></div>
                 <input type="text" name="username" value="User Name" class="textfield" />
                 <input type="password" name="password" value="Password" class="textfield" />
                 <input type="submit" value="Login" class="button button-small" />

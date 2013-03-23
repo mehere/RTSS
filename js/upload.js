@@ -144,7 +144,7 @@ $(document).ready(function(){
                 primary: "ui-icon-notice"
             },
             text: false,
-            label: 'Highlight/Unhighlight'
+            label: 'Fix/Unfix'
         }).hide().click(function(){
             if (!(dayEntry[time]['isHighlighted']-0))
             {

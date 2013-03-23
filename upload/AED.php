@@ -28,7 +28,8 @@ $dayArr=PageConstant::$DAY;
             <input type="submit" class="button button-small" value="Load" style="margin-left: 30px" />
             <input type="button" class="button green button-small" name="add" value="Add Class" style="margin-left: 30px; display: none" />
             <input type="button" class="button red button-small" name="upload" value="Save" style="margin-left: 30px; display: none" />
-        </div>        
+        </div>
+        <div style="color: blue; font-size: .9em; margin-top: -5px; margin-bottom: 10px">Hover mouse cursor onto lesson to view more options (e.g. Fix/Unfix)</div>        
     </form>                    
     <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
         <table class="hovered table-info">
