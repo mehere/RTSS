@@ -163,7 +163,7 @@ class Teacher {
     //output : array of associative arrays each representing temporary teacher. MT, remark, email may be ""
     public static function getTempTeacher($query_date)
     {
-        $result = Array();
+        $result = array();
 
         $db_con = Constant::connect_to_db("ntu");
 
@@ -1603,7 +1603,7 @@ class Teacher {
      */
     public static function overallReport($type = "", $order = "fullname", $direction = SORT_ASC, $year = "2013", $sem = 1, $future_leave = false)
     {
-        $result = Array();
+        $result = array();
 
         $db_con = Constant::connect_to_db("ntu");
         if(empty($db_con))

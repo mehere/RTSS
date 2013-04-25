@@ -110,7 +110,7 @@ Class Constant
         }
         else if(!is_bool($query_result))
         {
-            $result = Array();
+            $result = array();
 
             while($row = mysql_fetch_assoc($query_result))
             {
