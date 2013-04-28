@@ -113,15 +113,15 @@ EOD;
             <td class="label">Venue:</td>
             <td><input type="text" name="venue" class="field" style="width: 100%" /></td>
             <td class="label">Class:</td>
-            <td colspan="3"><input type="text" name="class" class="field" style="width: 50%" /> <span class="comment">Use <strong class="punc">;</strong> or <strong class="punc">,</strong> to separate classes</span></td>
+            <td colspan="3"><input type="text" name="class" class="field" style="width: 50%" /> <span class="comment">Use <strong class="punc">,</strong> to separate classes</span></td>
             <td><input type="submit" class="button button-small" value="Add" style="font-size: 14px" /></td>
         </tr>
     </table>    
 </form>
 <form name="save" id="dialog-save">
 	<div class="row" style="margin-top: 10px">
-        <span class="label">Specialty:</span><input type="text" class="field" name="specialty" style="width: 150px" />
-        <div class="comment" style="margin-left: 30px; padding-top: 5px;">Use <strong class="punc">;</strong> or <strong class="punc">,</strong> to separate subjects</div>
+        <span class="label">Specialty:</span><input type="text" class="field" name="specialty" style="width: 200px" />
+        <div class="comment" style="margin-left: 30px; padding-top: 5px;">Use <strong class="punc">,</strong> to separate subjects</div>
     </div>
 </form>
 <?php    

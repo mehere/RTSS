@@ -339,4 +339,119 @@ $(document).ready(function(){
     }).focusin(function(){
         $(this).autocomplete("search", '');
     });
+
+    // Class/Subject auto complete
+    function acSplit( val )
+    {
+        return val.split( /,\s*/ );
+    }
+    function acExtractLast( term )
+    {
+        return acSplit( term ).pop();
+    }
+
+    var classList=[];
+    $.getJSON("/RTSS/upload/_school_info.php", {"info": "class", "year": formG['year'].value, "sem": formG['sem'].value},
+            function(data){
+        if (data['error']) return;
+
+        $.each(data, function(key, value){
+            classList.push($.trim(value));
+        });
+    });
+
+    $(formAdd['class']).bind( "keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).data( "ui-autocomplete" ).menu.active ) {
+            event.preventDefault();
+        }
+    }).autocomplete({
+        minLength: 0,
+        delay: 0,
+        source: function( request, response ) {
+            // delegate back to autocomplete, but extract the last term
+            response( $.ui.autocomplete.filter(
+                classList, acExtractLast( request.term ) ) );
+        },
+        position: { my: "left bottom", at: "left top", collision: "none" },
+        focus: function() {
+            // prevent value inserted on focus
+            return false;
+        },
+        select: function( event, ui ) {
+            var terms = acSplit( this.value );
+            // remove the current input
+            terms.pop();
+            // add the selected item
+            terms.push( ui.item.value );
+            // add placeholder to get the comma-and-space at the end
+            terms.push( "" );
+            this.value = terms.join( ", " );
+            return false;
+        }
+    });
+
+    var subjectList=[];
+    $.getJSON("/RTSS/upload/_school_info.php", {"info": "subject", "year": formG['year'].value, "sem": formG['sem'].value},
+        function(data){
+            if (data['error']) return;
+
+            $.each(data, function(key, value){
+                subjectList.push($.trim(value));
+            });
+        });
+
+    $(formAdd['subject']).autocomplete({
+        source: subjectList,
+        delay: 0,
+        position: { my: "left bottom", at: "left top", collision: "none" },
+        autoFocus: true,
+        minLength: 0
+    }).focusout(function(){
+        var curText= $.trim(this.value), isMatch=false;
+        $.each(subjectList, function(index, value){
+            if (curText.toLowerCase() == value.toLowerCase())
+            {
+                isMatch=true;
+                return false;
+            }
+        });
+        if (!isMatch)
+        {
+            this.value="";
+        }
+    }).focusin(function(){
+        $(this).autocomplete("search", '');
+    });
+
+    $(formSave['specialty']).bind( "keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).data( "ui-autocomplete" ).menu.active ) {
+            event.preventDefault();
+        }
+    }).autocomplete({
+        minLength: 0,
+        delay: 0,
+        source: function( request, response ) {
+            // delegate back to autocomplete, but extract the last term
+            response( $.ui.autocomplete.filter(
+                subjectList, acExtractLast( request.term ) ) );
+        },
+        position: { my: "left bottom", at: "left top", collision: "none" },
+        focus: function() {
+            // prevent value inserted on focus
+            return false;
+        },
+        select: function( event, ui ) {
+            var terms = acSplit( this.value );
+            // remove the current input
+            terms.pop();
+            // add the selected item
+            terms.push( ui.item.value );
+            // add placeholder to get the comma-and-space at the end
+            terms.push( "" );
+            this.value = terms.join( ", " );
+            return false;
+        }
+    });
 });

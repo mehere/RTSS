@@ -13,7 +13,7 @@ class StaticInfoDB
         $year = mysql_real_escape_string(trim($year));
         
         $sql_class  = "select distinct class_name from ((ct_class_matching left join ct_lesson on ct_class_matching.lesson_id = ct_lesson.lesson_id) left join ct_semester_info on ct_lesson.sem_id = ct_semester_info.sem_id) where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem;";
-        $class_result = Constant::sql_execute($db_con, $sql_class);
+        $class_result = Constant::sql_execute($db_con, $sql_class, true);
         
         if(!empty($class_result))
         {
@@ -37,7 +37,7 @@ class StaticInfoDB
         $year = mysql_real_escape_string(trim($year));
         
         $sql_subj  = "select distinct subj_code from (ct_lesson left join ct_semester_info on ct_lesson.sem_id = ct_semester_info.sem_id) where ct_semester_info.year = '$year' and ct_semester_info.sem_num = $sem;";
-        $subj_result = Constant::sql_execute($db_con, $sql_subj);
+        $subj_result = Constant::sql_execute($db_con, $sql_subj, true);
         
         if(!empty($subj_result))
         {

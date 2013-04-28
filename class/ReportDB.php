@@ -1,7 +1,7 @@
 <?php
 class ReportDB
 {
-    public static function getReasonList($type = "", $order = "fullname", $direction = SORT_ASC, $year = "2013", $sem = 1)
+    public static function getReasonList($type = "", $year = "2013", $sem = 1, $order = "fullname", $direction = SORT_ASC)
     {
         $result = array();
 

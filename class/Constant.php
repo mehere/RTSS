@@ -100,7 +100,7 @@ Class Constant
         }
     }
 
-    public static function sql_execute($db_con, $sql)
+    public static function sql_execute($db_con, $sql, $isSingle=false)
     {
         $query_result = mysql_query($sql, $db_con);
 
@@ -112,9 +112,9 @@ Class Constant
         {
             $result = array();
 
-            while($row = mysql_fetch_assoc($query_result))
+            while($row = $isSingle ? mysql_fetch_array($query_result) : mysql_fetch_assoc($query_result))
             {
-                $result[] = $row;
+                $result[] = $isSingle ? $row[0] : $row;
             }
 
             return $result;
