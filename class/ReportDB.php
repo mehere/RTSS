@@ -45,7 +45,7 @@ class ReportDB
             $asia_timezone = new DateTimeZone("Asia/Singapore");
             $today->setTimezone($asia_timezone);
             $today_stamp = $today->getTimestamp();
-            
+
             foreach($query_mc_result as $row)
             {
                 $start_datetime_str = $row['start_datetime'];
@@ -123,7 +123,7 @@ class ReportDB
         $teacher_dict = Teacher::getTeacherName($type);
         foreach($teacher_dict as $a_teacher)
         {
-            $a_record = Array();
+            $a_record = array();
 
             $a_record['accname'] = $a_teacher['accname'];
             $a_record['fullname'] = $a_teacher['fullname'];
@@ -150,8 +150,6 @@ class ReportDB
             }
 
             $a_record['net'] = $a_record['numOfMC'] - $a_record['numOfRelief'];
-
-            $a_record['reason'] = 
             
             $result[] =$a_record;
         }

@@ -293,13 +293,13 @@ $result = User::queryTeacherID("S8104329I", "Li Huili");
 echo "id : ".$result;
  *
  */
-        /*
-          $result = User::login("G6471009K", '0707');
+  /*     
+          $result = User::login("dafsdf", 'psl');
           echo "accname : ".$result['accname']."<br>";
           echo "type : ".$result['type']."<br>";
           echo "fullname : ".$result['fullname']."<br>";
-         *
-         */
+   * 
+   */
         /*
           $result = Teacher::getTeacherName('');
 
@@ -532,7 +532,8 @@ foreach($result as $key => $row)
 //AdminConfig::setRecommendedLesson(10);
 //echo $scheduling->getRecommendedNoOfLessons();
 /*
-$result = ReportDB::getReasonList('', 'net', SORT_DESC, "2013", 1);
+$result = ReportDB::getReasonList();
+
 foreach($result as $value)
 {
     print_r($value);

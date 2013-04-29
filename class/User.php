@@ -5,14 +5,17 @@ spl_autoload_register(function($class){
 
 class User
 {
-    //this function verify user login for both admin and teacher
-    //input : accname, password
-    //output : array as specified in docs. empty($output['type']) if no such user or password wrong. 
+    /**
+     * this function verify user login for both admin and teacher
+     * @param type $username
+     * @param type $password
+     * @return array output['type'] = teacher (teacher login, call output['accname']); output['type'] = admin (admin login); output['code'] = super_admin (super admin login); output['code'] = "" (wrong username or password)
+     */
     public static function login($username, $password)
     {
         $result = array(
             'accname' => '',
-            'type' => '',
+            'type' => ''
         );
         
         //teacher
@@ -41,54 +44,59 @@ class User
                 $result['accname'] = $teacher_id;
                 $result['type'] = "teacher";
                 $result['fullname'] = $row['accfullname'];
-                return $result;
            // }
         }
-        
-        $ifins_sql_query_pri = "select * from fs_accounts_pri where accname ='".mysql_real_escape_string(trim($username))."' and accpw = '".mysql_real_escape_string(trim($password))."';";
-        $ifins_login_result_pri = Constant::sql_execute($ifins_db_con, $ifins_sql_query_pri);
-        
-        if(!is_null($ifins_login_result_pri) && count($ifins_login_result_pri) > 0)
+        else
         {
-            $row_pri = $ifins_login_result_pri[0];
-            
-            $teacher_id = User::queryTeacherID($row_pri['accfullname']);
-            
-            //if(empty($teacher_id))
-            //{
-            //    return $result;
-            //}
-            //else
-            //{
-                $result['accname'] = $teacher_id;
-                $result['type'] = "teacher";
-                $result['fullname'] = $row_pri['accfullname'];
-                return $result;
-            //}
-        } 
+            $ifins_sql_query_pri = "select * from fs_accounts_pri where accname ='".mysql_real_escape_string(trim($username))."' and accpw = '".mysql_real_escape_string(trim($password))."';";
+            $ifins_login_result_pri = Constant::sql_execute($ifins_db_con, $ifins_sql_query_pri);
+
+            if(!is_null($ifins_login_result_pri) && count($ifins_login_result_pri) > 0)
+            {
+                $row_pri = $ifins_login_result_pri[0];
+
+                $teacher_id = User::queryTeacherID($row_pri['accfullname']);
+
+                //if(empty($teacher_id))
+                //{
+                //    return $result;
+                //}
+                //else
+                //{
+                    $result['accname'] = $teacher_id;
+                    $result['type'] = "teacher";
+                    $result['fullname'] = $row_pri['accfullname'];
+                //}
+            } 
+            else
+            {
+                $ifins_sql_query_sec = "select * from fs_accounts_sec where accname ='".mysql_real_escape_string(trim($username))."' and accpw = '".mysql_real_escape_string(trim($password))."';";
+                $ifins_login_result_sec = Constant::sql_execute($ifins_db_con, $ifins_sql_query_sec);
+
+                if(!is_null($ifins_login_result_sec) && count($ifins_login_result_sec) > 0)
+                {
+                    $row_sec = $ifins_login_result_sec[0];
+
+                    $teacher_id = User::queryTeacherID($row_sec['accfullname']);
+
+                    //if(empty($teacher_id))
+                    //{
+                    //    return $result;
+                    //}
+                    //else
+                    //{
+                        $result['accname'] = $teacher_id;
+                        $result['type'] = "teacher";
+                        $result['fullname'] = $row_sec['accfullname'];
+                    //}
+                } 
+            }
+        }
         
-        $ifins_sql_query_sec = "select * from fs_accounts_sec where accname ='".mysql_real_escape_string(trim($username))."' and accpw = '".mysql_real_escape_string(trim($password))."';";
-        $ifins_login_result_sec = Constant::sql_execute($ifins_db_con, $ifins_sql_query_sec);
-        
-        if(!is_null($ifins_login_result_sec) && count($ifins_login_result_sec) > 0)
+        if(empty($result['accname']))
         {
-            $row_sec = $ifins_login_result_sec[0];
-            
-            $teacher_id = User::queryTeacherID($row_sec['accfullname']);
-            
-            //if(empty($teacher_id))
-            //{
-            //    return $result;
-            //}
-            //else
-            //{
-            
-                $result['accname'] = $teacher_id;
-                $result['type'] = "teacher";
-                $result['fullname'] = $row_sec['accfullname'];
-                return $result;
-            //}
-        } 
+            return $result;
+        }
         
         //admin
         $db_con = Constant::connect_to_db('ntu');
@@ -98,16 +106,21 @@ class User
             return $result;
         }
         
-        $sql_query = "select * from admin where username ='".mysql_real_escape_string(trim($username))."' and password = '".mysql_real_escape_string(trim($password))."';";
+        $sql_query = "select * from admin where teacher_id ='".$result['accname']."';";
         $admin_login = Constant::sql_execute($db_con, $sql_query);
         
         if(!is_null($admin_login) && count($admin_login) > 0)
         {
-            $result['accname'] = $username;
-            $result['type'] = "admin";
-            $result['fullname'] = 'admin';
+            $is_super = $admin_login[0]['is_super'];
             
-            return $result;
+            if($is_super)
+            {
+                $result['type'] = "super_admin";
+            }
+            else
+            {
+                $result['type'] = "admin";
+            }
         } 
         
         return $result;
