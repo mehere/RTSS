@@ -293,13 +293,18 @@ $result = User::queryTeacherID("S8104329I", "Li Huili");
 echo "id : ".$result;
  *
  */
-  /*     
+      /*
           $result = User::login("dafsdf", 'psl');
           echo "accname : ".$result['accname']."<br>";
           echo "type : ".$result['type']."<br>";
           echo "fullname : ".$result['fullname']."<br>";
-   * 
-   */
+ 
+       * 
+       */
+
+//User::lock("7576699", "SCHEDULER");
+//echo User::checkLogin("SCHEDULER");
+//User::unlock("7576699", "SCHEDULER");
         /*
           $result = Teacher::getTeacherName('');
 

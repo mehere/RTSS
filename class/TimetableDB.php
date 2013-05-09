@@ -1579,20 +1579,17 @@ class TimetableDB
 
         return $query_result[0]['sem_id'] - 0;
     }
-    /*
-    public static function getDatesOfSem($year = '2013', $sem = 1)
-    {
-        $result = array();
-
-        $db_con = Constant::connect_to_db("ntu");
-        if(empty($db_con))
-        {
-            throw new DBException("Fail to query semester", __FILE__, __LINE__);
-        }
-
-
-    }
-     *
+    
+    /**
+     * delete an AED teacher's timetable. 
+     * @param string $accname
+     * @param int $sem
+     * @param string $year
+     * @return bool 
      */
+    public static function deleteAEDTimetable($accname, $sem, $year)
+    {
+        
+    }
 }
 ?>
