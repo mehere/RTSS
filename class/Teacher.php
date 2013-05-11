@@ -434,56 +434,55 @@ class Teacher {
      * @param array $list : all excluded teachers, including default one
      * @return bool
      */
-    public static function setExcludingList($date, $list)
+    public static function setExcludingList($list)
     {
-        if(!isset($_SESSION['excluded']))
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
         {
-            $_SESSION['excluded'] = Array();
+            return false;
         }
-
-        $_SESSION['excluded'][$date] = implode(",", $list);
-
-        if(count($list) === 0)
+        
+        $sql_set_exclude = "insert into rs_exclude_list values ";
+        
+        foreach($list as $one)
         {
-            $_SESSION['excluded'][$date] = "emp";
+            $sql_set_exclude .= "('$one'),";
+        }
+        
+        $sql_set_exclude = substr($sql_set_exclude, 0, -1).';';
+        
+        $set_result = Constant::sql_execute($db_con, $sql_set_exclude);
+        
+        if(is_null($set_result))
+        {
+            return false;
         }
         
         return true;
     }
 
-    public static function getExcludingList($date)
+    public static function getExcludingList()
     {
-        if(!isset($_SESSION['excluded']) || empty($_SESSION['excluded'][$date]))
-        {
-            $db_con = Constant::connect_to_db("ntu");
-            if(empty($db_con))
-            {
-                throw new DBException("Fail to get exclude list", __FILE__, __LINE__);
-            }
-            $sql_query_exclude = "select * from rs_exclude_list;";
-            $query_exclude_result = Constant::sql_execute($db_con, $sql_query_exclude);
-            if(is_null($query_exclude_result))
-            {
-                throw new DBException("Fail to get exclude list", __FILE__, __LINE__, 2);
-            }
-
-            $result = Array();
-
-            foreach($query_exclude_result as $row)
-            {
-                $result[] = $row['teacher_id'];
-            }
-
-            return $result;
-        }
-        else if(strcmp($_SESSION['excluded'][$date], "emp") === 0)
+        $db_con = Constant::connect_to_db("ntu");
+        if(empty($db_con))
         {
             return array();
         }
-        else
+        $sql_query_exclude = "select * from rs_exclude_list;";
+        $query_exclude_result = Constant::sql_execute($db_con, $sql_query_exclude);
+        if(is_null($query_exclude_result))
         {
-            return explode(",", $_SESSION['excluded'][$date]);
+            return array();
         }
+
+        $result = array();
+
+        foreach($query_exclude_result as $row)
+        {
+            $result[] = $row['teacher_id'];
+        }
+
+        return $result;
     }
 
     public static function leaveHasRelief($accname, $entry)

@@ -8,50 +8,56 @@ class TimetableDB
 
     /**
      * this function insert lesson_list into database
-     * @param type $lesson_list
-     * @param type $teacher_list
-     * @param type $year  e.g. '12' representing 2012,  string
-     * @param type $sem   '1' or '2'
+     * @param array $lesson_list
+     * @param array $teacher_list
+     * @param string $year  e.g. 4 digit string
+     * @param int $sem   1 or 2
+     * @param string $semStartDate "yyyy/mm/dd"
+     * @param string $semEndDate "yyyy/mm/dd"
+     * @param array $time_list 
      * @return Array : array of error message strings. Each of output[0] - output[6] represents a type of error. if, e.g. empty(output[1]), then there is no error type 1. echo output[0]~output[6] to see the error details. pay special attention of output[6], which represents abbre name not found error.
      */
-    public static function insertTimetable($lesson_list, $teacher_list, $year='2013', $sem=1)
+    public static function insertTimetable($lesson_list, $teacher_list, $year, $sem, $semStartDate, $semEndDate, $time_list)
     {
         //insert semester info
+        $temp_date_start = new DateTime($semStartDate);
+        $sem_start_date = $temp_date_start->format("Y-m-d");
+
+        $temp_date_end = new DateTime($semEndDate);
+        $sem_end_date = $temp_date_end->format("Y-m-d");
+        
         $sem_id = TimetableDB::checkTimetableExistence(1, array('year'=>$year, 'sem'=>$sem));
 
+        $db_con = Constant::connect_to_db('ntu');
+
+        if (empty($db_con))
+        {
+            throw new DBException("Fail to connect to database", __FILE__, __LINE__);
+        }
+        
         if($sem_id === -1)
         {
-            if($sem == 1)
-            {
-                $sem_start_date = "$year-".Constant::$sem_dates[0];
-                $sem_end_date = "$year-".Constant::$sem_dates[1];
-            }
-            else if($sem == 2)
-            {
-                $sem_start_date = "$year-".Constant::$sem_dates[2];
-                $sem_end_date = "$year-".Constant::$sem_dates[3];
-            }
-            else
-            {
-                throw new DBException('Wrong semester number', __FILE__, __LINE__, 3);
-            }
+            $sql_update_sem = "insert into ct_semester_info (start_date, end_date, year, sem_num) values ('$sem_start_date', '$sem_end_date', '$year', $sem);";
+        }
+        else
+        {
+            $sql_update_sem = "update ct_semester_info set start_date = '$sem_start_date', end_date = '$sem_end_date' where sem_id = $sem_id;";
+        }
+        
+        $insert_sem = Constant::sql_execute($db_con, $sql_update_sem);
+        if(is_null($insert_sem))
+        {
+            throw new DBException("Fail to store semester information", __FILE__, __LINE__, 2);
+        }
 
-            $db_con = Constant::connect_to_db('ntu');
-
-            if (empty($db_con))
-            {
-                throw new DBException("Fail to connect to database", __FILE__, __LINE__);
-            }
-            
-            $sql_insert_sem = "insert into ct_semester_info (start_date, end_date, year, sem_num) values ('$sem_start_date', '$sem_end_date', '$year', $sem);";
-            $insert_sem = Constant::sql_execute($db_con, $sql_insert_sem);
-            if(is_null($insert_sem))
-            {
-                throw new DBException("Fail to store semester information", __FILE__, __LINE__, 2);
-            }
-
+        $clear_old = true;
+        if($sem_id === -1)
+        {
+            $clear_old = false;
             $sem_id = mysql_insert_id();
         }
+        
+        TimetableDB::insertTimelist($time_list, $sem_id, $clear_old);
         
         //teacher list
         //temp - will delete later
@@ -189,6 +195,49 @@ class TimetableDB
         return true;
     }
 
+    /**
+     * 
+     * @param matrix $time_list
+     * @return 
+     */
+    public static function insertTimelist($time_list, $sem_id, $clear_old)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to insert time list', __FILE__, __LINE__);
+        }
+        
+        if($clear_old)
+        {
+            $sql_clear = "delete from ct_time_list where sem_id = $sem_id";
+            $clear = Constant::sql_execute($db_con, $sql_clear);
+            if(is_null($clear))
+            {
+                throw new DBException('Fail to insert time list', __FILE__, __LINE__);
+            }
+        }
+        
+        $sql_insert = "insert into ct_time_list values ";
+        
+        foreach($time_list as $key => $value)
+        {
+            foreach($value as $time_index => $time_value)
+            {
+                $sql_insert .= "($sem_id, $key, $time_index, '$time_value'),";
+            }
+        }
+        
+        $sql_insert = substr($sql_insert, 0, -1).';';
+        
+        $insert = Constant::sql_execute($db_con, $sql_insert);
+        if(is_null($insert))
+        {
+            throw new DBException('Fail to insert time list', __FILE__, __LINE__);
+        }
+    }
+    
     /**
      * time index is 0-based
      * @param type $accname - accname of leave teacher or ""
@@ -357,29 +406,8 @@ class TimetableDB
 
         if($sem_id === -1)
         {
-            if($sem == 1)
-            {
-                $sem_start_date = "$year-".Constant::$sem_dates[0];
-                $sem_end_date = "$year-".Constant::$sem_dates[1];
-            }
-            else if($sem == 2)
-            {
-                $sem_start_date = "$year-".Constant::$sem_dates[2];
-                $sem_end_date = "$year-".Constant::$sem_dates[3];
-            }
-            else
-            {
-                throw new DBException('Wrong semester number', __FILE__, __LINE__, 3);
-            }
-
-            $sql_insert_sem = "insert into ct_semester_info (start_date, end_date, year, sem_num) values ('$sem_start_date', '$sem_end_date', '$year', $sem);";
-            $insert_sem = Constant::sql_execute($db_con, $sql_insert_sem);
-            if(is_null($insert_sem))
-            {
-                throw new DBException("Fail to store semester information", __FILE__, __LINE__, 2);
-            }
-
-            $sem_id = mysql_insert_id();
+            //semester does not exist
+            return false;
         }
 
         $accname = mysql_real_escape_string(trim($info["accname"]));
@@ -1589,7 +1617,16 @@ class TimetableDB
      */
     public static function deleteAEDTimetable($accname, $sem, $year)
     {
+        $db_con = Constant::connect_to_db('ntu');
+        if(empty($db_con))
+        {
+            return false;
+        }
         
+        $sql_delete = "delete from ct_lesson where lesson_id in (select distinct lesson_id from ct_teacher_matching where teacher_id = '$accname') and sem_id in (select distinct sem_id from ct_semester_info where year = '$year' and sem_num = $sem);";
+        $delete_result = Constant::sql_execute($db_con, $sql_delete);
+        
+        return is_null($delete_result)?false:true;
     }
 }
 ?>

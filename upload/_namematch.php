@@ -45,7 +45,7 @@ try
             break;
     }
     
-    TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);    
+    TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester, "0000-00-00", "0000-00-00", $analyzer->arrTimeList);    
 } 
 catch (DBException $e)
 {

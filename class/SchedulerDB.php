@@ -210,12 +210,12 @@ class SchedulerDB
 
     public function getExcludedTeachers()
     {
-        $result = Array(
-            "Temp" => Array(),
-            "Aed" => Array(),
-            "Untrained" => Array(),
-            "Normal" => Array(),
-            "Hod" => Array()
+        $result = array(
+            "Temp" => array(),
+            "Aed" => array(),
+            "Untrained" => array(),
+            "Normal" => array(),
+            "Hod" => array()
         );
 
         $db_type = array_keys(Constant::$teacher_type);
@@ -535,7 +535,7 @@ class SchedulerDB
      * get temp schedule that are not approved. time index 1-based
      * @param int $schedule_index [-1, max index - 1]; -1 -> return all results; >=0 -> return the specific table
      */
-    public static function getScheduleResult($schedule_index = -1)
+    public static function getScheduleResult($schedule_index = -1, $order, $direction = SORT_ASC)
     {
         $result = Array();
 
@@ -573,7 +573,7 @@ class SchedulerDB
 
             if (!array_key_exists($schedule_id, $result))
             {
-                $result[$schedule_id] = Array();
+                $result[$schedule_id] = array();
             }
 
             $relief_alr_created = false;
@@ -619,10 +619,10 @@ class SchedulerDB
                     $relief_full = "";
                 }
 
-                $temp = Array(
-                    "class" => Array(),
+                $temp = array(
+                    "class" => array(),
                     "id" => $row['lesson_id'],
-                    "time" => Array($row['start_time_index'] - 0, $row['end_time_index'] - 0),
+                    "time" => array($row['start_time_index'] - 0, $row['end_time_index'] - 0),
                     "teacherAccName" => $leave_acc,
                     "reliefAccName" => $relief_acc,
                     "teacherOnLeave" => $leave_full,

@@ -152,7 +152,7 @@ foreach($result as $key=>$a_result)
         //Teacher::abbreToFullnameBatchSetup($arrTeachers);
 
         //$timetableanalyzer = new TimetableAnalyzer("13", '1');
-        //$timetableanalyzer->readCsv('normal_algo_testing_timetable_skip.csv');
+        //$timetableanalyzer->readCsv('Master Teacher timetable.csv');
        /*
         TimetableDB::insertTimetable($arrLessons, $arrTeachers);
         Test::insertAEDTimetable($arrLessons, $arrTeachers);
@@ -305,6 +305,8 @@ echo "id : ".$result;
 //User::lock("7576699", "SCHEDULER");
 //echo User::checkLogin("SCHEDULER");
 //User::unlock("7576699", "SCHEDULER");
+
+//echo TimetableDB::deleteAEDTimetable("6937933", 2, "2012")?"YES":"NO";
         /*
           $result = Teacher::getTeacherName('');
 
@@ -470,6 +472,7 @@ foreach($result as $acc => $subresult)
  * 
  */
 //echo TimetableDB::checkTimetableConflict(0, array(4, 5), "7576699", "2013/2/06", "N1313126HD65");
+//print_r(SchoolTime::getSchoolTimeList(1, "2013"));
 /*
 $result = SchedulerDB::getScheduleResult(0);
 
@@ -527,6 +530,11 @@ foreach($result as $key => $row)
 }
  *
  */
+
+//TimetableDB::insertTimetable(array(), array(),'2013' , 1, "2014-03-05", "2014-08-05")
+
+//Teacher::setExcludingList(array("12234324", "ccccdde"));
+//print_r(Teacher::getExcludingList());
 
 //SchedulerDB::approve(0, '2013-02-06');
 

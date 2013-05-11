@@ -233,5 +233,38 @@ class SchoolTime
                 return date_format($dateObject, PageConstant::DATE_FORMAT_ISO);
         }
     }
+    
+    /**
+     * 
+     * @param int $sem 1 or 2
+     * @param string $year 4 digit string
+     * @return array 
+     */
+    public static function getSchoolTimeList($sem, $year, $weekday = 0)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+
+        if (empty($db_con))
+        {
+            throw new DBException("Fail to query time", __FILE__, __LINE__);
+        }
+        
+        $sql_query = "select * from ct_time_list where sem_id in (select distinct sem_id from ct_semester_info where year = '$year' and sem_num = $sem) and weekday = $weekday;";
+        $query = Constant::sql_execute($db_con, $sql_query);
+        
+        if(is_null($query))
+        {
+            return array();
+        }
+        
+        $result = array();
+        
+        foreach($query as $row)
+        {
+            $result[$row['time_index']] = $row['time_value'];
+        }
+        
+        return $result;
+    }
 }
 ?>

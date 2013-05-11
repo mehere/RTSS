@@ -34,7 +34,7 @@ try
     if (count($unknownTeachers) === 0)
     {
         $arrLesson = $analyzer->arrLessons;
-        TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester);
+        TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester, "0000-00-00", "0000-00-00", $analyzer->arrTimeList);
         $destination = "/RTSS/upload/";
         
         $_SESSION['uploadSuccess']="Upload timetable successfully.";

@@ -5,6 +5,7 @@ class TimetableAnalyzer
     public $arrTeachers = array();
     public $arrClasses = array();
     public $arrLessons = array();
+    public $arrTimeList = array();
     public $noCol = 0;
     public $year;
     public $semester;
@@ -58,12 +59,8 @@ class TimetableAnalyzer
             $timeIndex++;
         }
 
-        //To-Do:
-        //Upload $times[][]
-        //
-        //
-        //
-        //
+        //Done: insert time list into database
+        $this->arrTimeList = $this->parseTimeList($times);
 //        echo "<br> start:<br>";
 //        print_r($timeSlots);
 //        echo "<br>end<br>";
@@ -329,6 +326,54 @@ class TimetableAnalyzer
         return $unknown;
     }
 
+    /**
+     * 
+     * @param matrix $raw_times
+     * @return matrix weekday, timelist array
+     */
+    public function parseTimeList($raw_times)
+    {
+        $result = array();
+        
+        foreach($raw_times as $day)
+        {
+            if(empty($day))
+            {
+                continue;
+            }
+            
+            $temp = array();
+            
+            foreach($day as $time_period)
+            {
+                if(empty($time_period))
+                {
+                    continue;
+                }
+                
+                $splitted_time = explode("-", $time_period);
+                $start_time = trim($splitted_time[0]);
+                $start_time_new = substr($start_time, 0, 2).":".substr($start_time, 2, 2);
+                $end_time = trim($splitted_time[1]);
+                $end_time_new = substr($end_time, 0, 2).":".substr($end_time, 2, 2);
+                
+                if(!in_array($start_time_new, $temp))
+                {
+                    $temp[] = $start_time_new;
+                }
+                if(!in_array($end_time_new, $temp))
+                {
+                    $temp[] = $end_time_new;
+                }
+            }
+            
+            sort($temp);
+            
+            $result[] = $temp;
+        }
+        
+        return $result;
+    }
 }
 
 ?>
