@@ -63,13 +63,13 @@ class Template
             header('Expires: 0');
         }
 
-        if (!$_SESSION['accname'] || (!$allowsAll && $_SESSION['type'] != 'admin'))
+        if (!$_SESSION['accname'] || (!$allowsAll && ($_SESSION['type'] != 'admin' && $_SESSION['type'] != 'super_admin')))
         {
             if ($needsJSON)
             {
                 header('Content-type: application/json');
                 echo json_encode(array('error'=>1));
-                return;
+                exit;
             }
             else
             {
@@ -86,7 +86,7 @@ class Template
         $title=PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME . " - " . $title;
         
         // Menu part
-        if ($_SESSION['type'] != 'admin')
+        if ($_SESSION['type'] != 'admin' && $_SESSION['type'] != 'super_admin')
         {
             self::$MAIN_MENU=array_slice(self::$MAIN_MENU, 1, 1);
         }

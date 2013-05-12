@@ -535,7 +535,7 @@ class SchedulerDB
      * get temp schedule that are not approved. time index 1-based
      * @param int $schedule_index [-1, max index - 1]; -1 -> return all results; >=0 -> return the specific table
      */
-    public static function getScheduleResult($schedule_index = -1, $order, $direction = SORT_ASC)
+    public static function getScheduleResult($schedule_index = -1)
     {
         $result = Array();
 

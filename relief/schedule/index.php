@@ -123,7 +123,7 @@ EOD;
             if (!$scheduleList) 
             {
                 echo <<< EOD
-<a class="button" href="../">Go Back</a>   
+<a class="button" id="goback" href="../">Go Back</a>   
 EOD;
             }
             else 

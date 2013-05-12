@@ -538,7 +538,16 @@ $(document).ready(function(){
                 if (curText.toLowerCase() == value.toLowerCase())
                 {
                     isMatch=true;
-                    selfObj.parents('tr').first().find('input[name^="accname"]').val(nameAccMap[value]);
+                    var curRow=selfObj.parents('tr').first();
+                    curRow.find('input[name^="accname"]').val(nameAccMap[value]);
+
+                    if (noClear)
+                    {
+                        $.getJSON("/RTSS/relief/_teacher_name.php", {"accname": nameAccMap[value]}, function(data){
+                            curRow.find('input[name^="handphone"]').focus().val(data['phone']);
+                            curRow.find('input[name^="email"]').focus().val(data['email']);
+                        });
+                    }
 
                     return false;
                 }

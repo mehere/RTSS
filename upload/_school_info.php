@@ -3,7 +3,7 @@ spl_autoload_register(function($class){
     require_once "../class/$class.php";
 });
 
-//Template::validate(true, true);
+Template::validate(true, true);
 
 $info=$_GET['info'];
 $sem=$_GET['sem'];
@@ -15,14 +15,16 @@ if (!$info || !$sem || !$year)
 {
     $output['error']=1;
 }
-
-switch ($info)
+else
 {
-    case 'class':
-        $output=StaticInfoDB::getAllClasses($sem, $year);
-        break;
-    case 'subject':
-        $output=StaticInfoDB::getAllSubjects($sem, $year);
+    switch ($info)
+    {
+        case 'class':
+            $output=StaticInfoDB::getAllClasses($sem, $year);
+            break;
+        case 'subject':
+            $output=StaticInfoDB::getAllSubjects($sem, $year);
+    }
 }
 
 header('Content-type: application/json');

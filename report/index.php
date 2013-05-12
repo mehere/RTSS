@@ -42,7 +42,7 @@ $sem=$_POST['sem'] ? $_POST['sem'] : SchoolTime::getSemYearFromDate();
         <thead>
             <tr>
                 <?php
-                    $width=array('100%', '90px', '80px', '80px', '80px');
+                    $width=array('100%', '90px', '80px', '150px', '80px', '70px');
                     $tableHeaderArr=NameMap::$REPORT['overall']['display'];
 
                     $i=0;
@@ -63,14 +63,22 @@ EOD;
         </thead>
         <tbody>
             <?php
-                $reportArr=Teacher::overallReport($_POST['type'], $_POST['order'], $_POST['direction']==2 ? SORT_DESC : SORT_ASC, $year, $sem);
+                $reportArr=ReportDB::getReasonList($_POST['type'], $year, $sem, $_POST['order']?$_POST['order']:"fullname", $_POST['direction']==2 ? SORT_DESC : SORT_ASC);
                 PageConstant::escapeHTMLEntity($reportArr);
 
                 foreach ($reportArr as $value)
                 {
                     $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
+                    
+                    $reason='';
+                    arsort($value['reason']);
+                    foreach ($value['reason'] as $reasonKey => $reasonValue)
+                    {                        
+                        $reason .= NameMap::$RELIEF['leaveReason']['display'][$reasonKey] . ": $reasonValue<br />";
+                    }
+                    
                     echo <<< EOD
-<tr><td><a href="/RTSS/relief/_teacher_detail.php?accname={$value['accname']}" class="teacher-detail-link">{$value['fullname']}</a></td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
+<tr><td><a href="/RTSS/relief/_teacher_detail.php?accname={$value['accname']}" class="teacher-detail-link">{$value['fullname']}</a></td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>$reason</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
 EOD;
                 }
 

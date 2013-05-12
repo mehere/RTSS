@@ -32,11 +32,35 @@ $(document).ready(function(){
     });
 
     $('#btnScheduleAll').click(function(){
-        $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
-            position: "fixed"
-        }).end().dialog('option', 'buttons', null).dialog('open');
+        var submitForm=function(){
+            $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
+                position: "fixed"
+            }).end().dialog('option', 'buttons', null).dialog('open');
+            $(formSch).submit();
+        }
 
-        $(formSch).submit();
+        $.getJSON("/RTSS/_check_current_login.php", {"area": 'SCHEDULER'}, function(data){
+            var msg=data['fullname'] + ' (' + data['accname'] + ') is currently logged in.'
+                + (data['phone'] ? ' You can call ' + data['phone'] + ' to reach him/her.' : '');
+
+            if (!data['canProceed'])
+            {
+
+                $("#dialog-alert").html(msg).dialog('open');
+            }
+            else
+            {
+                if (data['canProceed'] == 2)
+                {
+                    msg += '<br /><b>Please contact him/her for discontinuing before you click the "OK" below.</b>';
+                    $("#dialog-alert").html(msg).dialog('open').data('func', submitForm);
+                }
+                else
+                {
+                    submitForm();
+                }
+            }
+        });
 
         return false;
     });

@@ -27,10 +27,13 @@ $dayArr=PageConstant::$DAY;
             </select>
             <input type="submit" class="button button-small" value="Load" style="margin-left: 30px" />
             <input type="button" class="button green button-small" name="add" value="Add Class" style="margin-left: 30px; display: none" />
-            <input type="button" class="button red button-small" name="upload" value="Save" style="margin-left: 30px; display: none" />
+            <input type="button" class="button red button-small" name="upload" value="Save" style="margin-left: 30px; display: none" />            
         </div>
-        <div style="color: blue; font-size: .9em; margin-top: -5px; margin-bottom: 10px">Hover mouse cursor onto lesson to view more options (e.g. Fix/Unfix)</div>        
-    </form>                    
+        <div style="color: blue; font-size: .9em; margin-top: -5px; margin-bottom: 10px">
+            Hover mouse cursor onto lesson to view more options (e.g. Fix/Unfix)
+            <a id="delete-timetable" href="" style="color: red; font-size: 1.1em; margin-left: 100px">Delete Timetable</a>
+        </div>
+    </form>
     <form name="AED" style="position: relative" method="post" action="_upload_AED.php">
         <table class="hovered table-info">
             <thead>
@@ -61,6 +64,7 @@ EOD;
     </form>
 </div>
 <div id="dialog-alert"></div>
+<div id="dialog-confirm"></div>
 <form name="add-class" id="dialog-help">
     <table class="form-table">
         <thead>

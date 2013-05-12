@@ -40,6 +40,7 @@ EOD;
 */
 
 $output['display']="The system is sending emails and SMSes to teachers affected. You can press 'OK' to leave this page.";
+User::unlock($_SESSION['accname'], "SCHEDULER");
 
 unset($_SESSION['scheduleType']);
 unset($_SESSION['scheduleIndex']);

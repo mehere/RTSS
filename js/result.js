@@ -107,6 +107,21 @@ $(document).ready(function(){
         return false;
     });
 
+    $('#goback').click(function(){
+        $.getJSON("/RTSS/_unlock_current_login.php", {"area": 'SCHEDULER'}, function(data){
+            if (!data['error'])
+            {
+                window.location.href=$('#goback').attr('href');
+            }
+            else
+            {
+                console.log("Unlocking failed");
+            }
+        });
+
+        return false;
+    });
+
     // Auto complete setup
     var CONFLICT_ALERT_TEXT={
         "1": "There is possible timetable clash for this relief teacher: ",

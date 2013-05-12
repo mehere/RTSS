@@ -15,8 +15,18 @@ if (!$accname)
 }
 else
 {
-    $output['timetable']=TimetableDB::timetableForSem($accname, $_GET['year'], $_GET['sem']);    
-    PageConstant::escapeHTMLEntity($output['timetable']);
+    if ($_GET['op'] == 'delete')
+    {
+        if (!TimetableDB::deleteAEDTimetable($accname, $_GET['year'], $_GET['sem']))
+        {
+            $output['error']=2;
+        }
+    }
+    else
+    {
+        $output['timetable']=TimetableDB::timetableForSem($accname, $_GET['year'], $_GET['sem']);
+        PageConstant::escapeHTMLEntity($output['timetable']);
+    }        
 }
 
 header('Content-type: application/json');

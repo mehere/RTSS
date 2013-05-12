@@ -240,6 +240,25 @@ $(document).ready(function(){
         return false;
     });
 
+    $('#delete-timetable').click(function(){
+        $('#dialog-confirm').html("Confirm to delete the timetable?").data('func', function(){
+            var dataSent=$(formG).serializeArray();
+            dataSent.push({"name": 'op', "value": 'delete'});
+
+            $.getJSON($(formG).attr('action'), dataSent, function(data){
+                if (data['error'])
+                {
+                    console.log("Failed to delete the timetable");
+                }
+                else
+                {
+                    window.location.reload();
+                }
+            });
+        }).dialog('open');
+        return false;
+    });
+
     // Retrieve AED timetable
     $(formG).submit(function(){
         if (!this['accname'].value)

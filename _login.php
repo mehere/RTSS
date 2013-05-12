@@ -24,7 +24,7 @@ if ($_SESSION['type'])
     //store user name
     $_SESSION['username'] = $userInfo['fullname'];
     $_SESSION['accname'] = $userInfo['accname'];    
-    if ($_SESSION['type'] == "admin")
+    if ($_SESSION['type'] == "admin" || $_SESSION['type'] == "super_admin")
         $destination = "/RTSS/relief/index.php";
     else
         $destination = "/RTSS/timetable/index.php";
