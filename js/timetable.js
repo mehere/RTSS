@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    var formS=document.forms['switch'], formT=document.forms['teacher-select'];
+    var formS=document.forms['switch'], formT=document.forms['teacher-select'],
+        formR=document.forms['relief-timetable'];
     $(formS['date-display']).datepicker({
         beforeShowDay: $.datepicker.noWeekends,
         dateFormat: "dd/mm/yy",
@@ -35,6 +36,23 @@ $(document).ready(function(){
     $(formT['accname']).change(function(){
         this.form['date'].value=formS['date'].value;
         this.form.submit();
+    });
+
+    $("#relief-timetable thead .sort").click(function(){
+        formR['order'].value=this.getAttribute('search');
+
+        var dir=this.getAttribute('direction');
+        if (dir != 1)
+        {
+            dir=1;
+        }
+        else
+        {
+            dir=2;
+        }
+        formR['direction'].value=this['direction']=dir;
+
+        $(formR).submit();
     });
 
     $("#print-individual").click(function(){

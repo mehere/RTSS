@@ -102,7 +102,7 @@ EOD;
 </div>
 
 <?php if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin') { ?>
-<div class='accordion colorbox green'>
+<form name="relief-timetable" method="post" class='accordion colorbox green'>
     <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
     <span class="box-title">
         Relief Timetable
@@ -110,22 +110,30 @@ EOD;
     <?php if ($NO_PREIVEW) { ?>
         <div class="control-top"><a href="" id="print-relief" target="_blank">Print</a></div>
     <?php } ?>
-</div>
+    <input type="hidden" name="relief-timetable-order" value="<?php echo $_POST['relief-timetable-order'] ?>" />
+    <input type="hidden" name="relief-timetable-direction" value="<?php echo $_POST['relief-timetable-direction'] ?>" />
+</form>
 <div>
-    <table class="hovered table-info">
+    <table id="relief-timetable" class="hovered table-info">
         <thead>
             <tr>
                 <?php
                 $width=array('120px', '15%', '20%', '15%', '25%', '25%');
 
                 $headerKeyList=NameMap::$TIMETABLE['layout']['display'];
-                $tableHeaderList=array_values($headerKeyList);
 
-                for ($i=0; $i < count($tableHeaderList); $i++)
-                {
+                $i=0;
+                foreach ($headerKeyList as $key => $value)
+                {                    
+                    $dir='';
+                    if ($_POST['relief-timetable-order'] == $key)
+                    {
+                        $dir=$_POST['relief-timetable-direction'];
+                    }
                     echo <<< EOD
-                        <th class="hovered" style="width: $width[$i]">$tableHeaderList[$i]</th>
+                        <th class="sort hovered" style="width: $width[$i]" search="$key" direction="$dir">$value<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
 EOD;
+                    $i++;
                 }
                 ?>
             </tr>

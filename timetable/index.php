@@ -28,12 +28,13 @@ if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin')
         $teacherList=PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($date), $_POST['accname']);
     ?>
     <div class="line">Date: <input type="text" class="textfield datefield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
-    </div>    
+    </div>
 </form>
 <?php
     if ($isAdmin) 
     {
-        $timetable=TimetableDB::getReliefTimetable('', '', $date);
+        $timetable=TimetableDB::getReliefTimetable('', '', $date); 
+//                $_POST['relief-timetable-order']?$_POST['order']:"", $_POST['relief-timetable-direction']==2 ? SORT_DESC : SORT_ASC);
         PageConstant::escapeHTMLEntity($timetable);
     }
 
