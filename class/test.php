@@ -288,6 +288,9 @@ foreach($result as $row)
 }
  *
  */
+
+//print_r(SchoolTime::checkSemInfo("2013/09/22"));
+
 /*
 $result = User::queryTeacherID("S8104329I", "Li Huili");
 echo "id : ".$result;

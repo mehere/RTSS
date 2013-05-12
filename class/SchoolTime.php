@@ -266,5 +266,41 @@ class SchoolTime
         
         return $result;
     }
+    
+    /**
+     * 
+     * @param string $currentDate date string
+     * @return array or null if date outside range
+     */
+    public static function checkSemInfo($currentDate)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+
+        if (empty($db_con))
+        {
+            throw new DBException("Fail to query sem info", __FILE__, __LINE__);
+        }
+        
+        $clear_date = mysql_real_escape_string(trim($currentDate));
+        $sql_sem = "select * from ct_semester_info where DATE('$clear_date') between DATE(start_date) and DATE(end_date);";
+        $sem = Constant::sql_execute($db_con, $sql_sem);
+        
+        if(is_null($sem))
+        {
+            throw new DBException("Fail to query sem info", __FILE__, __LINE__);
+        }
+        if(count($sem) === 0)
+        {
+            return null;
+        }
+        $result = array(
+            "startDate" => $sem[0]['start_date'],
+            "endDate" => $sem[0]['end_date'],
+            "year" => $sem[0]['year'],
+            "sem" => $sem[0]['sem_num']
+        );
+        
+        return $result;
+    }
 }
 ?>
