@@ -101,7 +101,7 @@ EOD;
     </table>
 </div>
 
-<?php if ($_SESSION['type'] == 'admin') { ?>
+<?php if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin') { ?>
 <div class='accordion colorbox green'>
     <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
     <span class="box-title">

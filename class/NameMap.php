@@ -168,7 +168,8 @@ class NameMap
     public static $REPORT=array(
         'overall' => array(
             'display' => array(
-                'fullname' => 'Name', 'type' => 'Type', 'numOfMC' => 'MC(#)', 'numOfRelief' => 'Relief(#)', 'net' => 'Net'
+                'fullname' => 'Name', 'type' => 'Type', 'numOfMC' => 'MC(#)', 'reason' => 'Reason',
+                'numOfRelief' => 'Relief(#)', 'net' => 'Net'
             ),
             'hidden' => array(
                 'accname'

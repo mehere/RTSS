@@ -9,7 +9,7 @@ Template::printHeaderAndDoValidation('View Timetable',
         Template::TT_VIEW, 'Timetable', '', true);
 
 $isAdmin=false;
-if ($_SESSION['type'] == 'admin')
+if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin')
 {
     $isAdmin=true;
 }

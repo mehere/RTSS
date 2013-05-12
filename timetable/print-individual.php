@@ -5,7 +5,7 @@ spl_autoload_register(function($class){
 
 Template::validate(false, false, true);
 
-if ($_SESSION['type'] != 'admin')
+if ($_SESSION['type'] != 'admin' && $_SESSION['type'] != 'super_admin')
 {
     $_GET['accname']=$_SESSION['accname'];
 }
