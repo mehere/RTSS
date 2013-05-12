@@ -35,6 +35,21 @@ Class Constant
 
     public static $SEM_PERIOD;
 
+    public static function compareForScheduleResult($toCompare, $direction)
+    {
+        return function ($arr1, $arr2) use ($toCompare, $direction)
+        {
+            if($direction === SORT_ASC)
+            {
+                return strcmp($arr1["$toCompare"], $arr2["$toCompare"]);
+            }
+            else
+            {
+                return -strcmp($arr1["$toCompare"], $arr2["$toCompare"]);
+            }
+        };
+    }
+    
     public static function connect_to_db($db_name)
     {
         if(strcmp($db_name, "ntu")===0)

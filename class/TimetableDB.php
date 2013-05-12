@@ -196,7 +196,7 @@ class TimetableDB
     }
 
     /**
-     * 
+     * 1-based time list
      * @param matrix $time_list
      * @return 
      */
@@ -225,7 +225,7 @@ class TimetableDB
         {
             foreach($value as $time_index => $time_value)
             {
-                $sql_insert .= "($sem_id, $key, $time_index, '$time_value'),";
+                $sql_insert .= "($sem_id, $key + 1, $time_index + 1, '$time_value'),";
             }
         }
         
@@ -243,10 +243,11 @@ class TimetableDB
      * @param type $accname - accname of leave teacher or ""
      * @param type $class - standard class name or ""
      * @param string $date "yyyy-mm-dd"
-     * @param $scheduleIndex -1 : return confirmed; >=0, alternatives, $date is ignored
+     * @param int $scheduleIndex -1 : return confirmed; >=0, alternatives, $date is ignored
+     * @param string $order values: time, subject, venue, teacher-fullname, relief-teacher-fullname
      * @return Complex data structure if succeed. null if fail.
      */
-    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex = -1)
+    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex = -1, $order = "time", $direction =ASC)
     {
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
@@ -303,7 +304,7 @@ class TimetableDB
             throw new DBException('Fail to query relief timetable', __FILE__, __LINE__, 2);
         }
 
-        $result = Array();
+        $result = array();
 
         foreach($query_relief_result as $row)
         {
@@ -314,7 +315,7 @@ class TimetableDB
             {
                 if(empty($result[$i]))
                 {
-                    $result[$i] = Array();
+                    $result[$i] = array();
                 }
 
                 $leave_teacher_id = $row['leave_teacher'];
@@ -368,14 +369,14 @@ class TimetableDB
                         $relief_name = "";
                     }
 
-                    $new_teaching = Array(
+                    $new_teaching = array(
                         'subject' => $subject,
                         'venue' => $venue,
                         'teacher-accname' => $leave_teacher_id,
                         'teacher-fullname' => $leave_name,
                         'relief-teacher-accname' => $relief_teacher_id,
                         'relief-teacher-fullname' => $relief_name,
-                        'class' => Array(),
+                        'class' => array(),
                         'id' => $row['lesson_id']
                     );
 

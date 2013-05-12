@@ -235,12 +235,12 @@ class SchoolTime
     }
     
     /**
-     * 
+     * 1-based. the array key starts from 1
      * @param int $sem 1 or 2
      * @param string $year 4 digit string
      * @return array 
      */
-    public static function getSchoolTimeList($sem, $year, $weekday = 0)
+    public static function getSchoolTimeList($sem, $year, $weekday = 1)
     {
         $db_con = Constant::connect_to_db('ntu');
 
