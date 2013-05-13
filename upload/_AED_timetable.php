@@ -17,7 +17,7 @@ else
 {
     if ($_GET['op'] == 'delete')
     {
-        if (!TimetableDB::deleteAEDTimetable($accname, $_GET['year'], $_GET['sem']))
+        if (!TimetableDB::deleteAEDTimetable($accname, $_GET['sem'], $_GET['year']))
         {
             $output['error']=2;
         }
