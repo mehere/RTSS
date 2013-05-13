@@ -288,6 +288,9 @@ foreach($result as $row)
 }
  *
  */
+
+//print_r(SchoolTime::checkSemInfo("2013/09/22"));
+
 /*
 $result = User::queryTeacherID("S8104329I", "Li Huili");
 echo "id : ".$result;
@@ -474,7 +477,7 @@ foreach($result as $acc => $subresult)
 //echo TimetableDB::checkTimetableConflict(0, array(4, 5), "7576699", "2013/2/06", "N1313126HD65");
 //print_r(SchoolTime::getSchoolTimeList(1, "2013"));
 /*
-$result = SchedulerDB::getScheduleResult(0);
+$result = SchedulerDB::getScheduleResult(0, "reliefTeacher", SORT_DESC);
 
 foreach($result as $a => $b)
 {
@@ -493,7 +496,7 @@ foreach($result as $a => $b)
         echo "<br><br>";
     }
 }
- *
+ * 
  */
 
 //echo print_r(SchedulerDB::allSchduleIndex());

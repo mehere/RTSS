@@ -17,7 +17,7 @@ if ($num)
         if ($_POST["select-$i"]) $accToBeExcluded[]=$_POST["accname-$i"];
     }
     
-    Teacher::setExcludingList($_SESSION['scheduleDate'], $accToBeExcluded);
+    Teacher::setExcludingList($accToBeExcluded);
     $submitted=true;
 }
 ?>
@@ -30,7 +30,7 @@ if ($num)
     <div>        
         <table class="hovered table-info">
             <?php
-                $accList=Teacher::getExcludingList($_SESSION['scheduleDate']);
+                $accList=Teacher::getExcludingList();
 
                 $execInfo=Teacher::getTeacherInfo('executive');
                 $nonexecInfo=Teacher::getTeacherInfo('non-executive');                            

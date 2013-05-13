@@ -442,6 +442,13 @@ class Teacher {
             return false;
         }
         
+        $sql_clear = "delete from rs_exclude_list;";
+        $clear = Constant::sql_execute($db_con, $sql_clear);
+        if(is_null($clear))
+        {
+            return false;
+        }
+        
         $sql_set_exclude = "insert into rs_exclude_list values ";
         
         foreach($list as $one)

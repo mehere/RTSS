@@ -151,7 +151,7 @@ EOD;
     <div>
         <table class="hovered table-info">
             <?php
-                $accList=Teacher::getExcludingList($date);
+                $accList=Teacher::getExcludingList();
 
                 $execInfo=Teacher::getTeacherInfo('executive');
                 $nonexecInfo=Teacher::getTeacherInfo('non-executive');

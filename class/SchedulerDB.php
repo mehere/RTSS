@@ -220,7 +220,7 @@ class SchedulerDB
 
         $db_type = array_keys(Constant::$teacher_type);
 
-        $all_excluded = Teacher::getExcludingList($this->date->format('Y/m/d'));
+        $all_excluded = Teacher::getExcludingList();
 
         foreach ($all_excluded as $teacher_id)
         {
@@ -534,8 +534,9 @@ class SchedulerDB
     /**
      * get temp schedule that are not approved. time index 1-based
      * @param int $schedule_index [-1, max index - 1]; -1 -> return all results; >=0 -> return the specific table
+     * @param string $order values: time, teacherOnLeave, reliefTeacher
      */
-    public static function getScheduleResult($schedule_index = -1)
+    public static function getScheduleResult($schedule_index = -1, $order = "time", $direction = SORT_ASC)
     {
         $result = Array();
 
@@ -555,16 +556,34 @@ class SchedulerDB
 
         if ($schedule_index === -1)
         {
-            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) order by start_time_index, end_time_index ASC;";
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id)";
         } else
         {
-            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = " . $schedule_index . " order by start_time_index, end_time_index ASC;";
+            $sql_schedule = "select * from (temp_each_alternative left join ct_class_matching on temp_each_alternative.lesson_id = ct_class_matching.lesson_id) where temp_each_alternative.schedule_id = " . $schedule_index . "";
         }
 
+        if(strcmp($order, "time") === 0)
+        {
+            $sql_schedule .= " order by start_time_index, end_time_index ";
+            
+            if($direction === SORT_ASC)
+            {
+                $sql_schedule .= "ASC;";
+            }
+            else
+            {
+                $sql_schedule .= "DESC;";
+            }
+        }
+        else
+        {
+            $sql_schedule .= ";";
+        }
+        
         $schedule_result = Constant::sql_execute($db_con, $sql_schedule);
         if (is_null($schedule_result))
         {
-            throw new DBException('Fail to query schedule result', __FILE__, __LINE__, 2);
+            throw new DBException('Fail to query schedule result ', __FILE__, __LINE__, 2);
         }
 
         foreach ($schedule_result as $row)
@@ -639,6 +658,17 @@ class SchedulerDB
             }
         }
 
+        $comp_array = array("teacherOnLeave", "reliefTeacher");
+        
+        if(in_array($order, $comp_array))
+        {
+            foreach($result as $key => $one_result)
+            {
+                usort($one_result, Constant::compareForScheduleResult($order, $direction));
+                $result[$key] = $one_result;
+            }
+        }
+        
         return $result;
     }
 
