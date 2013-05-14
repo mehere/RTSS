@@ -6,6 +6,11 @@ $(document).ready(function(){
             "Modify this teacher will affect future relief. Confirm to proceed?", 'There is another record conflicting with this one.'],
         FADE_DUR=400;
 
+    var formEdit=document.forms['edit'],
+        PROP_OPTION=['temp', 'leave'], CONTACT_INFO=['HP', 'Email'], CONTACT_STYLE=[{'color': '#aaa'}, {'color': 'black'}],
+        PHONE_CHECK=[/^(\+\d+\-?)?\d+$/, "Please enter digits with + or - for the phone number."],
+        EMAIL_CHECK=[/^[^@]+@[^@]+(\.[^@]+)+$/, "Please enter a valid email address."];
+
     var DATE_WARN_TEXT=["Date should not be empty.", "Date-To should be no smaller than Date-From."];
     function setDatePicker(target1, target2, altTarget1, altTarget2)
     {
@@ -16,6 +21,8 @@ $(document).ready(function(){
             dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
+            minDate: new Date(formEdit['sem-date-start'].value),
+            maxDate: new Date(formEdit['sem-date-end'].value),
             altField: altTarget1,
             altFormat: "yy/mm/dd",
             onSelect: function(dateText){
@@ -38,6 +45,7 @@ $(document).ready(function(){
             changeMonth: true,
             changeYear: true,
             minDate: curDate1,
+            maxDate: new Date(formEdit['sem-date-end'].value),
             altField: altTarget2,
             altFormat: "yy/mm/dd",
             onClose: function(dateText){
@@ -79,11 +87,6 @@ $(document).ready(function(){
             }
         });
     }
-
-    var formEdit=document.forms['edit'],
-        PROP_OPTION=['temp', 'leave'], CONTACT_INFO=['HP', 'Email'], CONTACT_STYLE=[{'color': '#aaa'}, {'color': 'black'}],
-        PHONE_CHECK=[/^(\+\d+\-?)?\d+$/, "Please enter digits with + or - for the phone number."],
-        EMAIL_CHECK=[/^[^@]+@[^@]+(\.[^@]+)+$/, "Please enter a valid email address."];
 
     var num=formEdit['num'].value;
     for (var i=0; i<num; i++)
