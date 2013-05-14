@@ -9,6 +9,13 @@ class SchoolTime
     {
         if (is_null(self::$SCHOOL_TIME_ARR))
         {
+            // Sem period
+            self::$SEM_PERIOD=array(
+                array(array(1, 1), array(6, 30)),
+                array(array(7, 1), array(12, 31))
+            );
+            
+            // Time in one day
             self::$SCHOOL_TIME_ARR=array(mktime(7, 25));
 
             $endTime=mktime(14,15);
@@ -16,12 +23,6 @@ class SchoolTime
             {
                 self::$SCHOOL_TIME_ARR[]=$curTime;
             }
-            
-            // Sem period
-            self::$SEM_PERIOD=array(
-                array(array(1, 1), array(6, 30)),
-                array(array(7, 1), array(12, 31))
-            );
         }
     }
 
@@ -38,8 +39,15 @@ class SchoolTime
     public static function getTimeValue($index)
     {
         new SchoolTime;
-        if ($index < 1 || $index > count(self::$SCHOOL_TIME_ARR)) return null;
-        return self::formatTime(self::$SCHOOL_TIME_ARR[$index-1]);
+        
+        $schoolTimeArr=self::getSchoolTimeArr($_SESSION['scheduleDate']);
+        if (!$schoolTimeArr)
+        {
+            $schoolTimeArr=self::$SCHOOL_TIME_ARR;
+        }
+        
+        if ($index < 1 || $index > count($schoolTimeArr)) return null;
+        return self::formatTime($schoolTimeArr[$index-1]);
     }
 
     /**
@@ -51,9 +59,16 @@ class SchoolTime
     public static function getTimeIndex($timeValue, $isTimeObject=false)
     {
         new SchoolTime;
-        for ($i=0; $i<count(self::$SCHOOL_TIME_ARR); $i++)
+        
+        $schoolTimeArr=self::getSchoolTimeArr($_SESSION['scheduleDate']);
+        if (!$schoolTimeArr)
         {
-            $time=self::$SCHOOL_TIME_ARR[$i];
+            $schoolTimeArr=self::$SCHOOL_TIME_ARR;
+        }
+        
+        for ($i=0; $i<count($schoolTimeArr); $i++)
+        {
+            $time=$schoolTimeArr[$i];
             if ($isTimeObject && $time == $timeValue || !$isTimeObject && self::formatTime($time) == $timeValue)
             {
                 return $i+1;
@@ -110,11 +125,36 @@ class SchoolTime
     public static function getTimeArrSub($start, $end, $isAssociate=false)
     {
         new SchoolTime;
+        
+        $schoolTimeArr=self::getSchoolTimeArr($_SESSION['scheduleDate']);
+        if (!$schoolTimeArr)
+        {
+            $schoolTimeArr=self::$SCHOOL_TIME_ARR;
+        }
+        
         if ($end < 0)
         {
-            $end=count(self::$SCHOOL_TIME_ARR)+$end;
+            $end=count($schoolTimeArr)+$end;
         }
-        return array_map(array('SchoolTime', 'formatTime'), array_slice(self::$SCHOOL_TIME_ARR, $start, $end-$start+1, $isAssociate));
+        return array_map(array('SchoolTime', 'formatTime'), array_slice($schoolTimeArr, $start, $end-$start+1, $isAssociate));
+    }
+    
+    private static function getSchoolTimeArr($curDateStr)
+    {
+        $timeStruct=self::checkSemInfo($curDateStr);
+        $schoolTimeArr=self::getSchoolTimeList($timeStruct['sem'], $timeStruct['year']);
+        if (!$schoolTimeArr)
+        {
+            return null;
+        }
+        
+        $result=array();
+        foreach ($schoolTimeArr as $key => $value)
+        {
+            $timePart=preg_split("/\:/", $value);
+            $result[]=mktime($timePart[0], $timePart[1]);
+        }
+        return $result;
     }
     
     /**
@@ -277,7 +317,7 @@ class SchoolTime
      * @param string $year 4 digit string
      * @return array 
      */
-    public static function getSchoolTimeList($sem, $year, $weekday = 1)
+    private static function getSchoolTimeList($sem, $year, $weekday = 1)
     {
         $db_con = Constant::connect_to_db('ntu');
 
