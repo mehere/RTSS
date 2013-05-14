@@ -13,7 +13,7 @@ try
     if ($_FILES["timetableFile"]["error"] > 0)
     {
         throw new Exception("Empty or wrong file choosen for uploading.");
-    }
+    }   
     $fileName = $_FILES["timetableFile"]["tmp_name"];
     $analyzer = new TimetableAnalyzer($year, $semester);
 
@@ -34,14 +34,15 @@ try
     if (count($unknownTeachers) === 0)
     {
         $arrLesson = $analyzer->arrLessons;
-        TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester, "0000-00-00", "0000-00-00", $analyzer->arrTimeList);
+        TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester, trim($_POST['server-sem-date-start']), trim($_POST['server-sem-date-end']), $analyzer->arrTimeList);
         $destination = "/RTSS/upload/";
         
         $_SESSION['uploadSuccess']="Upload timetable successfully.";
     } else
     {
         $_SESSION["abbrNameList"] = $unknownTeachers;        
-        $destination = "/RTSS/upload/namematch.php";
+        $destination = "/RTSS/upload/namematch.php?sds=" . urlencode(trim($_POST['server-sem-date-start'])) 
+                . "&sde=" . urlencode(trim($_POST['server-sem-date-end']));
     }
 } catch (Exception $e)
 {

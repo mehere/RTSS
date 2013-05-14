@@ -61,4 +61,14 @@ $(document).ready(function(){
             dataDisplay.datepicker("show");
         }
     });
+
+    $(formT['year']).change(function(){
+        this.form.action="";
+        this.form.submit();
+    });
+
+    $(formT['sem']).change(function(){
+        this.form.action="";
+        this.form.submit();
+    });
 });

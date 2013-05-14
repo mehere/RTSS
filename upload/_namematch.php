@@ -44,8 +44,8 @@ try
             throw new DBException('local throw', null, null);
             break;
     }
-    
-    TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester, "0000-00-00", "0000-00-00", $analyzer->arrTimeList);    
+
+    TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester, trim($_POST['sds']), trim($_POST['sde']), $analyzer->arrTimeList);    
 } 
 catch (DBException $e)
 {
