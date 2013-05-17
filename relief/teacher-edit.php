@@ -9,9 +9,13 @@ Template::printHeaderAndDoValidation('Scheduler (Edit)',
         array('relief.css', 'relief-edit.css'),
         array("teacher-detail.js", 'relief-edit.js'), 
         Template::HOME, $isTemp ? "Edit Temporary Relief" : "Edit Leave", Template::SCHEDULE);
+
+$semPeriod=SchoolTime::getSemYearFromDate(2, new DateTime($_SESSION['scheduleDate']));
 ?>
 <form class="main" name="edit" action="_teacher_edit.php" method="post">            	
     <input type="hidden" name="prop" value="<?php echo $isTemp?'temp':'leave'; ?>" />
+    <input type="hidden" name="sem-date-start" value="<?php echo $semPeriod[0]; ?>" />
+    <input type="hidden" name="sem-date-end" value="<?php echo $semPeriod[1]; ?>" />
     <div class="accordion colorbox blue">
         <span class="box-title">
             <?php echo $isTemp ? "Temporary Relief Teacher:" : "Teacher on Leave:"; ?>

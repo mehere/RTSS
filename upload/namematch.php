@@ -53,6 +53,8 @@ EOD;
     </div>
     <div class="bt-control">
         <input type="hidden" name="num" value="<?php echo count($abbrNameList); ?>" />
+        <input type="hidden" name="sds" value="<?php echo trim(urldecode($_GET['sds'])); ?>" />
+        <input type="hidden" name="sde" value="<?php echo trim(urldecode($_GET['sde'])); ?>" />
         <input type="submit" value="Submit" class="button" />
     </div>
     <div style="clear: both"></div>

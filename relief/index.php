@@ -28,7 +28,7 @@ $_SESSION['scheduleDate']=$date;
         <?php if (new DateTime($date) > new DateTime('yesterday')) { ?>
             <div class="control-top"><a href="teacher-edit.php">Edit/Add</a></div>
         <?php } ?>
-    </div>    
+    </div>
     <div>
         <table class="hovered table-info">
             <thead>
