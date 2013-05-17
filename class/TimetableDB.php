@@ -244,10 +244,9 @@ class TimetableDB
      * @param type $class - standard class name or ""
      * @param string $date "yyyy-mm-dd"
      * @param int $scheduleIndex -1 : return confirmed; >=0, alternatives, $date is ignored
-     * @param string $order values: time, subject, venue, teacher-fullname, relief-teacher-fullname
      * @return Complex data structure if succeed. null if fail.
      */
-    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex = -1, $order = "time", $direction =ASC)
+    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex = -1)
     {
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
@@ -393,6 +392,35 @@ class TimetableDB
         return $result;
     }
 
+    public static function getReliefTimetableByClass($date)
+    {
+        $normal_dict = Teacher::getAllTeachers();
+        $temp_dict = Teacher::getTempTeacher("");
+
+        $db_con = Constant::connect_to_db('ntu');
+
+        if(empty($db_con))
+        {
+            throw new DBException('Fail to query relief timetable', __FILE__, __LINE__);
+        }
+        
+        $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') order by class_name ASC;";
+    
+        
+        $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
+        if(is_null($query_relief_result))
+        {
+            throw new DBException('Fail to query relief timetable', __FILE__, __LINE__, 2);
+        }
+
+        $result = array();
+        
+        foreach($query_relief_result as $row)
+        {
+            
+        }
+    }
+    
     public static function uploadAEDTimetable($timetable, $info, $year='2013', $sem=1)
     {
         $db_con = Constant::connect_to_db('ntu');
