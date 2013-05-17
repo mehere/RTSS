@@ -244,10 +244,9 @@ class TimetableDB
      * @param type $class - standard class name or ""
      * @param string $date "yyyy-mm-dd"
      * @param int $scheduleIndex -1 : return confirmed; >=0, alternatives, $date is ignored
-     * @param string $order values: time, subject, venue, teacher-fullname, relief-teacher-fullname
      * @return Complex data structure if succeed. null if fail.
      */
-    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex = -1, $order = "time", $direction =ASC)
+    public static function getReliefTimetable($accname, $class, $date, $scheduleIndex = -1)
     {
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
