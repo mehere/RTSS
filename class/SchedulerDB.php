@@ -157,12 +157,12 @@ class SchedulerDB
 
     public function getLeave()
     {
-        $result = Array(
-            "Temp" => Array(),
-            "Aed" => Array(),
-            "Untrained" => Array(),
-            "Normal" => Array(),
-            "Hod" => Array()
+        $result = array(
+            "Temp" => array(),
+            "Aed" => array(),
+            "Untrained" => array(),
+            "Normal" => array(),
+            "Hod" => array()
         );
 
         //query leave
@@ -175,7 +175,7 @@ class SchedulerDB
 //                "endLeave" => $leave_time[1],
 //                "leaveID" => $a_info['leaveID']
 //            );
-            $a_leave = Array(
+            $a_leave = array(
                 "startLeave" => $leave_time[0],
                 "endLeave" => $leave_time[1]
             );
@@ -191,7 +191,7 @@ class SchedulerDB
                 $result[$algo_type][$a_info['accname']][] = $a_leave;
             } else
             {
-                $result[$algo_type][$a_info['accname']] = Array($a_leave);
+                $result[$algo_type][$a_info['accname']] = array($a_leave);
             }
         }
 
