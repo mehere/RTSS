@@ -404,9 +404,8 @@ class TimetableDB
             throw new DBException('Fail to query relief timetable', __FILE__, __LINE__);
         }
         
-        $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') order by class_name ASC;";
+        $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') order by class_name, start_time ASC;";
     
-        
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
         if(is_null($query_relief_result))
         {
@@ -417,8 +416,51 @@ class TimetableDB
         
         foreach($query_relief_result as $row)
         {
+            $class_name = $row['class_name'];
             
+            if(!array_key_exists($class_name, $result))
+            {
+                $result[$class_name] = array();
+            }
+            
+            $relief_teacher_id = $row["relief_teacher"];
+            $leave_teacher_id = $row["leave_teacher"];
+            
+            if(array_key_exists($leave_teacher_id, $normal_dict))
+            {
+                $leave_name = $normal_dict[$leave_teacher_id]['name'];
+            }
+            else
+            {
+                $leave_name = "";
+            }
+
+            if(array_key_exists($relief_teacher_id, $temp_dict))
+            {
+                $relief_name = $temp_dict[$relief_teacher_id]['fullname'];
+            }
+            else if(array_key_exists($relief_teacher_id, $normal_dict))
+            {
+                $relief_name = $normal_dict[$relief_teacher_id]['name'];
+            }
+            else
+            {
+                $relief_name = "";
+            }
+            
+            $venue = empty($row['venue'])?"":$row['venue'];
+            
+            $result[$class_name][] = array(
+                "timeFrom" => $row["start_time"] - 0,
+                "timeTo" => $row["end_time"] - 0,
+                "subject" => $row["subj_code"],
+                "venue" => $venue,
+                "teacher" => $leave_name,
+                "reliefTeacher" => $relief_name
+            );
         }
+        
+        return $result;
     }
     
     public static function uploadAEDTimetable($timetable, $info, $year='2013', $sem=1)

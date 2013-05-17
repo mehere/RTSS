@@ -110,6 +110,20 @@ foreach($result as $key=>$value)
  *
  */
 /*
+$result = TimetableDB::getReliefTimetableByClass("2013/05/21");
+foreach($result as $key => $value)
+{
+    echo "$key : <br>";
+    foreach($value as $sub_value)
+    {
+        print_r($sub_value);
+        echo "<br>";
+    }
+    echo "<br>";
+}
+ * 
+ */
+/*
 $result = $scheduling->getTempTeachers();
 foreach($result as $key=>$value)
 {
