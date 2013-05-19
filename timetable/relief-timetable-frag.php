@@ -140,7 +140,7 @@ if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin')
                         $dir=$_POST['relief-timetable-direction'];
                     }
                     echo <<< EOD
-                        <th class="sort hovered" style="width: $width[$i]" search="$key" direction="$dir">$value<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+                        <th class="hovered" style="width: $width[$i]" search="$key" direction="$dir">$value<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                     $i++;
                 }
