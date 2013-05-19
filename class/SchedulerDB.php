@@ -194,7 +194,69 @@ class SchedulerDB
                 $result[$algo_type][$a_info['accname']] = array($a_leave);
             }
         }
+        
+        $db_con = Constant::connect_to_db('ntu');
 
+        if (empty($db_con))
+        {
+            throw new DBException("Fail to escape lessons", __FILE__, __LINE__);
+        }
+        
+        $sql_query = "select * from temp_escaped_leave_lessons;";
+        $query = Constant::sql_execute($db_con, $sql_query);
+        if (is_null($query))
+        {
+            throw new DBException("Fail to escape lessons", __FILE__, __LINE__);
+        }
+        
+        foreach($query as $one)
+        {
+            $type = $one["type"];
+            $teacher_id = $one["teacher_id"];
+            
+            if(!array_key_exists($type, $result))
+            {
+                continue;
+            }
+            if(!array_key_exists($teacher_id, $result[$type]))
+            {
+                continue;
+            }
+            
+            $start_index = $one["start_time_index"] - 0;
+            $end_index = $one["end_time_index"] - 0;
+            
+            for($i = 0 ; $i < count($result[$type][$teacher_id]); $i++)
+            {
+                $leave_start = $result[$type][$teacher_id][$i]["startLeave"];
+                $leave_end = $result[$type][$teacher_id][$i]["endLeave"];
+                
+                if($leave_start < $start_index && $leave_end > $end_index)
+                {
+                    $result[$type][$teacher_id][$i]["endLeave"] = $start_index;
+                    
+                    $result[$type][$teacher_id][] = array(
+                        "startLeave" => $end_index,
+                        "endLeave" => $leave_end
+                    );
+                }
+                if($leave_start >= $start_index && $leave_end <= $end_index)
+                {
+                    unset($result[$type][$teacher_id][$i]);
+                    $result[$type][$teacher_id] = array_values($result[$type][$teacher_id]);
+                    $i -- ;
+                }
+                if($leave_start >= $start_index && $leave_end > $end_index)
+                {
+                    $result[$type][$teacher_id][$i]["startLeave"] = $end_index;
+                }
+                if($leave_start < $start_index && $leave_end <= $end_index)
+                {
+                    $result[$type][$teacher_id][$i]["endLeave"] = $start_index;
+                }
+            }
+        }
+            
         return $result;
     }
 
@@ -1300,6 +1362,135 @@ class SchedulerDB
         return $result;
     }
 
+    public static function getLessonsOnLeave($date)
+    {
+        $leave_info = Teacher::getTeacherOnLeave($date);
+        
+        $db_con = Constant::connect_to_db('ntu');
+
+        if (empty($db_con))
+        {
+            throw new DBException("Fail to query leave lessons", __FILE__, __LINE__);
+        }
+        
+        $date_obj = new DateTime($date);
+        $weekday = $date_obj->format('N');
+        
+        $sql_lesson = "select * from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.weekday = $weekday and ct_teacher_matching.teacher_id in (";
+        $id_list = array();
+        foreach ($leave_info as $a_info)
+        {
+            $teacher_id = $a_info['accname'];
+            
+            if(!in_array($teacher_id, $id_list))
+            {
+                $sql_lesson .= $teacher_id.",";
+                $id_list[] = $teacher_id;
+            }
+        }
+        
+        if(count($id_list) === 0)
+        {
+            return array();
+        }
+        
+        $sql_lesson = substr($sql_lesson, 0, -1).');';
+        $lesson_query = Constant::sql_execute($db_con, $sql_lesson);
+        
+        if(is_null($lesson_query))
+        {
+            throw new DBException("Fail to query leave lessons", __FILE__, __LINE__);
+        }
+        
+        $lesson_list = array();
+        foreach($lesson_query as $row)
+        {
+            $teacher_id = $row["teacher_id"];
+            if(!array_key_exists($teacher_id, $lesson_list))
+            {
+                $lesson_list[$teacher_id] = array();
+            }
+            
+            $venue = empty($row["venue"])?"":$row["venue"];
+            
+            $lesson_list[$teacher_id][] = array(
+                "start_time" => $row["start_time_index"],
+                "end_time" => $row["end_time_index"],
+                "subject" => $row["subj_code"],
+                "venue" => $venue
+            );
+        }
+        
+        $result = array();
+        foreach ($leave_info as $a_info)
+        {
+            $leave_time = SchedulerDB::trimTimePeriod($a_info['datetime'][0][0], $a_info['datetime'][1][0], $a_info['datetime'][0][1], $a_info['datetime'][1][1], $date, $a_info['leaveID']);
+        
+            $algo_type = Constant::$teacher_type[$a_info['type']];
+            
+            $teacher_id = $a_info["accname"];
+            
+            foreach($lesson_list[$teacher_id] as $a_lesson)
+            {
+                if($a_lesson["start_time"] < $leave_time[1] && $a_lesson["end_time"] > $leave_time[0])
+                {
+                    $result[] = array(
+                        "subject" => $a_lesson['subject'],
+                        "venue" => $a_lesson['venue'],
+                        "teacher_id" => $teacher_id,
+                        "teacher_name" => $a_info["fullname"],
+                        "type" => $algo_type,
+                        "start_time" => $a_lesson["start_time"],
+                        "end_time" => $a_lesson["end_time"]
+                    );
+                }
+            }
+        }
+        
+        return $result;
+    }
+    
+    public static function passEscapedLessons($escapedLessons)
+    {
+        $db_con = Constant::connect_to_db('ntu');
+
+        if (empty($db_con))
+        {
+            throw new DBException("Fail to set escaped lessons", __FILE__, __LINE__);
+        }
+        
+        $sql_clear = "delete from temp_escaped_leave_lessons";
+        $clear = Constant::sql_execute($db_con, $sql_clear);
+        if(is_null($clear))
+        {
+            throw new DBException("Fail to set escaped lessons", __FILE__, __LINE__);
+        }
+        
+        if(count($escapedLessons) === 0)
+        {
+            return;
+        }
+        
+        $sql_insert = "insert into temp_escaped_leave_lessons values ";
+        foreach($escapedLessons as $one)
+        {
+            $teacher_id = mysql_real_escape_string(trim($one["teacher_id"]));
+            $type = mysql_real_escape_string(trim($one["type"]));
+            $start_time = mysql_real_escape_string(trim($one["start_time"]));
+            $end_time = mysql_real_escape_string(trim($one["end_time"]));
+            
+            $sql_insert .= "('$teacher_id', '$type', $start_time, $end_time),";
+        }
+        
+        $sql_insert = substr($sql_insert, 0, -1).';';
+        
+        $insert = Constant::sql_execute($db_con, $sql_insert);
+        if(is_null($insert))
+        {
+            throw new DBException("Fail to set escaped lessons", __FILE__, __LINE__);
+        }
+    }
+    
     /*
       public static function scheduleResultNum()
       {

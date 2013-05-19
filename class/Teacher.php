@@ -83,7 +83,7 @@ class Teacher {
     //output : array of associative arrays each representing a piece of leave info that's on the input date. Empty - possibly there are errors. Check database for confirmation.
     public static function getTeacherOnLeave($query_date)
     {
-        $result = Array();
+        $result = array();
 
         //query teacher dict
         $teacher_dict = Teacher::getAllTeachers();
@@ -127,13 +127,13 @@ class Teacher {
 
         foreach($query_leave_result as $row)
         {
-            $each_record = Array();
+            $each_record = array();
             $each_record['accname'] = $row['teacher_id'];
             $each_record['reason'] = $row['reason'];
             $each_record['remark'] = empty($row['remark'])?'':$row['remark'];
             $each_record['leaveID'] = $row['leave_id'];
             $each_record['isVerified'] = ($row['verified'] === 'YES')?true:false;
-            $each_record['datetime'] = Array(Array($row['start_date'], $row['start_time_point']), Array($row['end_date'], $row['end_time_point']));
+            $each_record['datetime'] = array(array($row['start_date'], $row['start_time_point']), array($row['end_date'], $row['end_time_point']));
             $each_record['isScheduled'] = false;
             if(in_array($each_record['leaveID'], $leave_id_array))
             {

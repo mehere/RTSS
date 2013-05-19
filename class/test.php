@@ -581,6 +581,17 @@ foreach($result as $value)
  * 
  */
 /*
+$result = SchedulerDB::getLessonsOnLeave("2013-05-22");
+foreach ($result as $one)
+{
+    print_r($one);
+    echo "<br>";
+}
+ * 
+ */
+
+//SchedulerDB::passEscapedLessons(array(array("teacher_id" => "1111111", "type"=>"avad", "start_time"=>4, "end_time"=>3)));
+/*
 class Test
 {
     public static function insertAEDTimetable($lesson_list, $teacher_list, $year='2013', $sem=1)
