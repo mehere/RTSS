@@ -38,8 +38,7 @@ EOD;
         </thead>
         <tbody>
             <?php
-            // Define $timetableIndividual in the calling function        
-
+            // Define $timetableIndividual in the calling function
             $timeArr=SchoolTime::getTimeArrSub(0, -1);
             for ($i=0; $i < count($timeArr) - 1; $i++)
             {
@@ -101,12 +100,20 @@ EOD;
     </table>
 </div>
 
-<?php if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin') { ?>
+<?php 
+if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin') 
+{ 
+    $viewOrder=$_POST['view-order'];
+?>
 <form name="relief-timetable" method="post" class='accordion colorbox green'>
     <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
     <span class="box-title">
         Relief Timetable
     </span>
+    <select name="view-order" class="dropdown">
+        <option value="time" <?php if ($viewOrder == 'time') echo 'selected="selected"' ?>>View by Time</option>
+        <option value="class" <?php if ($viewOrder == 'class') echo 'selected="selected"' ?>>View by Class</option>        
+    </select>
     <?php if ($NO_PREIVEW) { ?>
         <div class="control-top"><a href="" id="print-relief" target="_blank">Print</a></div>
     <?php } ?>
@@ -118,9 +125,11 @@ EOD;
         <thead>
             <tr>
                 <?php
+                $orderByClass=$viewOrder == 'class';
+                
                 $width=array('120px', '15%', '20%', '15%', '25%', '25%');
 
-                $headerKeyList=NameMap::$TIMETABLE['layout']['display'];
+                $headerKeyList=NameMap::$TIMETABLE[$orderByClass ? 'layout2' : 'layout']['display'];
 
                 $i=0;
                 foreach ($headerKeyList as $key => $value)
@@ -131,7 +140,7 @@ EOD;
                         $dir=$_POST['relief-timetable-direction'];
                     }
                     echo <<< EOD
-                        <th class="sort hovered" style="width: $width[$i]" search="$key" direction="$dir">$value<span class="ui-icon ui-icon-arrowthick-2-n-s"></span></th>
+                        <th class="sort hovered" style="width: $width[$i]" search="$key" direction="$dir">$value<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
 EOD;
                     $i++;
                 }
@@ -141,9 +150,57 @@ EOD;
         <tbody>
             <?php
             // Define $timetable in the calling function
-            // $timetable=TimetableDB::getReliefTimetable($teacher, $class, $date);
+            if ($orderByClass)
+            {
+                $timetable=TimetableDB::getReliefTimetableByClass($date); 
+                PageConstant::escapeHTMLEntity($timetable);
+            }
+            else
+            {
+                $timetable=TimetableDB::getReliefTimetable('', '', $date); 
+                PageConstant::escapeHTMLEntity($timetable);
+            }
+//var_dump($timetable);            
 
             $timeArr=SchoolTime::getTimeArrSub(0, -1);
+            if ($orderByClass)
+            {
+                foreach ($timetable as $className => $teachingList)
+                {                  
+                    foreach ($teachingList as $tInd => $teaching)
+                    {
+                        PageConstant::escapeHTMLEntity($teaching);
+                        $timetableEntry=array();
+                        foreach (array_slice($headerKeyList, 1) as $key => $value)
+                        {
+                            $timetableEntry[$key]=$teaching[$key];
+                        }
+
+                        // Class name display/Account name                        
+                        $timetableEntry['time']= $timeArr[$teaching['time-from']] . " - " . $timeArr[$teaching['time-to']];
+                        
+                        $timetableEntry['teacher-fullname']=<<< EOD
+<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['teacher-accname']}" class="teacher-detail-link">{$timetableEntry['teacher-fullname']}</a>
+EOD;
+                        $timetableEntry['relief-teacher-fullname']=<<< EOD
+<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['relief-teacher-accname']}" class="teacher-detail-link">{$timetableEntry['relief-teacher-fullname']}</a>
+EOD;
+
+                        echo "<tr>";
+                        if ($tInd == 0)
+                        {
+                            $rowspan=count($teachingList);
+                            echo <<< EOD
+    <td class="time-col" rowspan="$rowspan">$className</td>
+EOD;
+                        }
+                        echo implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry)) . "</tr>";
+                    }
+                }
+            }
+            else
+            {
+             
             for ($i=0; $i < count($timeArr) - 1; $i++)
             {
                 $teachingList=$timetable[$i];
@@ -160,7 +217,15 @@ EOD;
                         }
 
                         // Class name display/Account name
-                        $timetableEntry['class']=implode(", ", $timetableEntry['class']);
+                        if ($orderByClass) 
+                        {
+                            $timetableEntry['time']= $timeArr[$timetableEntry['time-from']] . " - " . $timeArr[$timetableEntry['time-to']];
+                        }
+                        else
+                        {
+                            $timetableEntry['class']=implode(", ", $timetableEntry['class']);
+                        }
+                        
                         
                         $timetableEntry['teacher-fullname']=<<< EOD
 <a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['teacher-accname']}" class="teacher-detail-link">{$timetableEntry['teacher-fullname']}</a>
@@ -173,20 +238,40 @@ EOD;
                         if ($tInd == 0)
                         {
                             $rowspan=count($teachingList);
-                            echo <<< EOD
+                            if ($orderByClass)
+                            {
+                                echo <<< EOD
+    <td class="time-col" rowspan="$rowspan">{$timetableEntry['class']}</td>
+EOD;
+                            }
+                            else
+                            {
+                                echo <<< EOD
     <td class="time-col" rowspan="$rowspan">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>
 EOD;
+                            }
                         }
                         echo implode('', array_map(array("PageConstant", "tdWrap"), $timetableEntry)) . "</tr>";
                     }
                 }
                 else
                 {
-                    $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE['layout']['display'])-1, '')));
-                    echo <<< EOD
+                    $otherTdStr=implode('', array_map(array("PageConstant", "tdWrap"), array_fill(0, count(NameMap::$TIMETABLE[$orderByClass ? 'layout2' : 'layout']['display'])-1, '')));
+                    if ($orderByClass)
+                    {
+                        echo <<< EOD
+    <tr><td class="time-col">{$timetableEntry['class']}</td>$otherTdStr</tr>
+EOD;
+                    }
+                    else
+                    {
+                        echo <<< EOD
     <tr><td class="time-col">{$timeArr[$i]}<span style="margin: 0 3px">-</span>{$timeArr[$i + 1]}</td>$otherTdStr</tr>
 EOD;
+                    }
                 }
+            }    
+                
             }
             ?>
         </tbody>

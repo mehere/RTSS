@@ -451,12 +451,12 @@ class TimetableDB
             $venue = empty($row['venue'])?"":$row['venue'];
             
             $result[$class_name][] = array(
-                "timeFrom" => $row["start_time"] - 1,
-                "timeTo" => $row["end_time"] - 1,
+                "time-from" => $row["start_time"] - 1,
+                "time-to" => $row["end_time"] - 1,
                 "subject" => $row["subj_code"],
                 "venue" => $venue,
-                "teacher" => $leave_name,
-                "reliefTeacher" => $relief_name
+                "teacher-fullname" => $leave_name,
+                "relief-teacher-fullname" => $relief_name
             );
         }
         

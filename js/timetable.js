@@ -38,21 +38,25 @@ $(document).ready(function(){
         this.form.submit();
     });
 
-    $("#relief-timetable thead .sort").click(function(){
-        formR['order'].value=this.getAttribute('search');
+//    $("#relief-timetable thead .sort").click(function(){
+//        formR['order'].value=this.getAttribute('search');
+//
+//        var dir=this.getAttribute('direction');
+//        if (dir != 1)
+//        {
+//            dir=1;
+//        }
+//        else
+//        {
+//            dir=2;
+//        }
+//        formR['direction'].value=this['direction']=dir;
+//
+//        $(formR).submit();
+//    });
 
-        var dir=this.getAttribute('direction');
-        if (dir != 1)
-        {
-            dir=1;
-        }
-        else
-        {
-            dir=2;
-        }
-        formR['direction'].value=this['direction']=dir;
-
-        $(formR).submit();
+    $(formR['view-order']).change(function(){
+        this.form.submit();
     });
 
     $("#print-individual").click(function(){

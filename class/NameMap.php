@@ -144,6 +144,16 @@ class NameMap
                 'teacher-accname', 'relief-teacher-accname'
             )
         ),
+        
+        'layout2' => array(
+            'display' => array(
+                'class' => 'Class',   'time' => 'Time', 'subject' => 'Subject', 'venue' => 'Venue',
+                'teacher-fullname' => 'Teacher',  'relief-teacher-fullname' => 'Relief Teacher'
+            ),
+            'hidden' => array(
+                'teacher-accname', 'relief-teacher-accname', 'time-from', 'time-to'
+            )
+        ),
 
         'individual' => array(
             'display' => array(
