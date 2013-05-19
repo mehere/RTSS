@@ -456,7 +456,9 @@ class TimetableDB
                 "subject" => $row["subj_code"],
                 "venue" => $venue,
                 "teacher-fullname" => $leave_name,
-                "relief-teacher-fullname" => $relief_name
+                "relief-teacher-fullname" => $relief_name,
+                "teacher-accname" => $leave_teacher_id,
+                "relief-teacher-accname" => $relief_teacher_id
             );
         }
         
