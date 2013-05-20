@@ -1468,7 +1468,7 @@ class SchedulerDB
         
         if(count($escapedLessons) === 0)
         {
-            return;
+            return false;
         }
         
         $sql_insert = "insert into temp_escaped_leave_lessons values ";
@@ -1489,6 +1489,8 @@ class SchedulerDB
         {
             throw new DBException("Fail to set escaped lessons", __FILE__, __LINE__);
         }
+        
+        return true;
     }
     
     /*

@@ -2,7 +2,7 @@ $(document).ready(function(){
     // Alert dialog box
     var ALERT_MSG=['Scheduling ... <br /> Please do not close current window.'];
 
-    var formSch=document.forms['schedule'];
+    var formSch=document.forms['schedule'], formClass=document.forms['exclude-class'];
     $(formSch['date-display']).datepicker({
         beforeShowDay: $.datepicker.noWeekends,
         dateFormat: "dd/mm/yy",
@@ -33,10 +33,17 @@ $(document).ready(function(){
 
     $('#btnScheduleAll').click(function(){
         var submitForm=function(){
-            $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
-                position: "fixed"
-            }).end().dialog('option', 'buttons', null).dialog('open');
-            $(formSch).submit();
+            $("#dialog-class").dialog('open').data('func', function(){
+                $.getJSON("/RTSS/relief/_relief_class.php", $(formSch).serializeArray(), function(data){
+                    if (!data['error'])
+                    {
+                        $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
+                            position: "fixed"
+                        }).end().dialog('option', 'buttons', null).dialog('open');
+                        $(formSch).submit();
+                    }
+                });
+            });
         }
 
         $.getJSON("/RTSS/_check_current_login.php", {"area": 'SCHEDULER'}, function(data){
@@ -63,5 +70,26 @@ $(document).ready(function(){
         });
 
         return false;
+    });
+
+    // Exclude class
+    $("#dialog-class").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 700,
+        minWidth: 700,
+        minHeight: 600,
+        title: "Exclude Classes",
+        buttons: {
+            OK: function(){
+                $(this).dialog("close");
+
+                var func=$(this).data('func');
+                if (func) func();
+            },
+            Cancel: function(){
+                $(this).dialog("close");
+            }
+        }
     });
 });

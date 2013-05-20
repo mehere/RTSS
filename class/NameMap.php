@@ -14,6 +14,15 @@ class NameMap
                 'accname', 'leaveID'
             )
         ),
+        
+        'excludeClass' => array(
+            'display' => array(
+                'subject' => 'Subject', 'venue' => 'Venue', 'time' => 'Time', 'teacher_name' => 'Teacher'
+            ),
+            'hidden' => array(
+                'teacher_id', 'type', 'start_time', 'end_time'
+            )
+        ),
 
         'tempTeacher' => array(
             'display' => array(
