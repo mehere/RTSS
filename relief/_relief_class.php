@@ -24,7 +24,7 @@ if ($excludeClassNum)
         }
     }
     
-    $output['error']=var_export($escapedClassArr, true);
+//    $output['error']=var_export($escapedClassArr, true);
     
     if ($escapedClassArr)
     {        
