@@ -32,7 +32,7 @@ class User
         {
             $row = $ifins_login_result[0];
 
-            $teacher_id = User::queryTeacherID($row['accfullname']);
+            $teacher_id = User::queryTeacherID($row['accfullname'], $username);
 
             $result['accname'] = $teacher_id;
             $result['type'] = "teacher";
@@ -47,7 +47,7 @@ class User
             {
                 $row_pri = $ifins_login_result_pri[0];
 
-                $teacher_id = User::queryTeacherID($row_pri['accfullname']);
+                $teacher_id = User::queryTeacherID($row_pri['accfullname'], $username);
 
                 $result['accname'] = $teacher_id;
                 $result['type'] = "teacher";
@@ -62,7 +62,7 @@ class User
                 {
                     $row_sec = $ifins_login_result_sec[0];
 
-                    $teacher_id = User::queryTeacherID($row_sec['accfullname']);
+                    $teacher_id = User::queryTeacherID($row_sec['accfullname'], $username);
 
                     $result['accname'] = $teacher_id;
                     $result['type'] = "teacher";
@@ -337,7 +337,7 @@ class User
      *
      */
 
-    private static function queryTeacherID($fullname)
+    private static function queryTeacherID($fullname, $accname)
     {
         $ifins_db_con = Constant::connect_to_db('ifins');
 
@@ -345,26 +345,24 @@ class User
         {
             return "";
         }
-        /*
-        if(preg_match("/^S-[0-9]{7}-[A-Z]{1}$/", $accname))
+        
+        if(preg_match("/^[A-Z][0-9]{7}[A-Z]{1}$/", $accname))
         {
             $teacher_id = substr($accname, 1, 7);
 
             $sql_query_teacher_id = "select * from actatek_user where user_id = '".mysql_real_escape_string($teacher_id)."';";
             $query_teacher_id_result = Constant::sql_execute($ifins_db_con, $sql_query_teacher_id);
 
-            if(empty($query_teacher_id_result))
+            if(!empty($query_teacher_id_result))
             {
-                return "";
-            }
-            $row = $query_teacher_id_result[0];
-            if($row)
-            {
-                return $teacher_id;
+                $row = $query_teacher_id_result[0];
+                if($row)
+                {
+                    return $teacher_id;
+                }
             }
         }
-         *
-         */
+        
         $sql_query_teacher_id_via_name = "select * from actatek_user where user_name = '".mysql_real_escape_string(trim($fullname))."';";
         $query_teacher_id_via_name_result = Constant::sql_execute($ifins_db_con, $sql_query_teacher_id_via_name);
 

@@ -1447,6 +1447,8 @@ class SchedulerDB
             }
         }
         
+        usort($result, "SchedulerDB::compareSubject");
+        
         return $result;
     }
     
@@ -1458,7 +1460,7 @@ class SchedulerDB
         {
             throw new DBException("Fail to set escaped lessons", __FILE__, __LINE__);
         }
-        
+
         $sql_clear = "delete from temp_escaped_leave_lessons";
         $clear = Constant::sql_execute($db_con, $sql_clear);
         if(is_null($clear))
@@ -1517,6 +1519,10 @@ class SchedulerDB
      *
      */
 
+    public static function compareSubject($obj1, $obj2)
+    {
+        return strcmp($obj1["subject"], $obj2["subject"]);
+    }
 }
 
 ?>
