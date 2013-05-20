@@ -15,6 +15,28 @@ if (!$date)
     if (!$date) $date=date(PageConstant::DATE_FORMAT_ISO);
 }
 $_SESSION['scheduleDate']=$date;
+
+$excludeClassNum=$_POST['exclude-class-num'];
+if ($excludeClassNum)
+{
+    $escapedClassArr=array();
+    for ($i=0; $i<$excludeClassNum; $i++);
+    {
+        if ($_POST["class-select-$i"])
+        {
+            $escapedClassArr[]=array(
+                'teacher_id' => $_POST["teacher-accname-$i"],
+                'type' => $_POST["type-$i"],
+                'start_time' => $_POST["start-time-$i"],
+                'end_time' => $_POST["end-time-$i"]
+            );
+        }
+    }
+    if ($escapedClassArr)
+    {
+        SchedulerDB::passEscapedLessons($escapedClassArr);
+    }
+}
 ?>
 <form class="main" name="schedule" action="schedule/_schedule.php" method="post">
     <div style="margin-bottom: 10px">
@@ -85,6 +107,7 @@ EOD;
                 ?>
             </tbody>
         </table>
+        <a id="exclude-class" href="" style="display: block; margin: -10px 0 20px 0;">Exclude Classes</a>
     </div>
     <div class='accordion colorbox green'>
         <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
@@ -193,6 +216,67 @@ EOD;
 </form>
 <div id="teacher-detail"></div>
 <div id="dialog-alert"></div>
+<form id="dialog-class" name="exclude-class" action="" method="post">
+    <table class="hovered table-info">
+        <thead>
+            <tr class="teacher-thead">
+                <?php
+                    $width=array('50px', '130px', '110px', '130px', '100%');
+                    $tableHeaderList=array_values(NameMap::$RELIEF['excludeClass']['display']);
+                    array_unshift($tableHeaderList, '');
+
+                    for ($i=0; $i<count($tableHeaderList); $i++)
+                    {
+                        // class="sort"
+                        echo <<< EOD
+                            <th class="hovered" style="width: $width[$i]">$tableHeaderList[$i]<!--span class="ui-icon ui-icon-arrowthick-2-n-s"></span--></th>
+EOD;
+                    }
+                ?>
+            </tr>
+        </thead>
+        <tbody >
+            <?php
+                $timeArr=SchoolTime::getTimeArrSub(0, -1);
+                
+                $classList=SchedulerDB::getLessonsOnLeave($date);
+                PageConstant::escapeHTMLEntity($classList);
+                
+                $keyList=array_keys(NameMap::$RELIEF['excludeClass']['display']);
+                $keyExtraList=NameMap::$RELIEF['excludeClass']['hidden'];
+                
+                foreach ($classList as $i => $classInfo)
+                {
+                    $startTime=$timeArr[$classInfo[$keyExtraList[2]]-1];
+                    $endTime=$timeArr[$classInfo[$keyExtraList[3]]-1];
+                    echo <<< EOD
+<tr>
+    <td>
+        <input type="checkbox" name="class-select-$i" />
+        <input type="hidden" name="type-$i" value="{$classInfo[$keyExtraList[1]]}" />
+        <input type="hidden" name="teacher-accname-$i" value="{$classInfo[$keyExtraList[0]]}" />
+        <input type="hidden" name="start-time-$i" value="$startTime" />
+        <input type="hidden" name="end-time-$i" value="$endTime" />
+    </td>
+    <td class="text-left">{$classInfo[$keyList[0]]}</td><td>{$classInfo[$keyList[1]]}</td><td>$startTime - $endTime</td>
+    <td><a class="teacher-detail-link" href="_teacher_detail.php?accname={$classInfo[$keyExtraList[0]]}">{$classInfo[$keyList[3]]}</a></td>
+</tr>
+EOD;
+                }
+                if (empty($classList))
+                {
+                    echo "<tr>";
+                    foreach ($width as $value)
+                    {
+                        echo "<td>--</td>";
+                    }
+                    echo "</tr>";
+                }
+            ?>
+        </tbody>            
+    </table>
+    <input type="hidden" name="exclude-class-num" value="<?php echo count($width); ?>" />
+</form>
 <?php
     Template::printFooter();
     

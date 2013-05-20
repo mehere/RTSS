@@ -2,7 +2,7 @@ $(document).ready(function(){
     // Alert dialog box
     var ALERT_MSG=['Scheduling ... <br /> Please do not close current window.'];
 
-    var formSch=document.forms['schedule'];
+    var formSch=document.forms['schedule'], formClass=document.forms['exclude-class'];
     $(formSch['date-display']).datepicker({
         beforeShowDay: $.datepicker.noWeekends,
         dateFormat: "dd/mm/yy",
@@ -60,6 +60,35 @@ $(document).ready(function(){
                     submitForm();
                 }
             }
+        });
+
+        return false;
+    });
+
+    // Exclude class
+    $("#dialog-class").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 700,
+        minWidth: 700,
+        minHeight: 600,
+        title: "Exclude Classes",
+        buttons: {
+            OK: function(){
+                $(this).dialog("close");
+
+                var func=$(this).data('func');
+                if (func) func();
+            },
+            Cancel: function(){
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("#exclude-class").click(function(){
+        $("#dialog-class").dialog('open').data('func', function(){
+            $(formClass).submit();
         });
 
         return false;
