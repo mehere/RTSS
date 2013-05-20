@@ -392,7 +392,7 @@ class TimetableDB
         return $result;
     }
 
-    public static function getReliefTimetableByClass($date)
+    public static function getReliefTimetableByClass($date, $scheduleIndex = -1)
     {
         $normal_dict = Teacher::getAllTeachers();
         $temp_dict = Teacher::getTempTeacher("");
@@ -404,7 +404,14 @@ class TimetableDB
             throw new DBException('Fail to query relief timetable', __FILE__, __LINE__);
         }
         
-        $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') order by class_name, start_time ASC;";
+        if($scheduleIndex === -1)
+        {
+            $sql_query_relief = "SELECT *, rs_relief_info.start_time_index as start_time, rs_relief_info.end_time_index as end_time FROM ((rs_relief_info LEFT JOIN ct_lesson ON ct_lesson.lesson_id = rs_relief_info.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE rs_relief_info.schedule_date = DATE('".mysql_real_escape_string(trim($date))."') order by class_name, start_time ASC;";
+        }
+        else
+        {
+            $sql_query_relief = "SELECT *, temp_each_alternative.start_time_index as start_time, temp_each_alternative.end_time_index as end_time FROM ((temp_each_alternative LEFT JOIN ct_lesson ON ct_lesson.lesson_id = temp_each_alternative.lesson_id) LEFT JOIN ct_class_matching ON ct_lesson.lesson_id = ct_class_matching.lesson_id) WHERE temp_each_alternative.schedule_id = ".$scheduleIndex.";";
+        }
     
         $query_relief_result = Constant::sql_execute($db_con, $sql_query_relief);
         if(is_null($query_relief_result))

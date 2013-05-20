@@ -1485,7 +1485,7 @@ class SchedulerDB
         }
         
         $sql_insert = substr($sql_insert, 0, -1).';';
-        
+
         $insert = Constant::sql_execute($db_con, $sql_insert);
         if(is_null($insert))
         {
