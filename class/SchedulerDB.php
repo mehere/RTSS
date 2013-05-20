@@ -1453,7 +1453,7 @@ class SchedulerDB
     }
     
     public static function passEscapedLessons($escapedLessons)
-    {throw new DBException("asfasdfasdf", __FILE__, __LINE__);
+    {
         $db_con = Constant::connect_to_db('ntu');
 
         if (empty($db_con))
