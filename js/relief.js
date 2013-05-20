@@ -33,10 +33,17 @@ $(document).ready(function(){
 
     $('#btnScheduleAll').click(function(){
         var submitForm=function(){
-            $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
-                position: "fixed"
-            }).end().dialog('option', 'buttons', null).dialog('open');
-            $(formSch).submit();
+            $("#dialog-class").dialog('open').data('func', function(){
+                $.getJSON("/RTSS/relief/_relief_class.php", $(formSch).serializeArray(), function(data){
+                    if (!data['error'])
+                    {
+                        $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
+                            position: "fixed"
+                        }).end().dialog('option', 'buttons', null).dialog('open');
+                        $(formSch).submit();
+                    }
+                });
+            });
         }
 
         $.getJSON("/RTSS/_check_current_login.php", {"area": 'SCHEDULER'}, function(data){
@@ -84,13 +91,5 @@ $(document).ready(function(){
                 $(this).dialog("close");
             }
         }
-    });
-
-    $("#exclude-class").click(function(){
-        $("#dialog-class").dialog('open').data('func', function(){
-            $(formClass).submit();
-        });
-
-        return false;
     });
 });

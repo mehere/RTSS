@@ -15,28 +15,6 @@ if (!$date)
     if (!$date) $date=date(PageConstant::DATE_FORMAT_ISO);
 }
 $_SESSION['scheduleDate']=$date;
-
-$excludeClassNum=$_POST['exclude-class-num'];
-if ($excludeClassNum)
-{
-    $escapedClassArr=array();
-    for ($i=0; $i<$excludeClassNum; $i++);
-    {
-        if ($_POST["class-select-$i"])
-        {
-            $escapedClassArr[]=array(
-                'teacher_id' => $_POST["teacher-accname-$i"],
-                'type' => $_POST["type-$i"],
-                'start_time' => $_POST["start-time-$i"],
-                'end_time' => $_POST["end-time-$i"]
-            );
-        }
-    }
-    if ($escapedClassArr)
-    {
-        SchedulerDB::passEscapedLessons($escapedClassArr);
-    }
-}
 ?>
 <form class="main" name="schedule" action="schedule/_schedule.php" method="post">
     <div style="margin-bottom: 10px">
@@ -106,8 +84,7 @@ EOD;
                     }
                 ?>
             </tbody>
-        </table>
-        <a id="exclude-class" href="" style="display: block; margin: -10px 0 20px 0;">Exclude Classes</a>
+        </table>        
     </div>
     <div class='accordion colorbox green'>
         <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
