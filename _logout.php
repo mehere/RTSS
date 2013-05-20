@@ -7,5 +7,5 @@ Template::validate(true, false);
 
 session_destroy();
 
-header("Location: /RTSS/");
+header("Location: /RTSS2/");
 ?>

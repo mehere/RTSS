@@ -19,7 +19,7 @@ spl_autoload_register(function($class)
         // put your code here
 
 //        echo "123";
-        BackgroundRunner::execInBackground("C:\Users\Wee\Documents\NetBeansProjects\RTSS\TestScript.php", array("p","h"), array("helloo","2"));
+        BackgroundRunner::execInBackground("C:\Users\Wee\Documents\NetBeansProjects\RTSS2\TestScript.php", array("p","h"), array("helloo","2"));
         echo "Hellloooo";
 
 //        BackgroundRunner::execInBackground("php ./TestScript.php");

@@ -204,11 +204,11 @@ $(document).ready(function(){
         {
             confirm("Please save records you are editing before leaving this page.<br />" +
                 "Press <strong>'OK'</strong> to proceed <strong>without saving</strong>.", function(){
-                window.location.href="/RTSS/relief/";
+                window.location.href="/RTSS2/relief/";
             });
             return false;
         }
-        window.location.href="/RTSS/relief/";
+        window.location.href="/RTSS2/relief/";
     });
 
     function confirm(text, func){
@@ -345,7 +345,7 @@ $(document).ready(function(){
                 }
 
                 var self=this;
-                $.getJSON('/RTSS/relief/_relief_check.php', {
+                $.getJSON('/RTSS2/relief/_relief_check.php', {
                     'date-from': fieldObj['datePost'][0].value,
                     'date-to': fieldObj['datePost'][1].value
                 }, function(data){
@@ -513,7 +513,7 @@ $(document).ready(function(){
 
     function fillNameList(type, func)
     {
-        $.getJSON("/RTSS/relief/_teacher_name.php", {"type": type}, function(data){
+        $.getJSON("/RTSS2/relief/_teacher_name.php", {"type": type}, function(data){
             if (data['error']) return;
 
             nameList=[];
@@ -546,7 +546,7 @@ $(document).ready(function(){
 
                     if (noClear)
                     {
-                        $.getJSON("/RTSS/relief/_teacher_name.php", {"accname": nameAccMap[value]}, function(data){
+                        $.getJSON("/RTSS2/relief/_teacher_name.php", {"accname": nameAccMap[value]}, function(data){
                             curRow.find('input[name^="handphone"]').focus().val(data['phone']);
                             curRow.find('input[name^="email"]').focus().val(data['email']);
                         });
@@ -612,7 +612,7 @@ $(document).ready(function(){
         selfDelegate.removeAttribute('id');
 
         var numOfTeacher=formEdit['num'].value-0+1;
-        $.get("/RTSS/relief/teacher-edit-frag.php", {"num": numOfTeacher, "teacher": formEdit['prop'].value}, function(data){
+        $.get("/RTSS2/relief/teacher-edit-frag.php", {"num": numOfTeacher, "teacher": formEdit['prop'].value}, function(data){
             formEdit['num'].value=numOfTeacher;
             $(selfDelegate).parent().append(data);
 

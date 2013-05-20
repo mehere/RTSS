@@ -4,7 +4,7 @@ $(document).ready(function(){
     var formEdit=document.forms['edit'],
         ALERT_MSG=['Please provide relief teacher for each teacher on leave.',
             'Failed to override the relief teacher due to database error.'],
-        OVERRIDE_URL="/RTSS/relief/schedule/_override.php";
+        OVERRIDE_URL="/RTSS2/relief/schedule/_override.php";
 
     var contentToHide=$('#page-turn-wrapper').add('.bt-control');
 
@@ -100,7 +100,7 @@ $(document).ready(function(){
 
         $.post(this.action, $(formEdit).serializeArray(), function(data){
             $("#dialog-alert").dialog('option', 'title', '').html(data['display']).data('func', function(){
-                window.location="/RTSS/relief/";
+                window.location="/RTSS2/relief/";
             }).dialog('open');
         }, 'json');
 
@@ -108,7 +108,7 @@ $(document).ready(function(){
     });
 
     $('#goback').click(function(){
-        $.getJSON("/RTSS/_unlock_current_login.php", {"area": 'SCHEDULER'}, function(data){
+        $.getJSON("/RTSS2/_unlock_current_login.php", {"area": 'SCHEDULER'}, function(data){
             if (!data['error'])
             {
                 window.location.href=$('#goback').attr('href');
@@ -129,7 +129,7 @@ $(document).ready(function(){
     };
 
     var nameList=[], nameAccMap={};
-    $.getJSON("/RTSS/relief/_teacher_name.php", function(data){
+    $.getJSON("/RTSS2/relief/_teacher_name.php", function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){

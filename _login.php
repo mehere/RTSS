@@ -11,7 +11,7 @@ header("Pragma: no-cache");
 session_start();
 
 //page to be redirected to
-$destination = "/RTSS/index.php";
+$destination = "/RTSS2/index.php";
 
 //call function to verify username and password and store user type
 $userInfo = User::login(trim($_POST['username']), trim($_POST['password']));
@@ -25,9 +25,9 @@ if ($_SESSION['type'])
     $_SESSION['username'] = $userInfo['fullname'];
     $_SESSION['accname'] = $userInfo['accname'];    
     if ($_SESSION['type'] == "admin" || $_SESSION['type'] == "super_admin")
-        $destination = "/RTSS/relief/index.php";
+        $destination = "/RTSS2/relief/index.php";
     else
-        $destination = "/RTSS/timetable/index.php";
+        $destination = "/RTSS2/timetable/index.php";
 }
 else
 {

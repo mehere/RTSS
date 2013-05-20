@@ -19,5 +19,5 @@ select.dropdown {
 	background: linear-gradient(to bottom, #F1F2F3 0%,#EAEBEC 100%);
 	-pie-background: linear-gradient(to bottom, #F1F2F3, #EAEBEC);
 	
-	behavior: url(/RTSS/img/PIE.htc);
+	behavior: url(/RTSS2/img/PIE.htc);
 }

@@ -23,11 +23,11 @@ $semDates=SchoolTime::getSemPeriod($_POST['year'], $_POST['sem']);
     </div>
     <div class="line">
         <span class="label">Sem Start:</span>
-        <input type="text" class="textfield datefield" name="sem-date-start" maxlength="10" /><input type="hidden" name="server-sem-date-start" value="<?php echo $semDates[0]; ?>" /> <img class="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />        
+        <input type="text" class="textfield datefield" name="sem-date-start" maxlength="10" /><input type="hidden" name="server-sem-date-start" value="<?php echo $semDates[0]; ?>" /> <img class="calendar-trigger" src="/RTSS2/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />        
     </div>
     <div class="line">
         <span class="label">Sem End:</span>
-        <input type="text" class="textfield datefield" name="sem-date-end" maxlength="10" /><input type="hidden" name="server-sem-date-end" value="<?php echo $semDates[1]; ?>" /> <img class="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+        <input type="text" class="textfield datefield" name="sem-date-end" maxlength="10" /><input type="hidden" name="server-sem-date-end" value="<?php echo $semDates[1]; ?>" /> <img class="calendar-trigger" src="/RTSS2/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
     </div>
     <div class="line"><span class="label">File:</span><input type="file" name="timetableFile" /></div>
     <?php

@@ -1,7 +1,7 @@
 $(document).ready(function(){
     // Auto complete setup
     var nameList=[], nameAccMap={};
-    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": 'all_normal'}, function(data){
+    $.getJSON("/RTSS2/relief/_teacher_name.php", {"type": 'all_normal'}, function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){

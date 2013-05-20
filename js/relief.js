@@ -34,7 +34,7 @@ $(document).ready(function(){
     $('#btnScheduleAll').click(function(){
         var submitForm=function(){
             $("#dialog-class").dialog('open').data('func', function(){
-                $.getJSON("/RTSS/relief/_relief_class.php", $(formClass).serializeArray(), function(data){
+                $.getJSON("/RTSS2/relief/_relief_class.php", $(formClass).serializeArray(), function(data){
                     if (!data['error'])
                     {
                         $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
@@ -46,7 +46,7 @@ $(document).ready(function(){
             });
         }
 
-        $.getJSON("/RTSS/_check_current_login.php", {"area": 'SCHEDULER'}, function(data){
+        $.getJSON("/RTSS2/_check_current_login.php", {"area": 'SCHEDULER'}, function(data){
             var msg=data['fullname'] + ' (' + data['accname'] + ') is currently logged in.'
                 + (data['phone'] ? ' You can call ' + data['phone'] + ' to reach him/her.' : '');
 
@@ -74,7 +74,7 @@ $(document).ready(function(){
 
     // Unlock schedule
     $("#unlock-schedule").click(function(){
-        $.getJSON('/RTSS/_unlock_current_login.php', {"area": 'SCHEDULER'}, function(data){
+        $.getJSON('/RTSS2/_unlock_current_login.php', {"area": 'SCHEDULER'}, function(data){
             if (!data['error'])
             {
                 window.location.reload();

@@ -78,7 +78,7 @@ EOD;
                     }
                     
                     echo <<< EOD
-<tr><td><a href="/RTSS/relief/_teacher_detail.php?accname={$value['accname']}" class="teacher-detail-link">{$value['fullname']}</a></td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>$reason</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
+<tr><td><a href="/RTSS2/relief/_teacher_detail.php?accname={$value['accname']}" class="teacher-detail-link">{$value['fullname']}</a></td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>$reason</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
 EOD;
                 }
 

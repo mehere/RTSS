@@ -10,7 +10,7 @@ Template::validate();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Report - Print</title>
-<link href="/RTSS/css/print.css" rel="stylesheet" type="text/css">
+<link href="/RTSS2/css/print.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 .table-info {
 	width: 80%;

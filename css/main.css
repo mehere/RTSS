@@ -3,42 +3,42 @@
 @font-face
 {
     font-family: 'Segoe UI Light';
-    src: url('/RTSS/img/fonts/segoeuilight/segoeuilight.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/img/fonts/segoeuilight/segoeuilight.woff') format('woff'),
-        url('/RTSS/img/fonts/segoeuilight/segoeuilight.ttf')  format('truetype'),
-        url('/RTSS/img/fonts/segoeuilight/segoeuilight.svg#SegoeUILight') format('svg');
+    src: url('/RTSS2/img/fonts/segoeuilight/segoeuilight.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS2/img/fonts/segoeuilight/segoeuilight.woff') format('woff'),
+        url('/RTSS2/img/fonts/segoeuilight/segoeuilight.ttf')  format('truetype'),
+        url('/RTSS2/img/fonts/segoeuilight/segoeuilight.svg#SegoeUILight') format('svg');
 }
 
 @font-face
 {
     font-family: 'Segoe UI Semibold';
-    src: url('/RTSS/img/fonts/seguisb.ttf')  format('truetype');
+    src: url('/RTSS2/img/fonts/seguisb.ttf')  format('truetype');
 }
 
 @font-face
 {
     font-family: 'Segoe UI';
-    src: url('/RTSS/img/fonts/segoeui/segoeui.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/img/fonts/segoeui/segoeui.woff') format('woff'),
-        url('/RTSS/img/fonts/segoeui/segoeui.ttf')  format('truetype'),
-        url('/RTSS/img/fonts/segoeui/segoeui.svg#SegoeUI') format('svg');
+    src: url('/RTSS2/img/fonts/segoeui/segoeui.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS2/img/fonts/segoeui/segoeui.woff') format('woff'),
+        url('/RTSS2/img/fonts/segoeui/segoeui.ttf')  format('truetype'),
+        url('/RTSS2/img/fonts/segoeui/segoeui.svg#SegoeUI') format('svg');
 }
 
 @font-face{
     font-family: 'Open Sans';
-    src: url('/RTSS/img/fonts/opensans/opensans.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/img/fonts/opensans/opensans.woff') format('woff'),
-        url('/RTSS/img/fonts/opensans/opensans.ttf')  format('truetype'),
-        url('/RTSS/img/fonts/opensans/opensans.svg#SegoeUI') format('svg');
+    src: url('/RTSS2/img/fonts/opensans/opensans.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS2/img/fonts/opensans/opensans.woff') format('woff'),
+        url('/RTSS2/img/fonts/opensans/opensans.ttf')  format('truetype'),
+        url('/RTSS2/img/fonts/opensans/opensans.svg#SegoeUI') format('svg');
 }
 
 @font-face
 {
     font-family: 'Droid Sans Regular';
-    src: url('/RTSS/img/fonts/droidsans/droidsans.eot?#iefix') format('embedded-opentype'),
-        url('/RTSS/img/fonts/droidsans/droidsans.woff') format('woff'),
-        url('/RTSS/img/fonts/droidsans/droidsans.ttf')  format('truetype'),
-        url('/RTSS/img/fonts/droidsans/droidsans.svg#DroidSansRegular') format('svg');
+    src: url('/RTSS2/img/fonts/droidsans/droidsans.eot?#iefix') format('embedded-opentype'),
+        url('/RTSS2/img/fonts/droidsans/droidsans.woff') format('woff'),
+        url('/RTSS2/img/fonts/droidsans/droidsans.ttf')  format('truetype'),
+        url('/RTSS2/img/fonts/droidsans/droidsans.svg#DroidSansRegular') format('svg');
 }
 
 
@@ -76,10 +76,10 @@ a img {
     position: relative;
     padding: 0px;
     z-index: 0;
-    background: url("/RTSS/img/page_gradient_linear.png") no-repeat;
+    background: url("/RTSS2/img/page_gradient_linear.png") no-repeat;
     background-size: 100% 100%;
-    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/page_gradient_linear.png', sizingMethod='scale');
-    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS/img/page_gradient_linear.png', sizingMethod='scale')";	
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS2/img/page_gradient_linear.png', sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader( src='/RTSS2/img/page_gradient_linear.png', sizingMethod='scale')";	
 }
 
 div.header {
@@ -170,7 +170,7 @@ div.wrapper{
     
 	box-shadow: 0 3px 6px -4px #B9B9B9, inset 0 0 2px 0 #CCC;
     
-    behavior: url("/RTSS/img/PIE.htc");
+    behavior: url("/RTSS2/img/PIE.htc");
 }
 
 div.submenu{
@@ -446,7 +446,7 @@ table.hovered tbody tr:hover{
 	
 	box-shadow: 0 3px 3px 0 gray;
     
-    behavior: url("/RTSS/img/PIE.htc");
+    behavior: url("/RTSS2/img/PIE.htc");
 }
 .ui-autocomplete .ui-menu-item {
 	font-size: .9em;

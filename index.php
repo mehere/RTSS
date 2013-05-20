@@ -10,16 +10,16 @@ session_start();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title><?php echo PageConstant::SCH_NAME_ABBR . " " . PageConstant::PRODUCT_NAME; ?></title>
-<link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
-<link href="/RTSS/css/index.css" rel="stylesheet" type="text/css" />
+<link href="/RTSS2/css/main.css" rel="stylesheet" type="text/css" />
+<link href="/RTSS2/css/index.css" rel="stylesheet" type="text/css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
-<script src="/RTSS/js/index.js"></script>
+<script src="/RTSS2/js/index.js"></script>
 </head>
 <body>
 <div id="container">
     <div id="content-wrapper">
     	<div id="content">
-        	<img src="/RTSS/img/school-logo-name.png" alt="<?php echo PageConstant::SCH_NAME ?>" class="logo-name" />
+        	<img src="/RTSS2/img/school-logo-name.png" alt="<?php echo PageConstant::SCH_NAME ?>" class="logo-name" />
             <form method="post" action="_login.php" class="login-form" name="login">
                 <div>Log in to <?php echo PageConstant::PRODUCT_NAME ?><span style="color: #969696; font-size: .9em; margin-left: 10px">(Please use <em>ifins account</em> to log in)</span></div>
                 <input type="text" name="username" value="User Name" class="textfield" />

@@ -307,7 +307,7 @@ $(document).ready(function(){
             $("#dialog-help").parent().css({
                 position: "fixed",
                 boxShadow: "0 0 20px -5px black",
-                behavior: 'url("/RTSS/img/PIE.htc")'
+                behavior: 'url("/RTSS2/img/PIE.htc")'
             }).find('.ui-dialog-titlebar-close').css('visibility', 'visible');
             $("#dialog-help").dialog('open');
         });
@@ -325,7 +325,7 @@ $(document).ready(function(){
 
     // AED name auto complete
     var nameList=[], nameAccMap={};
-    $.getJSON("/RTSS/relief/_teacher_name.php", {"type": "AED"}, function(data){
+    $.getJSON("/RTSS2/relief/_teacher_name.php", {"type": "AED"}, function(data){
         if (data['error']) return;
 
         $.each(data, function(key, value){
@@ -370,7 +370,7 @@ $(document).ready(function(){
     }
 
     var classList=[];
-    $.getJSON("/RTSS/upload/_school_info.php", {"info": "class", "year": formG['year'].value, "sem": formG['sem'].value},
+    $.getJSON("/RTSS2/upload/_school_info.php", {"info": "class", "year": formG['year'].value, "sem": formG['sem'].value},
             function(data){
         if (data['error']) return;
 
@@ -411,7 +411,7 @@ $(document).ready(function(){
     });
 
     var subjectList=[];
-    $.getJSON("/RTSS/upload/_school_info.php", {"info": "subject", "year": formG['year'].value, "sem": formG['sem'].value},
+    $.getJSON("/RTSS2/upload/_school_info.php", {"info": "subject", "year": formG['year'].value, "sem": formG['sem'].value},
         function(data){
             if (data['error']) return;
 

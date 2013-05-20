@@ -56,7 +56,7 @@ EOD;
                             {
                                 $rowNum=count($allocation['lesson']);
                                 $firstRowSpanName=<<< EOD
-<td rowspan="$rowNum"><a href="/RTSS/relief/_teacher_detail.php?accname=$reliefAccname" class="teacher-detail-link">{$allocation['reliefTeacher']}</a></td>
+<td rowspan="$rowNum"><a href="/RTSS2/relief/_teacher_detail.php?accname=$reliefAccname" class="teacher-detail-link">{$allocation['reliefTeacher']}</a></td>
 EOD;
 
                                 $isFirstRow=false;

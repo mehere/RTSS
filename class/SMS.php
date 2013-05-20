@@ -159,7 +159,7 @@ class SMS {
 
         //chdir(SMS::$jarDir);
         $output = shell_exec($command);
-        chdir('C:\xampp\htdocs\RTSS\class');
+        chdir('C:\xampp\htdocs\RTSS2\class');
 
         $replied = array();
         

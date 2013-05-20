@@ -18,10 +18,10 @@ $_SESSION['scheduleDate']=$date;
 ?>
 <form class="main" name="schedule" action="schedule/_schedule.php" method="post">
     <div style="margin-bottom: 10px">
-        Date: <input type="text" class="textfield datefield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
+        Date: <input type="text" class="textfield datefield" name="date-display" maxlength="10" /><input type="hidden" name="date" value="<?php echo $date; ?>" /> <img id="calendar-trigger" src="/RTSS2/img/calendar.gif" alt="Calendar" style="vertical-align: middle; cursor: pointer" />
     </div>
     <div class="accordion colorbox blue">
-        <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
+        <a href="" class="icon-link"><img src="/RTSS2/img/minus-white.png" /><img src="/RTSS2/img/plus-white.png" style="display: none" /></a>
         <span class="box-title">
             Leave Status
         </span>
@@ -87,7 +87,7 @@ EOD;
         </table>        
     </div>
     <div class='accordion colorbox green'>
-        <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
+        <a href="" class="icon-link"><img src="/RTSS2/img/minus-white.png" /><img src="/RTSS2/img/plus-white.png" style="display: none" /></a>
         <span class="box-title">
             Temporary Relief
         </span>
@@ -140,7 +140,7 @@ EOD;
         </table>
     </div>
     <div class='accordion colorbox yellow'>
-        <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
+        <a href="" class="icon-link"><img src="/RTSS2/img/minus-white.png" /><img src="/RTSS2/img/plus-white.png" style="display: none" /></a>
         <span class="box-title">
             Excluding List
         </span>
@@ -184,10 +184,10 @@ EOD;
             if (new DateTime($date) > new DateTime('yesterday')) { 
                 if ($isScheduleRun) {                    
         ?>
-            <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS/img/redo.png" class="icon" />Re-Schedule All</a>
-            <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule the Remaining</a>
+            <a href="" id="btnScheduleAll" class="button red"><img src="/RTSS2/img/redo.png" class="icon" />Re-Schedule All</a>
+            <a href="adhoc-setting.php" id="btnScheduleAdhoc" class="button"><img src="/RTSS2/img/triangle.png" class="icon" />Schedule the Remaining</a>
         <?php } else { ?>
-            <a href="" id="btnScheduleAll" class="button"><img src="/RTSS/img/triangle.png" class="icon" />Schedule All</a>
+            <a href="" id="btnScheduleAll" class="button"><img src="/RTSS2/img/triangle.png" class="icon" />Schedule All</a>
         <?php } 
             }
         ?>

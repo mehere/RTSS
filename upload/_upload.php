@@ -35,18 +35,18 @@ try
     {
         $arrLesson = $analyzer->arrLessons;
         TimetableDB::insertTimetable($arrLesson, $arrTeachers, $year, $semester, trim($_POST['server-sem-date-start']), trim($_POST['server-sem-date-end']), $analyzer->arrTimeList);
-        $destination = "/RTSS/upload/";
+        $destination = "/RTSS2/upload/";
         
         $_SESSION['uploadSuccess']="Upload timetable successfully.";
     } else
     {
         $_SESSION["abbrNameList"] = $unknownTeachers;        
-        $destination = "/RTSS/upload/namematch.php?sds=" . urlencode(trim($_POST['server-sem-date-start'])) 
+        $destination = "/RTSS2/upload/namematch.php?sds=" . urlencode(trim($_POST['server-sem-date-start'])) 
                 . "&sde=" . urlencode(trim($_POST['server-sem-date-end']));
     }
 } catch (Exception $e)
 {
-    $destination = "/RTSS/upload/";
+    $destination = "/RTSS2/upload/";
     $_SESSION['uploadError'] = "Uploading Error: " . $e->getMessage();
 }
 

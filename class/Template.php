@@ -19,29 +19,29 @@ class Template
     
     // Menu map
     private static $MAIN_MENU=array(
-        self::HOME => "/RTSS/relief/",
-        self::TT_VIEW => "/RTSS/timetable/",
-        self::TT_ADMIN => "/RTSS/upload/",
-        self::REPORT => "/RTSS/report/"
+        self::HOME => "/RTSS2/relief/",
+        self::TT_VIEW => "/RTSS2/timetable/",
+        self::TT_ADMIN => "/RTSS2/upload/",
+        self::REPORT => "/RTSS2/report/"
     );
     
     private static $SUBMENU=array(
         self::HOME => array(
-            self::SCHEDULE => "/RTSS/relief/",
-            self::SMS => "/RTSS/sms/"            
+            self::SCHEDULE => "/RTSS2/relief/",
+            self::SMS => "/RTSS2/sms/"            
         ),
         
         self::TT_VIEW => array(            
         ),
         
         self::TT_ADMIN => array(
-            self::TT_ADMIN_MASTER => "/RTSS/upload/",
-            self::TT_ADMIN_AED => "/RTSS/upload/AED.php"
+            self::TT_ADMIN_MASTER => "/RTSS2/upload/",
+            self::TT_ADMIN_AED => "/RTSS2/upload/AED.php"
         ),
         
         self::REPORT => array(
-            self::REPORT_OVERALL => "/RTSS/report",
-            self::REPORT_INDIVIDUAL => "/RTSS/report/individual.php"
+            self::REPORT_OVERALL => "/RTSS2/report",
+            self::REPORT_INDIVIDUAL => "/RTSS2/report/individual.php"
         )
     );
     
@@ -73,7 +73,7 @@ class Template
             }
             else
             {
-                header("Location: /RTSS/");
+                header("Location: /RTSS2/");
                 exit;
             }
         }
@@ -125,24 +125,24 @@ EOD;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />      
         <title>$title</title>
-        <link href="/RTSS/jquery-ui/css/jQui1.9.2.min.css" rel="stylesheet" type="text/css" />
-        <link href="/RTSS/css/main.css" rel="stylesheet" type="text/css" />
+        <link href="/RTSS2/jquery-ui/css/jQui1.9.2.min.css" rel="stylesheet" type="text/css" />
+        <link href="/RTSS2/css/main.css" rel="stylesheet" type="text/css" />
 EOD;
         foreach ($css as $aCss)
         {
             echo <<< EOD
-        <link href="/RTSS/css/$aCss" rel="stylesheet" type="text/css" />
+        <link href="/RTSS2/css/$aCss" rel="stylesheet" type="text/css" />
 EOD;
         }
         echo <<< EOD
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
-        <script src="/RTSS/jquery-ui/jQui1.9.2.min.js" type="text/javascript"></script>
-        <script src="/RTSS/js/config.js" type="text/javascript"></script>
+        <script src="/RTSS2/jquery-ui/jQui1.9.2.min.js" type="text/javascript"></script>
+        <script src="/RTSS2/js/config.js" type="text/javascript"></script>
 EOD;
         foreach ($scripts as $script)
         {
             echo <<< EOD
-        <script src="/RTSS/js/$script" type="text/javascript"></script>
+        <script src="/RTSS2/js/$script" type="text/javascript"></script>
 EOD;
         }
 
@@ -153,7 +153,7 @@ EOD;
         <div id="container">
             <div class="header">
                 <div class="header-top">
-                    <a href="/RTSS/relief/" title="Home"><img src="/RTSS/img/school-logo.png" class="logo" /></a>
+                    <a href="/RTSS2/relief/" title="Home"><img src="/RTSS2/img/school-logo.png" class="logo" /></a>
                     <div class="wrapper">
                         <div class="statusBar">
                             <div class="statusbar-item">
@@ -162,7 +162,7 @@ EOD;
                                 </span>
                             </div>
                             <div class="statusbar-item">
-                                <a class="statusbar" href="/RTSS/_logout.php">
+                                <a class="statusbar" href="/RTSS2/_logout.php">
                                     Log out
                                 </a>
                             </div>
@@ -191,7 +191,7 @@ EOD;
 
                     <div style="clear:both;"></div>
 
-                    <img class="submenu-separator" src="/RTSS/img/line.png"/>
+                    <img class="submenu-separator" src="/RTSS2/img/line.png"/>
                 </div>
             </div>
             <div style="clear:both;"></div>

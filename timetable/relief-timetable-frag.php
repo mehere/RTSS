@@ -2,7 +2,7 @@
     <span style="color: red;">Relief classes are highlighted in red.</span> <span style="color: blue;">For AED: classes highlighted in blue are not mandatory.</span>
 </p>
 <form name="teacher-select" class="accordion colorbox blue" method="post">
-    <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
+    <a href="" class="icon-link"><img src="/RTSS2/img/minus-white.png" /><img src="/RTSS2/img/plus-white.png" style="display: none" /></a>
     <span class="box-title">
         Individual Timetable
         <?php if ($isAdmin) {  #define $isAdmin & $teacherList ?>                                
@@ -106,7 +106,7 @@ if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin')
     $viewOrder=$_POST['view-order'];
 ?>
 <form name="relief-timetable" method="post" class='accordion colorbox green'>
-    <a href="" class="icon-link"><img src="/RTSS/img/minus-white.png" /><img src="/RTSS/img/plus-white.png" style="display: none" /></a>
+    <a href="" class="icon-link"><img src="/RTSS2/img/minus-white.png" /><img src="/RTSS2/img/plus-white.png" style="display: none" /></a>
     <span class="box-title">
         Relief Timetable
     </span>
@@ -179,10 +179,10 @@ EOD;
                         $timetableEntry['time']= $timeArr[$teaching['time-from']] . " - " . $timeArr[$teaching['time-to']];
                         
                         $timetableEntry['teacher-fullname']=<<< EOD
-<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['teacher-accname']}" class="teacher-detail-link">{$timetableEntry['teacher-fullname']}</a>
+<a href="/RTSS2/relief/_teacher_detail.php?accname={$teaching['teacher-accname']}" class="teacher-detail-link">{$timetableEntry['teacher-fullname']}</a>
 EOD;
                         $timetableEntry['relief-teacher-fullname']=<<< EOD
-<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['relief-teacher-accname']}" class="teacher-detail-link">{$timetableEntry['relief-teacher-fullname']}</a>
+<a href="/RTSS2/relief/_teacher_detail.php?accname={$teaching['relief-teacher-accname']}" class="teacher-detail-link">{$timetableEntry['relief-teacher-fullname']}</a>
 EOD;
 
                         echo "<tr>";
@@ -227,10 +227,10 @@ EOD;
                         
                         
                         $timetableEntry['teacher-fullname']=<<< EOD
-<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['teacher-accname']}" class="teacher-detail-link">{$timetableEntry['teacher-fullname']}</a>
+<a href="/RTSS2/relief/_teacher_detail.php?accname={$teaching['teacher-accname']}" class="teacher-detail-link">{$timetableEntry['teacher-fullname']}</a>
 EOD;
                         $timetableEntry['relief-teacher-fullname']=<<< EOD
-<a href="/RTSS/relief/_teacher_detail.php?accname={$teaching['relief-teacher-accname']}" class="teacher-detail-link">{$timetableEntry['relief-teacher-fullname']}</a>
+<a href="/RTSS2/relief/_teacher_detail.php?accname={$teaching['relief-teacher-accname']}" class="teacher-detail-link">{$timetableEntry['relief-teacher-fullname']}</a>
 EOD;
 
                         echo "<tr>";

@@ -18,10 +18,10 @@ $(document).ready(function(){
     var formEdit=document.forms['edit'];
 
     $(formEdit['goback']).click(function(){
-        window.location.href="/RTSS/relief/";
+        window.location.href="/RTSS2/relief/";
     });
 
     $('#dialog-alert').data('func', function(){
-        window.location.href="/RTSS/relief/";
+        window.location.href="/RTSS2/relief/";
     }).dialog('open');
 });

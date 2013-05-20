@@ -1,14 +1,14 @@
 <?php
 class NameMap
 {
-    // For /RTSS/relief/index.php
+    // For /RTSS2/relief/index.php
     public static $RELIEF=array(
         'teacherOnLeave' => array(
             'display' => array(
 //                'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'reason' => 'Reason',
 //                'teacherVerified' => 'Verified', 'teacherScheduled' => 'Scheduled'
                 'fullname' => 'Name', 'type' => 'Type', 'datetime' => 'Time', 'handphone' => 'Handphone', 'reason' => 'Reason',
-                'isScheduled' => '<img src="/RTSS/img/thumbup.png"></img>'
+                'isScheduled' => '<img src="/RTSS2/img/thumbup.png"></img>'
             ),
             'hidden' => array(
                 'accname', 'leaveID'
@@ -70,7 +70,7 @@ class NameMap
          */
     );
 
-    // For /RTSS/relief/teacher-edit.php
+    // For /RTSS2/relief/teacher-edit.php
     public static $RELIEF_EDIT=array(
         'teacherOnLeave' => array(
             'display' => array(
@@ -108,7 +108,7 @@ class NameMap
         )
     );
 
-    // For /RTSS/relief/schedule/ & ~result.php
+    // For /RTSS2/relief/schedule/ & ~result.php
     public static $SCHEDULE_RESULT=array(
 //        'preview' => array(
 //            'display' => array(
@@ -129,7 +129,7 @@ class NameMap
         )
     );
 
-    // For /RTSS/relief/timetable/
+    // For /RTSS2/relief/timetable/
     public static $SMS=array(
         'layout' => array(
             'display' => array(
@@ -142,7 +142,7 @@ class NameMap
         )
     );
 
-    // For /RTSS/relief/timetable/
+    // For /RTSS2/relief/timetable/
     public static $TIMETABLE=array(
         'layout' => array(
             'display' => array(
@@ -183,7 +183,7 @@ class NameMap
         )
     );
 
-    // For /RTSS/relief/report/
+    // For /RTSS2/relief/report/
     public static $REPORT=array(
         'overall' => array(
             'display' => array(
