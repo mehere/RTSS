@@ -31,12 +31,12 @@ if ($_SESSION['type'] == 'admin' || $_SESSION['type'] == 'super_admin')
     </div>
 </form>
 <?php
-    if ($isAdmin) 
-    {
-        $timetable=TimetableDB::getReliefTimetable('', '', $date); 
-//                $_POST['relief-timetable-order']?$_POST['order']:"", $_POST['relief-timetable-direction']==2 ? SORT_DESC : SORT_ASC);
-        PageConstant::escapeHTMLEntity($timetable);
-    }
+//    if ($isAdmin) 
+//    {
+//        $timetable=TimetableDB::getReliefTimetable('', '', $date); 
+////                $_POST['relief-timetable-order']?$_POST['order']:"", $_POST['relief-timetable-direction']==2 ? SORT_DESC : SORT_ASC);
+//        PageConstant::escapeHTMLEntity($timetable);
+//    }
 
     $timetableIndividual=TimetableDB::getIndividualTimetable($date, $accname);
     PageConstant::escapeHTMLEntity($timetableIndividual);

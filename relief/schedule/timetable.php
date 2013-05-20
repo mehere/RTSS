@@ -58,8 +58,10 @@ EOD;
     $teacherList=PageConstant::formatOptionInSelect(ListGenerator::getTeacherName($_SESSION['scheduleDate']), $_POST['accname']);
     $isAdmin=true;
 
-    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['scheduleDate'], $curScheduleIndex);
-    PageConstant::escapeHTMLEntity($timetable);
+//    $timetable=TimetableDB::getReliefTimetable('', '', $_SESSION['scheduleDate'], $curScheduleIndex);
+//    PageConstant::escapeHTMLEntity($timetable);
+    
+    $date=$_SESSION['scheduleDate'];
 
     $timetableIndividual=TimetableDB::getIndividualTimetable($_SESSION['scheduleDate'], $_POST['accname'], $curScheduleIndex);
     PageConstant::escapeHTMLEntity($timetableIndividual);

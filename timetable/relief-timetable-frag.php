@@ -157,10 +157,9 @@ EOD;
             }
             else
             {
-                $timetable=TimetableDB::getReliefTimetable('', '', $date); 
+                $timetable=TimetableDB::getReliefTimetable('', '', $date, $curScheduleIndex?$curScheduleIndex:-1); 
                 PageConstant::escapeHTMLEntity($timetable);
-            }
-//var_dump($timetable);            
+            }            
 
             $timeArr=SchoolTime::getTimeArrSub(0, -1);
             if ($orderByClass)
