@@ -169,13 +169,16 @@ EOD;
                         $normalList[]=$nonexecInfo[$value]['fullname'];
                     }
                 }
+                
+                sort($adminList);
+                sort($normalList);
             ?>
             <tr><th style="width: 120px" class="hovered"><?php echo NameMap::$RELIEF['excludingList']['display']['executive']; ?></th><td><?php echo implode(', ', $adminList); ?></td></tr>
             <tr><th class="hovered"><?php echo NameMap::$RELIEF['excludingList']['display']['non-executive']; ?></th><td><?php echo implode(', ', $normalList); ?></td></tr>
         </table>
     </div>
 
-    <div style="clear: both"></div>
+    <div style="clear: both"></div>    
     <div class="bt-control">
         <?php 
             if (new DateTime($date) > new DateTime('yesterday')) { 
@@ -189,6 +192,9 @@ EOD;
             }
         ?>
     </div>
+    <?php if (User::checkLogin('SCHEDULER') == $_SESSION['accname']) { ?>
+    <a href="" id="unlock-schedule" style="display: block;">Unlock Scheduling</a>
+    <?php } ?>
     <div style="clear: both"></div>
 </form>
 <div id="teacher-detail"></div>
@@ -252,7 +258,7 @@ EOD;
             ?>
         </tbody>            
     </table>
-    <input type="hidden" name="exclude-class-num" value="<?php echo count($width); ?>" />
+    <input type="hidden" name="exclude-class-num" value="<?php echo count($classList); ?>" />
 </form>
 <?php
     Template::printFooter();

@@ -23,7 +23,12 @@ if ($area == 'SCHEDULER' || $area == 'EDIT_SCHEDULE')
         {
             User::unlock($loginUser, $area);
             User::lock($_SESSION['accname'], $area, true);
-            $output['canProceed']=$loginUser==$_SESSION['accname'] ? 1 : 2;
+            $output['canProceed']=2;
+        }
+
+        if ($loginUser==$_SESSION['accname'])
+        {
+            $output['canProceed']=1;
         }
     }
     else
