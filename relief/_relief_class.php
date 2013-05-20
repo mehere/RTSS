@@ -18,8 +18,8 @@ if ($excludeClassNum)
             $escapedClassArr[]=array(
                 'teacher_id' => $_GET["teacher-accname-$i"],
                 'type' => $_GET["type-$i"],
-                'start_time' => $_GET["start-time-$i"],
-                'end_time' => $_GET["end-time-$i"]
+                'start_time' => SchoolTime::getTimeIndex($_GET["start-time-$i"]),
+                'end_time' => SchoolTime::getTimeIndex($_GET["end-time-$i"])
             );
         }
     }
