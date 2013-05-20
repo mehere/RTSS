@@ -52,7 +52,7 @@ class SMS {
 
                 $type = $aReceipent["type"];
                 if ($type === 'R') {
-                    $messageFull = $messageFull . "~Please reply in the following format: '$smsId-Yes' to accept or '$smsId-no' to decline.";
+                    $messageFull = $messageFull . "~Please reply in the following format: '$smsId-OK'.";
                 }
                 $messageCache = $messageFull;
                 $arrMessage = array();
