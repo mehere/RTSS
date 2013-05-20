@@ -317,7 +317,7 @@ class SchoolTime
      * @param string $year 4 digit string
      * @return array 
      */
-    private static function getSchoolTimeList($sem, $year, $weekday = 1)
+    public static function getSchoolTimeList($sem, $year, $weekday = 1)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -349,7 +349,7 @@ class SchoolTime
      * @param string $currentDate date string
      * @return array or null if date outside range
      */
-    private static function checkSemInfo($currentDate)
+    public static function checkSemInfo($currentDate)
     {
         $db_con = Constant::connect_to_db('ntu');
 
@@ -374,7 +374,8 @@ class SchoolTime
             "startDate" => $sem[0]['start_date'],
             "endDate" => $sem[0]['end_date'],
             "year" => $sem[0]['year'],
-            "sem" => $sem[0]['sem_num']
+            "sem" => $sem[0]['sem_num'],
+            "sem_id" => $sem[0]['sem_id']
         );
         
         return $result;
