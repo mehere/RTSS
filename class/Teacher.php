@@ -488,7 +488,7 @@ class Teacher {
         {
             $result[] = $row['teacher_id'];
         }
-
+ 
         return $result;
     }
 
