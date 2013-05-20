@@ -152,7 +152,7 @@ EOD;
             // Define $timetable in the calling function
             if ($orderByClass)
             {
-                $timetable=TimetableDB::getReliefTimetableByClass($date); 
+                $timetable=TimetableDB::getReliefTimetableByClass($date, $curScheduleIndex?$curScheduleIndex:-1); 
                 PageConstant::escapeHTMLEntity($timetable);
             }
             else

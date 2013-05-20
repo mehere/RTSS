@@ -18,7 +18,7 @@ $curScheduleIndex=$scheduleIndexArr[$curPage-1];
 ?>
 <script type="text/javascript">
 $(document).ready(function(){
-    var formT=document.forms['teacher-select'];
+    var formT=document.forms['teacher-select'], formR=document.forms['relief-timetable'];
     
     $(formT['accname']).change(function(){
         this.form.submit();
@@ -26,7 +26,11 @@ $(document).ready(function(){
     
     <?php if (!$_POST['accname']) { ?>    
         GlobalFunction.toggleAccordion($('.icon-link', document.forms['teacher-select']), 0);
-    <?php } ?>     
+    <?php } ?>  
+        
+    $(formR['view-order']).change(function(){
+        this.form.submit();
+    });
 });
 </script>
 <div class="section">
