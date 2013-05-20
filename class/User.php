@@ -346,7 +346,7 @@ class User
             return "";
         }
         
-        if(preg_match("/^[A-Z]-[0-9]{7}-[A-Z]{1}$/", $accname))
+        if(preg_match("/^[A-Z][0-9]{7}[A-Z]{1}$/", $accname))
         {
             $teacher_id = substr($accname, 1, 7);
 
