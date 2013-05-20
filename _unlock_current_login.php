@@ -8,6 +8,7 @@ Template::validate(true, true);
 $output=array('error' => 1);
 
 $area=$_GET['area'];
+
 if ($area == 'SCHEDULER' || $area == 'EDIT_SCHEDULE')
 {
     User::unlock($_SESSION['accname'], $area);
