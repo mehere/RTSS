@@ -268,7 +268,7 @@ class SMS {
         $scheduleDateObj = date_create($scheduleDate . " 00:00:00");
         $timeDiff = date_diff($timeRepliedObj, $scheduleDateObj)->format("%R %d %h");
         list($sign, $dayDiff, $hourDiff) = explode(" ", $timeDiff);
-        if ($sign == "-" && ($hourDiff >= 15 || $dayDiff >= 1)) {
+        if ($sign == "-" && ($hourDiff >= 20 || $dayDiff >= 1)) {
             return false;
         } else {
             return true;
