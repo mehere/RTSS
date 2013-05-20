@@ -1460,7 +1460,7 @@ class SchedulerDB
         {
             throw new DBException("Fail to set escaped lessons", __FILE__, __LINE__);
         }
-        
+
         $sql_clear = "delete from temp_escaped_leave_lessons";
         $clear = Constant::sql_execute($db_con, $sql_clear);
         if(is_null($clear))
