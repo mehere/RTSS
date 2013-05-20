@@ -34,7 +34,7 @@ $(document).ready(function(){
     $('#btnScheduleAll').click(function(){
         var submitForm=function(){
             $("#dialog-class").dialog('open').data('func', function(){
-                $.getJSON("/RTSS/relief/_relief_class.php", $(formSch).serializeArray(), function(data){
+                $.getJSON("/RTSS/relief/_relief_class.php", $(formClass).serializeArray(), function(data){
                     if (!data['error'])
                     {
                         $("#dialog-alert").html(ALERT_MSG[0]).parent().css({
@@ -70,6 +70,16 @@ $(document).ready(function(){
         });
 
         return false;
+    });
+
+    // Unlock schedule
+    $("#unlock-schedule").click(function(){
+        $.getJSON('/RTSS/_unlock_current_login.php', {"area": 'SCHEDULER'}, function(data){
+            if (!data['error'])
+            {
+                window.location.reload();
+            }
+        });
     });
 
     // Exclude class
