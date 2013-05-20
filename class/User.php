@@ -353,14 +353,13 @@ class User
             $sql_query_teacher_id = "select * from actatek_user where user_id = '".mysql_real_escape_string($teacher_id)."';";
             $query_teacher_id_result = Constant::sql_execute($ifins_db_con, $sql_query_teacher_id);
 
-            if(empty($query_teacher_id_result))
+            if(!empty($query_teacher_id_result))
             {
-                return "";
-            }
-            $row = $query_teacher_id_result[0];
-            if($row)
-            {
-                return $teacher_id;
+                $row = $query_teacher_id_result[0];
+                if($row)
+                {
+                    return $teacher_id;
+                }
             }
         }
         
