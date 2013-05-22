@@ -15,7 +15,7 @@ class Template
     const TT_ADMIN_AED="Upload AED/Relief Timetable";
     
     const REPORT_OVERALL='Overall';
-    const REPORT_INDIVIDUAL='Indivudal';
+    const REPORT_INDIVIDUAL='Indiviudal';
     
     // Menu map
     private static $MAIN_MENU=array(

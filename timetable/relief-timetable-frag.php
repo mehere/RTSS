@@ -152,14 +152,14 @@ EOD;
             // Define $timetable in the calling function
             if ($orderByClass)
             {
-                $timetable=TimetableDB::getReliefTimetableByClass($date, $curScheduleIndex?$curScheduleIndex:-1); 
+                $timetable=TimetableDB::getReliefTimetableByClass($date, isset($curScheduleIndex)?$curScheduleIndex:-1); 
                 PageConstant::escapeHTMLEntity($timetable);
             }
             else
             {
-                $timetable=TimetableDB::getReliefTimetable('', '', $date, $curScheduleIndex?$curScheduleIndex:-1); 
+                $timetable=TimetableDB::getReliefTimetable('', '', $date, isset($curScheduleIndex)?$curScheduleIndex:-1); 
                 PageConstant::escapeHTMLEntity($timetable);
-            }            
+            }
 
             $timeArr=SchoolTime::getTimeArrSub(0, -1);
             if ($orderByClass)
