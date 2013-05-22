@@ -28,7 +28,7 @@ Template::validate();
             <thead>
                 <tr>
                     <?php
-                        $width=array('100%', '90px', '80px', '80px', '80px');
+                        $width=array('100%', '90px', '80px', '140px', '80px', '80px');
                         $tableHeaderArr=NameMap::$REPORT['overall']['display'];
 
                         $i=0;
@@ -43,15 +43,23 @@ EOD;
                 </tr>
             </thead>
             <tbody>
-                <?php
-                    $reportArr=Teacher::overallReport($_GET['type'], $_GET['order'], $_GET['direction']==2 ? SORT_DESC : SORT_ASC, $_GET['year'], $_GET['sem']);
+                <?php                    
+                    $reportArr=ReportDB::getReasonList($_GET['type'], $_GET['year'], $_GET['sem'], $_GET['order'], $_GET['direction']==2 ? SORT_DESC : SORT_ASC);
                     PageConstant::escapeHTMLEntity($reportArr);
 
                     foreach ($reportArr as $value)
                     {
                         $net=PageConstant::calculateNet($value['numOfMC'], $value['numOfRelief']);
+                        
+                        $reason='';
+                        arsort($value['reason']);
+                        foreach ($value['reason'] as $reasonKey => $reasonValue)
+                        {                        
+                            $reason .= NameMap::$RELIEF['leaveReason']['display'][$reasonKey] . ": $reasonValue<br />";
+                        }
+                        
                         echo <<< EOD
-<tr><td>{$value['fullname']}</td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
+<tr><td>{$value['fullname']}</td><td>{$value['type']}</td><td>{$value['numOfMC']}</td><td>$reason</td><td>{$value['numOfRelief']}</td><td>$net</td></tr>   
 EOD;
                     }
 
