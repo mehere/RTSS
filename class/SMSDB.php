@@ -220,7 +220,7 @@ class SMSDB
             if(count($break_reply) === 1)
             {
                 $sms_id = trim($break_reply[0]);
-                $content = "yes";
+                $content = "OK";
             }
             else
             {

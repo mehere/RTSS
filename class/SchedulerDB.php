@@ -165,10 +165,22 @@ class SchedulerDB
             "Hod" => array()
         );
 
+        $sem_info = SchoolTime::checkSemInfo($this->date_str);
+        if(is_null($sem_info))
+        {
+            return $result;
+        }
+        
+        $sem_year = $sem_info["year"];
+        $sem_num = $sem_info["sem"];
+        
+        $time_list = SchoolTime::getSchoolTimeList($sem_year, $sem_num);
+        $max_time_index = count($time_list);
+        
         //query leave
         foreach ($this->on_leave_info as $a_info)
         {
-            $leave_time = SchedulerDB::trimTimePeriod($a_info['datetime'][0][0], $a_info['datetime'][1][0], $a_info['datetime'][0][1], $a_info['datetime'][1][1], $this->date_str, $a_info['leaveID']);
+            $leave_time = SchedulerDB::trimTimePeriod($a_info['datetime'][0][0], $a_info['datetime'][1][0], $a_info['datetime'][0][1], $a_info['datetime'][1][1], $this->date_str, $a_info['leaveID'], $max_time_index);
 
 //            $a_leave = Array(
 //                "startLeave" => $leave_time[0],
@@ -222,7 +234,7 @@ class SchedulerDB
             {
                 continue;
             }
-            
+
             $start_index = $one["start_time_index"] - 0;
             $end_index = $one["end_time_index"] - 0;
             
@@ -230,7 +242,8 @@ class SchedulerDB
             {
                 $leave_start = $result[$type][$teacher_id][$i]["startLeave"];
                 $leave_end = $result[$type][$teacher_id][$i]["endLeave"];
-                
+                error_log($i." $teacher_id");
+                error_log($leave_start." ".$leave_end." ".$start_index." ".$end_index);
                 if($leave_start < $start_index && $leave_end > $end_index)
                 {
                     $result[$type][$teacher_id][$i]["endLeave"] = $start_index;
@@ -239,22 +252,42 @@ class SchedulerDB
                         "startLeave" => $end_index,
                         "endLeave" => $leave_end
                     );
+                    
+                    break;
                 }
-                if($leave_start >= $start_index && $leave_end <= $end_index)
+                else if($leave_start >= $start_index && $leave_end <= $end_index)
                 {
                     unset($result[$type][$teacher_id][$i]);
                     $result[$type][$teacher_id] = array_values($result[$type][$teacher_id]);
                     $i -- ;
+                    
+                    break;
                 }
-                if($leave_start >= $start_index && $leave_end > $end_index)
+                else if($leave_start >= $start_index && $leave_end > $end_index && $leave_start < $end_index)
                 {
                     $result[$type][$teacher_id][$i]["startLeave"] = $end_index;
+                    
+                    break;
                 }
-                if($leave_start < $start_index && $leave_end <= $end_index)
+                else if($leave_start < $start_index && $leave_end <= $end_index && $leave_end > $start_index)
                 {
                     $result[$type][$teacher_id][$i]["endLeave"] = $start_index;
+                    
+                    break;
+                }
+                
+                foreach($result[$type][$teacher_id] as $dafasd)
+                {
+                    error_log($dafasd['startLeave']." ".$dafasd['endLeave']);
                 }
             }
+        }
+        
+        $sql_clear = "delete from temp_escaped_leave_lessons";
+        $clear = Constant::sql_execute($db_con, $sql_clear);
+        if(is_null($clear))
+        {
+            throw new DBException("Fail to set escaped lessons", __FILE__, __LINE__);
         }
             
         return $result;
@@ -347,8 +380,21 @@ class SchedulerDB
 
     public function getTempTeachers()
     {
-        $result_list = Array();
+        $result_list = array();
 
+        $sem_info = SchoolTime::checkSemInfo($this->date_str);
+        if(is_null($sem_info))
+        {
+            return $result_list;
+        }
+        
+        $sem_year = $sem_info["year"];
+        $sem_num = $sem_info["sem"];
+        
+        $time_list = SchoolTime::getSchoolTimeList($sem_year, $sem_num);
+        $max_time_index = count($time_list);
+        
+        
         foreach ($this->temp_list as $a_teacher)
         {
             if (array_key_exists($a_teacher['accname'], $result_list))
@@ -373,13 +419,13 @@ class SchedulerDB
                 $result_list[$the_teacher->accname] = $the_teacher;
             }
 
-            $the_teacher->availability[] = SchedulerDB::trimTimePeriod($a_teacher['datetime'][0][0], $a_teacher['datetime'][1][0], $a_teacher['datetime'][0][1], $a_teacher['datetime'][1][1], $this->date_str, $a_teacher['availability_id']);
+            $the_teacher->availability[] = SchedulerDB::trimTimePeriod($a_teacher['datetime'][0][0], $a_teacher['datetime'][1][0], $a_teacher['datetime'][0][1], $a_teacher['datetime'][1][1], $this->date_str, $a_teacher['availability_id'], $max_time_index);
         }
 
         return $result_list;
     }
 
-    public static function trimTimePeriod($start_date, $end_date, $start_time, $end_time, $query_date, $leave_id)
+    public static function trimTimePeriod($start_date, $end_date, $start_time, $end_time, $query_date, $leave_id, $max_time = 15)
     {
         $start_date_obj = new DateTime($start_date);
         $end_date_obj = new DateTime($end_date);
@@ -393,7 +439,7 @@ class SchedulerDB
 
         if ($start_diff->d !== 0 && $end_diff->d !== 0)
         {
-            return array(1, 15, $leave_id);
+            return array(1, $max_time, $leave_id);
         } else if ($start_diff->d === 0 && $end_diff->d !== 0)
         {
             if ($start_time_index === -1)
@@ -401,7 +447,7 @@ class SchedulerDB
                 throw new DBException("Error in time format", __FILE__, __LINE__, 3);
             }
 
-            return array($start_time_index, 15, $leave_id);
+            return array($start_time_index, $max_time, $leave_id);
         } else if ($start_diff->d !== 0 && $end_diff->d === 0)
         {
             if ($end_time_index === -1)
@@ -1376,7 +1422,20 @@ class SchedulerDB
         $date_obj = new DateTime($date);
         $weekday = $date_obj->format('N');
         
-        $sql_lesson = "select * from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.weekday = $weekday and ct_teacher_matching.teacher_id in (";
+        $sem_info = SchoolTime::checkSemInfo($date);
+        if(is_null($sem_info))
+        {
+            return array();
+        }
+        
+        $sem_id = $sem_info["sem_id"];
+        $sem_year = $sem_info["year"];
+        $sem_num = $sem_info["sem"];
+        
+        $time_list = SchoolTime::getSchoolTimeList($sem_year, $sem_num);
+        $max_time_index = count($time_list);
+        
+        $sql_lesson = "select * from ct_lesson, ct_teacher_matching where ct_lesson.lesson_id = ct_teacher_matching.lesson_id and ct_lesson.weekday = $weekday and ct_lesson.sem_id = $sem_id and ct_teacher_matching.teacher_id in (";
         $id_list = array();
         foreach ($leave_info as $a_info)
         {
@@ -1422,9 +1481,10 @@ class SchedulerDB
         }
         
         $result = array();
+        
         foreach ($leave_info as $a_info)
         {
-            $leave_time = SchedulerDB::trimTimePeriod($a_info['datetime'][0][0], $a_info['datetime'][1][0], $a_info['datetime'][0][1], $a_info['datetime'][1][1], $date, $a_info['leaveID']);
+            $leave_time = SchedulerDB::trimTimePeriod($a_info['datetime'][0][0], $a_info['datetime'][1][0], $a_info['datetime'][0][1], $a_info['datetime'][1][1], $date, $a_info['leaveID'], $max_time_index);
         
             $algo_type = Constant::$teacher_type[$a_info['type']];
             
